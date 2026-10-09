@@ -1,0 +1,30 @@
+   31.5s boltons 4e5faa3d 'Fix spooled stream write compatibility and backwar' fns=3 probes=63 diffs=63 nondet=0 err=
+    0.5s boltons 78ec69ca 'bump version to 26.2.1dev' fns=0 probes=None diffs=0 nondet=0 err=
+    1.4s boltons 4332b35a 'boltons version 26.2.0' fns=0 probes=None diffs=0 nondet=0 err=
+   35.3s boltons 1216b467 'Complete September PR sweep for 26.2.0 (#481)' fns=6 probes=194 diffs=78 nondet=0 err=
+    3.7s boltons 73e22c90 'statsutils: finish Pearson zero-denominator review' fns=1 probes=0 diffs=0 nondet=0 err=
+   21.2s boltons 1cdc0e9d 'statsutils: handle zero interquartile range in his' fns=2 probes=15 diffs=0 nondet=0 err=
+    6.4s boltons 51508029 'jsonutils: accept explicit end-of-file relative se' fns=1 probes=0 diffs=0 nondet=0 err=
+   12.9s boltons a180020c 'setutils: flatten inputs to IndexedSet.update (#47' fns=1 probes=18 diffs=18 nondet=0 err=
+  172.3s boltons e00c10a8 'setutils, listutils: streamline bulk removal and f' fns=10 probes=244 diffs=0 nondet=0 err=
+   20.3s boltons efff866a 'mathutils: preserve empty Bits through conversions' fns=7 probes=42 diffs=0 nondet=0 err=
+    9.9s boltons 5eb6cc04 'mathutils: resolve negative Bits indices (#450)' fns=1 probes=32 diffs=4 nondet=0 err=
+    9.4s boltons 8789df2c 'timeutils: match timezone for default relative tim' fns=1 probes=25 diffs=0 nondet=4 err=
+    4.0s boltons f5f5cd86 'iterutils: correct inclusive GUIDerator size messa' fns=1 probes=0 diffs=0 nondet=0 err=
+   16.3s boltons 970051b6 'namedutils: reject empty type and field names (#46' fns=2 probes=84 diffs=62 nondet=0 err=
+   10.9s boltons 9decba3e 'ecoutils: skip identifying lookups when scrubbing ' fns=1 probes=3 diffs=0 nondet=3 err=
+   16.5s boltons a1ea1030 'dictutils: preserve iterator values in addlist (#4' fns=2 probes=106 diffs=15 nondet=0 err=
+   14.8s boltons d45cc414 'urlutils: honor parse_qsl encoding (#455)' fns=1 probes=43 diffs=11 nondet=0 err=
+    0.6s boltons d12d86a4 'Fix Unicode line separators in iter_splitlines' fns=0 probes=None diffs=0 nondet=0 err=
+    9.7s boltons 91b2bb47 'Keep the stop barrel valid during cross-barrel del' fns=2 probes=1 diffs=0 nondet=0 err=
+   24.1s boltons 448b1db1 'Normalize BarrelList slice bounds and reverse step' fns=3 probes=35 diffs=0 nondet=0 err=
+    6.3s boltons 1a04b637 'Support relative seeking in binary JSONL streams' fns=1 probes=0 diffs=0 nondet=0 err=
+    0.5s boltons 967864f8 'statsutils: add mode() for most-common value, incl' fns=0 probes=None diffs=0 nondet=0 err=
+   13.9s boltons 5df26592 'Use the sep argument in args2sh and args2cmd (#454' fns=2 probes=100 diffs=28 nondet=0 err=
+    0.5s boltons 673e010d 'strutils: add ellipsize for word-boundary-aware tr' fns=0 probes=None diffs=0 nondet=0 err=
+    6.0s boltons 580a9c2d "setutils: cover _ComplementSet __ge__'s double-com" fns=2 probes=0 diffs=0 nondet=0 err=
+    5.2s boltons ec1ff9f6 'Fix issupserset typo in _ComplementSet comparisons' fns=2 probes=0 diffs=0 nondet=0 err=
+    6.1s boltons b5c495be 'funcutils: forward target-keyword-only args as key' fns=2 probes=4 diffs=0 nondet=0 err=
+    9.3s boltons c1c25da3 'Fix off-by-one in Bits length check' fns=1 probes=99 diffs=2 nondet=0 err=
+   12.0s boltons 3e9983db "iterutils: unify xfrange with frange's count-based" fns=1 probes=67 diffs=16 nondet=0 err=
+    7.9s boltons f1034b07 'jsonutils: fix JSONLIterator nontermination at EOF' fns=2 probes=0 diffs=0 nondet=0 err=

@@ -1,0 +1,232 @@
+{
+  "schema": "invariantguard-m5-demo/1",
+  "started_at": "2026-10-08T17:26:58.116597Z",
+  "engine_version": "0.4.1",
+  "agent_client": "local-model harness: examples/demo_repo/run_demo.py drives guard mcp serve --stdio through the official MCP Python SDK client and asks the local model for repairs (not Claude Code)",
+  "host": {
+    "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "python": "3.13.9"
+  },
+  "repository": "temporary (removed after the run)",
+  "model": {
+    "artifact_id": "ollama:qwen2.5-coder:7b",
+    "revision": "sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "license": "apache-2.0 (Apache License; license text sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e)",
+    "runtime": "ollama 0.35.1",
+    "quantization": "Q4_K_M",
+    "details": {
+      "family": "qwen2",
+      "parameter_size": "7.6B",
+      "format": "gguf",
+      "size_bytes": 4683087561,
+      "context_length": 32768,
+      "base_model": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B",
+      "license_link": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct/blob/main/LICENSE",
+      "license_id": "apache-2.0",
+      "license_text_sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+      "capabilities": [
+        "completion",
+        "tools",
+        "insert"
+      ],
+      "endpoint": "http://127.0.0.1:11434"
+    }
+  },
+  "base_commit": "6381eba74f6fea799894b14f1938d3da1e4a8310",
+  "runner_probe_exit": 0,
+  "candidate_verify": {
+    "exit_code": 1,
+    "verdict": "BLOCK",
+    "wall_ms": 5211.357,
+    "ratio_introduced_exact": true,
+    "ratio_witness": {
+      "a": 0,
+      "b": 0
+    },
+    "normalize_observed_regression": [
+      {
+        "contract_id": "normalize.sum.v1",
+        "property_result": "OBSERVED_REGRESSION",
+        "patch_relation": "INTRODUCED",
+        "witness": {
+          "xs": [
+            1
+          ]
+        },
+        "observations": {
+          "base": {
+            "reason": "predicate holds",
+            "result": [
+              1.0
+            ]
+          },
+          "candidate": {
+            "reason": "predicate does not hold",
+            "result": [
+              0.5
+            ]
+          },
+          "candidate_repeat": {
+            "reason": "predicate does not hold",
+            "result": null
+          }
+        }
+      }
+    ]
+  },
+  "agent_loop": {
+    "attempts": [
+      {
+        "attempt": 1,
+        "functions": [
+          {
+            "symbol_id": "demo/math_ops.py::normalize",
+            "outcome": "applied",
+            "model_ms": 45796.753
+          },
+          {
+            "symbol_id": "demo/math_ops.py::ratio",
+            "outcome": "applied",
+            "model_ms": 28204.888
+          }
+        ],
+        "result": {
+          "run_id": "run-5ef10d828b0b4bf0a615623bfb79b683",
+          "status": "OK",
+          "verdict": "PASS",
+          "error_findings": []
+        }
+      }
+    ],
+    "final_mcp_report": {
+      "run_id": "run-5ef10d828b0b4bf0a615623bfb79b683",
+      "status": "OK",
+      "verdict": "PASS",
+      "run_outcome": "COMPLETE",
+      "exit_code": 0,
+      "candidate_snapshot": "sha256:276ae48b1ae23bfc8b28392c2d446738b1d25f672b38b39af215357ff681debc"
+    },
+    "stale_evidence_check": [
+      {
+        "finding_id": "fnd-7770ba015d38f520bb562e27488dc368",
+        "status": "STALE_SNAPSHOT",
+        "evidence_status": "STALE",
+        "superseded_by_run": "run-5ef10d828b0b4bf0a615623bfb79b683",
+        "evidence_run": "run-f3dff5263cfa4d5baf5dda72f7be1739"
+      },
+      {
+        "finding_id": "fnd-6689fb96e6aff89ddb0bf244bad790ed",
+        "status": "STALE_SNAPSHOT",
+        "evidence_status": "STALE",
+        "superseded_by_run": "run-5ef10d828b0b4bf0a615623bfb79b683",
+        "evidence_run": "run-f3dff5263cfa4d5baf5dda72f7be1739"
+      }
+    ],
+    "latency": {
+      "loop_ms": 80462.757,
+      "loop_definition": "from receipt of the first failing verify_patch result to receipt of the last verify_patch result (agent wall clock)",
+      "verifier_ms_in_loop": 5775.07,
+      "verifier_ms_per_call": [
+        4728.429,
+        5775.07
+      ],
+      "verify_round_trip_ms_per_call": [
+        4893.593,
+        6063.831
+      ],
+      "model_ms_total": 74001.641,
+      "model_ms_per_call": [
+        45796.753,
+        28204.888
+      ],
+      "evidence_fetch_ms_per_attempt": [
+        352.454
+      ],
+      "other_ms": 44.831
+    }
+  },
+  "final_verify": {
+    "exit_code": 0,
+    "verdict": "PASS",
+    "run_outcome": "COMPLETE",
+    "candidate_snapshot": "sha256:276ae48b1ae23bfc8b28392c2d446738b1d25f672b38b39af215357ff681debc",
+    "wall_ms": 5833.853,
+    "obligations": [
+      {
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      }
+    ],
+    "contracts": [
+      {
+        "contract_id": "normalize.sum.v1",
+        "property_result": "TESTED",
+        "status": "CHECKED"
+      }
+    ],
+    "findings": [],
+    "unknown_obligations": [],
+    "verdict_reasons": [
+      "quick mode: 1 unaffected symbol(s) outside the patch slice were not re-verified (use --mode full to verify the whole scope)",
+      "1 contract(s) TESTED on finite executed probes (not proofs)",
+      "all required obligations resolved; no findings"
+    ]
+  },
+  "static_check": {
+    "exit_code": 2,
+    "verdict": "INCOMPLETE",
+    "wall_ms": 479.616,
+    "model": "disabled"
+  },
+  "discovery": {
+    "exit_code": 0,
+    "wall_ms": 114421.862,
+    "model_status": "AVAILABLE",
+    "candidates_by_source_and_status": {
+      "local_model/refuted": 1,
+      "local_model/rejected": 2,
+      "template/would_propose": 1
+    }
+  },
+  "total_wall_ms": 214947.498,
+  "finished_at": "2026-10-08T17:30:33.062084Z",
+  "artifacts": [
+    "01_model_identity.json",
+    "02_source_baseline_math_ops.py",
+    "03_guard_init.json",
+    "04_guard_init.stderr.txt",
+    "05_guard_config.toml",
+    "06_contracts_declare.json",
+    "07_contracts_declare.stderr.txt",
+    "08_runner_probe.json",
+    "09_baseline_create.json",
+    "10_baseline_create.stderr.txt",
+    "11_source_candidate_math_ops.py",
+    "12_candidate_patch.diff",
+    "13_verify_candidate.json",
+    "14_verify_candidate.stderr.txt",
+    "15_mcp_server_params.json",
+    "16_mcp_tools_list.json",
+    "17_mcp_verify_patch_attempt0_candidate.json",
+    "18_mcp_get_contracts_a1.json",
+    "19_mcp_get_finding_a1_fnd-7770ba015d38f520bb562e27488dc368.json",
+    "20_mcp_explain_finding_a1_fnd-7770ba015d38f520bb562e27488dc368.json",
+    "21_mcp_get_finding_a1_fnd-6689fb96e6aff89ddb0bf244bad790ed.json",
+    "22_mcp_explain_finding_a1_fnd-6689fb96e6aff89ddb0bf244bad790ed.json",
+    "23_mcp_verify_patch_attempt1.json",
+    "24_agent_attempt1.json",
+    "25_mcp_get_finding_after_repair_fnd-7770ba015d38f520bb562e27488dc368.json",
+    "26_mcp_get_finding_after_repair_fnd-6689fb96e6aff89ddb0bf244bad790ed.json",
+    "27_source_final_math_ops.py",
+    "28_final_vs_candidate.diff",
+    "29_verify_final.json",
+    "30_verify_final.stderr.txt",
+    "31_check_static_no_model.json",
+    "32_check_static_no_model.stderr.txt",
+    "33_discover_local_model.json",
+    "34_discover_local_model.stderr.txt"
+  ]
+}

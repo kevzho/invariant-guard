@@ -1,0 +1,35 @@
+{
+  "available": true,
+  "reason": "qwen2.5-coder:7b at http://127.0.0.1:11434 (ollama 0.35.1)",
+  "identity": {
+    "artifact_id": "ollama:qwen2.5-coder:7b",
+    "revision": "sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "license": "apache-2.0 (Apache License; license text sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e)",
+    "runtime": "ollama 0.35.1",
+    "quantization": "Q4_K_M",
+    "details": {
+      "family": "qwen2",
+      "parameter_size": "7.6B",
+      "format": "gguf",
+      "size_bytes": 4683087561,
+      "context_length": 32768,
+      "base_model": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B",
+      "license_link": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct/blob/main/LICENSE",
+      "license_id": "apache-2.0",
+      "license_text_sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+      "capabilities": [
+        "completion",
+        "tools",
+        "insert"
+      ],
+      "endpoint": "http://127.0.0.1:11434"
+    }
+  },
+  "structured_output": "json_schema",
+  "context_limit_tokens": 32768,
+  "operations": [
+    "propose_contracts"
+  ],
+  "endpoint": "http://127.0.0.1:11434",
+  "probe_ms": 29.706
+}

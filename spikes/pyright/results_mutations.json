@@ -1,0 +1,238 @@
+[
+ {
+  "id": "M01",
+  "kind": "ATTR",
+  "repo": "more-itertools",
+  "sha": "262dbb9805",
+  "fn": "seekable.peek",
+  "detected": true,
+  "hit_rules": [
+   "reportAttributeAccessIssue"
+  ],
+  "hit_msgs": [
+   "Cannot access attribute \"_cach\" for class \"seekable*\"\n\u00a0\u00a0Attribute \"_cach\" is unknown"
+  ],
+  "other_introduced": 0,
+  "t": 4.0
+ },
+ {
+  "id": "M02",
+  "kind": "ARGS",
+  "repo": "more-itertools",
+  "sha": "262dbb9805",
+  "fn": "seekable.peek",
+  "detected": true,
+  "hit_rules": [
+   "reportCallIssue"
+  ],
+  "hit_msgs": [
+   "No overloads for \"next\" match the provided arguments\n\u00a0\u00a0Argument types: (Self@seekable, None, Literal[N])"
+  ],
+  "other_introduced": 0,
+  "t": 9.1
+ },
+ {
+  "id": "M03",
+  "kind": "UNBOUND",
+  "repo": "more-itertools",
+  "sha": "0c5183863a",
+  "fn": "bucket._get_values",
+  "detected": true,
+  "hit_rules": [
+   "reportPossiblyUnboundVariable"
+  ],
+  "hit_msgs": [
+   "\"item\" is possibly unbound"
+  ],
+  "other_introduced": 0,
+  "t": 5.4
+ },
+ {
+  "id": "M04",
+  "kind": "ARGS",
+  "repo": "more-itertools",
+  "sha": "0c5183863a",
+  "fn": "bucket._get_values",
+  "detected": true,
+  "hit_rules": [
+   "reportCallIssue"
+  ],
+  "hit_msgs": [
+   "No overloads for \"__init__\" match the provided arguments\n\u00a0\u00a0Argument types: (list[Unknown], Literal[N], Literal"
+  ],
+  "other_introduced": 0,
+  "t": 4.2
+ },
+ {
+  "id": "M05",
+  "kind": "ATTR",
+  "repo": "more-itertools",
+  "sha": "feaddee0ff",
+  "fn": "numeric_range.__reversed__",
+  "detected": true,
+  "hit_rules": [
+   "reportAttributeAccessIssue"
+  ],
+  "hit_msgs": [
+   "Cannot access attribute \"_length\" for class \"numeric_range*\"\n\u00a0\u00a0Attribute \"_length\" is unknown"
+  ],
+  "other_introduced": 0,
+  "t": 4.2
+ },
+ {
+  "id": "M06",
+  "kind": "ARGS",
+  "repo": "more-itertools",
+  "sha": "f89d7a3331",
+  "fn": "ichunked",
+  "detected": true,
+  "hit_rules": [
+   "reportCallIssue"
+  ],
+  "hit_msgs": [
+   "No overloads for \"__new__\" match the provided arguments\n\u00a0\u00a0Argument types: (Unknown, Unknown, Literal[N], Liter"
+  ],
+  "other_introduced": 0,
+  "t": 4.4
+ },
+ {
+  "id": "M07",
+  "kind": "RET",
+  "repo": "boltons",
+  "sha": "1cdc0e9d36",
+  "fn": "Stats._get_bin_bounds",
+  "detected": true,
+  "hit_rules": [
+   "reportReturnType"
+  ],
+  "hit_msgs": [
+   "Type \"None\" is not assignable to return type \"list[Unknown]\"\n\u00a0\u00a0\"None\" is not assignable to \"list[Unknown]\""
+  ],
+  "other_introduced": 1,
+  "t": 1.5
+ },
+ {
+  "id": "M08",
+  "kind": "OPT",
+  "repo": "boltons",
+  "sha": "8789df2cc3",
+  "fn": "decimal_relative_time",
+  "detected": true,
+  "hit_rules": [
+   "reportGeneralTypeIssues"
+  ],
+  "hit_msgs": [
+   "\"None\" is not iterable\n\u00a0\u00a0\"__iter__\" method not defined"
+  ],
+  "other_introduced": 0,
+  "t": 1.4
+ },
+ {
+  "id": "M09",
+  "kind": "ATTR",
+  "repo": "boltons",
+  "sha": "8789df2cc3",
+  "fn": "decimal_relative_time",
+  "detected": false,
+  "hit_rules": [],
+  "hit_msgs": [],
+  "other_introduced": 0,
+  "t": 1.7
+ },
+ {
+  "id": "M10",
+  "kind": "ARGS",
+  "repo": "boltons",
+  "sha": "efff866a3b",
+  "fn": "Bits.as_hex",
+  "detected": true,
+  "hit_rules": [
+   "reportCallIssue"
+  ],
+  "hit_msgs": [
+   "No overloads for \"__new__\" match the provided arguments\n\u00a0\u00a0Argument types: (int | Unknown, Literal[N], Literal["
+  ],
+  "other_introduced": 0,
+  "t": 1.2
+ },
+ {
+  "id": "M11",
+  "kind": "UNBOUND",
+  "repo": "boltons",
+  "sha": "a180020c76",
+  "fn": "IndexedSet.update",
+  "detected": true,
+  "hit_rules": [
+   "reportPossiblyUnboundVariable"
+  ],
+  "hit_msgs": [
+   "\"other\" is possibly unbound"
+  ],
+  "other_introduced": 0,
+  "t": 4.2
+ },
+ {
+  "id": "M12",
+  "kind": "ATTR",
+  "repo": "boltons",
+  "sha": "5150802911",
+  "fn": "JSONLIterator.__init__",
+  "detected": true,
+  "hit_rules": [
+   "reportAttributeAccessIssue"
+  ],
+  "hit_msgs": [
+   "Cannot access attribute \"_init_relseek\" for class \"JSONLIterator*\"\n\u00a0\u00a0Attribute \"_init_relseek\" is unknown"
+  ],
+  "other_introduced": 0,
+  "t": 3.2
+ },
+ {
+  "id": "M13",
+  "kind": "OPT",
+  "repo": "boltons",
+  "sha": "5150802911",
+  "fn": "JSONLIterator.__init__",
+  "detected": true,
+  "hit_rules": [
+   "reportOptionalMemberAccess"
+  ],
+  "hit_msgs": [
+   "\"strip\" is not a known attribute of \"None\""
+  ],
+  "other_introduced": 0,
+  "t": 3.7
+ },
+ {
+  "id": "M14",
+  "kind": "OPT",
+  "repo": "more-itertools",
+  "sha": "f89d7a3331",
+  "fn": "ichunked",
+  "detected": true,
+  "hit_rules": [
+   "reportOptionalOperand"
+  ],
+  "hit_msgs": [
+   "Operator \"-\" not supported for \"None\""
+  ],
+  "other_introduced": 0,
+  "t": 4.2
+ },
+ {
+  "id": "M15",
+  "kind": "RET",
+  "repo": "boltons",
+  "sha": "efff866a3b",
+  "fn": "Bits.as_hex",
+  "detected": true,
+  "hit_rules": [
+   "reportReturnType"
+  ],
+  "hit_msgs": [
+   "Type \"int\" is not assignable to return type \"str\"\n\u00a0\u00a0\"int\" is not assignable to \"str\""
+  ],
+  "other_introduced": 0,
+  "t": 1.2
+ }
+]

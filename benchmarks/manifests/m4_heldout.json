@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "description": "M4 held-out functions for model/template candidate evaluation. Written for this evaluation (origin: InvariantGuard repository, same license as the repository); not used in the prompt (the prompt example is halve_all) or in any test fixture. Seeded bugs contradict the function's own docstring; reference implementations live in benchmarks/m4_reference.py, which no discovery source sees.",
+  "fixture_root": "benchmarks/fixtures/m4_heldout",
+  "functions": [
+    {"symbol": "heldout/stats.py::mean_of", "seeded_bug": null},
+    {"symbol": "heldout/stats.py::spread", "seeded_bug": null},
+    {"symbol": "heldout/stats.py::normalize_to_unit", "seeded_bug": {"class": "wrong constant: divides by sum + 1e-3, so the result does not sum to 1", "reference": "normalize_to_unit", "dsl_expressible": true}},
+    {"symbol": "heldout/stats.py::running_total", "seeded_bug": null},
+    {"symbol": "heldout/stats.py::count_positive", "seeded_bug": {"class": "off-by-boundary: counts zeros as positive", "reference": "count_positive", "dsl_expressible": true, "note": "Corrected after the 2026-10-08 run (it was annotated false before running): DSL v1 has no counting operator, but a precondition-restricted claim such as all_between(xs, -1e6, 0) => result == 0 expresses the bug; the model proposed exactly that in repeat 1. The results file header (seeded_bugs_dsl_expressible = 4) reflects the pre-run annotation."}},
+    {"symbol": "heldout/sequences.py::dedupe_sorted", "seeded_bug": {"class": "mutation: sorts the caller's list in place although documented as not modifying it", "reference": "dedupe_sorted", "dsl_expressible": true}},
+    {"symbol": "heldout/sequences.py::pairwise_diffs", "seeded_bug": null},
+    {"symbol": "heldout/sequences.py::clip_negatives", "seeded_bug": {"class": "off-by-one: -1 is kept", "reference": "clip_negatives", "dsl_expressible": true}},
+    {"symbol": "heldout/sequences.py::rotate_left", "seeded_bug": null},
+    {"symbol": "heldout/scalars.py::abs_diff", "seeded_bug": null},
+    {"symbol": "heldout/scalars.py::clamp_percent", "seeded_bug": {"class": "missing lower clamp: negative inputs are returned unchanged", "reference": "clamp_percent", "dsl_expressible": true}},
+    {"symbol": "heldout/scalars.py::floor_div_or_zero", "seeded_bug": null},
+    {"symbol": "heldout/report.py::summary_score", "seeded_bug": null}
+  ]
+}

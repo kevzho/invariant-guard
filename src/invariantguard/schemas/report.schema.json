@@ -1,0 +1,1105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:report:1.0",
+  "title": "Report",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "invariantguard"
+        },
+        "engine_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ir_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grammar": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "engine_version",
+        "grammar",
+        "ir_version",
+        "name",
+        "python"
+      ]
+    },
+    "command": {
+      "enum": [
+        "check",
+        "verify"
+      ]
+    },
+    "run_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/run_id"
+    },
+    "base_snapshot": {
+      "anyOf": [
+        {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_snapshot": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "snapshot": {
+      "$ref": "urn:invariantguard:schema:snapshot:1.0"
+    },
+    "analysis_plan": {
+      "$ref": "urn:invariantguard:schema:analysis_plan:1.0"
+    },
+    "run_outcome": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/run_outcome"
+    },
+    "verdict": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/verdict"
+    },
+    "verdict_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "policy_id": {
+      "const": "default-v1"
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requested_symbols": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "analyzed_symbols": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_obligations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved_required_obligations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_captured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_analyzed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_obligations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "obligation_id": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/obligation_id"
+              },
+              "symbol_id": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "required": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "obligation_id",
+              "reason",
+              "required",
+              "symbol_id"
+            ]
+          }
+        },
+        "skipped_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": [
+                  "parse_failure",
+                  "source_changed_during_run",
+                  "engine_error",
+                  "excluded_path"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "symbol_id": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "required": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "reason",
+              "required",
+              "symbol_id"
+            ]
+          }
+        },
+        "unsupported_symbols": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "symbol_id": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "division_sites": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "division_sites",
+              "kind",
+              "reason",
+              "symbol_id"
+            ]
+          }
+        },
+        "advisory_obligations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "slice": {
+          "type": "object"
+        },
+        "contracts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "analyzed_symbols",
+        "files_analyzed",
+        "files_captured",
+        "requested_symbols",
+        "required_obligations",
+        "resolved_required_obligations",
+        "skipped_checks",
+        "unknown_obligations",
+        "unsupported_symbols"
+      ]
+    },
+    "timing_ms": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "capture": {
+          "type": "number",
+          "minimum": 0
+        },
+        "static": {
+          "type": "number",
+          "minimum": 0
+        },
+        "solver": {
+          "type": "number",
+          "minimum": 0
+        },
+        "dynamic": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model": {
+          "type": "null"
+        },
+        "base_capture": {
+          "type": "number",
+          "minimum": 0
+        },
+        "impact": {
+          "type": "number",
+          "minimum": 0
+        },
+        "base_static": {
+          "type": "number",
+          "minimum": 0
+        },
+        "lowering": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cache": {
+          "type": "number",
+          "minimum": 0
+        },
+        "runner_probe": {
+          "description": "M3: capability probe of the execution backend (before any target import)",
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "capture",
+        "dynamic",
+        "model",
+        "solver",
+        "static"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:finding:1.0"
+      }
+    },
+    "obligation_results": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:obligation_result:1.0"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:evidence:1.0"
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "solver": {
+          "enum": [
+            "configured",
+            "unavailable",
+            "disabled"
+          ]
+        },
+        "solver_detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "execution": {
+          "enum": [
+            "disabled",
+            "unavailable",
+            "isolated",
+            "unisolated"
+          ]
+        },
+        "model": {
+          "enum": [
+            "disabled",
+            "unavailable"
+          ]
+        },
+        "frontends": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "execution",
+        "frontends",
+        "model",
+        "solver",
+        "solver_detail"
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "symbol_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "message",
+          "symbol_id"
+        ]
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "symbol_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "error_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error_type",
+          "message",
+          "stage",
+          "symbol_id"
+        ]
+      }
+    },
+    "patch": {
+      "description": "guard verify only: base identity, file/symbol changes, affected slice, graph, relations, cache (docs/07).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "quick",
+            "full"
+          ]
+        },
+        "base": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "spec": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "enum": [
+                "git",
+                "baseline"
+              ]
+            },
+            "commit": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "label": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "snapshot_id": {
+              "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+            },
+            "model_available": {
+              "type": "boolean"
+            },
+            "files": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "config_digest": {
+              "anyOf": [
+                {
+                  "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dependency_locks": {
+              "type": "array"
+            },
+            "obligation_results": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "commit",
+            "kind",
+            "label",
+            "model_available",
+            "snapshot_id",
+            "spec"
+          ]
+        },
+        "files": {
+          "type": "object",
+          "required": [
+            "added",
+            "deleted",
+            "modified",
+            "renamed",
+            "git_states"
+          ]
+        },
+        "symbols": {
+          "type": "object",
+          "required": [
+            "added",
+            "deleted",
+            "modified",
+            "renamed",
+            "uncertain_renames"
+          ]
+        },
+        "slice": {
+          "type": "object",
+          "required": [
+            "affected_symbols",
+            "invalidated",
+            "outside_slice_symbols",
+            "global_change",
+            "widened_by_key_check"
+          ]
+        },
+        "graph": {
+          "type": "object",
+          "required": [
+            "candidate",
+            "unresolved_dynamic_edges",
+            "dynamic_edge_policy"
+          ]
+        },
+        "relations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "propertyNames": {
+            "enum": [
+              "INTRODUCED",
+              "PRE_EXISTING",
+              "RESOLVED",
+              "CHANGED",
+              "UNDETERMINED"
+            ]
+          }
+        },
+        "cache": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "published_entries"
+          ]
+        },
+        "unresolved_changes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "base",
+        "cache",
+        "files",
+        "graph",
+        "mode",
+        "relations",
+        "slice",
+        "symbols",
+        "unresolved_changes"
+      ]
+    },
+    "contracts": {
+      "description": "guard verify (M3): behavioral contract checks, execution backend and capabilities (docs/06, docs/10).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "requested": {
+              "type": "boolean"
+            },
+            "profile": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "backend": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "docker",
+                    "unisolated"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status": {
+              "enum": [
+                "DISABLED",
+                "NOT_STARTED",
+                "AVAILABLE",
+                "RUNNER_UNAVAILABLE"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "isolated": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "enum": [
+                      "VERIFIED",
+                      "FAILED",
+                      "NOT_ENFORCED",
+                      "NOT_PROBED"
+                    ]
+                  },
+                  "detail": {}
+                },
+                "required": [
+                  "name",
+                  "required",
+                  "status",
+                  "detail"
+                ]
+              }
+            },
+            "environment": {
+              "type": "object"
+            },
+            "environment_digest": {
+              "anyOf": [
+                {
+                  "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "run_profile": {
+              "anyOf": [
+                {
+                  "$ref": "urn:invariantguard:schema:run_profile:1.0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "run_profile_digest": {
+              "anyOf": [
+                {
+                  "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "requested",
+            "profile",
+            "backend",
+            "status",
+            "reason",
+            "isolated",
+            "capabilities",
+            "environment",
+            "environment_digest",
+            "run_profile",
+            "run_profile_digest"
+          ]
+        },
+        "registry": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "contract_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.-]{1,96}$"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "semantic_digest": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1
+              },
+              "authority": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/authority"
+              },
+              "input_profile": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "status": {
+                "enum": [
+                  "CHECKED",
+                  "NOT_RUN",
+                  "INVALID_CONTRACT",
+                  "INTEGRITY_ERROR",
+                  "RUNNER_UNAVAILABLE",
+                  "NOT_ALLOWED",
+                  "TARGET_UNAVAILABLE",
+                  "ENGINE_ERROR"
+                ]
+              },
+              "property_result": {
+                "enum": [
+                  "TESTED",
+                  "OBSERVED_FAILURE",
+                  "OBSERVED_REGRESSION",
+                  "UNVERIFIED",
+                  "UNKNOWN"
+                ]
+              },
+              "scope_validity": {
+                "anyOf": [
+                  {
+                    "const": "EXECUTED"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "patch_relation": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/patch_relation"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "severity": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/severity"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "finding_id": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/finding_id"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "quantifier": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence_ids": {
+                "type": "array",
+                "items": {
+                  "$ref": "urn:invariantguard:schema:common:1.0#/$defs/evidence_id"
+                }
+              },
+              "source_span": {
+                "$ref": "urn:invariantguard:schema:source_span:1.0"
+              },
+              "base_replay": {
+                "type": "string"
+              },
+              "probes": {
+                "type": "object"
+              },
+              "excluded_examples": {
+                "type": "array"
+              },
+              "witness": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/witness"
+              },
+              "original_witness": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/witness"
+              },
+              "observations": {
+                "type": "object"
+              },
+              "confirmations": {
+                "type": "array"
+              },
+              "resolved": {
+                "type": "object"
+              },
+              "proposer": {
+                "$ref": "urn:invariantguard:schema:common:1.0#/$defs/proposer"
+              }
+            },
+            "required": [
+              "contract_id",
+              "revision",
+              "semantic_digest",
+              "scope",
+              "authority",
+              "input_profile",
+              "required",
+              "status",
+              "property_result",
+              "scope_validity",
+              "patch_relation",
+              "severity",
+              "finding_id",
+              "quantifier",
+              "reasons",
+              "evidence_ids"
+            ],
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "property_result": {
+                      "enum": [
+                        "TESTED",
+                        "OBSERVED_FAILURE",
+                        "OBSERVED_REGRESSION"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "scope_validity": {
+                      "const": "EXECUTED"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "property_result": {
+                      "enum": [
+                        "UNKNOWN",
+                        "UNVERIFIED"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "scope_validity": {
+                      "type": "null"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "property_result": {
+                      "const": "OBSERVED_REGRESSION"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "witness",
+                    "confirmations"
+                  ],
+                  "properties": {
+                    "patch_relation": {
+                      "const": "INTRODUCED"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "execution",
+        "registry",
+        "policy",
+        "results"
+      ]
+    }
+  },
+  "required": [
+    "analysis_plan",
+    "base_snapshot",
+    "candidate_snapshot",
+    "capabilities",
+    "command",
+    "coverage",
+    "diagnostics",
+    "errors",
+    "evidence",
+    "findings",
+    "obligation_results",
+    "policy_id",
+    "run_id",
+    "run_outcome",
+    "schema_version",
+    "snapshot",
+    "timing_ms",
+    "tool",
+    "verdict",
+    "verdict_reasons"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "run_outcome": {
+            "const": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "run_outcome": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verdict": {
+            "const": "ERROR"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "check"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "base_snapshot": {
+            "type": "null"
+          },
+          "findings": {
+            "description": "guard check has no patch attribution (docs/09): every relation is UNDETERMINED.",
+            "items": {
+              "properties": {
+                "patch_relation": {
+                  "const": "UNDETERMINED"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "verify"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "patch"
+        ],
+        "properties": {
+          "base_snapshot": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "check"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "patch"
+          ]
+        }
+      }
+    }
+  ]
+}

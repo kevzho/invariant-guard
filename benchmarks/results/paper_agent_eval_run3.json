@@ -1,0 +1,4456 @@
+{
+  "schema_version": "1.0",
+  "benchmark": "agent_proposer_eval",
+  "engine_version": "0.5.0",
+  "protocol_version": "ig-agent-proposer-1",
+  "started_at": "2026-10-08T23:17:15Z",
+  "heldout": {
+    "manifest": "benchmarks/manifests/m4_heldout.json",
+    "functions": 13,
+    "seeded_bugs": 5
+  },
+  "proposals": {
+    "directory": "/Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run3",
+    "files": [
+      {
+        "file": "heldout_report_py_summary_score.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/report.py::summary_score"
+        ]
+      },
+      {
+        "file": "heldout_scalars_py_abs_diff.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/scalars.py::abs_diff"
+        ]
+      },
+      {
+        "file": "heldout_scalars_py_clamp_percent.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/scalars.py::clamp_percent"
+        ]
+      },
+      {
+        "file": "heldout_scalars_py_floor_div_or_zero.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/scalars.py::floor_div_or_zero"
+        ]
+      },
+      {
+        "file": "heldout_sequences_py_clip_negatives.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/sequences.py::clip_negatives"
+        ]
+      },
+      {
+        "file": "heldout_sequences_py_dedupe_sorted.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/sequences.py::dedupe_sorted"
+        ]
+      },
+      {
+        "file": "heldout_sequences_py_pairwise_diffs.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/sequences.py::pairwise_diffs"
+        ]
+      },
+      {
+        "file": "heldout_sequences_py_rotate_left.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/sequences.py::rotate_left"
+        ]
+      },
+      {
+        "file": "heldout_stats_py_count_positive.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/stats.py::count_positive"
+        ]
+      },
+      {
+        "file": "heldout_stats_py_mean_of.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/stats.py::mean_of"
+        ]
+      },
+      {
+        "file": "heldout_stats_py_normalize_to_unit.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/stats.py::normalize_to_unit"
+        ]
+      },
+      {
+        "file": "heldout_stats_py_running_total.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/stats.py::running_total"
+        ]
+      },
+      {
+        "file": "heldout_stats_py_spread.json",
+        "status": "LOADED",
+        "batches": 1,
+        "symbols": [
+          "heldout/stats.py::spread"
+        ]
+      }
+    ],
+    "batches": 13,
+    "client": {
+      "name": "claude-code-subagent",
+      "version": "claude-sonnet-5-5"
+    },
+    "symbols_proposed": [
+      "heldout/report.py::summary_score",
+      "heldout/scalars.py::abs_diff",
+      "heldout/scalars.py::clamp_percent",
+      "heldout/scalars.py::floor_div_or_zero",
+      "heldout/sequences.py::clip_negatives",
+      "heldout/sequences.py::dedupe_sorted",
+      "heldout/sequences.py::pairwise_diffs",
+      "heldout/sequences.py::rotate_left",
+      "heldout/stats.py::count_positive",
+      "heldout/stats.py::mean_of",
+      "heldout/stats.py::normalize_to_unit",
+      "heldout/stats.py::running_total",
+      "heldout/stats.py::spread"
+    ],
+    "symbols_not_proposed": [],
+    "symbols_outside_heldout": []
+  },
+  "settings": {
+    "runner": "docker python:3.13-slim",
+    "max_probes": 32,
+    "execute": true,
+    "templates_in_same_run": true,
+    "dry_run": true,
+    "config": "schema_version = \"1.0\"\n[execution]\nenabled = true\nprofile = \"iso\"\n[execution.profiles.iso]\nbackend = \"docker\"\nimage = \"python:3.13-slim\"\nallowed_targets = [\"heldout/*.py::*\"]\nmax_probes = 32\n"
+  },
+  "host": {
+    "python": "3.13.9",
+    "os": "Darwin 24.6.0",
+    "docker": "29.5.2"
+  },
+  "run_outcome": "COMPLETE",
+  "incomplete_reasons": [],
+  "engine_errors": [],
+  "falsification": {
+    "status": "AVAILABLE",
+    "reason": "docker 29.5.2; image python:3.13-slim (sha256:3dd7cc108ec1\u2026); all required capabilities verified from inside the boundary",
+    "results": {
+      "TESTED": 79,
+      "REFUTED": 9,
+      "UNKNOWN": 0,
+      "UNSTABLE": 0,
+      "NOT_ALLOWED": 0,
+      "ENGINE_ERROR": 0
+    },
+    "elapsed_ms": 81501.771
+  },
+  "agent_proposed": {
+    "raw_candidates": 84,
+    "responses_rejected_whole": 0,
+    "rejected_structural": 0,
+    "rejected_vacuity": 0,
+    "rejected_duplicate_in_response": 0,
+    "rejected_other": 0,
+    "rejection_codes": {},
+    "schema_valid": 84,
+    "schema_valid_rate": 1.0,
+    "nonvacuous": 84,
+    "nonvacuous_rate": 1.0,
+    "duplicate_of_earlier_claim": 19,
+    "distinct_validated": 65,
+    "new_beyond_templates": 65,
+    "mechanically_checkable": 84,
+    "mechanically_checkable_rate": 1.0,
+    "tested": 56,
+    "refuted": 9,
+    "unknown": 0,
+    "refuted_by_type_mismatch": 0,
+    "refuted_claim_valid_for_intended_behavior": 9,
+    "false_claims_refuted": 0,
+    "seeded_bug_functions_exposed": [
+      "heldout/scalars.py::clamp_percent",
+      "heldout/sequences.py::clip_negatives",
+      "heldout/sequences.py::dedupe_sorted",
+      "heldout/stats.py::count_positive",
+      "heldout/stats.py::normalize_to_unit"
+    ],
+    "falsification_ms": 63185.1,
+    "refutation_judgements": [
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.a0b61c7d9c",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.f175449d83",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.750acb8b7e",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.7811f929db",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.c02c617a65",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.987f7c619a",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.ca9cf19df2",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.aa966115dc",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.346b23c220",
+        "claim_valid_for_intended_behavior": true,
+        "intended_checked_inputs": 33,
+        "intended_fail": 0,
+        "intended_unknown": 0,
+        "intended_verdict_at_counterexample": "PASS",
+        "fixture_verdict_at_counterexample": "FAIL",
+        "type_mismatch": false,
+        "exposes_seeded_bug": true
+      }
+    ],
+    "candidates": [
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.a143e81c5f",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "approx_eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "atol": 1e-09,
+          "rtol": 1e-09,
+          "require_finite": true
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:3a38447a173c2f0f6fb35f53dc64379192543a9f18b43bf54cc6061ff6dbfb18",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 5914176014188,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.a369b8eeeb",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": 0,
+          "upper": 1000000.0
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "literal",
+            "value": 0
+          },
+          "right": {
+            "kind": "result"
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:56bfe20136a6f8fe80c437b96551ae5c7592aed328e2746cee7548318ea58ed6",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 36702553314378,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.60da31e147",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:f3ae915551a1256d387324334619193d0dd1cecb6e7b0bc651147b7e618297ef",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 65,
+            "admitted": 32,
+            "excluded_by_domain": 33,
+            "seed": 189109618540566,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.53fc02aa5c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": -1000000.0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 3000000.0
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:77915231154e860d1f8f0e09664a1498e70472c467950f3a20c48fa7b8b75c68",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 228603964090616,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.11067496a2",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:9003393ea6ac051dca25daba5815926dcace1a056289b6a0456df348c786e7b8",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 269028838789783,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/report.py::summary_score",
+        "contract_id": "heldout.report.summary_score.agent.9200b4ab69",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.report.summary_score.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:e288e174e89dac7f8beb5b17adab6acc0f89b41674af6ca867986a4f74c7ec60",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 225742403883023,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.2fa805a315",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "literal",
+            "value": 0
+          },
+          "right": {
+            "kind": "result"
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:a3912f39f2ca1d6b7b6ba3385fd07951898094c86ab02dcac63176aac2702bf2",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 183648205824802,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.5d694f7f3c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "arg",
+            "name": "a"
+          },
+          "right": {
+            "kind": "arg",
+            "name": "b"
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:daacec531faa2d91025d76b2ab70f041396535e3d054d3197f0cc022cf14e50f",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 259,
+            "admitted": 8,
+            "excluded_by_domain": 251,
+            "seed": 51221526840304,
+            "pass": 8,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "8 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.1e38047de6",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "not",
+          "arg": {
+            "kind": "eq",
+            "left": {
+              "kind": "arg",
+              "name": "a"
+            },
+            "right": {
+              "kind": "arg",
+              "name": "b"
+            }
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:9f2c974f91a80d41f312bfb71c03072eebdb06e921a6de8d23819499b947e183",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 37,
+            "admitted": 32,
+            "excluded_by_domain": 5,
+            "seed": 70332570748511,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.1238e18fa3",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 2000000
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:c8529df2946cb02e97bb05eb4cef524f965ae59ce0158557a746e3f6948378fe",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 231220733434951,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.76c8e5f8bc",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "arg",
+            "name": "a"
+          },
+          "right": {
+            "kind": "arg",
+            "name": "b"
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:677adefdfc1c6305bd86dab678b5b0efde7f0d5089f3bd8050b32d7656f6c29b",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 74,
+            "admitted": 32,
+            "excluded_by_domain": 42,
+            "seed": 68930756552518,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.1bc6aee13c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "lt",
+          "left": {
+            "kind": "arg",
+            "name": "a"
+          },
+          "right": {
+            "kind": "arg",
+            "name": "b"
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:2d2a5f982d46df3038b283412997e4fa91daf66811993ad9307ec52c3d0c5a41",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 75,
+            "admitted": 32,
+            "excluded_by_domain": 43,
+            "seed": 112670318568458,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::abs_diff",
+        "contract_id": "heldout.scalars.abs_diff.agent.55ea97387e",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.scalars.abs_diff.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:19e19bdc048214d874112c8d9133a9c6f2bdeeb1599d5120973f2b4c030a88d3",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 198596644614915,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.a0b61c7d9c",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'p': -1.0}: predicate does not hold",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0.0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 100.0
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:e96824f54cff9a2fdc5f7f78e637e996d0f16597e3e191879c49ad85972c06c2",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 255854319021210,
+            "pass": 19,
+            "fail": 13,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "p": -1.0
+            },
+            "original_input": {
+              "p": -1.0
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -1.0
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -1.0
+            }
+          },
+          "reasons": [
+            "counterexample {'p': -1.0}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.2ba5b4fe00",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 100.0
+          }
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:3784587e4423e7345aba94a2670342edc7c6534c28eb35c82ebfe4d148545074",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 214847445629908,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.f175449d83",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'p': -0.5}: predicate does not hold",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "literal",
+            "value": 0.0
+          },
+          "right": {
+            "kind": "result"
+          }
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:8d28de8482b12050d9d743f0757da952012a73a1a9d4fba653b2dae89d25fa29",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 251868256625394,
+            "pass": 16,
+            "fail": 16,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "p": -0.5
+            },
+            "original_input": {
+              "p": -0.5
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -0.5
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -0.5
+            }
+          },
+          "reasons": [
+            "counterexample {'p': -0.5}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.72f1a9d00f",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0.0
+              },
+              "right": {
+                "kind": "arg",
+                "name": "p"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "arg",
+                "name": "p"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 100.0
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "arg",
+            "name": "p"
+          }
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:72743f9afdb3dbd75b3f4ab121efae8cae9d803dda0246b01736fde580e4fde1",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 82933195730373,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.750acb8b7e",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'p': -1.0}: predicate does not hold",
+        "precondition": {
+          "kind": "lt",
+          "left": {
+            "kind": "arg",
+            "name": "p"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0.0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0.0
+          }
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:f22893ff32bd4cd12c9527b308297a6f083da831c891b5feb1b9c40657957ccb",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 33,
+            "admitted": 32,
+            "excluded_by_domain": 1,
+            "seed": 132367238634543,
+            "pass": 0,
+            "fail": 32,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "p": -1.0
+            },
+            "original_input": {
+              "p": -1.0
+            },
+            "shrink_rounds": 0,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -1.0
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -1.0
+            }
+          },
+          "reasons": [
+            "counterexample {'p': -1.0}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::clamp_percent",
+        "contract_id": "heldout.scalars.clamp_percent.agent.e93359a054",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "arg",
+            "name": "p"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 100.0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 100.0
+          }
+        },
+        "input_profile": "bounded_builtin_finite_floats_v1",
+        "meaning_digest": "sha256:4ed5f2bdcc3565863fac8a7bf78323ef293eed8f05fce8cd926ce5059bddb5c5",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 33,
+            "admitted": 32,
+            "excluded_by_domain": 1,
+            "seed": 148169819197122,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.eedc9b39d1",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "arg",
+            "name": "b"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:0ea4ba9f3b592ea961607f509784c390556aae0dd4d53a80cced64cf8a1259ab",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 173978216276612,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.b1703761a9",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "gt",
+              "left": {
+                "kind": "arg",
+                "name": "b"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 0
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0
+              },
+              "right": {
+                "kind": "arg",
+                "name": "a"
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "arg",
+                "name": "a"
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:32ddf2be550320db59be9c51adab0b112e3f260dd2997b1cc1bf21318c5186a4",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 36,
+            "admitted": 32,
+            "excluded_by_domain": 4,
+            "seed": 3460476422929,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.ac69f2c5cc",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "arg",
+            "name": "a"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:cd1f728c38360fb2ebd51f4c9b154b7d9049a72916377ae9f34f9902561cbb6f",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 266160667627505,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.bfbd3a32ad",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "arg",
+            "name": "b"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "arg",
+            "name": "a"
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:44aac0870459a80effea416115771cb5792800a6e01c5ff6adec8a7f067fa185",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 123404658810763,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.7464d4ee50",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0
+              },
+              "right": {
+                "kind": "arg",
+                "name": "a"
+              }
+            },
+            {
+              "kind": "lt",
+              "left": {
+                "kind": "arg",
+                "name": "a"
+              },
+              "right": {
+                "kind": "arg",
+                "name": "b"
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:287819f3e49f48f74c7fe64eeba1155b033e071e6f4b871b058c305908a9eaed",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 156,
+            "admitted": 32,
+            "excluded_by_domain": 124,
+            "seed": 243941114193781,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.48736c3eff",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "lt",
+              "left": {
+                "kind": "arg",
+                "name": "b"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 0
+              }
+            },
+            {
+              "kind": "gt",
+              "left": {
+                "kind": "arg",
+                "name": "a"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 0
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:d0572b3cedfda136b57c82c98b5498950c0e5566bc338eb02b9e3bcc7a590753",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 36,
+            "admitted": 32,
+            "excluded_by_domain": 4,
+            "seed": 131472947707081,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/scalars.py::floor_div_or_zero",
+        "contract_id": "heldout.scalars.floor_div_or_zero.agent.07c624793e",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": -1000000.0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 1000000.0
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_ints_v1",
+        "meaning_digest": "sha256:84a73a8a28cf76ae89bae0144be67146b859941171c6137626a167269c751b09",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 115758104064018,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.7811f929db",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [-1]}: predicate does not hold",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": 0,
+          "upper": 1000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:e959341661410a37ce74c108fdf224a3876f898129ce365b255fa792a1666afe",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 101453179400841,
+            "pass": 26,
+            "fail": 6,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                -1
+              ]
+            },
+            "original_input": {
+              "xs": [
+                -1
+              ]
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                -1
+              ]
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                -1
+              ]
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [-1]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.dcc174940a",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.clip_negatives.length.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:e614e4816ee5d6a602ba48205e722ca6fb4e0f6a0c32d9acc1338cc13976669e",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 117768578787932,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.b337495e58",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": 0,
+          "upper": 1000
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:770abcaf23140cb695b9d0b208a07d6be9d0fbc525600a7a64d936f98032d209",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 27193746617696,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.c02c617a65",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [-1]}: predicate does not hold",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": -1000,
+          "upper": -1
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:4cdaae779dd289ee94910f3a7942c8f2d17bfa95f8fed1afa7aa0ab2809b61d8",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 219487855188111,
+            "pass": 19,
+            "fail": 13,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                -1
+              ]
+            },
+            "original_input": {
+              "xs": [
+                -1
+              ]
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                -1
+              ]
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                -1
+              ]
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [-1]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.f3d9c73b49",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:1dbd5d0ac31c54361b761e4bc1ab55493e2647998dbdda64719d67fa4694947b",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 172301579796172,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.987f7c619a",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.clip_negatives.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:03f87e69a2223495b362c2ece75fb8db25d191c007126d7a68947d5f4b4b28e5",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 175753987367028,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::clip_negatives",
+        "contract_id": "heldout.sequences.clip_negatives.agent.2ed5a844c2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.clip_negatives.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:6ad8fdc18912e61597806f3876539b50eef43948583b94ca0ab2a5adc257b2d1",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 223891170007779,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.987f7c619a",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [1, 0]}: predicate does not hold",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:1e64bbf1e60741ba0065b7b8f4d342240abfd94f32db32be753c91196234354b",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 150146488983683,
+            "pass": 15,
+            "fail": 17,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                1,
+                0
+              ]
+            },
+            "original_input": {
+              "xs": [
+                3,
+                1,
+                2
+              ]
+            },
+            "shrink_rounds": 4,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                1,
+                2,
+                3
+              ]
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0,
+                1
+              ]
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [1, 0]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.6d52fd3593",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:54bc3c7ed92e098ed3f11e7940c31299ef75c43622560bda0d019183a3a014e6",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 223395138895402,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.65004e7a70",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:7650ebb41d891980e627df20e838ea2cc9ca632caed99e63a31ef74c0968cb31",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 4814187590554,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.5b4af370e9",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:7540027ef43d0ceac1cdba18d4e21e8770fb0357206ee731fbe1fcb2aa4057db",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 1,
+            "admitted": 1,
+            "excluded_by_domain": 0,
+            "seed": 211566688709072,
+            "pass": 1,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "1 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.2608a84749",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:4a31f8cf1b4eadfbd3418b3d1c63bd78148ce9729be0aff9c0dfa1f51c806dc8",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 82285042579458,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::dedupe_sorted",
+        "contract_id": "heldout.sequences.dedupe_sorted.agent.9668992287",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": -1000,
+          "upper": 1000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:d150163f54adcc74852e8801299938a8960943a4abf3537ed0f178dad6889919",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 257431761009315,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.e48e05ed03",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "le",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:3143a5b712cbbbd3df610b396748e5683cd94da56726ff611d6afe3469eba2ec",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 133445928620449,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.154a2b228d",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 2
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:153393decb56f68599cc1cb81d197e13844d4c5f4bcc4a602e46063cb17ebdb6",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 62152047859689,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.6cbff3640c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "lt",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:bd1fbb6e4c84466b2cacac854fa0af1ea54f04fcd7689931ff9367ddb56abac2",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 241278188226301,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.82a876baef",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": -2000,
+          "upper": 2000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:c9c35679ad18236376c39b3a1e95e8b47b5de719a9525a8c8ce1b0a98df92820",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 193341811060305,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.6d52fd3593",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:e964f252e0343eeefa994bcd922c5c2c58f8a5c8b31f51ab7f1c33f1f0340d5b",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 169416431958535,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.987f7c619a",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.pairwise_diffs.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:d5d6d5825a812cc0c13ddd8040b2d30a2fdb9d725a1801fb91525d8a647ec8af",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 125827291149305,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::pairwise_diffs",
+        "contract_id": "heldout.sequences.pairwise_diffs.agent.2ed5a844c2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.pairwise_diffs.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:14dd942fbe8387c311cc95d63d4b6a44a8f92f146f395c82a9a43015dc55839d",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 143946251316945,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.dcc174940a",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:f8456afbfcff8d82bb385ebb2d01b2725712ac99e34c47eab0c6759032eeb2f8",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 118972010787898,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.8071a1e30c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:c376fcf74283ff98a2b451ca70f88f105785310b487170ad75e3217c7a400dbd",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 213344472347654,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.987f7c619a",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.rotate_left.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:6004d980b1c145135f74727c8be58a9e7a8598dfcbcb850f1ab0c14a1add66c5",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 99249842357780,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.9668992287",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": -1000,
+          "upper": 1000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:5c7cf6011a68d540eceb03f35e9161b4fcf125c8d7af5d87e687975d222b762a",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 112875150233376,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.5b4af370e9",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:e3c997c13b9f5d902370ac895fe7fc653bf0398f101cc492d012dfc72ff4758f",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 1,
+            "admitted": 1,
+            "excluded_by_domain": 0,
+            "seed": 149118706967686,
+            "pass": 1,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "1 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.2608a84749",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:7cdd8300042aae057ac7657241fd5e39d48878f7c02f990dfc334718c777b9b1",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 151081367754139,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/sequences.py::rotate_left",
+        "contract_id": "heldout.sequences.rotate_left.agent.2ed5a844c2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.sequences.rotate_left.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:d1af7cf952b65fbcc9ab1fb071048b949e6f09d1b5f8f6e53fa4a044b076d172",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 59693311443594,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.e0eaa3a9d8",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": 0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "len",
+                "value": {
+                  "kind": "arg",
+                  "name": "xs"
+                }
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:60cc96a1abf95247dc9a6873c2fade86ecd958d79aac5852aad3ed9e7dc772a1",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 126657753386926,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.ca9cf19df2",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [0]}: predicate does not hold",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": -1000000.0,
+          "upper": 0.0
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:70b4502740b79fa1b02039469599e62fea8c1009023271bcaed337c405b8f233",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 23616668522766,
+            "pass": 20,
+            "fail": 12,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                0
+              ]
+            },
+            "original_input": {
+              "xs": [
+                0
+              ]
+            },
+            "shrink_rounds": 0,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": 1
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": 1
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [0]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.baf8b0499a",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": 1e-06,
+          "upper": 1000000.0
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:3e4f351d4cf5a04094344c67fb11f1342da48d2a6d9032b8d4813b9b723e1bb5",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 280169897399820,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.d744669f11",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": -1000000.0,
+          "upper": -1e-06
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:40c040c3a1e84f7b6513051e9080c07e10be91d1c47a1fb1eb5e01579fcd20a1",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 99847509733524,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.11067496a2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.count_positive.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:27b6708951899a433ee2825f81bc2ce643446745be6a6d85496f84f39d199981",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 256264126648460,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::count_positive",
+        "contract_id": "heldout.stats.count_positive.agent.9200b4ab69",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.count_positive.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:0e165b7ce274965e313bf1cef2d26694d730a2abd775519cfc0127ccb496cc40",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 141006067445998,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.e4c1fe1dfe",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "le",
+              "left": {
+                "kind": "literal",
+                "value": -1000000.0
+              },
+              "right": {
+                "kind": "result"
+              }
+            },
+            {
+              "kind": "le",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 1000000.0
+              }
+            }
+          ]
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:f02f7fefc2a5b52a9fd09465e5764dc0b7dd85a53a8ef3bf9bc8e4d6c859fb70",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 168633098112825,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.60da31e147",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "gt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:cea70c20cd2e082884f05b07912e221ecf23b6ef285e6a73ac5d9db5fecbf4fa",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 54,
+            "admitted": 32,
+            "excluded_by_domain": 22,
+            "seed": 210687653605391,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.6a41159685",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "lt",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "lt",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:2f14c3953e3082cddb483be041ae1d69e75fd93abf80bcf80df19b2b84f4cb7e",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 71,
+            "admitted": 32,
+            "excluded_by_domain": 39,
+            "seed": 26020152689747,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.6247add182",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:d6a7765d725f77fa75ffecf0e8bfc8ef02f9b142c31707b7696141ace6a4be59",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 273,
+            "admitted": 6,
+            "excluded_by_domain": 267,
+            "seed": 118158038995022,
+            "pass": 6,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "6 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.a143e81c5f",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "approx_eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "atol": 1e-09,
+          "rtol": 1e-09,
+          "require_finite": true
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:25ebe77a7ba72ec4c8ce329d54600d5baed3c919a8bd6f32ce5f0d3dd5073548",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 200565308450988,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.11067496a2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.mean_of.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:452438ff088cc3374f9e2f64cb22b51e99b2f8f4218160f7311ffaea0404c9f8",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 21512691606624,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::mean_of",
+        "contract_id": "heldout.stats.mean_of.agent.9200b4ab69",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.mean_of.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:874873b661a42f149e9ea0400122a18e03490cc5eb21e52d25f6b8b92af4511e",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 124683943098655,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.aa966115dc",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [1]}: predicate does not hold",
+        "precondition": {
+          "kind": "gt",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "approx_eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1.0
+          },
+          "atol": 1e-09,
+          "rtol": 1e-09,
+          "require_finite": true
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:6bf7bedfc766c2c9457088785e30b234d242c2ace1f89566fbdcedac06150a1d",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 64,
+            "admitted": 32,
+            "excluded_by_domain": 32,
+            "seed": 5479223962420,
+            "pass": 12,
+            "fail": 20,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                1
+              ]
+            },
+            "original_input": {
+              "xs": [
+                1
+              ]
+            },
+            "shrink_rounds": 0,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9990009990009991
+              ]
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9990009990009991
+              ]
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [1]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.b4339b2aba",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.normalize_to_unit.length.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:b6e2fb2f8223263d609bb7212ca6dd8c55a688046f98ef2b8337f460851b05fb",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 107724556398477,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.12e526c92c",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "all_between",
+              "value": {
+                "kind": "arg",
+                "name": "xs"
+              },
+              "lower": 0,
+              "upper": 1000000.0
+            },
+            {
+              "kind": "gt",
+              "left": {
+                "kind": "sum",
+                "value": {
+                  "kind": "arg",
+                  "name": "xs"
+                }
+              },
+              "right": {
+                "kind": "literal",
+                "value": 0
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": 0,
+          "upper": 1
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:a0389199fdff87bb8d104d83ec0f197407258f46a1d13fefb69561a39b4b2ac7",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 35,
+            "admitted": 32,
+            "excluded_by_domain": 3,
+            "seed": 203890243706120,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.346b23c220",
+        "status": "refuted",
+        "rejection_code": null,
+        "reason": "counterexample on the current snapshot: counterexample {'xs': [1]}: predicate does not hold",
+        "precondition": {
+          "kind": "and",
+          "args": [
+            {
+              "kind": "eq",
+              "left": {
+                "kind": "len",
+                "value": {
+                  "kind": "arg",
+                  "name": "xs"
+                }
+              },
+              "right": {
+                "kind": "literal",
+                "value": 1
+              }
+            },
+            {
+              "kind": "gt",
+              "left": {
+                "kind": "sum",
+                "value": {
+                  "kind": "arg",
+                  "name": "xs"
+                }
+              },
+              "right": {
+                "kind": "literal",
+                "value": 0
+              }
+            }
+          ]
+        },
+        "predicate": {
+          "kind": "approx_eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1.0
+          },
+          "atol": 1e-09,
+          "rtol": 1e-09,
+          "require_finite": true
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:bc1cca95e4e641b8fe97c24863eaa07f89bdde3a37bc487f61933f37a520ab10",
+        "falsification": {
+          "status": "REFUTED",
+          "probes": {
+            "attempted_inputs": 66,
+            "admitted": 32,
+            "excluded_by_domain": 34,
+            "seed": 267926922376025,
+            "pass": 0,
+            "fail": 32,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "xs": [
+                1
+              ]
+            },
+            "original_input": {
+              "xs": [
+                5
+              ]
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9998000399920015
+              ]
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9990009990009991
+              ]
+            }
+          },
+          "reasons": [
+            "counterexample {'xs': [1]}: predicate does not hold"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.11067496a2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.normalize_to_unit.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:0bcd2b6117bec885beeb7abab6c6070e0fdee14ad6896d4ea7e0a1ef8a4ef554",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 124349382675019,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::normalize_to_unit",
+        "contract_id": "heldout.stats.normalize_to_unit.agent.9200b4ab69",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.normalize_to_unit.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:a8d580d428a2ea2af1e44989c9a556bc82b84899708c0cf92a54fd858ebc568e",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 181204698299121,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.dcc174940a",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:9029e845d4e097ec2e1f109ed25fc8abcf6dd07d7e67aa99e7aecb28e668709c",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 218018715304490,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.2608a84749",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "sum",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "sum",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:ed94f160baf1b71d706738ed214597af3f5ed911a1f90106a24a54304cc7a1d9",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 219617036674505,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.9751724eba",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": 0,
+          "upper": 1000
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": 0,
+          "upper": 16000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:50cac305f4d9a709594e626efdf33bffc5513d751bdde813d55183aa76039c0f",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 196360050913456,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.0189144268",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "all_between",
+          "value": {
+            "kind": "result"
+          },
+          "lower": -16000,
+          "upper": 16000
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:f861edef9eb473ec0c653d71eae0ea6866c21d8a06d2c0cd499def34fe628ab6",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 240146988860241,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.987f7c619a",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.running_total.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:2b77ddac01deff36fbbdafd197fb5ca4711511e694072cf6738d146000110072",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 74615441579948,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::running_total",
+        "contract_id": "heldout.stats.running_total.agent.5b4af370e9",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "result"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_int_list_v1",
+        "meaning_digest": "sha256:3e59da2cf4b9902c5a438b07ec35a0eb866ab26cc45e41e8efcb85e690c2c79b",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 1,
+            "admitted": 1,
+            "excluded_by_domain": 0,
+            "seed": 75327559177348,
+            "pass": 1,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "1 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.f3708b44ad",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "literal",
+            "value": 0
+          },
+          "right": {
+            "kind": "result"
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:7e48cdc610160233f4ede0963e1c7d8bf09c5cffefc694cc9462b6e4112cd440",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 277491202317055,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.43c1ddd21a",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "eq",
+          "left": {
+            "kind": "len",
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1
+          }
+        },
+        "predicate": {
+          "kind": "eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:8d06d2f43f211cc76a261c58ea3cd55453ae791ab30bbfabe21ad4eae0bd0d72",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 12371604248717,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.8c397656f9",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 2000000
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:92c08666a7d3981310f9cea91290984cd5bcadf50d80b59fb58fa0cdbb9405f0",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 274702852166330,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.2023396486",
+        "status": "would_propose",
+        "rejection_code": null,
+        "reason": "",
+        "precondition": {
+          "kind": "all_between",
+          "value": {
+            "kind": "arg",
+            "name": "xs"
+          },
+          "lower": 0,
+          "upper": 1000000.0
+        },
+        "predicate": {
+          "kind": "le",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 1000000.0
+          }
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:0bc3e261a73d003f51eb2c4ad9b027d7502c967ff80e22d5445af0803c42ccba",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 157215911681848,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.11067496a2",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.spread.purity.xs in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "xs"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:699707c2242bd4ffaf2291472a78f691fa86c9cd382fb8ded124191b03b32c51",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 207978013800258,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      },
+      {
+        "scope": "heldout/stats.py::spread",
+        "contract_id": "heldout.stats.spread.agent.9200b4ab69",
+        "status": "duplicate",
+        "rejection_code": null,
+        "reason": "same claim as candidate heldout.stats.spread.repeatability in this run",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "input_profile": "bounded_builtin_numeric_list_v1",
+        "meaning_digest": "sha256:90b0c47cc3a5c082f122aa5480566a3ccad16cb20db450c222a2abb645da3438",
+        "falsification": {
+          "status": "TESTED",
+          "probes": {
+            "attempted_inputs": 32,
+            "admitted": 32,
+            "excluded_by_domain": 0,
+            "seed": 77004837748420,
+            "pass": 32,
+            "fail": 0,
+            "unknown": 0
+          },
+          "counterexample": null,
+          "reasons": [
+            "32 admitted input(s) satisfied the candidate"
+          ]
+        }
+      }
+    ],
+    "exit_code": 0,
+    "wall_ms": 83099.7,
+    "batches": [
+      {
+        "batch_index": 0,
+        "symbol": "heldout/report.py::summary_score",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 1,
+        "symbol": "heldout/scalars.py::abs_diff",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 2,
+        "symbol": "heldout/scalars.py::clamp_percent",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 3,
+        "symbol": "heldout/scalars.py::floor_div_or_zero",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 4,
+        "symbol": "heldout/sequences.py::clip_negatives",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 5,
+        "symbol": "heldout/sequences.py::dedupe_sorted",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 6,
+        "symbol": "heldout/sequences.py::pairwise_diffs",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 7,
+        "symbol": "heldout/sequences.py::rotate_left",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 8,
+        "symbol": "heldout/stats.py::count_positive",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 9,
+        "symbol": "heldout/stats.py::mean_of",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 7
+      },
+      {
+        "batch_index": 10,
+        "symbol": "heldout/stats.py::normalize_to_unit",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 11,
+        "symbol": "heldout/stats.py::running_total",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      },
+      {
+        "batch_index": 12,
+        "symbol": "heldout/stats.py::spread",
+        "status": "PARSED",
+        "rejection_code": null,
+        "reason": null,
+        "raw_candidates": 6
+      }
+    ],
+    "template_candidates_same_run": 23
+  },
+  "finished_at": "2026-10-08T23:18:39Z",
+  "label": "agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch",
+  "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run3.json"
+}

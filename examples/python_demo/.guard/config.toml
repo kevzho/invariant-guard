@@ -1,0 +1,131 @@
+# InvariantGuard demo configuration. Domains below are explicit admissions of
+# exact built-in integer inputs for the named demo functions.
+schema_version = "1.0"
+
+[analysis]
+languages = ["python"]
+mode = "quick"
+solver_enabled = true
+per_query_timeout_ms = 100
+quick_budget_ms = 2000
+require_coverage = true
+
+[execution]
+enabled = false
+profile = ""
+allow_unisolated = false
+
+[semantic]
+enabled = false
+
+[privacy]
+telemetry = false
+store_raw_model_context = false
+retain_replay_source = false
+store_witnesses = true
+
+[scope]
+exclude = [".git", ".guard", ".venv", "vendor", "node_modules"]
+
+[[domains]]
+symbol = "baseline/ratio.py::ratio"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "demo public API admits exact built-in integer inputs"
+
+[[domains]]
+symbol = "candidate/ratio.py::ratio"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "demo public API admits exact built-in integer inputs"
+
+[[domains]]
+symbol = "adversarial/guarded_nonzero.py::ratio_nonzero"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/unreachable_branch.py::unreachable_bad_branch"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/two_variable_equality.py::guarded_difference"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/unknown_call_unrelated.py::logged_inverse"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/sum_of_cubes.py::cube_sum_ratio"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/assert_guard.py::checked_ratio"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/floor_semantics.py::floor_bucket"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/modulo_guard.py::wrap"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/loop_total.py::mean_inverse"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+[[domains]]
+symbol = "adversarial/unicode_names.py::ratio_ünïcode"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"
+
+# M2 fixtures (bounds, None-flow, call summaries).
+[[domains]]
+symbol = "adversarial/empty_list.py::first_item"
+profile = "python_exact_builtin_list"
+authority = "DECLARED"
+reason = "fixture: exact built-in list input"
+
+[[domains]]
+symbol = "adversarial/guarded_index.py::last_or_zero"
+profile = "python_exact_builtin_list"
+authority = "DECLARED"
+reason = "fixture: exact built-in list input"
+
+[[domains]]
+symbol = "adversarial/none_flow.py::port_bits"
+profile = "python_optional_exact_builtin_int"
+authority = "DECLARED"
+reason = "fixture: exact int or None"
+
+[[domains]]
+symbol = "adversarial/none_flow.py::safe_port_bits"
+profile = "python_optional_exact_builtin_int"
+authority = "DECLARED"
+reason = "fixture: exact int or None"
+
+[[domains]]
+symbol = "adversarial/summary_caller.py::scaled"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "fixture: exact integer inputs"

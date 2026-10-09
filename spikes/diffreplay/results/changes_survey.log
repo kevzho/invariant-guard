@@ -1,0 +1,90 @@
+16.4 more-itertools 67fcf640 fix: honour a falsey validator in bucket (#1308) | changed 1 | existing 0 | missed 1
+7.2 more-itertools f89d7a33 Issue 1304: make ichunked match chunked for n=0 an | changed 1 | existing 0 | missed 1
+7.1 more-itertools 237642ea Use the same literal markup as the explicit-step c | changed 0 | existing 0 | missed 0
+8.6 more-itertools 031c1a62 Document that numeric_range's default step is type | changed 0 | existing 0 | missed 0
+11.8 more-itertools ca0586d5 Remove redundant seekable peek cache check | changed 1 | existing 0 | missed 1
+8.3 more-itertools ed1bd2d4 Optimize maxlen == 0 | changed 2 | existing 0 | missed 2
+9.5 more-itertools 3eb4053e Bound zero-cache seekable lookahead storage | changed 2 | existing 0 | missed 2
+12.3 more-itertools 262dbb98 fix: check maxlen with getattr instead of isinstan | changed 1 | existing 0 | missed 1
+8.9 more-itertools 288d6da0 Issue #1287: Less aggressive fix for issue #1284 | changed 3 | existing 0 | missed 3
+27.8 more-itertools 0c518386 Keep the cached append within the 79-column limit | changed 1 | existing 0 | missed 1
+14.5 more-itertools 2b8d5cdd Issue 1284: don't let a bucket lookup invent a key | changed 3 | existing 0 | missed 3
+8.5 more-itertools def2dabe Fix one()/only() dropping a falsy user-supplied ex | changed 2 | existing 2 | missed 0
+7.6 more-itertools feaddee0 Optimize numeric_range reverse iteration following | changed 1 | existing 0 | missed 1
+12.1 more-itertools e426d256 Reuse input iterators in zip_broadcast | changed 1 | existing 0 | missed 1
+10.8 more-itertools 752799b5 Preserve numeric_range values during reverse itera | changed 1 | existing 0 | missed 1
+27.9 more-itertools d032cab7 fix nonpositive item limits in constrained_batches | changed 1 | existing 0 | missed 1
+6.7 more-itertools 6b1907de fix: seekable.peek/bool no longer drop items when  | changed 1 | existing 0 | missed 1
+14.7 more-itertools 0e6dce3a Clarify `combination_with_replacement_index` a bit | changed 1 | existing 1 | missed 0
+21.2 more-itertools 1b74b56d Fix/simplify `combination_with_replacement_index` | changed 1 | existing 1 | missed 0
+4.8 more-itertools 1fd388bc Validate running window sizes through the index pr | changed 4 | existing 4 | missed 0
+13.0 more-itertools b8e0cbb8 Add missing word in docstring | changed 4 | existing 4 | missed 0
+10.4 more-itertools ddd67820 Thinner API with only random_ordered_range() | changed 1 | existing 0 | missed 1
+17.0 more-itertools caaec943 Add random ordered combinatoric functions | changed 1 | existing 0 | missed 1
+12.0 more-itertools dee22c93 Remove special case logic for cwr | changed 1 | existing 0 | missed 1
+13.0 more-itertools b8fe9209 Add random ordered combinatoric functions | changed 7 | existing 7 | missed 0
+10.6 more-itertools ce676d24 Do not yield an empty list for an empty iterable w | changed 3 | existing 0 | missed 3
+12.4 more-itertools 7847d432 Don't mask TypeError raised while iterating in val | changed 1 | existing 0 | missed 1
+11.8 more-itertools dc2664b4 Issue 1247: Keep numeric_range consistent with the | changed 5 | existing 3 | missed 2
+16.2 more-itertools 63ee5830 Clarify output order for sortable input elements | changed 1 | existing 1 | missed 0
+9.8 more-itertools 237388cc Simplify and speed up nth_permutation | changed 1 | existing 1 | missed 0
+18.2 boltons 4e5faa3d Fix spooled stream write compatibility and backwar | changed 3 | existing 0 | missed 3
+18.8 boltons 78ec69ca bump version to 26.2.1dev | changed 0 | existing 0 | missed 0
+25.8 boltons 4332b35a boltons version 26.2.0 | changed 0 | existing 0 | missed 0
+15.4 boltons 1216b467 Complete September PR sweep for 26.2.0 (#481) | changed 6 | existing 1 | missed 5
+16.8 boltons 73e22c90 statsutils: finish Pearson zero-denominator review | changed 1 | existing 0 | missed 1
+12.2 boltons 1cdc0e9d statsutils: handle zero interquartile range in his | changed 1 | existing 0 | missed 1
+29.7 boltons 51508029 jsonutils: accept explicit end-of-file relative se | changed 1 | existing 0 | missed 1
+9.1 boltons a180020c setutils: flatten inputs to IndexedSet.update (#47 | changed 1 | existing 0 | missed 1
+8.7 boltons e00c10a8 setutils, listutils: streamline bulk removal and f | changed 7 | existing 1 | missed 6
+6.8 boltons efff866a mathutils: preserve empty Bits through conversions | changed 3 | existing 0 | missed 3
+11.9 boltons 5eb6cc04 mathutils: resolve negative Bits indices (#450) | changed 1 | existing 0 | missed 1
+8.0 boltons 8789df2c timeutils: match timezone for default relative tim | changed 1 | existing 1 | missed 0
+16.5 boltons f5f5cd86 iterutils: correct inclusive GUIDerator size messa | changed 1 | existing 0 | missed 1
+7.0 boltons 970051b6 namedutils: reject empty type and field names (#46 | changed 2 | existing 2 | missed 0
+11.0 boltons 9decba3e ecoutils: skip identifying lookups when scrubbing  | changed 1 | existing 1 | missed 0
+20.8 boltons a1ea1030 dictutils: preserve iterator values in addlist (#4 | changed 2 | existing 0 | missed 2
+14.0 boltons d45cc414 urlutils: honor parse_qsl encoding (#455) | changed 1 | existing 1 | missed 0
+9.8 boltons d12d86a4 Fix Unicode line separators in iter_splitlines | changed 0 | existing 0 | missed 0
+14.7 boltons 91b2bb47 Keep the stop barrel valid during cross-barrel del | changed 1 | existing 0 | missed 1
+8.5 boltons 448b1db1 Normalize BarrelList slice bounds and reverse step | changed 1 | existing 0 | missed 1
+10.6 boltons 1a04b637 Support relative seeking in binary JSONL streams | changed 1 | existing 0 | missed 1
+5.9 boltons 967864f8 statsutils: add mode() for most-common value, incl | changed 1 | existing 1 | missed 0
+12.3 boltons 5df26592 Use the sep argument in args2sh and args2cmd (#454 | changed 2 | existing 2 | missed 0
+4.3 boltons 673e010d strutils: add ellipsize for word-boundary-aware tr | changed 1 | existing 1 | missed 0
+8.5 boltons 580a9c2d setutils: cover _ComplementSet __ge__'s double-com | changed 2 | existing 0 | missed 2
+20.0 boltons ec1ff9f6 Fix issupserset typo in _ComplementSet comparisons | changed 2 | existing 0 | missed 2
+8.4 boltons b5c495be funcutils: forward target-keyword-only args as key | changed 2 | existing 1 | missed 1
+3.8 boltons c1c25da3 Fix off-by-one in Bits length check | changed 1 | existing 0 | missed 1
+3.9 boltons 3e9983db iterutils: unify xfrange with frange's count-based | changed 1 | existing 1 | missed 0
+6.4 boltons f1034b07 jsonutils: fix JSONLIterator nontermination at EOF | changed 2 | existing 0 | missed 2
+2.6 dateutil f2293200 avoid deprecated utcfromtimestamp | changed 0 | existing 0 | missed 0
+1.8 dateutil 95e20ce2 Remove trailing whitespace | changed 0 | existing 0 | missed 0
+2.5 dateutil 7c5c9895 docs: YYYYMM is not supported (#1179) | changed 1 | existing 0 | missed 1
+0.9 dateutil da9ecd07 Move to src layout | changed 0 | existing 0 | missed 0
+1.6 dateutil 7d2e7f63 Fix typo discovered by codespell | changed 1 | existing 0 | missed 1
+1.6 dateutil e78c3c76 Lazy-load submodules in Python 3.7+ | changed 2 | existing 2 | missed 0
+1.4 dateutil 5cf3e3cb Decode input str when reporting an error in `parse | changed 1 | existing 0 | missed 1
+1.3 dateutil 1376b599 Use already existing `str_len` in isoparse | changed 1 | existing 0 | missed 1
+2.4 dateutil 1426acd8 Simplify parser._timelex handling of bytes and byt | changed 1 | existing 0 | missed 1
+1.4 dateutil 34906dcd isoparse: Fail with inconsistent time separators | changed 1 | existing 0 | missed 1
+1.2 dateutil 7e1ffa23 Use fat zic binaries in zoneinfo.rebuild | changed 2 | existing 2 | missed 0
+1.3 dateutil 1fb2ea99 Added property test for tz.gettz() | changed 1 | existing 1 | missed 0
+1.8 dateutil bd69e8e9 Fix tz.gettz() behavior with empty string | changed 1 | existing 1 | missed 0
+3.4 dateutil ab9e6102 Fix simple typo: negilible -> negligible | changed 1 | existing 1 | missed 0
+2.2 dateutil 7a3f5c47 Wrap _invalidates_cache decorator to preserve docs | changed 1 | existing 1 | missed 0
+1.3 dateutil d6820442 Fix numbered list formatting | changed 1 | existing 1 | missed 0
+1.3 dateutil 40c41c0f Fix Easter typos | changed 1 | existing 1 | missed 0
+2.1 dateutil 6d89db3e Improve documentation for parser errors/warnings | changed 0 | existing 0 | missed 0
+3.9 dateutil 579cd769 Document that parser.parse raises ParserError | changed 1 | existing 1 | missed 0
+1.7 dateutil 6edfecd6 Update documentation links | changed 0 | existing 0 | missed 0
+4.5 dateutil ea7f441b Fix custom repr for ParserError | changed 2 | existing 1 | missed 1
+5.4 dateutil 79d2e486 Fix TypeError in parser wrapper logic | changed 1 | existing 0 | missed 1
+2.6 dateutil 6e92f211 Lock around strong cache updates | changed 4 | existing 0 | missed 4
+3.8 dateutil d8cc4ccc Add helpful message when passed bytes to gettz | changed 1 | existing 1 | missed 0
+2.4 dateutil 980e5aa6 Fix incorrect import in Python 3.7+ | changed 0 | existing 0 | missed 0
+2.9 dateutil b7668eaf Fix typos in comments and documentation | changed 3 | existing 1 | missed 2
+2.7 dateutil d77c0c74 Remove unnecessary tzutc() calls in tz | changed 2 | existing 2 | missed 0
+3.8 dateutil a6ea0336 Move UTC definition into dateutil.tz.tz | changed 0 | existing 0 | missed 0
+2.7 dateutil 6588716b Use tz.UTC in parser | changed 1 | existing 0 | missed 1
+3.5 dateutil 4d5ddce3 Use tz.UTC in isoparser | changed 1 | existing 0 | missed 1

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:agent_candidate_batch:1.0",
+  "title": "AgentCandidateBatch",
+  "description": "Proposer input form: one agent's candidate contracts for one target, written against one context packet (guard contracts propose / MCP propose_contracts). Generic form; get_context_packet returns a per-packet schema that also fixes parameter names, the input profile and snippet indexes. Passing this schema is necessary, not sufficient: every candidate is still type-checked, source-checked, vacuity-checked and optionally falsified. There is deliberately no field for authority, approval, provenance, identity or evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "symbol": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+    },
+    "context_packet_digest": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "candidates": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "precondition": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/dsl_node"
+          },
+          "predicate": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/dsl_node"
+          },
+          "input_profile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "snippet",
+              "start_line",
+              "end_line"
+            ],
+            "properties": {
+              "snippet": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "start_line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "end_line": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "rationale": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "uncertainty": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "unsupported_dependencies": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "boundary_inputs": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "precondition",
+          "predicate",
+          "input_profile",
+          "source_ref"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "symbol",
+    "context_packet_digest",
+    "candidates"
+  ]
+}

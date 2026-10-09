@@ -1,0 +1,240 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/scalars.py::abs_diff",
+ "context_packet_digest": "sha256:943e3582eb6f9651358ded752355fb5f7b7d8226ba604fd1b641a00374b107a8",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Docstring: never negative.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": -1000000,
+     "b": 1000000
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "a"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "b"
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Equal arguments differ by zero.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 3,
+     "b": 3
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "not",
+    "arg": {
+     "kind": "eq",
+     "left": {
+      "kind": "arg",
+      "name": "a"
+     },
+     "right": {
+      "kind": "arg",
+      "name": "b"
+     }
+    }
+   },
+   "predicate": {
+    "kind": "gt",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Distinct arguments have strictly positive distance.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": 1,
+     "b": 0
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 2000000
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Inputs in [-1e6,1e6] give distance at most 2e6.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": -1000000,
+     "b": 1000000
+    },
+    {
+     "a": 1000000,
+     "b": -1000000
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "eq",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "a"
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "|a-0| equals a when a is nonnegative.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 5,
+     "b": 0
+    },
+    {
+     "a": 0,
+     "b": 0
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Pure integer function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

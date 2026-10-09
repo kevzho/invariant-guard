@@ -1,0 +1,60 @@
+{
+ "commits_with_executable_replay": 59,
+ "commits_with_probable_regression": [
+  [
+   "more-itertools",
+   "caaec943"
+  ]
+ ],
+ "correct_commits_with_executable_replay": 58,
+ "clusters": 38,
+ "labels": {
+  "INTENDED": 30,
+  "INTENDED_CONSEQUENCE": 3,
+  "UNINTENDED": 3,
+  "ARTIFACT": 2
+ },
+ "policies": {
+  "P0_every_difference": {
+   "warn_clusters": 38,
+   "warn_cluster_labels": {
+    "INTENDED": 30,
+    "INTENDED_CONSEQUENCE": 3,
+    "UNINTENDED": 3,
+    "ARTIFACT": 2
+   },
+   "correct_commits_with_warn": 18,
+   "noise_rate_commits": "18/58 = 31.0%",
+   "commits_with_artifact_warn": 1,
+   "true_positive_still_warned": true,
+   "noise_share_of_warn_clusters": "37/38"
+  },
+  "P1_ack_all_new": {
+   "warn_clusters": 26,
+   "warn_cluster_labels": {
+    "INTENDED": 22,
+    "INTENDED_CONSEQUENCE": 3,
+    "UNINTENDED": 1
+   },
+   "correct_commits_with_warn": 14,
+   "noise_rate_commits": "14/58 = 24.1%",
+   "commits_with_artifact_warn": 0,
+   "true_positive_still_warned": true,
+   "noise_share_of_warn_clusters": "25/26"
+  },
+  "P2_ack_any_new": {
+   "warn_clusters": 14,
+   "warn_cluster_labels": {
+    "INTENDED": 10,
+    "INTENDED_CONSEQUENCE": 3,
+    "UNINTENDED": 1
+   },
+   "correct_commits_with_warn": 9,
+   "noise_rate_commits": "9/58 = 15.5%",
+   "commits_with_artifact_warn": 0,
+   "true_positive_still_warned": true,
+   "noise_share_of_warn_clusters": "13/14"
+  }
+ },
+ "intended_clusters_with_patch_test_witness": "18/33"
+}

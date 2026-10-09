@@ -1,0 +1,336 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::normalize_to_unit",
+ "context_packet_digest": "sha256:b73ea24e453d4bcce63f0779a3d66a874034f6b124bd17b4bb99ab4c14f900f5",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "approx_eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1.0
+    },
+    "atol": 1e-09,
+    "rtol": 1e-09,
+    "require_finite": true
+   },
+   "rationale": "Docstring: values sum to 1.0 when the total is positive; the +1e-3 breaks it.",
+   "uncertainty": "epsilon offset may violate",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      0.0005
+     ]
+    },
+    {
+     "xs": [
+      10.0,
+      20.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "Docstring: one entry per input value.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      1,
+      2,
+      3
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "all_between",
+      "value": {
+       "kind": "arg",
+       "name": "xs"
+      },
+      "lower": 0,
+      "upper": 1000000.0
+     },
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "arg",
+        "name": "xs"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": 0,
+    "upper": 1
+   },
+   "rationale": "Shares of nonnegative values with positive total lie in [0,1].",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      0.0,
+      5.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Normalizing must not mutate the input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0,
+      2.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "predicate": {
+    "kind": "all_finite",
+    "value": {
+     "kind": "result"
+    }
+   },
+   "rationale": "With nonnegative total the denominator is at least 1e-3, so results are finite.",
+   "uncertainty": "negative totals may divide by zero",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      -5.0,
+      5.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "eq",
+      "left": {
+       "kind": "len",
+       "value": {
+        "kind": "arg",
+        "name": "xs"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1
+      }
+     },
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "arg",
+        "name": "xs"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "approx_eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1.0
+    },
+    "atol": 1e-09,
+    "rtol": 1e-09,
+    "require_finite": true
+   },
+   "rationale": "A single positive value normalizes to 1.",
+   "uncertainty": "epsilon offset may violate",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      100.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   }
+  }
+ ]
+}

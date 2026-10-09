@@ -1,0 +1,134 @@
+{
+ "schema_version": "1.0",
+ "parts": {
+  "tests": {
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider",
+   "started_at": "2026-10-08T23:08:12Z",
+   "finished_at": "2026-10-08T23:11:39Z",
+   "elapsed_s": 206.4,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_test_suite.json",
+   "results_sha256": "sha256:8c0f1419385b84a74103cdab6676fe8bf7f0179e58ec6182245bebc52822fcf8"
+  },
+  "semantic": {
+   "command": ".venv/bin/python benchmarks/bench_semantic.py",
+   "started_at": "2026-10-08T23:11:39Z",
+   "finished_at": "2026-10-08T23:11:52Z",
+   "elapsed_s": 13.5,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_semantic_fixtures.json",
+   "results_sha256": "sha256:e9f28cee7d343a24e47df90bbc9a09bba9a640995dd03e58bc100bebadb896dd"
+  },
+  "seeded": {
+   "command": ".venv/bin/python benchmarks/bench_seeded.py",
+   "started_at": "2026-10-08T23:11:52Z",
+   "finished_at": "2026-10-08T23:14:09Z",
+   "elapsed_s": 137.1,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_seeded_patches.json",
+   "results_sha256": "sha256:c0e70a262c31c91ae37da4c275e8537880d55d5c9eabd8ebbf430d84bf65b6be"
+  },
+  "agent": {
+   "started_at": "2026-10-08T23:14:09Z",
+   "finished_at": "2026-10-08T23:18:39Z",
+   "elapsed_s": 269.3,
+   "exit": 0,
+   "runs": [
+    {
+     "run": "run1",
+     "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals benchmarks/agent_eval/proposals/run1 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run1: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out benchmarks/results/paper_agent_eval_run1.json",
+     "exit": 0,
+     "elapsed_s": 86.0,
+     "results_file": "benchmarks/results/paper_agent_eval_run1.json",
+     "results_sha256": "sha256:94bfd88c59a13f7820039a2ed9ad7d4afc549a75055da78a147d759af1f51532"
+    },
+    {
+     "run": "run2",
+     "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals benchmarks/agent_eval/proposals/run2 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run2: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out benchmarks/results/paper_agent_eval_run2.json",
+     "exit": 0,
+     "elapsed_s": 99.5,
+     "results_file": "benchmarks/results/paper_agent_eval_run2.json",
+     "results_sha256": "sha256:805321aa7721c157f5a449e58c0ec4bcbae9ede17e58b2528ffad90c8eb55d17"
+    },
+    {
+     "run": "run3",
+     "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out benchmarks/results/paper_agent_eval_run3.json",
+     "exit": 0,
+     "elapsed_s": 83.8,
+     "results_file": "benchmarks/results/paper_agent_eval_run3.json",
+     "results_sha256": "sha256:539d16d34b39327956050ef1c5b5cc5bfff45af2b571f6002678c87e3b15a32e"
+    }
+   ]
+  },
+  "latency": {
+   "command": ".venv/bin/python benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000",
+   "started_at": "2026-10-08T23:18:39Z",
+   "finished_at": "2026-10-09T00:45:38Z",
+   "elapsed_s": 5219.6,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_latency.json",
+   "results_sha256": "sha256:e00affd85b89d679bae33818c909af52e602ff9eb203ddaba0f043c20facb6af"
+  },
+  "model": {
+   "command": ".venv/bin/python benchmarks/model_eval.py --repeats 3 --template-repeats 3 --out benchmarks/results/paper_model_eval.json",
+   "started_at": "2026-10-09T00:45:38Z",
+   "finished_at": "2026-10-09T02:00:35Z",
+   "elapsed_s": 3710.6,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_model_eval.json",
+   "results_sha256": "sha256:657dadb2081802a28df0854d595bbf1f63b34e560ec24503dff7f81fcb9f1165"
+  },
+  "transport": {
+   "command": ".venv/bin/python benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out benchmarks/results/paper_transport_openai_compat.json",
+   "started_at": "2026-10-09T02:00:35Z",
+   "finished_at": "2026-10-09T02:17:32Z",
+   "elapsed_s": 989.4,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_transport_openai_compat.json",
+   "results_sha256": "sha256:3a442188a6eafa796f1e390b9553bd9f3a9c9ab84bb0c3793fdfa834ff89d259"
+  },
+  "latency_repeat": {
+   "command": ".venv/bin/python benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000 --out-name paper_latency_repeat",
+   "started_at": "2026-10-09T02:21:36Z",
+   "finished_at": "2026-10-09T03:27:05Z",
+   "elapsed_s": 3929.5,
+   "exit": 0,
+   "results_file": "benchmarks/results/paper_latency_repeat.json",
+   "results_sha256": "sha256:7ec7e73d39e4d46655dd2ff56bd65d03bc54926c9154bb1104e5fd29714a500f"
+  }
+ },
+ "last_invocation": {
+  "command": ".venv/bin/python benchmarks/run_all.py --parts latency_repeat",
+  "started_at": "2026-10-09T02:21:35Z",
+  "host": {
+   "recorded_at": "2026-10-09T02:21:35Z",
+   "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
+   "machine": "arm64",
+   "python": "3.13.9",
+   "python_executable": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python",
+   "cpu": "Apple M4",
+   "memory_bytes": "17179869184",
+   "model": "Mac16,12",
+   "logical_cpus": "10",
+   "os": "macOS 15.6 (24G84)",
+   "z3": "5.1.0",
+   "invariantguard": "0.5.0",
+   "engine_version": "0.5.0",
+   "semantics_profile": "python3.13-cpython-builtin-v4",
+   "git": "git version 2.52.0",
+   "docker_server": "29.5.2",
+   "runner_image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+   "ollama": "ollama version is 0.40.1",
+   "requirements_lock": "sha256:8f935293b5350f9a99803b3aabc8cae4d242844b6d0f18d44231c98581dc4b61",
+   "pip_freeze_sha256": "sha256:0fd5afa4b7428e200bfc096ab89f700b216959ef41d52161e8be435c4c232d95",
+   "pip_freeze_equals_lock": true,
+   "source_tree_sha256": "sha256:451eaf54f534b618b356f128b7aa4a248416fca13994c8875176000ad59b0430",
+   "load_average_at_start": [
+    8.41,
+    5.89,
+    11.78
+   ]
+  },
+  "finished_at": "2026-10-09T03:27:05Z"
+ }
+}

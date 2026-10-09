@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\small
+
+\caption{Seeded patches: defect detection over execution-confirmed labels (intentional changes excluded; see text). A = abstentions, kept in the denominators; Rec.\textsubscript{a} counts them as misses. The last row uses the \emph{execute} run for cases with contracts and the static quick run otherwise.}
+\label{tab:seeded-confusion}
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+configuration & pos & neg & TP & FN & A\textsubscript{pos} & FP & TN & A\textsubscript{neg} & Prec. & Rec.\textsubscript{a} & Rec.\textsubscript{d} & Abst. \\
+\midrule
+static quick & 21 & 12 & 13 & 4 & 4 & 0 & 7 & 5 & 1.00 & 0.62 & 0.76 & 0.27 \\
+static quick, no solver & 21 & 12 & 13 & 4 & 4 & 0 & 7 & 5 & 1.00 & 0.62 & 0.76 & 0.27 \\
+static full & 21 & 12 & 13 & 3 & 5 & 0 & 7 & 5 & 1.00 & 0.62 & 0.81 & 0.30 \\
+static quick, warm cache & 21 & 12 & 13 & 4 & 4 & 0 & 7 & 5 & 1.00 & 0.62 & 0.76 & 0.27 \\
+\midrule
+static + dynamic (execute) & 21 & 12 & 18 & 1 & 2 & 0 & 7 & 5 & 1.00 & 0.86 & 0.95 & 0.21 \\
+\bottomrule
+\end{tabular}
+\end{table*}

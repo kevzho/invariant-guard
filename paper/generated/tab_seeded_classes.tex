@@ -1,0 +1,25 @@
+\begin{table*}[t]
+\centering
+\small
+
+\caption{Seeded patches by class. Left block: static quick verification (\texttt{guard verify -{}-mode quick}); right block: the best available configuration (the \texttt{-{}-execute} run for cases with contracts, otherwise static quick). A = abstained (required coverage missing: verdict INCOMPLETE without a flagged finding), kept in every denominator. The two \emph{intentional} labels are excluded from the counts and discussed in the text. Labels confirmed by executing both versions in a separate interpreter.}
+\label{tab:seeded-classes}
+\begin{tabular}{lrlrrrrrrrrrr}
+\toprule
+ & & & \multicolumn{5}{c}{static quick} & \multicolumn{5}{c}{best available} \\ \cmidrule(lr){4-8}\cmidrule(lr){9-13}
+class & n & labels & TP & FN & A & FP & TN & TP & FN & A & FP & TN \\
+\midrule
+division by zero & 6 & 6 defect & 6 & 0 & 0 & 0 & 0 & 6 & 0 & 0 & 0 & 0 \\
+changed callee & 2 & 2 defect & 2 & 0 & 0 & 0 & 0 & 2 & 0 & 0 & 0 & 0 \\
+index bounds & 3 & 3 defect & 3 & 0 & 0 & 0 & 0 & 3 & 0 & 0 & 0 & 0 \\
+None flow & 2 & 2 defect & 2 & 0 & 0 & 0 & 0 & 2 & 0 & 0 & 0 & 0 \\
+contract regression & 5 & 5 defect & 0 & 3 & 2 & 0 & 0 & 5 & 0 & 0 & 0 & 0 \\
+unsupported construct & 4 & 3 defect, 1 none & 0 & 1 & 3 & 0 & 0 & 0 & 1 & 3 & 0 & 0 \\
+safe refactor & 7 & 7 none & 0 & 0 & 1 & 0 & 6 & 0 & 0 & 1 & 0 & 6 \\
+intentional change & 4 & 2 intent., 2 none & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 1 & 0 & 1 \\
+pre-existing failure & 2 & 2 none & 0 & 0 & 2 & 0 & 0 & 0 & 0 & 2 & 0 & 0 \\
+\midrule
+all & 35 & 21 defect, 12 none, 2 intent. & 13 & 4 & 9 & 0 & 7 & 18 & 1 & 7 & 0 & 7 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "tool": "get_finding",
+  "status": "OK",
+  "repository": "demo",
+  "finding": {
+    "assumptions": [
+      "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+    ],
+    "authority": "DECLARED",
+    "comparison": {
+      "base_obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+      "base_result": "PROVED_SAFE",
+      "match": "anchor",
+      "reason": "the same witness {'a': 0, 'b': 0} runs without this failure in the base",
+      "witness_in_base": "PASSED"
+    },
+    "domain": "a, b: exact Python built-in integers",
+    "domain_source": "CONFIG_DECLARED",
+    "evidence_ids": [
+      "ev-4ca8a4239f146a45b51a03723e033af3"
+    ],
+    "finding_id": "fnd-7770ba015d38f520bb562e27488dc368",
+    "message": "`100 / d` raises ZeroDivisionError for admitted input {'a': 0, 'b': 0}: divisor `d` is 0",
+    "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+    "patch_relation": "INTRODUCED",
+    "path_constraints": [
+      "d == a - b",
+      "d == 0"
+    ],
+    "property_id": "division.zero_denominator",
+    "property_result": "PROVED_UNSAFE",
+    "quantifier": "exists admitted function input",
+    "reasons": [
+      "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ],
+    "replay_available": false,
+    "runtime_mode": null,
+    "scope_validity": "EXACT_MODEL",
+    "severity": "ERROR",
+    "source_span": {
+      "end_byte": 59,
+      "end_column": 18,
+      "end_line": 3,
+      "path": "demo/math_ops.py",
+      "snapshot_id": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+      "start_byte": 52,
+      "start_column": 11,
+      "start_line": 3
+    },
+    "symbol_id": "demo/math_ops.py::ratio",
+    "witness": {
+      "a": 0,
+      "b": 0
+    },
+    "witness_validated": true
+  },
+  "obligation_result": {
+    "anchor": "division.zero_denominator:02423d59d086f933#0",
+    "assumptions": [
+      "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+    ],
+    "authority": "DECLARED",
+    "divisor_fact": null,
+    "divisor_text": "d",
+    "domain": "a, b: exact Python built-in integers",
+    "domain_source": "CONFIG_DECLARED",
+    "evidence_ids": [
+      "ev-4ca8a4239f146a45b51a03723e033af3"
+    ],
+    "evidence_reused": true,
+    "finding_id": "fnd-7770ba015d38f520bb562e27488dc368",
+    "method": "SMT",
+    "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+    "operation": "DIV",
+    "operation_text": "100 / d",
+    "patch_relation": "INTRODUCED",
+    "path_constraints": [
+      "d == a - b",
+      "d == 0"
+    ],
+    "property_id": "division.zero_denominator",
+    "property_result": "PROVED_UNSAFE",
+    "quantifier": "exists admitted function input",
+    "reasons": [
+      "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ],
+    "required": true,
+    "runtime_mode": null,
+    "scope_validity": "EXACT_MODEL",
+    "source_span": {
+      "end_byte": 59,
+      "end_column": 18,
+      "end_line": 3,
+      "path": "demo/math_ops.py",
+      "snapshot_id": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+      "start_byte": 52,
+      "start_column": 11,
+      "start_line": 3
+    },
+    "symbol_id": "demo/math_ops.py::ratio",
+    "witness": {
+      "a": 0,
+      "b": 0
+    },
+    "witness_validated": true
+  },
+  "contract_result": null,
+  "evidence": [
+    {
+      "assumptions": [
+        "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+      ],
+      "created_at": "2026-10-08T17:27:01.647456Z",
+      "details": [
+        "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+      ],
+      "domain": "a, b: exact Python built-in integers",
+      "engine": {
+        "ir_version": "ir-0.2",
+        "name": "invariantguard",
+        "version": "0.4.1"
+      },
+      "evidence_id": "ev-4ca8a4239f146a45b51a03723e033af3",
+      "kind": "SOLVER",
+      "method": "SMT",
+      "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+      "precision": "EXACT_MODEL",
+      "property_id": "division.zero_denominator",
+      "result_label": "PROVED_UNSAFE",
+      "run_id": "run-1ea2e1034b344e9ebf67db634dd37b15",
+      "schema_version": "1.0",
+      "snapshot_id": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+      "solver_runs": [
+        {
+          "assertions_constraint": "any",
+          "elapsed_ms": 6.441,
+          "exact_encoding": true,
+          "query_digest": "sha256:40813acd3687ab4ca6ff047ead15c6b8a685b5b18efdc8db5322fa6f60ae62a1",
+          "reason_unknown": null,
+          "response": "SAT",
+          "rlimit": null,
+          "solver": "z3",
+          "solver_version": "5.1.0",
+          "timeout_ms": 100
+        }
+      ],
+      "source_span": {
+        "end_byte": 59,
+        "end_column": 18,
+        "end_line": 3,
+        "path": "demo/math_ops.py",
+        "snapshot_id": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+        "start_byte": 52,
+        "start_column": 11,
+        "start_line": 3
+      },
+      "symbol_id": "demo/math_ops.py::ratio",
+      "witness": {
+        "a": 0,
+        "b": 0
+      },
+      "witness_validation": "VALIDATED"
+    }
+  ],
+  "missing_evidence_ids": [],
+  "run": {
+    "run_id": "run-f3dff5263cfa4d5baf5dda72f7be1739",
+    "command": "verify",
+    "verdict": "BLOCK",
+    "run_outcome": "INCOMPLETE",
+    "base_snapshot": "sha256:5bc2cbe5696c71af7c65f50d4514efb32fe48e7958ab03a7278acf380287dfa0",
+    "candidate_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "report_digest": "sha256:4f535b47a900b50c13ad0cc70cf210b9e55b0d3aa8f6eba5c93f834ff1508cc7",
+    "scope": ".",
+    "source": "state_index",
+    "recorded_at": "2026-10-08T17:27:11.070503Z",
+    "policy_id": "default-v1"
+  },
+  "contract_definition": null,
+  "freshness": {
+    "evidence_status": "CURRENT",
+    "evidence_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "current_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "superseded_by_run": null
+  },
+  "service_ms": 90.714
+}

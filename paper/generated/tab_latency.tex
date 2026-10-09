@@ -1,0 +1,37 @@
+\begin{table*}[h!]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Static \texttt{guard verify} latency on synthetic repositories (ms; fresh child process per run, interpreter start included). \emph{leaf}: one function body changes; \emph{hub}: a constant read by most functions changes. Default 2\,s quick budget. \emph{load}: median 1-minute load average sampled after each run (10 logical CPUs; values far above 10 mean heavy contention from other processes on the host).}
+\label{tab:latency}
+\begin{tabular}{rllllrrrrrlr}
+\toprule
+fns & change & mode & cache & n & wall p50 & wall p95 & engine p50 & RSS MB & affected & verdict (runs) & load \\
+\midrule
+101 & leaf & quick & cold & 30 & 493 & 517 & 156 & 39 & 2 & PASS & 7 \\
+101 & leaf & quick & warm & 30 & 496 & 598 & 155 & 40 & 2 & PASS & 6 \\
+101 & leaf & full & cold & 30 & 1{,}456 & 1{,}607 & 932 & 82 & 2 & PASS & 5 \\
+101 & leaf & full & warm & 30 & 668 & 690 & 167 & 46 & 2 & PASS & 4 \\
+101 & hub & quick & cold & 30 & 855 & 916 & 439 & 66 & 48 & PASS & 3 \\
+101 & hub & quick & warm & 30 & 563 & 604 & 159 & 42 & 48 & PASS & 3 \\
+101 & hub & full & cold & 30 & 1{,}450 & 1{,}536 & 927 & 81 & 48 & PASS & 3 \\
+101 & hub & full & warm & 30 & 672 & 704 & 168 & 45 & 48 & PASS & 3 \\
+1{,}001 & leaf & quick & cold & 30 & 1{,}445 & 1{,}488 & 1{,}016 & 84 & 2 & PASS & 2 \\
+1{,}001 & leaf & quick & warm & 30 & 1{,}435 & 1{,}495 & 1{,}011 & 84 & 2 & PASS & 2 \\
+1{,}001 & leaf & full & cold & 30 & 9{,}334 & 13{,}711 & 7{,}046 & 180 & 2 & PASS & 4 \\
+1{,}001 & leaf & full & warm & 30 & 3{,}388 & 3{,}599 & 1{,}197 & 152 & 2 & PASS & 2 \\
+1{,}001 & hub & quick & cold & 30 & 4{,}483 & 4{,}711 & 3{,}145 & 135 & 570 & INCOMPLETE & 4 \\
+1{,}001 & hub & quick & warm & 30 & 2{,}401 & 2{,}741 & 1{,}116 & 118 & 570 & PASS & 5 \\
+1{,}001 & hub & full & cold & 30 & 9{,}930 & 15{,}753 & 7{,}671 & 173 & 570 & PASS & 5 \\
+1{,}001 & hub & full & warm & 30 & 3{,}578 & 4{,}293 & 1{,}260 & 152 & 570 & PASS & 7 \\
+10{,}001 & leaf & quick & cold & 5 & 14{,}335 & 17{,}925 & 13{,}223 & 380 & 2 & PASS & 6 \\
+10{,}001 & leaf & quick & warm & 5 & 13{,}961 & 14{,}307 & 12{,}851 & 375 & 2 & PASS & 6 \\
+10{,}001 & leaf & full & cold & 5 & 116{,}354 & 124{,}784 & 91{,}375 & 549 & 2 & INCOMPLETE (2); PASS (3) & 6 \\
+10{,}001 & leaf & full & warm & 5 & 42{,}714 & 54{,}785 & 18{,}945 & 599 & 2 & PASS & 5 \\
+10{,}001 & hub & quick & cold & 5 & 39{,}896 & 45{,}567 & 27{,}315 & 492 & 5{,}749 & INCOMPLETE & 6 \\
+10{,}001 & hub & quick & warm & 5 & 32{,}328 & 33{,}837 & 18{,}679 & 514 & 5{,}749 & INCOMPLETE & 6 \\
+10{,}001 & hub & full & cold & 5 & 129{,}902 & 135{,}368 & 107{,}396 & 565 & 5{,}749 & PASS & 8 \\
+10{,}001 & hub & full & warm & 5 & 35{,}696 & 42{,}447 & 17{,}783 & 698 & 5{,}749 & PASS & 5 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,226 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/sequences.py::rotate_left",
+ "context_packet_digest": "sha256:231e0c42fc3feec4b854ab67e61848a1436735088560284d81273f95e69fb816",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Docstring: same length as the input.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      1
+     ]
+    },
+    {
+     "xs": [
+      1,
+      2,
+      3
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Rotation preserves the multiset, hence the sum.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Slicing creates new lists; xs is not mutated.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 10
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": 0,
+    "upper": 10
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Rotation introduces no new element values.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0,
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Empty input returns empty list.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 24,
+    "end_line": 28
+   },
+   "rationale": "Pure function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

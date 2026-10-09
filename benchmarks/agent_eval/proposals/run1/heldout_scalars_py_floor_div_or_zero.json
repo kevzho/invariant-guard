@@ -1,0 +1,333 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/scalars.py::floor_div_or_zero",
+ "context_packet_digest": "sha256:d1d4e05b344b9d9144cd7fe40fa6c5e5aa468f4cf5a453eaa460a9e0bdd55828",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "b"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "Docstring: result is 0 when b is 0.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 5,
+     "b": 0
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     },
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "Nonnegative a over positive b floors to a nonnegative value.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": 7,
+     "b": 2
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     },
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "a"
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "For a>=0 and b>=1, a//b <= a.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 7,
+     "b": 1
+    },
+    {
+     "a": 1000000,
+     "b": 3
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "b"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "a"
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "Dividing by 1 returns a.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": -4,
+     "b": 1
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     },
+     {
+      "kind": "lt",
+      "left": {
+       "kind": "arg",
+       "name": "a"
+      },
+      "right": {
+       "kind": "arg",
+       "name": "b"
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "A nonnegative a smaller than positive b floors to 0.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": 1,
+     "b": 2
+    },
+    {
+     "a": 0,
+     "b": 5
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "lt",
+      "left": {
+       "kind": "arg",
+       "name": "a"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     },
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "lt",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "Floor division of negative a by positive b is negative (rounds down).",
+   "uncertainty": "Python floor semantics",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "a": -1,
+     "b": 2
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   },
+   "rationale": "Pure integer function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

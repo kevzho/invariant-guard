@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\small
+
+\caption{Controlled semantic fixtures (one obligation per case). Result counts over all cases; ``=spec'' is agreement with the specified expected result; the confusion counts use only cases with an independent label (defect: witness executed; safe: hand argument plus finite grid). Rec.\textsubscript{a} counts abstentions as misses; Rec.\textsubscript{d} uses decided cases only.}
+\label{tab:semantic}
+\begin{tabular}{lrrrrrrrrrrrrrr}
+\toprule
+ & SAFE & UNSAFE & POSS. & UNK. & =spec & TP & FP & FN & TN & Abst. & Prec. & Rec.\textsubscript{a} & Rec.\textsubscript{d} & Abst.\,rate \\
+\midrule
+solver on & 9 & 10 & 1 & 11 & 31/31 & 10 & 0 & 0 & 9 & 9 & 1.00 & 0.56 & 1.00 & 0.32 \\
+solver off & 8 & 10 & 0 & 13 & 31/31 & 10 & 0 & 0 & 8 & 10 & 1.00 & 0.56 & 1.00 & 0.36 \\
+\bottomrule
+\end{tabular}
+\end{table*}

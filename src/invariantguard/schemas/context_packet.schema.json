@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:context_packet:1.0",
+  "title": "ContextPacket",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "snapshot_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "symbol_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+      }
+    },
+    "source_spans": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:source_span:1.0"
+      }
+    },
+    "source_digest": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "snippets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "span": {
+            "$ref": "urn:invariantguard:schema:source_span:1.0"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 20000
+          },
+          "trusted": {
+            "const": false
+          }
+        },
+        "required": [
+          "span",
+          "text",
+          "trusted"
+        ]
+      }
+    },
+    "trusted_static_facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "candidate_domain": {
+      "type": "string"
+    },
+    "existing_contract_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unsupported_constructs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resource_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "max_bytes",
+        "max_tokens"
+      ]
+    }
+  },
+  "required": [
+    "candidate_domain",
+    "existing_contract_ids",
+    "resource_budget",
+    "schema_version",
+    "snapshot_id",
+    "snippets",
+    "source_digest",
+    "source_spans",
+    "symbol_ids",
+    "trusted_static_facts",
+    "unsupported_constructs"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "command": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/guard",
+  "args": [
+    "mcp",
+    "serve",
+    "--stdio",
+    "--root",
+    "demo=/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3",
+    "--allow-profile",
+    "isolated-python",
+    "--timeout-s",
+    "900"
+  ],
+  "client": "mcp.Client (official MCP Python SDK) over stdio, initialize handshake (mode='legacy')",
+  "agent": "local-model harness (examples/demo_repo/run_demo.py)"
+}

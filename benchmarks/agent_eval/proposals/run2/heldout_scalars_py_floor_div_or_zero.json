@@ -1,0 +1,332 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/scalars.py::floor_div_or_zero",
+ "context_packet_digest": "sha256:d1d4e05b344b9d9144cd7fe40fa6c5e5aa468f4cf5a453eaa460a9e0bdd55828",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "b"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Docstring: returns 0 when b is 0.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 5,
+     "b": 0
+    },
+    {
+     "a": 0,
+     "b": 0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     }
+    ]
+   },
+   "rationale": "Nonneg a floor-divided by positive b lies in [0,a].",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 7,
+     "b": 2
+    },
+    {
+     "a": 0,
+     "b": 1
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "a"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Zero divided by anything (or zero divisor) is 0.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 0,
+     "b": -3
+    },
+    {
+     "a": 0,
+     "b": 0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "b"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "a"
+    }
+   },
+   "rationale": "Dividing by 1 returns a.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": -9,
+     "b": 1
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": -1000000.0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1000000.0
+      }
+     }
+    ]
+   },
+   "rationale": "Quotient magnitude never exceeds the input magnitude bound.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 1000000,
+     "b": -1
+    },
+    {
+     "a": -1000000,
+     "b": 1
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "gt",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     },
+     {
+      "kind": "lt",
+      "left": {
+       "kind": "arg",
+       "name": "a"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": -1
+    }
+   },
+   "rationale": "Floor division of a negative by a positive is at most -1.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": -1,
+     "b": 2
+    },
+    {
+     "a": -7,
+     "b": 3
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic scalar function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 18
+   }
+  }
+ ]
+}

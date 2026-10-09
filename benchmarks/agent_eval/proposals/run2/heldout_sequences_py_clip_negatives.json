@@ -1,0 +1,272 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/sequences.py::clip_negatives",
+ "context_packet_digest": "sha256:01c0a440c94eede98299ec1018ccc5b84ac27ec0183d860b6b3b173919e497f6",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "rationale": "Docstring: all results are >= 0; the code keeps -1.",
+   "uncertainty": "boundary -1 may violate",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1
+     ]
+    },
+    {
+     "xs": [
+      -1000,
+      5
+     ]
+    },
+    {
+     "xs": []
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "One output per input element.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      3,
+      -4
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Clipping builds a new list and must not mutate the input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -2,
+      3
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "Nonnegative inputs pass through unchanged, so sums agree.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0,
+      1,
+      2
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": -1000,
+    "upper": -1
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "All-negative input is replaced entirely by zeros.",
+   "uncertainty": "-1 handling may violate",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1
+     ]
+    },
+    {
+     "xs": [
+      -1,
+      -1
+     ]
+    },
+    {
+     "xs": [
+      -1000
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    }
+   },
+   "rationale": "Clipping never decreases the sum.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -5,
+      5
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   }
+  }
+ ]
+}

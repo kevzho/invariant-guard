@@ -1,0 +1,232 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/report.py::summary_score",
+ "context_packet_digest": "sha256:d8b437b66266d79d2726ac3212039b0448bd8ea11e283404400757c61bbbe0bf",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Scoring should not mutate the caller's score list.",
+   "uncertainty": "callees might mutate",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0,
+      2.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Pure function of xs; repeated calls agree.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_finite",
+    "value": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Mean plus spread of finite bounded values is finite.",
+   "uncertainty": "overflow unlikely at bounds",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000000.0,
+      -1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": -1000000.0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 3000000.0
+      }
+     }
+    ]
+   },
+   "rationale": "mean+max-min lies between min-ish and 3e6 for profile inputs.",
+   "uncertainty": "bound derived by hand",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1000000.0,
+      -1000000.0
+     ]
+    },
+    {
+     "xs": [
+      1000000.0,
+      -1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "rationale": "For nonnegative scores, mean and spread are both nonnegative.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      0,
+      1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "A single score has spread 0 so the result equals the value.",
+   "uncertainty": "float division exactness",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -3.5
+     ]
+    },
+    {
+     "xs": [
+      0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 6,
+    "end_line": 8
+   }
+  }
+ ]
+}

@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:contract_revision:1.0",
+  "title": "ContractRevision",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "contract_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "scope": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+    },
+    "authority": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/authority"
+    },
+    "lifecycle_state": {
+      "enum": [
+        "CANDIDATE",
+        "VALIDATED",
+        "CHECKED",
+        "REVIEWED",
+        "REJECTED",
+        "INVALID_CONTRACT"
+      ]
+    },
+    "precondition": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/dsl_node"
+    },
+    "predicate": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/dsl_node"
+    },
+    "input_profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "maintainer_approval",
+              "declaration",
+              "template",
+              "local_model",
+              "test",
+              "docstring",
+              "assertion",
+              "remote_model",
+              "agent_proposed"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          },
+          "client": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/proposer_client"
+          },
+          "egress": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/data_egress"
+          }
+        },
+        "required": [
+          "kind",
+          "reference"
+        ]
+      }
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/timestamp"
+    },
+    "examples": {
+      "description": "Hand-authored inputs probed first (each must satisfy the input profile; the precondition decides admission).",
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "propertyNames": {
+          "pattern": "^(?!\\d)\\w+$"
+        },
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": [
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            {
+              "type": "array",
+              "maxItems": 64,
+              "items": {
+                "type": [
+                  "number",
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "authority",
+    "contract_id",
+    "created_at",
+    "input_profile",
+    "lifecycle_state",
+    "precondition",
+    "predicate",
+    "provenance",
+    "reason",
+    "revision",
+    "schema_version",
+    "scope",
+    "supersedes"
+  ]
+}

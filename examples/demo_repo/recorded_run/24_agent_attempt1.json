@@ -1,0 +1,85 @@
+{
+  "attempt": 1,
+  "input_report_run_id": "run-a6e924ebdc994d5baa6798f92f53b55c",
+  "input_verdict": "BLOCK",
+  "functions": [
+    {
+      "symbol_id": "demo/math_ops.py::normalize",
+      "finding_ids": [
+        "fnd-170d5f01159090000faea33b166bafbc"
+      ],
+      "model": {
+        "request": {
+          "model": "qwen2.5-coder:7b",
+          "options": {
+            "temperature": 0.0,
+            "seed": 0,
+            "num_ctx": 8192,
+            "num_predict": 1024
+          },
+          "format": "json_schema",
+          "system_sha256": "sha256:9fe48b96100954d56f150a1a84e6d005bea86bc941a71caa29b5652b172b1e03",
+          "user_prompt": "Function to repair: demo/math_ops.py::normalize\n\nVerifier evidence (JSON):\nBEGIN EVIDENCE\n{\"property_id\": \"contract.behavior\", \"result\": \"OBSERVED_REGRESSION\", \"scope_validity\": \"EXECUTED\", \"patch_relation\": \"INTRODUCED\", \"message\": \"contract normalize.sum.v1 r1 (DECLARED) regressed on admitted input {'xs': [1]}: base: predicate holds (returned [1.0]); candidate: predicate does not hold (returned [0.5])\", \"witness\": {\"xs\": [1]}, \"domain\": \"contract precondition over input profile bounded_builtin_numeric_list_v1\", \"path_constraints\": [], \"what_would_resolve_it\": \"change the code so that contract.behavior holds for the witness input {'xs': [1]} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents\", \"contract\": {\"contract_id\": \"normalize.sum.v1\", \"authority\": \"DECLARED\", \"observations\": {\"base\": {\"reason\": \"predicate holds\", \"result\": [1.0]}, \"candidate\": {\"reason\": \"predicate does not hold\", \"result\": [0.5]}, \"candidate_repeat\": {\"reason\": \"predicate does not hold\"}}, \"precondition\": {\"args\": [{\"kind\": \"gt\", \"left\": {\"kind\": \"len\", \"value\": {\"kind\": \"arg\", \"name\": \"xs\"}}, \"right\": {\"kind\": \"literal\", \"value\": 0}}, {\"kind\": \"all_between\", \"lower\": 0.0, \"upper\": 100.0, \"value\": {\"kind\": \"arg\", \"name\": \"xs\"}}, {\"kind\": \"gt\", \"left\": {\"kind\": \"sum\", \"value\": {\"kind\": \"arg\", \"name\": \"xs\"}}, \"right\": {\"kind\": \"literal\", \"value\": 0.0}}], \"kind\": \"and\"}, \"predicate\": {\"atol\": 1e-09, \"kind\": \"approx_eq\", \"left\": {\"kind\": \"sum\", \"value\": {\"kind\": \"result\"}}, \"require_finite\": true, \"right\": {\"kind\": \"literal\", \"value\": 1.0}, \"rtol\": 1e-09}, \"input_profile\": \"bounded_builtin_numeric_list_v1\"}}\nEND EVIDENCE\n\nCurrent source:\nBEGIN SOURCE\ndef normalize(xs):\n    total = sum(xs) + 1.0\n    return [x / total for x in xs]\nEND SOURCE",
+          "user_prompt_sha256": "sha256:db8e68511ddbf57b518d3aacbb6bc8e911bcc721face2530910ccb99bce6b767"
+        },
+        "response": {
+          "raw_text": "{\n  \"function_name\": \"normalize\",\n  \"replacement_source\": \"def normalize(xs):\\n    total = sum(xs)\\n    return [x / total for x in xs]\",\n  \"explanation\": \"The original function was regressing on the input {'xs': [1]}. The issue was that the total was being incremented by 1.0, which caused the normalization to be off by a factor of 2. The replacement function removes the increment, ensuring that the sum of the normalized values is exactly 1.0.\"\n}",
+          "parsed": {
+            "function_name": "normalize",
+            "replacement_source": "def normalize(xs):\n    total = sum(xs)\n    return [x / total for x in xs]",
+            "explanation": "The original function was regressing on the input {'xs': [1]}. The issue was that the total was being incremented by 1.0, which caused the normalization to be off by a factor of 2. The replacement function removes the increment, ensuring that the sum of the normalized values is exactly 1.0."
+          },
+          "model": "qwen2.5-coder:7b",
+          "done_reason": "stop",
+          "prompt_tokens": 729,
+          "output_tokens": 113
+        },
+        "elapsed_ms": 18265.406
+      },
+      "outcome": "applied",
+      "diff": "--- a/demo/math_ops.py\n+++ b/demo/math_ops.py\n@@ -4,5 +4,5 @@\n \n \n def normalize(xs):\n-    total = sum(xs) + 1.0\n+    total = sum(xs)\n     return [x / total for x in xs]\n"
+    },
+    {
+      "symbol_id": "demo/math_ops.py::ratio",
+      "finding_ids": [
+        "fnd-c0b6348a551d23f938c6f7f128ad3edc"
+      ],
+      "model": {
+        "request": {
+          "model": "qwen2.5-coder:7b",
+          "options": {
+            "temperature": 0.0,
+            "seed": 0,
+            "num_ctx": 8192,
+            "num_predict": 1024
+          },
+          "format": "json_schema",
+          "system_sha256": "sha256:9fe48b96100954d56f150a1a84e6d005bea86bc941a71caa29b5652b172b1e03",
+          "user_prompt": "Function to repair: demo/math_ops.py::ratio\n\nVerifier evidence (JSON):\nBEGIN EVIDENCE\n{\"property_id\": \"division.zero_denominator\", \"result\": \"PROVED_UNSAFE\", \"scope_validity\": \"EXACT_MODEL\", \"patch_relation\": \"INTRODUCED\", \"message\": \"`100 / d` raises ZeroDivisionError for admitted input {'a': 0, 'b': 0}: divisor `d` is 0\", \"witness\": {\"a\": 0, \"b\": 0}, \"domain\": \"a, b: exact Python built-in integers\", \"path_constraints\": [\"d == a - b\", \"d == 0\"], \"what_would_resolve_it\": \"change the code so that division.zero_denominator holds for the witness input {'a': 0, 'b': 0} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents\"}\nEND EVIDENCE\n\nCurrent source:\nBEGIN SOURCE\ndef ratio(a: int, b: int):\n    d = a - b\n    return 100 / d\nEND SOURCE",
+          "user_prompt_sha256": "sha256:5e0e56012a3bafb97d11a2a54394bf76eae1aea844e2441dae894b6d8ef5173d"
+        },
+        "response": {
+          "raw_text": "{\n  \"function_name\": \"ratio\",\n  \"replacement_source\": \"def ratio(a: int, b: int):\\n    d = a - b\\n    if d == 0:\\n        return None  # or some other appropriate value or handling\\n    return 100 / d\",\n  \"explanation\": \"The function now checks if the divisor `d` is zero before performing the division. If `d` is zero, it returns `None` (or another appropriate value or handling). This change ensures that the function does not raise a `ZeroDivisionError` for the admitted input and for every other admitted input, without changing behavior on inputs that already behaved correctly.\"\n}",
+          "parsed": {
+            "function_name": "ratio",
+            "replacement_source": "def ratio(a: int, b: int):\n    d = a - b\n    if d == 0:\n        return None  # or some other appropriate value or handling\n    return 100 / d",
+            "explanation": "The function now checks if the divisor `d` is zero before performing the division. If `d` is zero, it returns `None` (or another appropriate value or handling). This change ensures that the function does not raise a `ZeroDivisionError` for the admitted input and for every other admitted input, without changing behavior on inputs that already behaved correctly."
+          },
+          "model": "qwen2.5-coder:7b",
+          "done_reason": "stop",
+          "prompt_tokens": 425,
+          "output_tokens": 144
+        },
+        "elapsed_ms": 25219.561
+      },
+      "outcome": "applied",
+      "diff": "--- a/demo/math_ops.py\n+++ b/demo/math_ops.py\n@@ -1,5 +1,7 @@\n def ratio(a: int, b: int):\n     d = a - b\n+    if d == 0:\n+        return None  # or some other appropriate value or handling\n     return 100 / d\n \n \n"
+    }
+  ],
+  "result": {
+    "run_id": "run-d25d9560fa474987ab3f8806c733fb16",
+    "status": "OK",
+    "verdict": "PASS",
+    "error_findings": []
+  }
+}

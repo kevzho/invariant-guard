@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "guard",
+    "contracts",
+    "declare",
+    "--file",
+    "/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-contract-5qvshh49/normalize.sum.v1.json",
+    "--reason",
+    "maintainer: positive-sum inputs must normalize to a sum of 1 (docs/13 Fixture B)",
+    "--path",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-gzr2qkuc"
+  ],
+  "exit_code": 0,
+  "wall_ms": 229.742,
+  "stdout": {
+    "declared": "normalize.sum.v1",
+    "revision": 1,
+    "authority": "DECLARED",
+    "semantic_digest": "sha256:70a1e413e1275863756b111776a7d7f01f27fac18f582b38b67c6e87bd0228ea",
+    "validation": {
+      "admissible_witness": {
+        "xs": [
+          1.0,
+          1.0
+        ]
+      },
+      "search": {
+        "attempts": 2,
+        "admitted": 1,
+        "excluded": 1
+      },
+      "target": {
+        "symbol_id": "demo/math_ops.py::normalize",
+        "module": "demo.math_ops",
+        "function": "normalize",
+        "python_path_root": ".",
+        "positional": [
+          "xs"
+        ],
+        "keyword_only": []
+      },
+      "snapshot_id": "sha256:43155c608059dbdf6bdf58f5c7dd6eb07cadcbb919ac7d84822e08f5504f20c6"
+    }
+  }
+}

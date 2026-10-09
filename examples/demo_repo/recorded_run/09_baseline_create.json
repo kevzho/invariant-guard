@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "guard",
+    "baseline",
+    "create",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3",
+    "--label",
+    "demo-base",
+    "--rev",
+    "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+    "--reason",
+    "maintainer: reviewed baseline before the agent patch"
+  ],
+  "exit_code": 0,
+  "wall_ms": 362.27,
+  "stdout": {
+    "schema_version": "1.0",
+    "baseline": {
+      "label": "demo-base",
+      "created_at": "2026-10-08T17:01:29.255279Z",
+      "reason": "maintainer: reviewed baseline before the agent patch",
+      "snapshot_id": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+      "manifest_digest": "sha256:9331b3376f347e4a6d9541fa74be48e6d747e60fc672747c39a69151cae376e3",
+      "results_digest": "sha256:e3d62683525a3c19ac26abd7369a0a494910d1c4dd1c74dd7180f0c59f6a8d1b",
+      "git_commit": "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+      "source_retained": false,
+      "supersedes": null,
+      "engine_version": "0.4.0",
+      "contract_set": "sha256:25b05c8d02ba1ce264448fdc0ab87888316a135886affb965aabd169aa6a4fb9"
+    },
+    "snapshot": {
+      "snapshot_id": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+      "kind": "saved_baseline",
+      "files": 1,
+      "source_identity": {
+        "kind": "baseline",
+        "label": "demo-base",
+        "commit": "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+        "object_format": "sha1"
+      },
+      "dependency_locks": [],
+      "config_digest": "sha256:9bce4e59a090727688ce7dab3f4549de2a9d04a23b84676b700af5819eb207ec"
+    },
+    "replay_source": "accessible Git revision",
+    "obligation_results": {
+      "PROVED_SAFE": 1,
+      "UNKNOWN": 1
+    },
+    "errors": []
+  }
+}

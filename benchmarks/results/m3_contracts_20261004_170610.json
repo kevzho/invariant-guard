@@ -1,0 +1,881 @@
+{
+ "benchmark": "m3_contract_timing",
+ "created_at": "2026-10-04T21:04:41.445275+00:00",
+ "host": {
+  "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.13.9",
+  "cpu": "Apple M4",
+  "memory_bytes": "17179869184",
+  "model": "Mac16,12",
+  "logical_cpus": "10",
+  "os": "15.6 (24G84)",
+  "z3": "5.1.0",
+  "git": "git version 2.52.0",
+  "invariantguard": "0.3.0"
+ },
+ "reps": 10,
+ "definitions": {
+  "wall_ms": "child process elapsed time incl. interpreter start, imports, static analysis and dynamic checks",
+  "dynamic_ms": "report timing_ms.dynamic: contract checks (admission, container/process runs, shrinking, confirmation, evidence)",
+  "runner_probe_ms": "report timing_ms.runner_probe: backend availability + capability probe before any target import (once per command)"
+ },
+ "conditions": [
+  {
+   "backend": "docker",
+   "scenario": "regression",
+   "n": 10,
+   "runs": [
+    {
+     "wall_ms": 4459.544,
+     "dynamic_ms": 2821.184,
+     "runner_probe_ms": 1140.271,
+     "peak_rss_mb": 42.8,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4082.219,
+     "dynamic_ms": 2909.197,
+     "runner_probe_ms": 628.944,
+     "peak_rss_mb": 40.8,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4324.197,
+     "dynamic_ms": 3140.024,
+     "runner_probe_ms": 621.03,
+     "peak_rss_mb": 40.4,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4206.019,
+     "dynamic_ms": 2946.62,
+     "runner_probe_ms": 661.53,
+     "peak_rss_mb": 41.0,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4235.143,
+     "dynamic_ms": 3080.002,
+     "runner_probe_ms": 615.652,
+     "peak_rss_mb": 41.0,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4164.801,
+     "dynamic_ms": 3013.338,
+     "runner_probe_ms": 606.735,
+     "peak_rss_mb": 39.9,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4113.499,
+     "dynamic_ms": 2951.649,
+     "runner_probe_ms": 618.247,
+     "peak_rss_mb": 40.2,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 5348.635,
+     "dynamic_ms": 4119.586,
+     "runner_probe_ms": 641.566,
+     "peak_rss_mb": 39.0,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4833.186,
+     "dynamic_ms": 3191.527,
+     "runner_probe_ms": 1083.158,
+     "peak_rss_mb": 38.7,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 4339.77,
+     "dynamic_ms": 3050.462,
+     "runner_probe_ms": 757.066,
+     "peak_rss_mb": 41.3,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   ],
+   "wall_p50_ms": 4279.7,
+   "wall_p95_ms": 5348.6,
+   "dynamic_p50_ms": 3031.9,
+   "dynamic_p95_ms": 4119.6,
+   "runner_probe_p50_ms": 635.3,
+   "outcomes": [
+    [
+     "BLOCK",
+     "OBSERVED_REGRESSION",
+     "AVAILABLE"
+    ]
+   ]
+  },
+  {
+   "backend": "docker",
+   "scenario": "tested",
+   "n": 10,
+   "runs": [
+    {
+     "wall_ms": 2561.22,
+     "dynamic_ms": 1245.283,
+     "runner_probe_ms": 614.375,
+     "peak_rss_mb": 40.4,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2941.099,
+     "dynamic_ms": 1432.036,
+     "runner_probe_ms": 858.138,
+     "peak_rss_mb": 39.1,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2488.281,
+     "dynamic_ms": 1230.527,
+     "runner_probe_ms": 705.515,
+     "peak_rss_mb": 39.5,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2462.014,
+     "dynamic_ms": 1283.714,
+     "runner_probe_ms": 689.241,
+     "peak_rss_mb": 39.2,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2273.055,
+     "dynamic_ms": 1164.862,
+     "runner_probe_ms": 603.023,
+     "peak_rss_mb": 39.9,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2397.975,
+     "dynamic_ms": 1181.683,
+     "runner_probe_ms": 716.336,
+     "peak_rss_mb": 39.4,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2414.135,
+     "dynamic_ms": 1274.5,
+     "runner_probe_ms": 635.105,
+     "peak_rss_mb": 39.4,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2387.126,
+     "dynamic_ms": 1216.074,
+     "runner_probe_ms": 648.981,
+     "peak_rss_mb": 40.5,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2334.951,
+     "dynamic_ms": 1174.194,
+     "runner_probe_ms": 646.567,
+     "peak_rss_mb": 40.4,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 2348.6,
+     "dynamic_ms": 1176.023,
+     "runner_probe_ms": 646.504,
+     "peak_rss_mb": 40.6,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    }
+   ],
+   "wall_p50_ms": 2406.1,
+   "wall_p95_ms": 2941.1,
+   "dynamic_p50_ms": 1223.3,
+   "dynamic_p95_ms": 1432.0,
+   "runner_probe_p50_ms": 647.8,
+   "outcomes": [
+    [
+     "PASS",
+     "TESTED",
+     "AVAILABLE"
+    ]
+   ]
+  },
+  {
+   "backend": "unisolated",
+   "scenario": "regression",
+   "n": 10,
+   "runs": [
+    {
+     "wall_ms": 1092.553,
+     "dynamic_ms": 673.327,
+     "runner_probe_ms": 4.697,
+     "peak_rss_mb": 38.5,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1149.605,
+     "dynamic_ms": 739.969,
+     "runner_probe_ms": 4.857,
+     "peak_rss_mb": 38.7,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1136.48,
+     "dynamic_ms": 738.229,
+     "runner_probe_ms": 4.656,
+     "peak_rss_mb": 38.1,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1116.211,
+     "dynamic_ms": 691.045,
+     "runner_probe_ms": 5.137,
+     "peak_rss_mb": 38.9,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1103.404,
+     "dynamic_ms": 699.942,
+     "runner_probe_ms": 4.72,
+     "peak_rss_mb": 38.3,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1163.961,
+     "dynamic_ms": 684.563,
+     "runner_probe_ms": 4.623,
+     "peak_rss_mb": 39.8,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1213.352,
+     "dynamic_ms": 778.501,
+     "runner_probe_ms": 4.842,
+     "peak_rss_mb": 38.8,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1079.542,
+     "dynamic_ms": 682.566,
+     "runner_probe_ms": 4.772,
+     "peak_rss_mb": 39.8,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1096.499,
+     "dynamic_ms": 678.337,
+     "runner_probe_ms": 4.774,
+     "peak_rss_mb": 38.5,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    {
+     "wall_ms": 1069.511,
+     "dynamic_ms": 670.549,
+     "runner_probe_ms": 4.659,
+     "peak_rss_mb": 38.2,
+     "exit": 1,
+     "verdict": "BLOCK",
+     "execution": "AVAILABLE",
+     "property_result": "OBSERVED_REGRESSION",
+     "patch_relation": "INTRODUCED",
+     "runner_invocations": 9,
+     "admitted": 48,
+     "witness": {
+      "xs": [
+       1
+      ]
+     },
+     "original_witness": {
+      "xs": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   ],
+   "wall_p50_ms": 1109.8,
+   "wall_p95_ms": 1213.4,
+   "dynamic_p50_ms": 687.8,
+   "dynamic_p95_ms": 778.5,
+   "runner_probe_p50_ms": 4.7,
+   "outcomes": [
+    [
+     "BLOCK",
+     "OBSERVED_REGRESSION",
+     "AVAILABLE"
+    ]
+   ]
+  },
+  {
+   "backend": "unisolated",
+   "scenario": "tested",
+   "n": 10,
+   "runs": [
+    {
+     "wall_ms": 947.301,
+     "dynamic_ms": 498.128,
+     "runner_probe_ms": 6.254,
+     "peak_rss_mb": 38.7,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 853.125,
+     "dynamic_ms": 465.516,
+     "runner_probe_ms": 4.802,
+     "peak_rss_mb": 37.8,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 775.029,
+     "dynamic_ms": 384.465,
+     "runner_probe_ms": 5.184,
+     "peak_rss_mb": 36.7,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 782.178,
+     "dynamic_ms": 393.219,
+     "runner_probe_ms": 5.255,
+     "peak_rss_mb": 36.6,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 778.421,
+     "dynamic_ms": 383.358,
+     "runner_probe_ms": 5.29,
+     "peak_rss_mb": 36.9,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 783.493,
+     "dynamic_ms": 383.671,
+     "runner_probe_ms": 5.372,
+     "peak_rss_mb": 37.1,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 782.477,
+     "dynamic_ms": 385.237,
+     "runner_probe_ms": 5.293,
+     "peak_rss_mb": 37.0,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 778.215,
+     "dynamic_ms": 384.547,
+     "runner_probe_ms": 5.159,
+     "peak_rss_mb": 36.9,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 785.565,
+     "dynamic_ms": 388.364,
+     "runner_probe_ms": 5.305,
+     "peak_rss_mb": 36.5,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    },
+    {
+     "wall_ms": 783.702,
+     "dynamic_ms": 386.026,
+     "runner_probe_ms": 5.15,
+     "peak_rss_mb": 36.4,
+     "exit": 0,
+     "verdict": "PASS",
+     "execution": "AVAILABLE",
+     "property_result": "TESTED",
+     "patch_relation": null,
+     "runner_invocations": 2,
+     "admitted": 48,
+     "witness": null,
+     "original_witness": null
+    }
+   ],
+   "wall_p50_ms": 783.0,
+   "wall_p95_ms": 947.3,
+   "dynamic_p50_ms": 385.6,
+   "dynamic_p95_ms": 498.1,
+   "runner_probe_p50_ms": 5.3,
+   "outcomes": [
+    [
+     "PASS",
+     "TESTED",
+     "AVAILABLE"
+    ]
+   ]
+  }
+ ]
+}

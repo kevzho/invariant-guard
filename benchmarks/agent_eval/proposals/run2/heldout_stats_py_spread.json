@@ -1,0 +1,251 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::spread",
+ "context_packet_digest": "sha256:db758f0c1ebb116dd97a84be5d01133fd330cb1690b0696e1b2a9fe8e90b4c8f",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Docstring: never negative.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      3,
+      -3
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 2000000.0
+      }
+     }
+    ]
+   },
+   "rationale": "Range of values in [-1e6,1e6] is at most 2e6.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000000.0,
+      -1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "A single value has zero spread.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      4.2
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1000000.0
+    }
+   },
+   "rationale": "For nonnegative values max-min <= max <= 1e6.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0,
+      1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Computing the range must not mutate the input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      2.0,
+      1.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_finite",
+    "value": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Finite inputs give a finite range.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000000.0,
+      -1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  }
+ ]
+}

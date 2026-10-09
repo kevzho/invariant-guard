@@ -1,0 +1,4 @@
+# Second spike image: identical to Dockerfile plus `six` (dateutil's only runtime dependency). Explicit setup step, build-time network only.
+FROM ig-crosshair-spike:0.0.111
+USER root
+RUN pip install --no-cache-dir six==1.17.0 && pip freeze > /opt/freeze.txt

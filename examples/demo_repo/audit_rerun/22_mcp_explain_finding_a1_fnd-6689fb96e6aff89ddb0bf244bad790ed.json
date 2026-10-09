@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0",
+  "tool": "explain_finding",
+  "status": "OK",
+  "repository": "demo",
+  "finding_id": "fnd-6689fb96e6aff89ddb0bf244bad790ed",
+  "run": {
+    "run_id": "run-f3dff5263cfa4d5baf5dda72f7be1739",
+    "command": "verify",
+    "verdict": "BLOCK",
+    "run_outcome": "INCOMPLETE",
+    "base_snapshot": "sha256:5bc2cbe5696c71af7c65f50d4514efb32fe48e7958ab03a7278acf380287dfa0",
+    "candidate_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "report_digest": "sha256:4f535b47a900b50c13ad0cc70cf210b9e55b0d3aa8f6eba5c93f834ff1508cc7",
+    "scope": ".",
+    "source": "state_index",
+    "recorded_at": "2026-10-08T17:27:11.070503Z",
+    "policy_id": "default-v1"
+  },
+  "freshness": {
+    "evidence_status": "CURRENT",
+    "evidence_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "current_snapshot": "sha256:863fa9a9ee08d4551cd3c45d8d7331ec5f2bd3f8a97e7d78f6c1d19fb3e3aedc",
+    "superseded_by_run": null
+  },
+  "explanation": {
+    "summary": "contract normalize.sum.v1 r1 (DECLARED) regressed on admitted input {'xs': [1]}: base: predicate holds (returned [1.0]); candidate: predicate does not hold (returned [0.5])",
+    "location": "demo/math_ops.py:6:1",
+    "symbol_id": "demo/math_ops.py::normalize",
+    "property_id": "contract.behavior",
+    "result": {
+      "value": "OBSERVED_REGRESSION",
+      "meaning": "the same admitted input passed on the base and failed on the candidate, both executed in recorded environments"
+    },
+    "scope_validity": {
+      "value": "EXECUTED",
+      "meaning": "observed by execution in the recorded environment"
+    },
+    "patch_relation": {
+      "value": "INTRODUCED",
+      "meaning": "the base does not have this failure on the same witness: the patch introduced it",
+      "comparison": {
+        "base_obligation_id": "demo/math_ops.py::normalize::contract.behavior#931187398",
+        "base_result": "TESTED",
+        "match": "contract_scope",
+        "reason": "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)",
+        "witness_in_base": "PASSED"
+      }
+    },
+    "severity": "ERROR",
+    "authority": "DECLARED",
+    "quantifier": "exists an admitted input (same witness executed in base and candidate)",
+    "domain": "contract precondition over input profile bounded_builtin_numeric_list_v1",
+    "domain_source": "CONTRACT_PRECONDITION",
+    "assumptions": [
+      "contract authority DECLARED"
+    ],
+    "path_constraints": [],
+    "witness": {
+      "xs": [
+        1
+      ]
+    },
+    "witness_validated": true,
+    "observations": {
+      "base": {
+        "reason": "predicate holds",
+        "result": [
+          1.0
+        ]
+      },
+      "candidate": {
+        "reason": "predicate does not hold",
+        "result": [
+          0.5
+        ]
+      },
+      "candidate_repeat": {
+        "reason": "predicate does not hold"
+      }
+    },
+    "contract": {
+      "contract_id": "normalize.sum.v1",
+      "revision": 1,
+      "input_profile": "bounded_builtin_numeric_list_v1",
+      "precondition": {
+        "args": [
+          {
+            "kind": "gt",
+            "left": {
+              "kind": "len",
+              "value": {
+                "kind": "arg",
+                "name": "xs"
+              }
+            },
+            "right": {
+              "kind": "literal",
+              "value": 0
+            }
+          },
+          {
+            "kind": "all_between",
+            "lower": 0.0,
+            "upper": 100.0,
+            "value": {
+              "kind": "arg",
+              "name": "xs"
+            }
+          },
+          {
+            "kind": "gt",
+            "left": {
+              "kind": "sum",
+              "value": {
+                "kind": "arg",
+                "name": "xs"
+              }
+            },
+            "right": {
+              "kind": "literal",
+              "value": 0.0
+            }
+          }
+        ],
+        "kind": "and"
+      },
+      "predicate": {
+        "atol": 1e-09,
+        "kind": "approx_eq",
+        "left": {
+          "kind": "sum",
+          "value": {
+            "kind": "result"
+          }
+        },
+        "require_finite": true,
+        "right": {
+          "kind": "literal",
+          "value": 1.0
+        },
+        "rtol": 1e-09
+      }
+    },
+    "evidence": [
+      {
+        "evidence_id": "ev-e20a787e43964839a623136f14585b7f",
+        "kind": "EXECUTION"
+      },
+      {
+        "evidence_id": "ev-0fee9bb0820061139e892ed892565f85",
+        "kind": "EXECUTION"
+      }
+    ],
+    "what_this_does_not_show": [
+      "execution evidence covers the executed inputs and the recorded environment only; it is not a proof",
+      "other properties and runtime errors outside contract.behavior are not covered by this finding"
+    ],
+    "what_would_resolve_it": "change the code so that contract.behavior holds for the witness input {'xs': [1]} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents",
+    "explainer": "deterministic template over the stored evidence (no model; the local model's explain_finding operation is not implemented)"
+  },
+  "text": "demo/math_ops.py:6:1  demo/math_ops.py::normalize  [contract.behavior]\ncontract normalize.sum.v1 r1 (DECLARED) regressed on admitted input {'xs': [1]}: base: predicate holds (returned [1.0]); candidate: predicate does not hold (returned [0.5])\n\nresult: OBSERVED_REGRESSION: the same admitted input passed on the base and failed on the candidate, both executed in recorded environments\nscope: EXECUTED: observed by execution in the recorded environment\npatch relation: INTRODUCED: the base does not have this failure on the same witness: the patch introduced it\nseverity ERROR, authority DECLARED\nquantifier: exists an admitted input (same witness executed in base and candidate)\ndomain (CONTRACT_PRECONDITION): contract precondition over input profile bounded_builtin_numeric_list_v1\nassumes: contract authority DECLARED\nwitness: {\"xs\": [1]}\nbase: reason=predicate holds, result=[1.0]\ncandidate: reason=predicate does not hold, result=[0.5]\ncandidate_repeat: reason=predicate does not hold\ncontract normalize.sum.v1 r1 (bounded_builtin_numeric_list_v1):\n  precondition: {\"args\":[{\"kind\":\"gt\",\"left\":{\"kind\":\"len\",\"value\":{\"kind\":\"arg\",\"name\":\"xs\"}},\"right\":{\"kind\":\"literal\",\"value\":0}},{\"kind\":\"all_between\",\"lower\":0.0,\"upper\":100.0,\"value\":{\"kind\":\"arg\",\"name\":\"xs\"}},{\"kind\":\"gt\",\"left\":{\"kind\":\"sum\",\"value\":{\"kind\":\"arg\",\"name\":\"xs\"}},\"right\":{\"kind\":\"literal\",\"value\":0.0}}],\"kind\":\"and\"}\n  predicate: {\"atol\":1e-09,\"kind\":\"approx_eq\",\"left\":{\"kind\":\"sum\",\"value\":{\"kind\":\"result\"}},\"require_finite\":true,\"right\":{\"kind\":\"literal\",\"value\":1.0},\"rtol\":1e-09}\ndoes not show:\n  - execution evidence covers the executed inputs and the recorded environment only; it is not a proof\n  - other properties and runtime errors outside contract.behavior are not covered by this finding\nto resolve: change the code so that contract.behavior holds for the witness input {'xs': [1]} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents",
+  "service_ms": 76.235
+}

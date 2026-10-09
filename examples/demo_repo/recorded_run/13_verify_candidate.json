@@ -1,0 +1,4571 @@
+{
+  "argv": [
+    "guard",
+    "verify",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3",
+    "--base",
+    "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+    "--format",
+    "json",
+    "--execute",
+    "--run-profile",
+    "isolated-python"
+  ],
+  "exit_code": 1,
+  "wall_ms": 5587.015,
+  "stdout": {
+    "schema_version": "1.0",
+    "tool": {
+      "name": "invariantguard",
+      "engine_version": "0.4.0",
+      "ir_version": "ir-0.2",
+      "python": "3.13.9",
+      "grammar": "3.13"
+    },
+    "command": "verify",
+    "run_id": "run-bf719b78a9ad4af29f043e489f74fd99",
+    "base_snapshot": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+    "candidate_snapshot": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+    "snapshot": {
+      "schema_version": "1.0",
+      "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+      "kind": "working_tree_capture",
+      "root_label": "ig-m5-demo-0h8bryz3",
+      "scope": [
+        "."
+      ],
+      "files": [
+        {
+          "path": "demo/math_ops.py",
+          "sha256": "sha256:500be5c410734d40e7ed05e4b369f884e6e72d123135afd7e571d84ec1606a2e",
+          "size_bytes": 142
+        }
+      ],
+      "excluded": [],
+      "config_digest": "sha256:9bce4e59a090727688ce7dab3f4549de2a9d04a23b84676b700af5819eb207ec",
+      "semantics_profile": "python3.13-cpython-builtin-v3",
+      "dependency_lock_digests": [],
+      "dependency_locks": [],
+      "source_retained": false,
+      "source_identity": {
+        "kind": "working_tree",
+        "head": "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+        "object_format": "sha1",
+        "git_listing": true
+      }
+    },
+    "analysis_plan": {
+      "schema_version": "1.0",
+      "plan_id": "plan-7df71b712bae22004dbcc1867d45cca1",
+      "command": "verify",
+      "mode": "quick",
+      "base_snapshot": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+      "candidate_snapshot": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+      "requested_symbols": [
+        "demo/math_ops.py::normalize",
+        "demo/math_ops.py::ratio"
+      ],
+      "required_properties": [
+        "division.zero_denominator",
+        "index.out_of_range",
+        "none.attribute_access"
+      ],
+      "required_obligations": [
+        "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "demo/math_ops.py::ratio::division.zero_denominator#0"
+      ],
+      "require_coverage": true,
+      "budgets": {
+        "per_query_timeout_ms": 100,
+        "quick_budget_ms": 20000,
+        "per_query_rlimit": 0
+      },
+      "solver": {
+        "enabled": true,
+        "available": true
+      },
+      "invalidated_summaries": [
+        "demo/math_ops.py::normalize: definition changed",
+        "demo/math_ops.py::ratio: definition changed"
+      ],
+      "unresolved_changes": [],
+      "created_before_analysis": true,
+      "required_contracts": [
+        "normalize.sum.v1"
+      ]
+    },
+    "run_outcome": "INCOMPLETE",
+    "verdict": "BLOCK",
+    "verdict_reasons": [
+      "1 blocking finding(s): exact modeled failure in an admitted domain",
+      "1 blocking contract regression(s): replayed regression of an APPROVED or DECLARED contract",
+      "1 required obligation(s) UNKNOWN",
+      "patch relations: 1 INTRODUCED, 1 UNDETERMINED"
+    ],
+    "policy_id": "default-v1",
+    "coverage": {
+      "requested_symbols": 2,
+      "analyzed_symbols": 2,
+      "required_obligations": 2,
+      "resolved_required_obligations": 1,
+      "files_captured": 1,
+      "files_analyzed": 1,
+      "unknown_obligations": [
+        {
+          "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+          "symbol_id": "demo/math_ops.py::normalize",
+          "reason": "unsupported: ListComp expression is outside the supported subset",
+          "required": true
+        }
+      ],
+      "skipped_checks": [],
+      "unsupported_symbols": [],
+      "advisory_obligations": 0,
+      "slice": {
+        "mode": "quick",
+        "affected_symbols": 2,
+        "candidate_symbols": 2
+      },
+      "contracts": {
+        "contracts_active": 1,
+        "required_contract_checks": 1,
+        "resolved_required_contract_checks": 1,
+        "contracts_not_run": 0
+      }
+    },
+    "timing_ms": {
+      "capture": 39.61,
+      "static": 52.316,
+      "solver": 6.881,
+      "dynamic": 3825.523,
+      "model": null,
+      "base_capture": 43.753,
+      "base_static": 2.936,
+      "impact": 0.328,
+      "runner_probe": 1048.751
+    },
+    "findings": [
+      {
+        "finding_id": "fnd-a7a5fa0de8a250b436809e9b5bc1a6d5",
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "property_result": "UNKNOWN",
+        "scope_validity": null,
+        "authority": "INFERRED",
+        "patch_relation": "UNDETERMINED",
+        "severity": "INFO",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 8,
+          "start_column": 12,
+          "end_line": 8,
+          "end_column": 21,
+          "start_byte": 119,
+          "end_byte": 128,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "message": "zero-divisor safety of `x / total` is UNKNOWN: unsupported: ListComp expression is outside the supported subset",
+        "quantifier": "none (no claim)",
+        "domain": "not established (unsupported construct)",
+        "domain_source": "NONE",
+        "assumptions": [],
+        "path_constraints": [],
+        "reasons": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "witness": null,
+        "witness_validated": false,
+        "runtime_mode": null,
+        "evidence_ids": [
+          "ev-37e835c045148f0dd37fc05e2dcda27c"
+        ],
+        "replay_available": false,
+        "comparison": {
+          "base_obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+          "base_result": "UNKNOWN",
+          "match": "anchor",
+          "witness_in_base": "NOT_EVALUATED",
+          "reason": "no claim (UNKNOWN); nothing to attribute"
+        }
+      },
+      {
+        "finding_id": "fnd-c0b6348a551d23f938c6f7f128ad3edc",
+        "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL",
+        "authority": "DECLARED",
+        "patch_relation": "INTRODUCED",
+        "severity": "ERROR",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 3,
+          "start_column": 11,
+          "end_line": 3,
+          "end_column": 18,
+          "start_byte": 52,
+          "end_byte": 59,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "message": "`100 / d` raises ZeroDivisionError for admitted input {'a': 0, 'b': 0}: divisor `d` is 0",
+        "quantifier": "exists admitted function input",
+        "domain": "a, b: exact Python built-in integers",
+        "domain_source": "CONFIG_DECLARED",
+        "assumptions": [
+          "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+        ],
+        "path_constraints": [
+          "d == a - b",
+          "d == 0"
+        ],
+        "reasons": [
+          "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+        ],
+        "witness": {
+          "a": 0,
+          "b": 0
+        },
+        "witness_validated": true,
+        "runtime_mode": null,
+        "evidence_ids": [
+          "ev-20d407470ce1a79b25c3b2e48d6548a5"
+        ],
+        "replay_available": false,
+        "comparison": {
+          "base_obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+          "base_result": "PROVED_SAFE",
+          "match": "anchor",
+          "witness_in_base": "PASSED",
+          "reason": "the same witness {'a': 0, 'b': 0} runs without this failure in the base"
+        }
+      },
+      {
+        "finding_id": "fnd-170d5f01159090000faea33b166bafbc",
+        "obligation_id": "demo/math_ops.py::normalize::contract.behavior#931187398",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "contract.behavior",
+        "property_result": "OBSERVED_REGRESSION",
+        "scope_validity": "EXECUTED",
+        "authority": "DECLARED",
+        "patch_relation": "INTRODUCED",
+        "severity": "ERROR",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 6,
+          "start_column": 0,
+          "end_line": 7,
+          "end_column": 4,
+          "start_byte": 62,
+          "end_byte": 85,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "message": "contract normalize.sum.v1 r1 (DECLARED) regressed on admitted input {'xs': [1]}: base: predicate holds (returned [1.0]); candidate: predicate does not hold (returned [0.5])",
+        "quantifier": "exists an admitted input (same witness executed in base and candidate)",
+        "domain": "contract precondition over input profile bounded_builtin_numeric_list_v1",
+        "domain_source": "CONTRACT_PRECONDITION",
+        "assumptions": [
+          "contract authority DECLARED"
+        ],
+        "path_constraints": [],
+        "reasons": [
+          "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)"
+        ],
+        "witness": {
+          "xs": [
+            1
+          ]
+        },
+        "witness_validated": true,
+        "runtime_mode": null,
+        "evidence_ids": [
+          "ev-82f404b8e531f12c1356b97fda75e4e2",
+          "ev-de88ef6a08fd82d6a462c66bb872f255"
+        ],
+        "replay_available": true,
+        "contract": {
+          "contract_id": "normalize.sum.v1",
+          "revision": 1,
+          "semantic_digest": "sha256:70a1e413e1275863756b111776a7d7f01f27fac18f582b38b67c6e87bd0228ea"
+        },
+        "comparison": {
+          "base_obligation_id": "demo/math_ops.py::normalize::contract.behavior#931187398",
+          "base_result": "TESTED",
+          "match": "contract_scope",
+          "witness_in_base": "PASSED",
+          "reason": "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)"
+        }
+      }
+    ],
+    "obligation_results": [
+      {
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "operation": "DIV",
+        "operation_text": "x / total",
+        "divisor_text": "total",
+        "property_result": "UNKNOWN",
+        "scope_validity": null,
+        "authority": "INFERRED",
+        "domain": "not established (unsupported construct)",
+        "domain_source": "NONE",
+        "assumptions": [],
+        "quantifier": "none (no claim)",
+        "method": "UNSUPPORTED",
+        "reasons": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 8,
+          "start_column": 12,
+          "end_line": 8,
+          "end_column": 21,
+          "start_byte": 119,
+          "end_byte": 128,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "required": true,
+        "witness": null,
+        "witness_validated": false,
+        "path_constraints": [],
+        "evidence_ids": [
+          "ev-37e835c045148f0dd37fc05e2dcda27c"
+        ],
+        "finding_id": "fnd-a7a5fa0de8a250b436809e9b5bc1a6d5",
+        "runtime_mode": null,
+        "divisor_fact": null,
+        "anchor": "division.zero_denominator:af9695636342bb7e#0",
+        "patch_relation": "UNDETERMINED"
+      },
+      {
+        "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "operation": "DIV",
+        "operation_text": "100 / d",
+        "divisor_text": "d",
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL",
+        "authority": "DECLARED",
+        "domain": "a, b: exact Python built-in integers",
+        "domain_source": "CONFIG_DECLARED",
+        "assumptions": [
+          "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+        ],
+        "quantifier": "exists admitted function input",
+        "method": "SMT",
+        "reasons": [
+          "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+        ],
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 3,
+          "start_column": 11,
+          "end_line": 3,
+          "end_column": 18,
+          "start_byte": 52,
+          "end_byte": 59,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "required": true,
+        "witness": {
+          "a": 0,
+          "b": 0
+        },
+        "witness_validated": true,
+        "path_constraints": [
+          "d == a - b",
+          "d == 0"
+        ],
+        "evidence_ids": [
+          "ev-20d407470ce1a79b25c3b2e48d6548a5"
+        ],
+        "finding_id": "fnd-c0b6348a551d23f938c6f7f128ad3edc",
+        "runtime_mode": null,
+        "divisor_fact": null,
+        "anchor": "division.zero_denominator:02423d59d086f933#0",
+        "patch_relation": "INTRODUCED"
+      }
+    ],
+    "evidence": [
+      {
+        "schema_version": "1.0",
+        "kind": "UNSUPPORTED",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "ir-0.2"
+        },
+        "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "result_label": "UNKNOWN",
+        "domain": "not established (unsupported construct)",
+        "assumptions": [],
+        "precision": null,
+        "method": "UNSUPPORTED",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 8,
+          "start_column": 12,
+          "end_line": 8,
+          "end_column": 21,
+          "start_byte": 119,
+          "end_byte": 128,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "details": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "solver_runs": [],
+        "witness": null,
+        "witness_validation": "NOT_APPLICABLE",
+        "evidence_id": "ev-37e835c045148f0dd37fc05e2dcda27c",
+        "run_id": "run-bf719b78a9ad4af29f043e489f74fd99",
+        "created_at": "2026-10-08T17:01:30.672574Z"
+      },
+      {
+        "schema_version": "1.0",
+        "kind": "SOLVER",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "ir-0.2"
+        },
+        "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "result_label": "PROVED_UNSAFE",
+        "domain": "a, b: exact Python built-in integers",
+        "assumptions": [
+          "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+        ],
+        "precision": "EXACT_MODEL",
+        "method": "SMT",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 3,
+          "start_column": 11,
+          "end_line": 3,
+          "end_column": 18,
+          "start_byte": 52,
+          "end_byte": 59,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "details": [
+          "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+        ],
+        "solver_runs": [
+          {
+            "solver": "z3",
+            "solver_version": "5.1.0",
+            "query_digest": "sha256:40813acd3687ab4ca6ff047ead15c6b8a685b5b18efdc8db5322fa6f60ae62a1",
+            "response": "SAT",
+            "reason_unknown": null,
+            "elapsed_ms": 6.881,
+            "timeout_ms": 100,
+            "rlimit": null,
+            "exact_encoding": true,
+            "assertions_constraint": "any"
+          }
+        ],
+        "witness": {
+          "a": 0,
+          "b": 0
+        },
+        "witness_validation": "VALIDATED",
+        "evidence_id": "ev-20d407470ce1a79b25c3b2e48d6548a5",
+        "run_id": "run-bf719b78a9ad4af29f043e489f74fd99",
+        "created_at": "2026-10-08T17:01:30.672574Z"
+      },
+      {
+        "schema_version": "1.0",
+        "kind": "EXECUTION",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "n/a (execution)"
+        },
+        "snapshot_id": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "contract.behavior",
+        "obligation_id": "demo/math_ops.py::normalize::contract.behavior#931187398",
+        "result_label": "TESTED",
+        "domain": "inputs of profile bounded_builtin_numeric_list_v1 that satisfy the contract precondition",
+        "assumptions": [
+          "executed in a fresh container per batch (deny_network=VERIFIED, readonly_source=VERIFIED, no_host_credentials=VERIFIED, scratch_only_writes=VERIFIED, resource_limits=VERIFIED, interpreter_minor_matches_host=VERIFIED)",
+          "observations are finite executions of the admitted inputs only; they do not prove the contract for other inputs",
+          "base and candidate ran the same inputs in the same prepared environment"
+        ],
+        "precision": "EXECUTED",
+        "method": "PROBE",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 8,
+          "start_column": 0,
+          "end_line": 9,
+          "end_column": 4,
+          "start_byte": 96,
+          "end_byte": 119,
+          "snapshot_id": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb"
+        },
+        "details": [
+          "base side of contract normalize.sum.v1 r1",
+          "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)"
+        ],
+        "solver_runs": [],
+        "witness": null,
+        "witness_validation": "VALIDATED",
+        "contract": {
+          "contract_id": "normalize.sum.v1",
+          "revision": 1,
+          "semantic_digest": "sha256:70a1e413e1275863756b111776a7d7f01f27fac18f582b38b67c6e87bd0228ea",
+          "authority": "DECLARED"
+        },
+        "execution": {
+          "side": "base",
+          "backend": "docker",
+          "isolated": true,
+          "capabilities": [
+            {
+              "name": "deny_network",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "readonly_source",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "no_host_credentials",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "scratch_only_writes",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "resource_limits",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "interpreter_minor_matches_host",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            }
+          ],
+          "environment_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+          "environment": {
+            "docker_server": "29.5.2",
+            "image": "python:3.13-slim",
+            "image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+            "repo_digests": [
+              "python@sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f"
+            ],
+            "architecture": "arm64",
+            "harness_digest": "sha256:14e9788cc6282f462afbb65bc2cb0a7ddbb30c3dd1e47769da1f1057d67bbf67"
+          },
+          "interpreter": {
+            "implementation": "cpython",
+            "version": "3.13.16",
+            "version_info": [
+              3,
+              13,
+              16
+            ],
+            "platform": "linux",
+            "machine": "aarch64",
+            "executable_flags": {
+              "isolated": true,
+              "no_site": true,
+              "dont_write_bytecode": true
+            },
+            "hash_seed": "0"
+          },
+          "run_profile_digest": "sha256:51ca0f1e35bad23ff6a4f784fd60cbc3ab39eff7c1bc0746a87f8005e23b71a3",
+          "dependency_locks": [],
+          "probes": [
+            {
+              "probe": "p0000",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.5,
+                0.5
+              ]
+            },
+            {
+              "probe": "p0001",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ]
+            },
+            {
+              "probe": "p0002",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ]
+            },
+            {
+              "probe": "p0003",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ]
+            },
+            {
+              "probe": "p0004",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.5,
+                0.5
+              ]
+            },
+            {
+              "probe": "p0005",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.5,
+                0.5
+              ]
+            },
+            {
+              "probe": "p0006",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.009900990099009901,
+                0.9900990099009901
+              ]
+            },
+            {
+              "probe": "p0007",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.0,
+                1.0
+              ]
+            },
+            {
+              "probe": "p0008",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.3333333333333333,
+                0.3333333333333333,
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0009",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.3333333333333333,
+                0.3333333333333333,
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0010",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.3333333333333333,
+                0.3333333333333333,
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0011",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.009900990099009901,
+                0.9900990099009901,
+                0.0
+              ]
+            },
+            {
+              "probe": "p0012",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.004975124378109453,
+                0.0,
+                0.9950248756218906
+              ]
+            },
+            {
+              "probe": "p0013",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "39"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.26ccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3333333333333p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.02e147ae147aep+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.34ccccccccccdp+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.187ae147ae148p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "26"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.1177038691374419,
+                0.22243013219049917,
+                0.05794652019074062,
+                0.1953280618096215,
+                0.11649664996680147,
+                0.21162552061326734,
+                0.07846924609162793
+              ]
+            },
+            {
+              "probe": "p0014",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "43"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.10416666666666667,
+                0.8958333333333334
+              ]
+            },
+            {
+              "probe": "p0015",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.37851eb851eb8p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "26"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.08854258898530193,
+                0.017708517797060386,
+                0.3447848415087657,
+                0.0,
+                0.46042146272357004,
+                0.08854258898530193
+              ]
+            },
+            {
+              "probe": "p0016",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "67"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7800000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.4161490683229814,
+                0.0,
+                0.5838509316770186
+              ]
+            },
+            {
+              "probe": "p0017",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.c800000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1d9999999999ap+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a59999999999ap+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.05232862375719518,
+                0.2982731554160125,
+                0.37362637362637363,
+                0.2757718472004186
+              ]
+            },
+            {
+              "probe": "p0018",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "74"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5c00000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8970a3d70a3d7p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.3987283797618406,
+                0.0,
+                0.46877525728756936,
+                0.13249636295059
+              ]
+            },
+            {
+              "probe": "p0019",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "17"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.542d9ee04b2bcp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.f000000000000p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b3c28f5c28f5cp+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a333333333333p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.05606591083047514,
+                0.28047648435971995,
+                0.0032979947547338317,
+                0.3297994754733832,
+                0.05111891869837439,
+                0.1796417742903518,
+                0.08640746257402639,
+                0.013191979018935327
+              ]
+            },
+            {
+              "probe": "p0020",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.4c6d406a642a4p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "90"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.0,
+                0.4614303364261094,
+                0.49970381156340365,
+                0.03886585201048695
+              ]
+            },
+            {
+              "probe": "p0021",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.13851eb851eb8p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.70dbe31f28790p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.052866378290068426,
+                0.40530890022385796,
+                0.30345301138499275,
+                0.03524425219337895,
+                0.20312745790770192
+              ]
+            },
+            {
+              "probe": "p0022",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.fd70a3d70a3d7p+1"
+                    },
+                    {
+                      "t": "int",
+                      "v": "89"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.009617234083477592,
+                0.09617234083477591,
+                0.038276591652240816,
+                0.8559338334295057
+              ]
+            },
+            {
+              "probe": "p0023",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.72e7440ed3192p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.fc00000000000p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "37"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0400000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.12286030232512335,
+                0.336546047144137,
+                0.19609769676115069,
+                0.344495953769589
+              ]
+            },
+            {
+              "probe": "p0024",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "85"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8b33333333333p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "9"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.6800000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2cccccccccccdp+2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a0ccccccccccdp+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.2929014472777395,
+                0.1702274293590627,
+                0.031013094417643005,
+                0.31013094417643006,
+                0.016195727084769126,
+                0.17953135768435563
+              ]
+            },
+            {
+              "probe": "p0025",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.d645e7088e612p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.8546176320116687,
+                0.14538236798833123
+              ]
+            },
+            {
+              "probe": "p0026",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.ad3ca3e7f19b7p+3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "69"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.06e09a1ca870dp+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "85"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7b7079112f6fap+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8000000000000p+3"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.04505711326740459,
+                0.23177436901455992,
+                0.00671809765259594,
+                0.016795244131489848,
+                0.05518861620147036,
+                0.2855191502353274,
+                0.31863882358157625,
+                0.04030858591557564
+              ]
+            },
+            {
+              "probe": "p0027",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.183d70a3d70a4p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1ee41d6454093p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.4941362113664096,
+                0.5058637886335903
+              ]
+            },
+            {
+              "probe": "p0028",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.6666666666666666,
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0029",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3347ae147ae14p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.68a38264c4472p+3"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.668092109606454,
+                0.256614179299839,
+                0.07529371109370701
+              ]
+            },
+            {
+              "probe": "p0030",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.806c75d204d59p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "83"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.d800000000000p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.0,
+                0.0041822469620651235,
+                0.40193868442468744,
+                0.3471264978514052,
+                0.24675257076184226
+              ]
+            },
+            {
+              "probe": "p0031",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1666666666666p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.46b851eb851ecp+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.03145313482910463,
+                0.09121409100440342,
+                0.8563640176137555,
+                0.02096875655273642
+              ]
+            },
+            {
+              "probe": "p0032",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.128f5c28f5c29p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.c800000000000p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0fa5d2f48630fp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.6200000000000p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3800000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.02698181616271335,
+                0.17924982765438938,
+                0.009434201455494179,
+                0.015723669092490296,
+                0.21356496667000532,
+                0.27830894293707825,
+                0.03144733818498059,
+                0.24528923784284865
+              ]
+            },
+            {
+              "probe": "p0033",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.38d4eaa113a7bp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.bb33333333333p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9bb552407476cp+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.01e51b0ec6b17p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b6000aecc865ep+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.3437885726062726,
+                0.12176442865849937,
+                0.11311241935201598,
+                0.01758331099761724,
+                0.2834154379462792,
+                0.12033583043931555
+              ]
+            },
+            {
+              "probe": "p0034",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.499999999999ap+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b07ae147ae148p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.e4c2bf55ddc6cp+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.09958898609645539,
+                0.2613485722511834,
+                0.004834416800798805,
+                0.04834416800798805,
+                0.5858838568435744
+              ]
+            },
+            {
+              "probe": "p0035",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.1000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    },
+                    {
+                      "t": "int",
+                      "v": "9"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7e66666666666p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.4506295559973492,
+                0.0,
+                0.2783300198807157,
+                0.0066269052352551355,
+                0.046388336646785946,
+                0.05964214711729622,
+                0.15838303512259774
+              ]
+            },
+            {
+              "probe": "p0036",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "23"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.4eccccccccccdp+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.2155576382380506,
+                0.7844423617619494
+              ]
+            },
+            {
+              "probe": "p0037",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8e0091d4aeae1p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "35"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.0,
+                0.48184158959655293,
+                0.16949106882355747,
+                0.34866734157988966
+              ]
+            },
+            {
+              "probe": "p0038",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.159999999999ap+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ]
+            },
+            {
+              "probe": "p0039",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.8000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ]
+            },
+            {
+              "probe": "p0040",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.63f40de4843e8p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "8"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.10257432997330698,
+                0.7606598967289504,
+                0.0,
+                0.13676577329774264
+              ]
+            },
+            {
+              "probe": "p0041",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.dbe5a2f6dd6bdp+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.20d70a3d70a3dp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    },
+                    {
+                      "t": "int",
+                      "v": "46"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.1166626706288052,
+                0.28322804739529317,
+                0.0,
+                0.027455980221119683,
+                0.18042501288164364,
+                0.3922282888731383
+              ]
+            },
+            {
+              "probe": "p0042",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.19ccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.53ae147ae147bp+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.ebc5e80dce648p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.4540719177578515,
+                0.006445307562212228,
+                0.13683387954576562,
+                0.3962035875719584,
+                0.006445307562212228
+              ]
+            },
+            {
+              "probe": "p0043",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.3533333333333p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.dfff83f7d038ep+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7eccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b9d0d025a1358p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5c613e0ad52f2p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.d4ccccccccccdp+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.2353739356937226,
+                0.18269573685236137,
+                0.2914008492353073,
+                0.16816283073742155,
+                0.033149877548120266,
+                0.08921676993306692
+              ]
+            },
+            {
+              "probe": "p0044",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.1000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.f75c28f5c28f6p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.81c93e24e3ad8p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.23101510067907838,
+                0.10687845687299714,
+                0.6553118806632457,
+                0.006794561784678775
+              ]
+            },
+            {
+              "probe": "p0045",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "66"
+                    },
+                    {
+                      "t": "int",
+                      "v": "84"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.ca147ae147ae1p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5cd584ac1700ep+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.29af850e934a6p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.2291070352259779,
+                0.29159077210579004,
+                0.19876770965211354,
+                0.1513642732572674,
+                0.1291702097588513
+              ]
+            },
+            {
+              "probe": "p0046",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.519999999999ap+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.170a3d70a3d71p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2000000000000p+3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "52"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.31342840166369584,
+                0.04456327985739751,
+                0.014854426619132503,
+                0.12953060011883544,
+                0.014854426619132503,
+                0.029708853238265005,
+                0.06684491978609626,
+                0.3862150920974451
+              ]
+            },
+            {
+              "probe": "p0047",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.3333333333333p-2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0ad13d8de54a2p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "PASS",
+              "reason": "predicate holds",
+              "result": [
+                0.004477322159090926,
+                0.9955226778409091
+              ]
+            }
+          ],
+          "confirmations": {
+            "probes": [
+              {
+                "probe": "c-original",
+                "input": {
+                  "xs": {
+                    "t": "list",
+                    "v": [
+                      {
+                        "t": "float",
+                        "v": "0x1.0000000000000p+0"
+                      },
+                      {
+                        "t": "float",
+                        "v": "0x1.0000000000000p+0"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "probe": "c-minimized",
+                "input": {
+                  "xs": {
+                    "t": "list",
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": "1"
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "runs": [
+              {
+                "probe": "c-original",
+                "witness": {
+                  "xs": [
+                    1.0,
+                    1.0
+                  ]
+                },
+                "base": "PASS",
+                "candidate_run_1": "FAIL",
+                "candidate_run_2": "FAIL"
+              },
+              {
+                "probe": "c-minimized",
+                "witness": {
+                  "xs": [
+                    1
+                  ]
+                },
+                "base": "PASS",
+                "candidate_run_1": "FAIL",
+                "candidate_run_2": "FAIL"
+              }
+            ]
+          },
+          "witness_storage": "stored"
+        },
+        "evidence_id": "ev-82f404b8e531f12c1356b97fda75e4e2",
+        "run_id": "run-bf719b78a9ad4af29f043e489f74fd99",
+        "created_at": "2026-10-08T17:01:30.672574Z"
+      },
+      {
+        "schema_version": "1.0",
+        "kind": "EXECUTION",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "n/a (execution)"
+        },
+        "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "contract.behavior",
+        "obligation_id": "demo/math_ops.py::normalize::contract.behavior#931187398",
+        "result_label": "OBSERVED_REGRESSION",
+        "domain": "inputs of profile bounded_builtin_numeric_list_v1 that satisfy the contract precondition",
+        "assumptions": [
+          "executed in a fresh container per batch (deny_network=VERIFIED, readonly_source=VERIFIED, no_host_credentials=VERIFIED, scratch_only_writes=VERIFIED, resource_limits=VERIFIED, interpreter_minor_matches_host=VERIFIED)",
+          "observations are finite executions of the admitted inputs only; they do not prove the contract for other inputs",
+          "base and candidate ran the same inputs in the same prepared environment"
+        ],
+        "precision": "EXECUTED",
+        "method": "PROBE",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 6,
+          "start_column": 0,
+          "end_line": 7,
+          "end_column": 4,
+          "start_byte": 62,
+          "end_byte": 85,
+          "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+        },
+        "details": [
+          "candidate side of contract normalize.sum.v1 r1",
+          "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)"
+        ],
+        "solver_runs": [],
+        "witness": {
+          "xs": [
+            1
+          ]
+        },
+        "witness_validation": "VALIDATED",
+        "contract": {
+          "contract_id": "normalize.sum.v1",
+          "revision": 1,
+          "semantic_digest": "sha256:70a1e413e1275863756b111776a7d7f01f27fac18f582b38b67c6e87bd0228ea",
+          "authority": "DECLARED"
+        },
+        "execution": {
+          "side": "candidate",
+          "backend": "docker",
+          "isolated": true,
+          "capabilities": [
+            {
+              "name": "deny_network",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "readonly_source",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "no_host_credentials",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "scratch_only_writes",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "resource_limits",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            },
+            {
+              "name": "interpreter_minor_matches_host",
+              "required": true,
+              "status": "VERIFIED",
+              "detail": null
+            }
+          ],
+          "environment_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+          "environment": {
+            "docker_server": "29.5.2",
+            "image": "python:3.13-slim",
+            "image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+            "repo_digests": [
+              "python@sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f"
+            ],
+            "architecture": "arm64",
+            "harness_digest": "sha256:14e9788cc6282f462afbb65bc2cb0a7ddbb30c3dd1e47769da1f1057d67bbf67"
+          },
+          "interpreter": {
+            "implementation": "cpython",
+            "version": "3.13.16",
+            "version_info": [
+              3,
+              13,
+              16
+            ],
+            "platform": "linux",
+            "machine": "aarch64",
+            "executable_flags": {
+              "isolated": true,
+              "no_site": true,
+              "dont_write_bytecode": true
+            },
+            "hash_seed": "0"
+          },
+          "run_profile_digest": "sha256:51ca0f1e35bad23ff6a4f784fd60cbc3ab39eff7c1bc0746a87f8005e23b71a3",
+          "dependency_locks": [],
+          "probes": [
+            {
+              "probe": "p0000",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.3333333333333333,
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0001",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.5
+              ]
+            },
+            {
+              "probe": "p0002",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9900990099009901
+              ]
+            },
+            {
+              "probe": "p0003",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.3333333333333333
+              ]
+            },
+            {
+              "probe": "p0004",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.4975124378109453,
+                0.4975124378109453
+              ]
+            },
+            {
+              "probe": "p0005",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.25,
+                0.25
+              ]
+            },
+            {
+              "probe": "p0006",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.00980392156862745,
+                0.9803921568627451
+              ]
+            },
+            {
+              "probe": "p0007",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0,
+                0.9900990099009901
+              ]
+            },
+            {
+              "probe": "p0008",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            },
+            {
+              "probe": "p0009",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.33222591362126247,
+                0.33222591362126247,
+                0.33222591362126247
+              ]
+            },
+            {
+              "probe": "p0010",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.2,
+                0.2,
+                0.2
+              ]
+            },
+            {
+              "probe": "p0011",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.00980392156862745,
+                0.9803921568627451,
+                0.0
+              ]
+            },
+            {
+              "probe": "p0012",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0049261083743842365,
+                0.0,
+                0.9852216748768473
+              ]
+            },
+            {
+              "probe": "p0013",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "39"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.26ccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3333333333333p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.02e147ae147aep+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.34ccccccccccdp+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.187ae147ae148p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "26"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.11734970211229463,
+                0.22176084732502857,
+                0.05777216103989889,
+                0.19474032617199252,
+                0.1161461154239634,
+                0.21098874646446408,
+                0.07823313474152975
+              ]
+            },
+            {
+              "probe": "p0014",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "43"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.10204081632653061,
+                0.8775510204081632
+              ]
+            },
+            {
+              "probe": "p0015",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.37851eb851eb8p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "26"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.08700191404210893,
+                0.017400382808421787,
+                0.33878545327997217,
+                0.0,
+                0.4524099530189664,
+                0.08700191404210893
+              ]
+            },
+            {
+              "probe": "p0016",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "67"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7800000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.41358024691358025,
+                0.0,
+                0.5802469135802469
+              ]
+            },
+            {
+              "probe": "p0017",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.c800000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1d9999999999ap+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a59999999999ap+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.05205622071837584,
+                0.2967204580947423,
+                0.3716814159292035,
+                0.2743362831858407
+              ]
+            },
+            {
+              "probe": "p0018",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "74"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5c00000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8970a3d70a3d7p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.39659145720563804,
+                0.0,
+                0.4662629294174393,
+                0.13178626936063026
+              ]
+            },
+            {
+              "probe": "p0019",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "17"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.542d9ee04b2bcp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.f000000000000p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b3c28f5c28f5cp+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a333333333333p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.055881613562061394,
+                0.2795545150354708,
+                0.003287153738944788,
+                0.3287153738944788,
+                0.050950882953644215,
+                0.1790512641603226,
+                0.08612342796035344,
+                0.013148614955779151
+              ]
+            },
+            {
+              "probe": "p0020",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.4c6d406a642a4p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "90"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0,
+                0.4588824993816566,
+                0.49694464342500927,
+                0.03865125004416739
+              ]
+            },
+            {
+              "probe": "p0021",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.13851eb851eb8p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.70dbe31f28790p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.052404637723064834,
+                0.40176888921016374,
+                0.30080262053039214,
+                0.03493642514870989,
+                0.2013533211004919
+              ]
+            },
+            {
+              "probe": "p0022",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.fd70a3d70a3d7p+1"
+                    },
+                    {
+                      "t": "int",
+                      "v": "89"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.009525623928367307,
+                0.09525623928367308,
+                0.037911983234901886,
+                0.8477805296246904
+              ]
+            },
+            {
+              "probe": "p0023",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.72e7440ed3192p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.fc00000000000p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "37"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0400000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.12221258324163914,
+                0.334771777562498,
+                0.19506387039074688,
+                0.34267977230806884
+              ]
+            },
+            {
+              "probe": "p0024",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "85"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8b33333333333p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "9"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.6800000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2cccccccccccdp+2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.a0ccccccccccdp+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.2918956043956044,
+                0.16964285714285715,
+                0.030906593406593408,
+                0.3090659340659341,
+                0.016140109890109892,
+                0.17891483516483517
+              ]
+            },
+            {
+              "probe": "p0025",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.d645e7088e612p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.8304704790538192,
+                0.14127460078848403
+              ]
+            },
+            {
+              "probe": "p0026",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.ad3ca3e7f19b7p+3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "69"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.06e09a1ca870dp+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "85"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7b7079112f6fap+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8000000000000p+3"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.04490627091080822,
+                0.2309984339959691,
+                0.0066956067824918575,
+                0.016739016956229643,
+                0.055003855564992904,
+                0.28456328825590393,
+                0.3175720834474073,
+                0.04017364069495115
+              ]
+            },
+            {
+              "probe": "p0027",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.183d70a3d70a4p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1ee41d6454093p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.48726283958529865,
+                0.4988272877459802
+              ]
+            },
+            {
+              "probe": "p0028",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.5714285714285714,
+                0.2857142857142857
+              ]
+            },
+            {
+              "probe": "p0029",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3347ae147ae14p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.68a38264c4472p+3"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.6636582611290991,
+                0.25491113809968696,
+                0.07479401815992294
+              ]
+            },
+            {
+              "probe": "p0030",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "1"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.806c75d204d59p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "83"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.d800000000000p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0,
+                0.004164828620220684,
+                0.4002646786882217,
+                0.3456807754783167,
+                0.24572488859302033
+              ]
+            },
+            {
+              "probe": "p0031",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.1666666666666p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.46b851eb851ecp+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.031126789790412945,
+                0.09026769039219754,
+                0.8474787300269765,
+                0.02075119319360863
+              ]
+            },
+            {
+              "probe": "p0032",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.128f5c28f5c29p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.c800000000000p+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0fa5d2f48630fp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.6200000000000p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "10"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.3800000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.026897231529099817,
+                0.17868790176674704,
+                0.00940462640877616,
+                0.015674377347960268,
+                0.21289546709482726,
+                0.27743647905889673,
+                0.031348754695920536,
+                0.24452028662818015
+              ]
+            },
+            {
+              "probe": "p0033",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.38d4eaa113a7bp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.bb33333333333p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9bb552407476cp+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.01e51b0ec6b17p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b6000aecc865ep+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.34228395131490674,
+                0.12123151579725545,
+                0.11261737277968603,
+                0.017506356071805843,
+                0.28217504505304564,
+                0.11980916996534878
+              ]
+            },
+            {
+              "probe": "p0034",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.499999999999ap+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b07ae147ae148p+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p-1"
+                    },
+                    {
+                      "t": "int",
+                      "v": "5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.e4c2bf55ddc6cp+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0986352978146416,
+                0.2588458349446371,
+                0.004788121253137941,
+                0.04788121253137941,
+                0.5802732909499281
+              ]
+            },
+            {
+              "probe": "p0035",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.1000000000000p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    },
+                    {
+                      "t": "int",
+                      "v": "9"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7e66666666666p+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.4476629361421988,
+                0.0,
+                0.27649769585253453,
+                0.0065832784726793945,
+                0.04608294930875576,
+                0.05924950625411455,
+                0.1573403554970375
+              ]
+            },
+            {
+              "probe": "p0036",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "23"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.4eccccccccccdp+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.21355617455896006,
+                0.7771587743732591
+              ]
+            },
+            {
+              "probe": "p0037",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.8e0091d4aeae1p+6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "35"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.0,
+                0.4795194676794474,
+                0.16867424658536428,
+                0.3469870215470351
+              ]
+            },
+            {
+              "probe": "p0038",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.159999999999ap+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.9719887955182073
+              ]
+            },
+            {
+              "probe": "p0039",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.8000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.6
+              ]
+            },
+            {
+              "probe": "p0040",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.63f40de4843e8p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "8"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.10085022263752319,
+                0.747874443406192,
+                0.0,
+                0.13446696351669757
+              ]
+            },
+            {
+              "probe": "p0041",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.dbe5a2f6dd6bdp+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.20d70a3d70a3dp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x0.0p+0"
+                    },
+                    {
+                      "t": "int",
+                      "v": "7"
+                    },
+                    {
+                      "t": "int",
+                      "v": "46"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.9000000000000p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.11620687439381737,
+                0.2821214871138431,
+                0.0,
+                0.02734871084056089,
+                0.17972009980940012,
+                0.39069586915086985
+              ]
+            },
+            {
+              "probe": "p0042",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.19ccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.53ae147ae147bp+4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.ebc5e80dce648p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.4511640268438368,
+                0.006404031608855029,
+                0.13595759105599226,
+                0.3936662872736058,
+                0.006404031608855029
+              ]
+            },
+            {
+              "probe": "p0043",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.3533333333333p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.dfff83f7d038ep+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.7eccccccccccdp+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.b9d0d025a1358p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5c613e0ad52f2p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.d4ccccccccccdp+4"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.23465941164112822,
+                0.18214112787281264,
+                0.2905162444250449,
+                0.16765233926367318,
+                0.03304924454991306,
+                0.0889459348135195
+              ]
+            },
+            {
+              "probe": "p0044",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.1000000000000p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.f75c28f5c28f6p+3"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.81c93e24e3ad8p+6"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0000000000000p+0"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.22945604738823086,
+                0.1061571654534374,
+                0.6508893726060829,
+                0.006748707276124437
+              ]
+            },
+            {
+              "probe": "p0045",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": "66"
+                    },
+                    {
+                      "t": "int",
+                      "v": "84"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.ca147ae147ae1p+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.5cd584ac1700ep+5"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.29af850e934a6p+5"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.22831448288849704,
+                0.2905820691308144,
+                0.19808011045750515,
+                0.15084065726065335,
+                0.12872336991573477
+              ]
+            },
+            {
+              "probe": "p0046",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.519999999999ap+5"
+                    },
+                    {
+                      "t": "int",
+                      "v": "6"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.170a3d70a3d71p+4"
+                    },
+                    {
+                      "t": "int",
+                      "v": "2"
+                    },
+                    {
+                      "t": "int",
+                      "v": "4"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.2000000000000p+3"
+                    },
+                    {
+                      "t": "int",
+                      "v": "52"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.31111766440578004,
+                0.04423473901503982,
+                0.014744913005013271,
+                0.12857564140371575,
+                0.014744913005013271,
+                0.029489826010026542,
+                0.06635210852255972,
+                0.3833677381303451
+              ]
+            },
+            {
+              "probe": "p0047",
+              "input": {
+                "xs": {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "float",
+                      "v": "0x1.3333333333333p-2"
+                    },
+                    {
+                      "t": "float",
+                      "v": "0x1.0ad13d8de54a2p+6"
+                    }
+                  ]
+                }
+              },
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": [
+                0.004411483384714776,
+                0.9808835719995693
+              ]
+            }
+          ],
+          "confirmations": {
+            "probes": [
+              {
+                "probe": "c-original",
+                "input": {
+                  "xs": {
+                    "t": "list",
+                    "v": [
+                      {
+                        "t": "float",
+                        "v": "0x1.0000000000000p+0"
+                      },
+                      {
+                        "t": "float",
+                        "v": "0x1.0000000000000p+0"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "probe": "c-minimized",
+                "input": {
+                  "xs": {
+                    "t": "list",
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": "1"
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "runs": [
+              {
+                "probe": "c-original",
+                "witness": {
+                  "xs": [
+                    1.0,
+                    1.0
+                  ]
+                },
+                "base": "PASS",
+                "candidate_run_1": "FAIL",
+                "candidate_run_2": "FAIL"
+              },
+              {
+                "probe": "c-minimized",
+                "witness": {
+                  "xs": [
+                    1
+                  ]
+                },
+                "base": "PASS",
+                "candidate_run_1": "FAIL",
+                "candidate_run_2": "FAIL"
+              }
+            ]
+          },
+          "witness_storage": "stored"
+        },
+        "evidence_id": "ev-de88ef6a08fd82d6a462c66bb872f255",
+        "run_id": "run-bf719b78a9ad4af29f043e489f74fd99",
+        "created_at": "2026-10-08T17:01:30.672574Z"
+      }
+    ],
+    "capabilities": {
+      "solver": "configured",
+      "solver_detail": "z3 5.1.0",
+      "execution": "isolated",
+      "model": "disabled",
+      "frontends": [
+        "python (stdlib ast, grammar 3.13)"
+      ]
+    },
+    "diagnostics": [],
+    "errors": [],
+    "patch": {
+      "mode": "quick",
+      "base": {
+        "spec": "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+        "kind": "git",
+        "commit": "b40ba95fa53eb5a761ee742e93ce282658fb02eb",
+        "label": null,
+        "snapshot_id": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+        "model_available": true,
+        "files": 1,
+        "config_digest": "sha256:9bce4e59a090727688ce7dab3f4549de2a9d04a23b84676b700af5819eb207ec",
+        "dependency_locks": [],
+        "obligation_results": {
+          "PROVED_SAFE": 1,
+          "UNKNOWN": 1
+        }
+      },
+      "files": {
+        "added": [],
+        "deleted": [],
+        "modified": [
+          "demo/math_ops.py"
+        ],
+        "renamed": [],
+        "unchanged_count": 0,
+        "git_states": {
+          "demo/math_ops.py": [
+            "unstaged"
+          ]
+        }
+      },
+      "symbols": {
+        "added": [],
+        "deleted": [],
+        "modified": [
+          "demo/math_ops.py::normalize",
+          "demo/math_ops.py::ratio"
+        ],
+        "unchanged_count": 0,
+        "renamed": [],
+        "uncertain_renames": []
+      },
+      "slice": {
+        "affected_symbols": 2,
+        "base_symbols_rechecked": 2,
+        "global_change": null,
+        "widened_by_key_check": [],
+        "invalidated": [
+          {
+            "symbol_id": "demo/math_ops.py::normalize",
+            "reason": "definition changed"
+          },
+          {
+            "symbol_id": "demo/math_ops.py::ratio",
+            "reason": "definition changed"
+          }
+        ],
+        "outside_slice_symbols": 0
+      },
+      "graph": {
+        "candidate": {
+          "edges": 2,
+          "dynamic_edges": 1,
+          "references_edges": 2
+        },
+        "base": {
+          "edges": 2,
+          "dynamic_edges": 1,
+          "references_edges": 2
+        },
+        "unresolved_dynamic_edges": [
+          {
+            "symbol_id": "demo/math_ops.py::normalize",
+            "call": "sum (builtin 'sum' is not modeled)"
+          }
+        ],
+        "unresolved_dynamic_edges_total": 1,
+        "dynamic_edge_policy": "unresolved calls are modeled as arbitrary results and effects (havoc) in every analysis, so the results of their callers do not depend on the callee bodies; they are disclosed, not followed"
+      },
+      "relations": {
+        "INTRODUCED": 1,
+        "UNDETERMINED": 1
+      },
+      "cache": {
+        "enabled": true,
+        "state_dir": "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3/.guard",
+        "base": {
+          "hits": 2,
+          "misses": 0,
+          "staged": 0,
+          "uncacheable": 0,
+          "rejected": []
+        },
+        "candidate": {
+          "hits": 0,
+          "misses": 2,
+          "staged": 2,
+          "uncacheable": 0,
+          "rejected": []
+        },
+        "published_entries": 2
+      },
+      "unresolved_changes": []
+    },
+    "contracts": {
+      "execution": {
+        "requested": true,
+        "profile": "isolated-python",
+        "backend": "docker",
+        "status": "AVAILABLE",
+        "reason": "docker 29.5.2; image python:3.13-slim (sha256:3dd7cc108ec1…); all required capabilities verified from inside the boundary",
+        "isolated": true,
+        "capabilities": [
+          {
+            "name": "deny_network",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "interfaces_up": [],
+              "interfaces": [
+                "erspan0",
+                "gre0",
+                "gretap0",
+                "ip6_vti0",
+                "ip6gre0",
+                "ip6tnl0",
+                "ip_vti0",
+                "lo",
+                "sit0",
+                "tunl0"
+              ],
+              "ipv4_routes": 0,
+              "ipv6_routes_off_lo": 0,
+              "connect_test": "refused: ENETUNREACH"
+            }
+          },
+          {
+            "name": "readonly_source",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "write_attempt": {
+                "path": "/work/src/.ig-write-probe",
+                "written": false,
+                "errno": "EROFS"
+              },
+              "mount_read_only": true
+            }
+          },
+          {
+            "name": "no_host_credentials",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "env_keys": [
+                "GPG_KEY",
+                "HOME",
+                "HOSTNAME",
+                "LANG",
+                "PATH",
+                "PYTHONHASHSEED",
+                "PYTHON_SHA256",
+                "PYTHON_VERSION"
+              ],
+              "unexpected_env": [],
+              "credential_paths_present": [],
+              "uid": 65534,
+              "effective_capabilities": "0000000000000000"
+            }
+          },
+          {
+            "name": "scratch_only_writes",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "write_attempts": [
+                {
+                  "path": "/ig-write-probe",
+                  "written": false,
+                  "errno": "EROFS"
+                },
+                {
+                  "path": "/etc/ig-write-probe",
+                  "written": false,
+                  "errno": "EROFS"
+                },
+                {
+                  "path": "/usr/ig-write-probe",
+                  "written": false,
+                  "errno": "EROFS"
+                },
+                {
+                  "path": "/work/ig-write-probe",
+                  "written": false,
+                  "errno": "EROFS"
+                }
+              ],
+              "scratch_writable": true,
+              "root_read_only": true,
+              "writable_non_virtual_mounts": [],
+              "writable_tmpfs": [
+                "/dev",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/timer_list",
+                "/tmp"
+              ],
+              "container_managed_files": [
+                "/etc/hostname",
+                "/etc/hosts",
+                "/etc/resolv.conf"
+              ]
+            }
+          },
+          {
+            "name": "resource_limits",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "observed_vs_expected": {
+                "memory_bytes": [
+                  "268435456",
+                  "268435456"
+                ],
+                "pids": [
+                  "32",
+                  "32"
+                ],
+                "cpu_max": [
+                  "100000 100000",
+                  "100000 100000"
+                ],
+                "rlimit_cpu_seconds": [
+                  "10",
+                  "10"
+                ]
+              }
+            }
+          },
+          {
+            "name": "interpreter_minor_matches_host",
+            "required": true,
+            "status": "VERIFIED",
+            "detail": {
+              "verified": true,
+              "observed": [
+                3,
+                13
+              ],
+              "expected": [
+                3,
+                13
+              ]
+            }
+          }
+        ],
+        "environment": {
+          "docker_server": "29.5.2",
+          "image": "python:3.13-slim",
+          "image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+          "repo_digests": [
+            "python@sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f"
+          ],
+          "os": "linux",
+          "architecture": "arm64",
+          "harness_digest": "sha256:14e9788cc6282f462afbb65bc2cb0a7ddbb30c3dd1e47769da1f1057d67bbf67",
+          "interpreter": {
+            "implementation": "cpython",
+            "version": "3.13.16",
+            "version_info": [
+              3,
+              13,
+              16
+            ],
+            "platform": "linux",
+            "machine": "aarch64",
+            "executable_flags": {
+              "isolated": true,
+              "no_site": true,
+              "dont_write_bytecode": true
+            },
+            "hash_seed": "0"
+          }
+        },
+        "environment_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+        "run_profile": {
+          "schema_version": "1.0",
+          "profile_id": "isolated-python",
+          "allowed_targets": [
+            "demo/*.py::*"
+          ],
+          "input_templates": [
+            "bounded_builtin_finite_floats_v1",
+            "bounded_builtin_int_list_v1",
+            "bounded_builtin_ints_v1",
+            "bounded_builtin_numeric_list_v1"
+          ],
+          "interpreter": {
+            "implementation": "cpython",
+            "version": "3.13.16"
+          },
+          "environment_lock_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+          "isolation": {
+            "backend": "container",
+            "required_capabilities": [
+              "deny_network",
+              "readonly_source",
+              "no_host_credentials",
+              "scratch_only_writes",
+              "resource_limits"
+            ]
+          },
+          "network_policy": "deny",
+          "writable_paths": [
+            "/tmp (tmpfs, 16 MiB, noexec)"
+          ],
+          "limits": {
+            "cpu_seconds": 10,
+            "memory_mb": 256,
+            "wall_seconds": 120,
+            "max_processes": 32
+          },
+          "env_allowlist": [],
+          "max_sizes": {
+            "input_bytes": 1048576,
+            "output_bytes": 4194304,
+            "artifact_bytes": 4194304
+          },
+          "baseline_environment": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+          "candidate_environment": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+          "source_retention": false,
+          "witness_storage": true,
+          "allow_unisolated": false
+        },
+        "run_profile_digest": "sha256:51ca0f1e35bad23ff6a4f784fd60cbc3ab39eff7c1bc0746a87f8005e23b71a3"
+      },
+      "registry": {
+        "indexed_contracts": 1,
+        "active": 1,
+        "diagnostics": []
+      },
+      "policy": "regression of an APPROVED/DECLARED contract blocks; a change to an INFERRED contract warns; pre-existing violations warn; required checks without evidence make the run INCOMPLETE",
+      "results": [
+        {
+          "contract_id": "normalize.sum.v1",
+          "revision": 1,
+          "semantic_digest": "sha256:70a1e413e1275863756b111776a7d7f01f27fac18f582b38b67c6e87bd0228ea",
+          "scope": "demo/math_ops.py::normalize",
+          "authority": "DECLARED",
+          "input_profile": "bounded_builtin_numeric_list_v1",
+          "required": true,
+          "status": "CHECKED",
+          "property_result": "OBSERVED_REGRESSION",
+          "scope_validity": "EXECUTED",
+          "patch_relation": "INTRODUCED",
+          "severity": "ERROR",
+          "finding_id": "fnd-170d5f01159090000faea33b166bafbc",
+          "quantifier": "exists an admitted input (same witness executed in base and candidate)",
+          "reasons": [
+            "same witness: base satisfies the contract, candidate violates it (predicate does not hold); confirmed in fresh runs (base once, candidate twice)"
+          ],
+          "evidence_ids": [
+            "ev-82f404b8e531f12c1356b97fda75e4e2",
+            "ev-de88ef6a08fd82d6a462c66bb872f255"
+          ],
+          "source_span": {
+            "path": "demo/math_ops.py",
+            "start_line": 6,
+            "start_column": 0,
+            "end_line": 7,
+            "end_column": 4,
+            "start_byte": 62,
+            "end_byte": 85,
+            "snapshot_id": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba"
+          },
+          "base_replay": "available",
+          "probes": {
+            "attempted_inputs": 52,
+            "admitted": 48,
+            "excluded_by_domain": 4,
+            "seed": 123840618553639,
+            "candidate_pass": 0,
+            "candidate_fail": 48,
+            "candidate_unknown": 0,
+            "base_pass": 48,
+            "base_fail": 0,
+            "base_unknown": 0,
+            "regression": 48,
+            "pre_existing": 0,
+            "resolved": 0,
+            "pass_both": 0,
+            "pass_candidate": 0,
+            "fail_undetermined": 0,
+            "unknown": 0,
+            "shrink_rounds": 2,
+            "runner_invocations": 9
+          },
+          "excluded_examples": [
+            {
+              "input": {
+                "xs": [
+                  0.0,
+                  0.0
+                ]
+              },
+              "origin": "example",
+              "why": "precondition is false"
+            },
+            {
+              "input": {
+                "xs": [
+                  0.0
+                ]
+              },
+              "origin": "boundary",
+              "why": "precondition is false"
+            },
+            {
+              "input": {
+                "xs": [
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "origin": "boundary",
+              "why": "precondition is false"
+            }
+          ],
+          "confirmations": [
+            {
+              "probe": "c-original",
+              "witness": {
+                "xs": [
+                  1.0,
+                  1.0
+                ]
+              },
+              "base": "PASS",
+              "candidate_run_1": "FAIL",
+              "candidate_run_2": "FAIL"
+            },
+            {
+              "probe": "c-minimized",
+              "witness": {
+                "xs": [
+                  1
+                ]
+              },
+              "base": "PASS",
+              "candidate_run_1": "FAIL",
+              "candidate_run_2": "FAIL"
+            }
+          ],
+          "witness": {
+            "xs": [
+              1
+            ]
+          },
+          "original_witness": {
+            "xs": [
+              1.0,
+              1.0
+            ]
+          },
+          "observations": {
+            "base": {
+              "verdict": "PASS",
+              "kind": "returned",
+              "reason": "predicate holds",
+              "result": [
+                1.0
+              ],
+              "trace": [
+                "sum([1.0]) = 1.0",
+                "approx_eq(1.0, 1.0, atol=1e-09, rtol=1e-09) = True"
+              ]
+            },
+            "candidate": {
+              "verdict": "FAIL",
+              "kind": "returned",
+              "reason": "predicate does not hold",
+              "result": [
+                0.5
+              ],
+              "trace": [
+                "sum([0.5]) = 0.5",
+                "approx_eq(0.5, 1.0, atol=1e-09, rtol=1e-09) = False"
+              ]
+            },
+            "candidate_repeat": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

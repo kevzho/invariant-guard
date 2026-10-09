@@ -1,0 +1,30 @@
+   70.4s more-itertools 67fcf640 'fix: honour a falsey validator in bucket (#1308)' fns=1 probes=59 diffs=0 nondet=0 err=
+   31.6s more-itertools f89d7a33 'Issue 1304: make ichunked match chunked for n=0 an' fns=1 probes=59 diffs=26 nondet=0 err=
+    1.3s more-itertools 237642ea 'Use the same literal markup as the explicit-step c' fns=0 probes=None diffs=0 nondet=0 err=
+    1.2s more-itertools 031c1a62 "Document that numeric_range's default step is type" fns=0 probes=None diffs=0 nondet=0 err=
+   12.3s more-itertools ca0586d5 'Remove redundant seekable peek cache check' fns=1 probes=19 diffs=0 nondet=0 err=
+   12.6s more-itertools ed1bd2d4 'Optimize maxlen == 0' fns=2 probes=83 diffs=0 nondet=0 err=
+   28.2s more-itertools 3eb4053e 'Bound zero-cache seekable lookahead storage' fns=2 probes=81 diffs=0 nondet=0 err=
+   13.5s more-itertools 262dbb98 'fix: check maxlen with getattr instead of isinstan' fns=1 probes=18 diffs=0 nondet=0 err=
+   51.4s more-itertools 288d6da0 'Issue #1287: Less aggressive fix for issue #1284' fns=4 probes=120 diffs=0 nondet=0 err=
+   21.1s more-itertools 0c518386 'Keep the cached append within the 79-column limit' fns=2 probes=55 diffs=0 nondet=0 err=
+   56.5s more-itertools 2b8d5cdd "Issue 1284: don't let a bucket lookup invent a key" fns=4 probes=120 diffs=0 nondet=0 err=
+   25.4s more-itertools def2dabe 'Fix one()/only() dropping a falsy user-supplied ex' fns=2 probes=113 diffs=0 nondet=2 err=
+    9.4s more-itertools feaddee0 'Optimize numeric_range reverse iteration following' fns=1 probes=1 diffs=0 nondet=0 err=
+   15.9s more-itertools e426d256 'Reuse input iterators in zip_broadcast' fns=1 probes=72 diffs=0 nondet=1 err=
+   11.2s more-itertools 752799b5 'Preserve numeric_range values during reverse itera' fns=1 probes=1 diffs=0 nondet=0 err=
+   19.1s more-itertools d032cab7 'fix nonpositive item limits in constrained_batches' fns=1 probes=65 diffs=1 nondet=0 err=
+   12.4s more-itertools 6b1907de 'fix: seekable.peek/bool no longer drop items when ' fns=1 probes=18 diffs=0 nondet=0 err=
+   17.2s more-itertools 0e6dce3a 'Clarify `combination_with_replacement_index` a bit' fns=1 probes=65 diffs=0 nondet=0 err=
+   16.1s more-itertools 1b74b56d 'Fix/simplify `combination_with_replacement_index`' fns=1 probes=65 diffs=0 nondet=0 err=
+   25.6s more-itertools 1fd388bc 'Validate running window sizes through the index pr' fns=4 probes=199 diffs=0 nondet=2 err=
+   27.5s more-itertools b8e0cbb8 'Add missing word in docstring' fns=4 probes=158 diffs=0 nondet=1 err=
+   14.0s more-itertools ddd67820 'Thinner API with only random_ordered_range()' fns=2 probes=15 diffs=0 nondet=0 err=
+   18.4s more-itertools caaec943 'Add random ordered combinatoric functions' fns=1 probes=14 diffs=2 nondet=0 err=
+   16.4s more-itertools dee22c93 'Remove special case logic for cwr' fns=1 probes=14 diffs=2 nondet=0 err=
+    1.2s more-itertools b8fe9209 'Add random ordered combinatoric functions' fns=0 probes=None diffs=0 nondet=0 err=
+   33.2s more-itertools ce676d24 'Do not yield an empty list for an empty iterable w' fns=3 probes=181 diffs=3 nondet=0 err=
+   11.1s more-itertools 7847d432 "Don't mask TypeError raised while iterating in val" fns=1 probes=54 diffs=0 nondet=0 err=
+   31.9s more-itertools dc2664b4 'Issue 1247: Keep numeric_range consistent with the' fns=3 probes=0 diffs=0 nondet=0 err=
+   18.2s more-itertools 63ee5830 'Clarify output order for sortable input elements' fns=1 probes=64 diffs=0 nondet=0 err=
+   12.0s more-itertools 237388cc 'Simplify and speed up nth_permutation' fns=1 probes=63 diffs=0 nondet=0 err=

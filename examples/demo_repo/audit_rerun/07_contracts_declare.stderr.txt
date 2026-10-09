@@ -1,0 +1,1 @@
+guard: recorded declare for normalize.sum.v1

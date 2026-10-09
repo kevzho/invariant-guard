@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:snapshot:1.0",
+  "title": "Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "snapshot_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "kind": {
+      "enum": [
+        "working_tree_capture",
+        "git_revision",
+        "saved_baseline"
+      ]
+    },
+    "root_label": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/rel_path"
+          },
+          "sha256": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "size_bytes"
+        ]
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path",
+          "reason"
+        ]
+      }
+    },
+    "config_digest": {
+      "anyOf": [
+        {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "semantics_profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dependency_lock_digests": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+      }
+    },
+    "source_retained": {
+      "type": "boolean"
+    },
+    "dependency_locks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ]
+      }
+    },
+    "source_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "working_tree",
+            "git_commit",
+            "baseline"
+          ]
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "head": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "object_format": {
+          "enum": [
+            "sha1",
+            "sha256"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "git_listing": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    }
+  },
+  "required": [
+    "config_digest",
+    "dependency_lock_digests",
+    "excluded",
+    "files",
+    "kind",
+    "root_label",
+    "schema_version",
+    "scope",
+    "semantics_profile",
+    "snapshot_id",
+    "source_retained"
+  ]
+}

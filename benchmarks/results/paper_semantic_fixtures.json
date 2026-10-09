@@ -1,0 +1,1983 @@
+{
+ "schema_version": "1.0",
+ "benchmark": "semantic_fixtures",
+ "started_at": "2026-10-08T23:11:52Z",
+ "host": {
+  "recorded_at": "2026-10-08T23:11:52Z",
+  "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.13.9",
+  "python_executable": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python",
+  "cpu": "Apple M4",
+  "memory_bytes": "17179869184",
+  "model": "Mac16,12",
+  "logical_cpus": "10",
+  "os": "macOS 15.6 (24G84)",
+  "z3": "5.1.0",
+  "invariantguard": "0.5.0",
+  "engine_version": "0.5.0",
+  "semantics_profile": "python3.13-cpython-builtin-v4",
+  "git": "git version 2.52.0",
+  "docker_server": "29.5.2",
+  "runner_image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+  "ollama": "ollama version is 0.40.1",
+  "requirements_lock": "sha256:8f935293b5350f9a99803b3aabc8cae4d242844b6d0f18d44231c98581dc4b61",
+  "pip_freeze_sha256": "sha256:0fd5afa4b7428e200bfc096ab89f700b216959ef41d52161e8be435c4c232d95",
+  "pip_freeze_equals_lock": true,
+  "source_tree_sha256": "sha256:451eaf54f534b618b356f128b7aa4a248416fca13994c8875176000ad59b0430",
+  "load_average_at_start": [
+   5.89,
+   5.99,
+   5.6
+  ]
+ },
+ "manifests": {
+  "tests": {
+   "path": "tests/semantic_fixtures/manifest.json",
+   "sha256": "sha256:23910806ced2c5856572bf7a6e777dcaf6c64d51a65f17f791d80a27fd2a763c"
+  },
+  "ground_truth": {
+   "path": "benchmarks/manifests/semantic_ground_truth.json",
+   "sha256": "sha256:efbd19cbf13823e5f2c3f586cee67224af5e371bb780f6f8a26ee6f977f815b7"
+  }
+ },
+ "config": {
+  "path": "examples/python_demo/.guard/config.toml",
+  "sha256": "sha256:cbcc50fddb2449814eb2a7199c8035453ff6bcc26ab8dc50a9589f1d063b7313"
+ },
+ "definitions": "Controlled semantic fixture suite (docs/12 track 1) with and without the solver.\n\nFor every case of tests/semantic_fixtures/manifest.json the real CLI runs\n``guard check <file> --format json`` (and ``--no-solver``) in a fresh child process and the\ncase's obligation result is compared with\n\n* the manifest's *expected* result (the specification the tests check), and\n* the independent ground truth in benchmarks/manifests/semantic_ground_truth.json: a witness\n  executed in a separate ``python -I`` process (benchmarks/gt_oracle.py) for defects, a hand\n  argument corroborated by a finite grid for safe cases, and no label for indeterminate cases.\n\nPrediction: PROVED_UNSAFE / POSSIBLY_UNSAFE = flag, PROVED_SAFE = clear, UNKNOWN = abstain.\nPrecision/recall use labeled cases only; abstentions stay in the denominator.\n",
+ "cases": [
+  {
+   "case_id": "A-baseline-guarded",
+   "path": "examples/python_demo/baseline/ratio.py",
+   "symbol_id": "baseline/ratio.py::ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 247.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 199.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 49,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "division only where d = a - b != 0"
+   }
+  },
+  {
+   "case_id": "A-candidate-unguarded",
+   "path": "examples/python_demo/candidate/ratio.py",
+   "symbol_id": "candidate/ratio.py::ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 230.8,
+    "solver_ms": 1.584,
+    "reasons": [
+     "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.6,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": 1,
+     "b": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 3,
+     "file": "ratio.py",
+     "args_unchanged": {
+      "a": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "C-imported-ratio",
+   "path": "examples/python_demo/unknown/imported_ratio.py",
+   "symbol_id": "unknown/imported_ratio.py::imported_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 209.0,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from call to 'external_transform' (unresolved): result and effects unknown: 'external_transform' is imported from an unresolved module (module 'vendor_math' maps to 0 captured files (vendor_math.py, vendor_math/__init__.py))"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 198.0,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from call to 'external_transform' (unresolved): result and effects unknown: 'external_transform' is imported from an unresolved module (module 'vendor_math' maps to 0 captured files (vendor_math.py, vendor_math/__init__.py))"
+    ]
+   },
+   "ground_truth": {
+    "label": "indeterminate",
+    "confirmed_by_execution": null,
+    "note": "divisor comes from an external module that is not part of the fixture"
+   }
+  },
+  {
+   "case_id": "guarded-nonzero",
+   "path": "examples/python_demo/adversarial/guarded_nonzero.py",
+   "symbol_id": "adversarial/guarded_nonzero.py::ratio_nonzero",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 215.5,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 189.2,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 49,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "d != 0 on the only path to the division"
+   }
+  },
+  {
+   "case_id": "unreachable-bad-branch",
+   "path": "examples/python_demo/adversarial/unreachable_branch.py",
+   "symbol_id": "adversarial/unreachable_branch.py::unreachable_bad_branch",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "UNREACHABLE",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 214.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "no feasible path reaches this operation under the modeled branch facts"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "UNREACHABLE",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 192.1,
+    "solver_ms": 0.0,
+    "reasons": [
+     "no feasible path reaches this operation under the modeled branch facts"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 13,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "x > 5 and x < 3 is infeasible"
+   }
+  },
+  {
+   "case_id": "two-variable-equality",
+   "path": "examples/python_demo/adversarial/two_variable_equality.py",
+   "symbol_id": "adversarial/two_variable_equality.py::guarded_difference",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 220.9,
+    "solver_ms": 1.625,
+    "reasons": [
+     "SMT: reach(path) AND a - b == 0 is UNSAT"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 193.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 49,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "a != b implies a - b != 0 for exact ints"
+   }
+  },
+  {
+   "case_id": "unknown-call-unrelated",
+   "path": "examples/python_demo/adversarial/unknown_call_unrelated.py",
+   "symbol_id": "adversarial/unknown_call_unrelated.py::logged_inverse",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "POSSIBLY_UNSAFE",
+    "scope_validity": "OVERAPPROXIMATE",
+    "method": "SMT",
+    "witness": {
+     "a": 0
+    },
+    "witness_validated": false,
+    "expected_property_result": "POSSIBLY_UNSAFE",
+    "expected_scope_validity": "OVERAPPROXIMATE",
+    "matches_expected": true,
+    "file_verdict": "WARN",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 241.6,
+    "solver_ms": 1.635,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "SMT: SAT, but the witness could not be validated by the IR evaluator (STUCK: CALL at v1: call to 'audit_log' (builtin): result and effects unknown: builtin 'audit_log' is not modeled); query overapproximates: havoc of none"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 196.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "indeterminate",
+    "confirmed_by_execution": null,
+    "note": "audit_log is not defined in the fixture; reaching the division depends on an external definition"
+   }
+  },
+  {
+   "case_id": "annotation-only",
+   "path": "examples/python_demo/adversarial/annotation_only.py",
+   "symbol_id": "adversarial/annotation_only.py::ratio_annotated",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "SMT",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "WARN",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 228.3,
+    "solver_ms": 1.518,
+    "reasons": [
+     "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "WARN",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 190.1,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": 1,
+     "b": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 4,
+     "file": "annotation_only.py",
+     "args_unchanged": {
+      "a": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "bool-subclass-isinstance",
+   "path": "examples/python_demo/adversarial/isinstance_guard.py",
+   "symbol_id": "adversarial/isinstance_guard.py::ratio_isinstance",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 211.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it is computed by `a - b` on operands of unmodeled type, so the operator may dispatch to user-defined methods (e.g. bool or int subclasses): parameter 'a' (unannotated, no declared exact domain); parameter 'b' (unannotated, no declared exact domain)"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 222.7,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it is computed by `a - b` on operands of unmodeled type, so the operator may dispatch to user-defined methods (e.g. bool or int subclasses): parameter 'a' (unannotated, no declared exact domain); parameter 'b' (unannotated, no declared exact domain)"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": 1,
+     "b": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 4,
+     "file": "isinstance_guard.py",
+     "args_unchanged": {
+      "a": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "negative-index-m1",
+   "path": "examples/python_demo/adversarial/negative_index.py",
+   "symbol_id": "adversarial/negative_index.py::last_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 231.9,
+    "solver_ms": 2.074,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from: element value of a built-in sequence is not modeled"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 191.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from: element value of a built-in sequence is not modeled"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "xs": [
+      0
+     ]
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 3,
+     "file": "negative_index.py",
+     "args_unchanged": {
+      "xs": true
+     },
+     "arg_lengths": {
+      "xs": 1
+     }
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "widened-caller-m1",
+   "path": "examples/python_demo/adversarial/local_helper_call.py",
+   "symbol_id": "adversarial/local_helper_call.py::caller_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 214.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it is computed by `n - 1` on operands of unmodeled type, so the operator may dispatch to user-defined methods (e.g. bool or int subclasses): parameter 'n' (unannotated, no declared exact domain)"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 191.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it is computed by `n - 1` on operands of unmodeled type, so the operator may dispatch to user-defined methods (e.g. bool or int subclasses): parameter 'n' (unannotated, no declared exact domain)"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "n": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 7,
+     "file": "local_helper_call.py",
+     "args_unchanged": {
+      "n": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "exception-handler",
+   "path": "examples/python_demo/adversarial/exception_handler.py",
+   "symbol_id": "adversarial/exception_handler.py::safe_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 223.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: exception handling (try/except) is outside the supported subset"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 192.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: exception handling (try/except) is outside the supported subset"
+    ]
+   },
+   "ground_truth": {
+    "label": "excluded",
+    "confirmed_by_execution": null,
+    "note": "b == 0 reaches a zero divisor at the site but the handler catches it; whether that counts depends on the property reading (site vs escaping exception), so the case has no unambiguous label"
+   }
+  },
+  {
+   "case_id": "solver-timeout-cubes",
+   "path": "examples/python_demo/adversarial/sum_of_cubes.py",
+   "symbol_id": "adversarial/sum_of_cubes.py::cube_sum_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "SMT",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 348.9,
+    "solver_ms": 118.888,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "SMT: TIMEOUT (timeout) (per-query limit 100 ms)"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 204.2,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "x": {
+      "bigint": "8866128975287528"
+     },
+     "y": {
+      "bigint": "-8778405442862239"
+     },
+     "z": {
+      "bigint": "-2736111468807040"
+     }
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 5,
+     "file": "sum_of_cubes.py",
+     "args_unchanged": {
+      "x": true,
+      "y": true,
+      "z": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "float-nan",
+   "path": "examples/python_demo/adversarial/float_nan.py",
+   "symbol_id": "adversarial/float_nan.py::float_gap",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 215.2,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor is a computed float: float semantics (NaN, infinities, rounding) are not modeled"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 188.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor is a computed float: float semantics (NaN, infinities, rounding) are not modeled"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "x": 1.0
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "float division by zero",
+     "line": 4,
+     "file": "float_nan.py",
+     "args_unchanged": {
+      "x": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "assert-runtime-mode",
+   "path": "examples/python_demo/adversarial/assert_guard.py",
+   "symbol_id": "adversarial/assert_guard.py::checked_ratio",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "SMT",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "WARN",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 223.8,
+    "solver_ms": 2.774,
+    "reasons": [
+     "SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "a": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "WARN",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 188.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": 1,
+     "b": 0
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 4,
+     "file": "assert_guard.py",
+     "args_unchanged": {
+      "a": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I -O",
+    "observed_without_O": {
+     "kind": "raised",
+     "exception": "AssertionError",
+     "message": "",
+     "line": 3,
+     "file": "assert_guard.py",
+     "args_unchanged": {
+      "a": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    }
+   }
+  },
+  {
+   "case_id": "literal-zero",
+   "path": "examples/python_demo/adversarial/literal_zero.py",
+   "symbol_id": "adversarial/literal_zero.py::literal_offset",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {},
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 217.8,
+    "solver_ms": 0.178,
+    "reasons": [
+     "SMT: SAT; witness {} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {},
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.5,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [0, 0] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {},
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "integer division or modulo by zero",
+     "line": 3,
+     "file": "literal_zero.py",
+     "args_unchanged": {},
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "floor-semantics-safe-const",
+   "path": "examples/python_demo/adversarial/floor_semantics.py",
+   "symbol_id": "adversarial/floor_semantics.py::floor_bucket",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 222.7,
+    "solver_ms": 1.651,
+    "reasons": [
+     "divisor 2 has interval/nonzero fact [2, 2], which excludes 0"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 194.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor 2 has interval/nonzero fact [2, 2], which excludes 0"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 7,
+    "grid_failures": 0,
+    "site_line": 3,
+    "note": "constant divisor 2; the function's other site (line 5) fails at a=-1, so the grid check counts failures at line 3 only"
+   }
+  },
+  {
+   "case_id": "floor-semantics-unsafe",
+   "path": "examples/python_demo/adversarial/floor_semantics.py",
+   "symbol_id": "adversarial/floor_semantics.py::floor_bucket",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "a": -1
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 222.7,
+    "solver_ms": 1.651,
+    "reasons": [
+     "SMT: SAT; witness {'a': -1} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "a": -1
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 194.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": -1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "integer division or modulo by zero",
+     "line": 5,
+     "file": "floor_semantics.py",
+     "args_unchanged": {
+      "a": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "modulo-guard-positive",
+   "path": "examples/python_demo/adversarial/modulo_guard.py",
+   "symbol_id": "adversarial/modulo_guard.py::wrap",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 215.7,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor n has interval/nonzero fact [1, +inf], which excludes 0"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 213.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor n has interval/nonzero fact [1, +inf], which excludes 0"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 49,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "n > 0"
+   }
+  },
+  {
+   "case_id": "modulo-guard-negative",
+   "path": "examples/python_demo/adversarial/modulo_guard.py",
+   "symbol_id": "adversarial/modulo_guard.py::wrap",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 215.7,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor n - 1 has interval/nonzero fact [-inf, -1], which excludes 0"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 213.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor n - 1 has interval/nonzero fact [-inf, -1], which excludes 0"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 49,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "n <= 0 implies n - 1 <= -1"
+   }
+  },
+  {
+   "case_id": "loop-unsupported",
+   "path": "examples/python_demo/adversarial/loop_total.py",
+   "symbol_id": "adversarial/loop_total.py::mean_inverse",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 213.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from: 'total' may be rebound inside unsupported construct: for loop (loops are outside the supported subset)"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 192.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "divisor has type object: its value is not modeled; it comes from: 'total' may be rebound inside unsupported construct: for loop (loops are outside the supported subset)"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "n": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 5,
+     "file": "loop_total.py",
+     "args_unchanged": {
+      "n": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "decorated-unsupported",
+   "path": "examples/python_demo/adversarial/decorated.py",
+   "symbol_id": "adversarial/decorated.py::cached_inverse",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 217.5,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: decorated function: a decorator may replace or wrap it, so callers may not reach this body with the admitted domain"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 192.5,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: decorated function: a decorator may replace or wrap it, so callers may not reach this body with the admitted domain"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "a": 0
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 6,
+     "file": "decorated.py",
+     "args_unchanged": {
+      "a": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "method-unsupported",
+   "path": "examples/python_demo/adversarial/method_division.py",
+   "symbol_id": "adversarial/method_division.py::Scaler.scale",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 227.7,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: methods are outside the M1 subset (receiver types and dispatch not modeled)"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 195.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "unsupported: methods are outside the M1 subset (receiver types and dispatch not modeled)"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "x": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 6,
+     "file": "method_division.py",
+     "args_unchanged": {
+      "x": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "unicode-source-map",
+   "path": "examples/python_demo/adversarial/unicode_names.py",
+   "symbol_id": "adversarial/unicode_names.py::ratio_ünïcode",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "größe": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 226.2,
+    "solver_ms": 1.645,
+    "reasons": [
+     "SMT: SAT; witness {'größe': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "größe": 0,
+     "b": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [-inf, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "größe": 1,
+     "b": 1
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 5,
+     "file": "unicode_names.py",
+     "args_unchanged": {
+      "größe": true,
+      "b": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "empty-list",
+   "path": "examples/python_demo/adversarial/empty_list.py",
+   "symbol_id": "adversarial/empty_list.py::first_item",
+   "property": "index.out_of_range",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "xs": []
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 222.7,
+    "solver_ms": 1.629,
+    "reasons": [
+     "SMT: SAT; witness {'xs': []} re-validated by the IR evaluator: IndexError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "xs": []
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 219.2,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: index [0, 0] vs len [0, +inf] does not exclude IndexError",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "xs": []
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "IndexError",
+     "message": "list index out of range",
+     "line": 3,
+     "file": "empty_list.py",
+     "args_unchanged": {
+      "xs": true
+     },
+     "arg_lengths": {
+      "xs": 0
+     }
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "negative-index-guarded",
+   "path": "examples/python_demo/adversarial/guarded_index.py",
+   "symbol_id": "adversarial/guarded_index.py::last_or_zero",
+   "property": "index.out_of_range",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 211.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "index -1 in [-1, -1] lies within [-len, len) for every len(xs) in [1, +inf]"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "INTERVAL",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "PASS",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 0,
+    "file_wall_ms": 186.4,
+    "solver_ms": 0.0,
+    "reasons": [
+     "index -1 in [-1, -1] lies within [-len, len) for every len(xs) in [1, +inf]"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 7,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "bool(list) is len != 0, and -1 is valid for nonempty lists"
+   }
+  },
+  {
+   "case_id": "negative-index-annotation",
+   "path": "examples/python_demo/adversarial/negative_index.py",
+   "symbol_id": "adversarial/negative_index.py::last_ratio",
+   "property": "index.out_of_range",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "SMT",
+    "witness": {
+     "xs": []
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 231.9,
+    "solver_ms": 2.074,
+    "reasons": [
+     "SMT: SAT; witness {'xs': []} re-validated by the IR evaluator: IndexError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "CONDITIONAL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "xs": []
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "CONDITIONAL",
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 191.8,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: index [-1, -1] vs len [0, +inf] does not exclude IndexError",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "xs": []
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "IndexError",
+     "message": "list index out of range",
+     "line": 3,
+     "file": "negative_index.py",
+     "args_unchanged": {
+      "xs": true
+     },
+     "arg_lengths": {
+      "xs": 0
+     }
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "alias-mutation",
+   "path": "examples/python_demo/adversarial/alias_mutation.py",
+   "symbol_id": "adversarial/alias_mutation.py::grow_then_read",
+   "property": "index.out_of_range",
+   "solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 213.9,
+    "solver_ms": 0.0,
+    "reasons": [
+     "list xs may be mutated (through an alias or an escaped reference) by unknown effects before this index (ys.append); alias/effect tracking for lists is not modeled"
+    ]
+   },
+   "no_solver": {
+    "property_result": "UNKNOWN",
+    "scope_validity": null,
+    "method": "UNSUPPORTED",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "UNKNOWN",
+    "expected_scope_validity": null,
+    "matches_expected": true,
+    "file_verdict": "INCOMPLETE",
+    "file_run_outcome": "INCOMPLETE",
+    "file_exit": 2,
+    "file_wall_ms": 192.3,
+    "solver_ms": 0.0,
+    "reasons": [
+     "list xs may be mutated (through an alias or an escaped reference) by unknown effects before this index (ys.append); alias/effect tracking for lists is not modeled"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "exhaustive_execution",
+    "grid_size": 1,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "no parameters: the single execution returns 2"
+   }
+  },
+  {
+   "case_id": "none-flow-unguarded",
+   "path": "examples/python_demo/adversarial/none_flow.py",
+   "symbol_id": "adversarial/none_flow.py::port_bits",
+   "property": "none.attribute_access",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "code": null
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 223.5,
+    "solver_ms": 0.833,
+    "reasons": [
+     "SMT: SAT; witness {'code': None} re-validated by the IR evaluator: AttributeError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "code": null
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.6,
+    "solver_ms": 0.0,
+    "reasons": [
+     "solver disabled: interval analysis alone cannot decide this obligation",
+     "bounded concrete search; witness {'code': None} re-validated by the IR evaluator: AttributeError at this operation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "code": null
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "AttributeError",
+     "message": "'NoneType' object has no attribute 'bit_length'",
+     "line": 3,
+     "file": "none_flow.py",
+     "args_unchanged": {
+      "code": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  },
+  {
+   "case_id": "none-flow-guarded",
+   "path": "examples/python_demo/adversarial/none_flow.py",
+   "symbol_id": "adversarial/none_flow.py::safe_port_bits",
+   "property": "none.attribute_access",
+   "solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "PATH_FACT",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 223.5,
+    "solver_ms": 0.833,
+    "reasons": [
+     "receiver code was narrowed to non-None by an `is None`/`is not None` test on every path here"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_SAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "PATH_FACT",
+    "witness": null,
+    "witness_validated": false,
+    "expected_property_result": "PROVED_SAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.6,
+    "solver_ms": 0.0,
+    "reasons": [
+     "receiver code was narrowed to non-None by an `is None`/`is not None` test on every path here"
+    ]
+   },
+   "ground_truth": {
+    "label": "safe",
+    "confirmed_by_execution": true,
+    "method": "hand_label",
+    "grid_size": 5,
+    "grid_failures": 0,
+    "site_line": null,
+    "note": "is None returns early"
+   }
+  },
+  {
+   "case_id": "changed-callee-single-snapshot",
+   "path": "examples/python_demo/adversarial/summary_caller.py",
+   "symbol_id": "adversarial/summary_caller.py::scaled",
+   "property": "division.zero_denominator",
+   "solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "SMT",
+    "witness": {
+     "x": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 226.1,
+    "solver_ms": 1.619,
+    "reasons": [
+     "SMT: SAT; witness {'x': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation"
+    ]
+   },
+   "no_solver": {
+    "property_result": "PROVED_UNSAFE",
+    "scope_validity": "EXACT_MODEL",
+    "method": "WITNESS_SEARCH",
+    "witness": {
+     "x": 0
+    },
+    "witness_validated": true,
+    "expected_property_result": "PROVED_UNSAFE",
+    "expected_scope_validity": "EXACT_MODEL",
+    "matches_expected": true,
+    "file_verdict": "BLOCK",
+    "file_run_outcome": "COMPLETE",
+    "file_exit": 1,
+    "file_wall_ms": 192.2,
+    "solver_ms": 0.0,
+    "reasons": [
+     "interval analysis: divisor fact [0, +inf] includes 0",
+     "solver disabled: interval analysis alone cannot decide this obligation"
+    ]
+   },
+   "ground_truth": {
+    "label": "defect",
+    "confirmed_by_execution": true,
+    "witness": {
+     "x": 0
+    },
+    "observed": {
+     "kind": "raised",
+     "exception": "ZeroDivisionError",
+     "message": "division by zero",
+     "line": 9,
+     "file": "summary_caller.py",
+     "args_unchanged": {
+      "x": true
+     },
+     "arg_lengths": {}
+    },
+    "python_flags": "-I"
+   }
+  }
+ ],
+ "skip_cases": [
+  {
+   "case_id": "syntax-error",
+   "expected_run_outcome": "INCOMPLETE",
+   "run_outcome": "INCOMPLETE",
+   "verdict": "INCOMPLETE",
+   "exit": 2,
+   "skipped": [
+    "parse_failure"
+   ]
+  }
+ ],
+ "summary": {
+  "solver": {
+   "result_counts": {
+    "PROVED_SAFE": 9,
+    "PROVED_UNSAFE": 10,
+    "UNKNOWN": 11,
+    "POSSIBLY_UNSAFE": 1
+   },
+   "matches_expected": 31,
+   "cases": 31,
+   "confusion": {
+    "TP": 10,
+    "FN": 0,
+    "abstain_pos": 8,
+    "FP": 0,
+    "TN": 9,
+    "abstain_neg": 1,
+    "n_pos": 18,
+    "n_neg": 10,
+    "unlabeled": 3,
+    "precision": 1.0,
+    "recall_abstain_as_miss": 0.5556,
+    "recall_decided_only": 1.0,
+    "safe_proof_rate": 0.9,
+    "abstention_rate_labeled": 0.3214,
+    "abstention_rate_all_cases": 0.3548
+   }
+  },
+  "no_solver": {
+   "result_counts": {
+    "PROVED_SAFE": 8,
+    "PROVED_UNSAFE": 10,
+    "UNKNOWN": 13
+   },
+   "matches_expected": 31,
+   "cases": 31,
+   "confusion": {
+    "TP": 10,
+    "FN": 0,
+    "abstain_pos": 8,
+    "FP": 0,
+    "TN": 8,
+    "abstain_neg": 2,
+    "n_pos": 18,
+    "n_neg": 10,
+    "unlabeled": 3,
+    "precision": 1.0,
+    "recall_abstain_as_miss": 0.5556,
+    "recall_decided_only": 1.0,
+    "safe_proof_rate": 0.8,
+    "abstention_rate_labeled": 0.3571,
+    "abstention_rate_all_cases": 0.4194
+   }
+  },
+  "ground_truth": {
+   "safe:True": 10,
+   "defect:True": 18,
+   "indeterminate:None": 2,
+   "excluded:None": 1
+  },
+  "solver_changed": [
+   {
+    "case_id": "two-variable-equality",
+    "solver": "PROVED_SAFE",
+    "no_solver": "UNKNOWN"
+   },
+   {
+    "case_id": "unknown-call-unrelated",
+    "solver": "POSSIBLY_UNSAFE",
+    "no_solver": "UNKNOWN"
+   }
+  ]
+ },
+ "finished_at": "2026-10-08T23:11:52Z"
+}

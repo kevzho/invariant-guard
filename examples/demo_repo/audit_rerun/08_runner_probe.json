@@ -1,0 +1,199 @@
+{
+  "argv": [
+    "guard",
+    "runner",
+    "probe",
+    "--run-profile",
+    "isolated-python",
+    "--path",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-gzr2qkuc"
+  ],
+  "exit_code": 0,
+  "wall_ms": 1272.347,
+  "stdout": {
+    "profile": "isolated-python",
+    "backend": "docker",
+    "status": "AVAILABLE",
+    "reason": "docker 29.5.2; image python:3.13-slim (sha256:3dd7cc108ec1…); all required capabilities verified from inside the boundary",
+    "isolated": true,
+    "capabilities": [
+      {
+        "name": "deny_network",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "interfaces_up": [],
+          "interfaces": [
+            "erspan0",
+            "gre0",
+            "gretap0",
+            "ip6_vti0",
+            "ip6gre0",
+            "ip6tnl0",
+            "ip_vti0",
+            "lo",
+            "sit0",
+            "tunl0"
+          ],
+          "ipv4_routes": 0,
+          "ipv6_routes_off_lo": 0,
+          "connect_test": "refused: ENETUNREACH"
+        }
+      },
+      {
+        "name": "readonly_source",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "write_attempt": {
+            "path": "/work/src/.ig-write-probe",
+            "written": false,
+            "errno": "EROFS"
+          },
+          "mount_read_only": true
+        }
+      },
+      {
+        "name": "no_host_credentials",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "env_keys": [
+            "GPG_KEY",
+            "HOME",
+            "HOSTNAME",
+            "LANG",
+            "PATH",
+            "PYTHONHASHSEED",
+            "PYTHON_SHA256",
+            "PYTHON_VERSION"
+          ],
+          "unexpected_env": [],
+          "credential_paths_present": [],
+          "uid": 65534,
+          "effective_capabilities": "0000000000000000"
+        }
+      },
+      {
+        "name": "scratch_only_writes",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "write_attempts": [
+            {
+              "path": "/ig-write-probe",
+              "written": false,
+              "errno": "EROFS"
+            },
+            {
+              "path": "/etc/ig-write-probe",
+              "written": false,
+              "errno": "EROFS"
+            },
+            {
+              "path": "/usr/ig-write-probe",
+              "written": false,
+              "errno": "EROFS"
+            },
+            {
+              "path": "/work/ig-write-probe",
+              "written": false,
+              "errno": "EROFS"
+            }
+          ],
+          "scratch_writable": true,
+          "root_read_only": true,
+          "writable_non_virtual_mounts": [],
+          "writable_tmpfs": [
+            "/dev",
+            "/proc/interrupts",
+            "/proc/kcore",
+            "/proc/keys",
+            "/proc/timer_list",
+            "/tmp"
+          ],
+          "container_managed_files": [
+            "/etc/hostname",
+            "/etc/hosts",
+            "/etc/resolv.conf"
+          ]
+        }
+      },
+      {
+        "name": "resource_limits",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "observed_vs_expected": {
+            "memory_bytes": [
+              "268435456",
+              "268435456"
+            ],
+            "pids": [
+              "32",
+              "32"
+            ],
+            "cpu_max": [
+              "100000 100000",
+              "100000 100000"
+            ],
+            "rlimit_cpu_seconds": [
+              "10",
+              "10"
+            ]
+          }
+        }
+      },
+      {
+        "name": "interpreter_minor_matches_host",
+        "required": true,
+        "status": "VERIFIED",
+        "detail": {
+          "verified": true,
+          "observed": [
+            3,
+            13
+          ],
+          "expected": [
+            3,
+            13
+          ]
+        }
+      }
+    ],
+    "environment": {
+      "docker_server": "29.5.2",
+      "image": "python:3.13-slim",
+      "image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+      "repo_digests": [
+        "python@sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "harness_digest": "sha256:14e9788cc6282f462afbb65bc2cb0a7ddbb30c3dd1e47769da1f1057d67bbf67",
+      "interpreter": {
+        "implementation": "cpython",
+        "version": "3.13.16",
+        "version_info": [
+          3,
+          13,
+          16
+        ],
+        "platform": "linux",
+        "machine": "aarch64",
+        "executable_flags": {
+          "isolated": true,
+          "no_site": true,
+          "dont_write_bytecode": true
+        },
+        "hash_seed": "0"
+      }
+    },
+    "environment_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011"
+  }
+}

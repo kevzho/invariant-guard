@@ -1,0 +1,793 @@
+{
+  "argv": [
+    "guard",
+    "contracts",
+    "discover",
+    "--model",
+    "local",
+    "--execute",
+    "--run-profile",
+    "isolated-python",
+    "--dry-run",
+    "--path",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3"
+  ],
+  "exit_code": 0,
+  "wall_ms": 99418.663,
+  "stdout": {
+    "schema_version": "1.0",
+    "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435",
+    "mode": "templates (deterministic) + local model + dynamic falsification",
+    "authority_note": "proposals are INFERRED; approval is a separate `guard contracts approve ID --reason` command; model output is never evidence",
+    "run_outcome": "COMPLETE",
+    "incomplete_reasons": [],
+    "counts": {
+      "template": {
+        "would_propose": 1
+      },
+      "local_model": {
+        "rejected": 2,
+        "refuted": 1
+      }
+    },
+    "candidates": [
+      {
+        "contract_id": "demo.math_ops.ratio.repeatability",
+        "scope": "demo/math_ops.py::ratio",
+        "source": "template",
+        "template": "repeatability",
+        "status": "would_propose",
+        "reason": "",
+        "rejection_code": null,
+        "rationale": "ratio uses no random/time/datetime/uuid/os/secrets names and no global state statements",
+        "assumptions": [
+          "input profile bounded_builtin_ints_v1 inferred from annotations",
+          "INFERRED candidate: not approved intent",
+          "module-level mutable state reached through calls or attributes is not analyzed"
+        ],
+        "provenance": [
+          {
+            "kind": "template",
+            "reference": "repeatability:no-syntactic-nondeterminism"
+          }
+        ],
+        "input_profile": "bounded_builtin_ints_v1",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "repeatability",
+          "repeats": 3,
+          "seed": 0,
+          "comparison": "exact"
+        },
+        "examples": [],
+        "semantic_digest": "sha256:807de7523b3115b247bdd717e8910da8e66d10eee2103c806fa782e76f6bbaa2",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 1,
+          "start_column": 0,
+          "end_line": 2,
+          "end_column": 4,
+          "start_byte": 0,
+          "end_byte": 31,
+          "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+        },
+        "admissible_witness": {
+          "a": 0,
+          "b": 0
+        },
+        "nonvacuity": "falsified by synthetic behavior result=None",
+        "meaning_digest": "sha256:593562c70c496883b882f6469f785effb02c9f98594354842f79fdf48f5616d3",
+        "boundary_inputs_dropped": [],
+        "falsification": {
+          "status": "TESTED",
+          "property_result": "TESTED",
+          "scope_validity": "EXECUTED",
+          "quantifier": "for the 48 executed admitted input(s) only (finite probes; not a proof)",
+          "reasons": [
+            "48 admitted input(s) satisfied the candidate"
+          ],
+          "probes": {
+            "attempted_inputs": 48,
+            "admitted": 48,
+            "excluded_by_domain": 0,
+            "seed": 141278240193329,
+            "pass": 48,
+            "fail": 0,
+            "unknown": 0
+          },
+          "elapsed_ms": 1066.353,
+          "runner_invocations": 1
+        }
+      },
+      {
+        "contract_id": "demo.math_ops.ratio.model.042f42a36a",
+        "scope": "demo/math_ops.py::ratio",
+        "source": "local_model",
+        "template": "local_model",
+        "status": "rejected",
+        "reason": "VACUOUS_PREDICATE: no synthetic behavior (of 23 results x argument/repeat variants, on 4 admitted input(s)) violates the predicate except by a type mismatch: it cannot detect a behavior change (tautology over the bounded behavior pool)",
+        "rejection_code": "VACUOUS_PREDICATE",
+        "rationale": "the function does not modify the first argument",
+        "assumptions": [
+          "proposed by local model ollama:qwen2.5-coder:7b (sha256:dae161e27b0e...); a model proposal is not evidence",
+          "INFERRED candidate: not approved intent",
+          "model-stated uncertainty: none known"
+        ],
+        "provenance": [
+          {
+            "kind": "local_model",
+            "reference": "ollama:qwen2.5-coder:7b@sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364 ig-contract-prompt-1 packet sha256:43c570a5d0f9cea4c0800f3ed57861b8415f1f327167a2e5ef486b71afe44a66 candidate 0"
+          }
+        ],
+        "input_profile": "bounded_builtin_ints_v1",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "a"
+        },
+        "examples": [
+          {
+            "a": 0,
+            "b": 1
+          },
+          {
+            "a": 1000000,
+            "b": 999999
+          },
+          {
+            "a": -1000000,
+            "b": -999999
+          }
+        ],
+        "semantic_digest": null,
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 1,
+          "start_column": 0,
+          "end_line": 5,
+          "end_column": 18,
+          "start_byte": 0,
+          "end_byte": 141,
+          "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+        },
+        "admissible_witness": null,
+        "nonvacuity": null,
+        "meaning_digest": null,
+        "boundary_inputs_dropped": [],
+        "falsification": null
+      },
+      {
+        "contract_id": "demo.math_ops.ratio.model.924f1f6ff1",
+        "scope": "demo/math_ops.py::ratio",
+        "source": "local_model",
+        "template": "local_model",
+        "status": "rejected",
+        "reason": "VACUOUS_PREDICATE: no synthetic behavior (of 23 results x argument/repeat variants, on 4 admitted input(s)) violates the predicate except by a type mismatch: it cannot detect a behavior change (tautology over the bounded behavior pool)",
+        "rejection_code": "VACUOUS_PREDICATE",
+        "rationale": "the function does not modify the second argument",
+        "assumptions": [
+          "proposed by local model ollama:qwen2.5-coder:7b (sha256:dae161e27b0e...); a model proposal is not evidence",
+          "INFERRED candidate: not approved intent",
+          "model-stated uncertainty: none known"
+        ],
+        "provenance": [
+          {
+            "kind": "local_model",
+            "reference": "ollama:qwen2.5-coder:7b@sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364 ig-contract-prompt-1 packet sha256:43c570a5d0f9cea4c0800f3ed57861b8415f1f327167a2e5ef486b71afe44a66 candidate 1"
+          }
+        ],
+        "input_profile": "bounded_builtin_ints_v1",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "unchanged_argument",
+          "name": "b"
+        },
+        "examples": [
+          {
+            "a": 0,
+            "b": 1
+          },
+          {
+            "a": 1000000,
+            "b": 999999
+          },
+          {
+            "a": -1000000,
+            "b": -999999
+          }
+        ],
+        "semantic_digest": null,
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 1,
+          "start_column": 0,
+          "end_line": 5,
+          "end_column": 18,
+          "start_byte": 0,
+          "end_byte": 141,
+          "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+        },
+        "admissible_witness": null,
+        "nonvacuity": null,
+        "meaning_digest": null,
+        "boundary_inputs_dropped": [],
+        "falsification": null
+      },
+      {
+        "contract_id": "demo.math_ops.ratio.model.a615c5f67e",
+        "scope": "demo/math_ops.py::ratio",
+        "source": "local_model",
+        "template": "local_model",
+        "status": "refuted",
+        "reason": "counterexample on the current snapshot: counterexample {'a': 0, 'b': 0}: predicate type mismatch: left operand of approx_eq is none None, not a number",
+        "rejection_code": null,
+        "rationale": "the function returns 100 when a and b differ by 1",
+        "assumptions": [
+          "proposed by local model ollama:qwen2.5-coder:7b (sha256:dae161e27b0e...); a model proposal is not evidence",
+          "INFERRED candidate: not approved intent",
+          "model-stated uncertainty: float rounding"
+        ],
+        "provenance": [
+          {
+            "kind": "local_model",
+            "reference": "ollama:qwen2.5-coder:7b@sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364 ig-contract-prompt-1 packet sha256:43c570a5d0f9cea4c0800f3ed57861b8415f1f327167a2e5ef486b71afe44a66 candidate 2"
+          }
+        ],
+        "input_profile": "bounded_builtin_ints_v1",
+        "precondition": {
+          "kind": "literal",
+          "value": true
+        },
+        "predicate": {
+          "kind": "approx_eq",
+          "left": {
+            "kind": "result"
+          },
+          "right": {
+            "kind": "literal",
+            "value": 100
+          },
+          "atol": 1e-09,
+          "rtol": 1e-09,
+          "require_finite": true
+        },
+        "examples": [
+          {
+            "a": 1,
+            "b": 0
+          },
+          {
+            "a": -1,
+            "b": 0
+          },
+          {
+            "a": 1000000,
+            "b": 999999
+          }
+        ],
+        "semantic_digest": "sha256:9d6c6432ea533385d5af2f66926b26780798142be4068258fb653d93896aee60",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 1,
+          "start_column": 0,
+          "end_line": 5,
+          "end_column": 18,
+          "start_byte": 0,
+          "end_byte": 141,
+          "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+        },
+        "admissible_witness": {
+          "a": 1,
+          "b": 0
+        },
+        "nonvacuity": "falsified by synthetic behavior result=0",
+        "meaning_digest": "sha256:bb5d94e57fbe2917f407f37546c9619b6831c1b7c3e54e845ca93cefd5722c1d",
+        "boundary_inputs_dropped": [],
+        "falsification": {
+          "status": "REFUTED",
+          "property_result": "OBSERVED_FAILURE",
+          "scope_validity": "EXECUTED",
+          "quantifier": "exists an admitted input (executed on the current snapshot; confirmed in a fresh run)",
+          "reasons": [
+            "counterexample {'a': 0, 'b': 0}: predicate type mismatch: left operand of approx_eq is none None, not a number"
+          ],
+          "probes": {
+            "attempted_inputs": 48,
+            "admitted": 48,
+            "excluded_by_domain": 0,
+            "seed": 173088863087187,
+            "pass": 2,
+            "fail": 46,
+            "unknown": 0
+          },
+          "counterexample": {
+            "input": {
+              "a": 0,
+              "b": 0
+            },
+            "original_input": {
+              "a": -1,
+              "b": 0
+            },
+            "shrink_rounds": 1,
+            "first_observation": {
+              "verdict": "FAIL",
+              "reason": "predicate does not hold",
+              "result": -100.0
+            },
+            "confirmation": {
+              "verdict": "FAIL",
+              "reason": "predicate type mismatch: left operand of approx_eq is none None, not a number",
+              "result": null
+            }
+          },
+          "elapsed_ms": 2214.629,
+          "runner_invocations": 3
+        }
+      }
+    ],
+    "skipped": [
+      {
+        "symbol_id": "demo/math_ops.py::normalize",
+        "reason": "no single input profile could be established from annotations or doctest examples"
+      }
+    ],
+    "candidate_batch": {
+      "schema_version": "1.0",
+      "batch_id": "batch-fe63eafd48e11e463f1b70e9548173d9",
+      "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435",
+      "source": "template",
+      "model_identity": null,
+      "context_packet_digest": null,
+      "candidates": [
+        {
+          "candidate_id": "cand-d913f4ec00a073b1",
+          "scope": "demo/math_ops.py::ratio",
+          "precondition": {
+            "kind": "literal",
+            "value": true
+          },
+          "predicate": {
+            "kind": "repeatability",
+            "repeats": 3,
+            "seed": 0,
+            "comparison": "exact"
+          },
+          "input_profile": "bounded_builtin_ints_v1",
+          "source_refs": [
+            {
+              "path": "demo/math_ops.py",
+              "start_line": 1,
+              "start_column": 0,
+              "end_line": 2,
+              "end_column": 4,
+              "start_byte": 0,
+              "end_byte": 31,
+              "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+            }
+          ],
+          "rationale": "ratio uses no random/time/datetime/uuid/os/secrets names and no global state statements",
+          "uncertainty": "input profile bounded_builtin_ints_v1 inferred from annotations; INFERRED candidate: not approved intent; module-level mutable state reached through calls or attributes is not analyzed",
+          "unsupported_dependencies": [],
+          "boundary_inputs": []
+        }
+      ]
+    },
+    "model_candidate_batches": [
+      {
+        "schema_version": "1.0",
+        "batch_id": "batch-8201585090d99a461d1ef3ecf7fb5cd9",
+        "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435",
+        "source": "local_model",
+        "model_identity": {
+          "artifact_id": "ollama:qwen2.5-coder:7b",
+          "revision": "sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+          "license": "apache-2.0 (Apache License; license text sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e)",
+          "runtime": "ollama 0.35.1",
+          "quantization": "Q4_K_M"
+        },
+        "context_packet_digest": "sha256:43c570a5d0f9cea4c0800f3ed57861b8415f1f327167a2e5ef486b71afe44a66",
+        "candidates": [
+          {
+            "candidate_id": "cand-59433d75f070d89c",
+            "scope": "demo/math_ops.py::ratio",
+            "precondition": {
+              "kind": "literal",
+              "value": true
+            },
+            "predicate": {
+              "kind": "approx_eq",
+              "left": {
+                "kind": "result"
+              },
+              "right": {
+                "kind": "literal",
+                "value": 100
+              },
+              "atol": 1e-09,
+              "rtol": 1e-09,
+              "require_finite": true
+            },
+            "input_profile": "bounded_builtin_ints_v1",
+            "source_refs": [
+              {
+                "path": "demo/math_ops.py",
+                "start_line": 1,
+                "start_column": 0,
+                "end_line": 5,
+                "end_column": 18,
+                "start_byte": 0,
+                "end_byte": 141,
+                "snapshot_id": "sha256:9cd619be02ff01f63a5e07a25b67254e8752384585d1fec79d5c0bc98800a435"
+              }
+            ],
+            "rationale": "the function returns 100 when a and b differ by 1",
+            "uncertainty": "float rounding",
+            "unsupported_dependencies": [],
+            "boundary_inputs": [
+              {
+                "a": 1,
+                "b": 0
+              },
+              {
+                "a": -1,
+                "b": 0
+              },
+              {
+                "a": 1000000,
+                "b": 999999
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "model": {
+      "requested": true,
+      "status": "AVAILABLE",
+      "reason": "qwen2.5-coder:7b at http://127.0.0.1:11434 (ollama 0.35.1)",
+      "capabilities": {
+        "available": true,
+        "reason": "qwen2.5-coder:7b at http://127.0.0.1:11434 (ollama 0.35.1)",
+        "identity": {
+          "artifact_id": "ollama:qwen2.5-coder:7b",
+          "revision": "sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+          "license": "apache-2.0 (Apache License; license text sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e)",
+          "runtime": "ollama 0.35.1",
+          "quantization": "Q4_K_M",
+          "details": {
+            "family": "qwen2",
+            "parameter_size": "7.6B",
+            "format": "gguf",
+            "size_bytes": 4683087561,
+            "context_length": 32768,
+            "base_model": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B",
+            "license_link": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct/blob/main/LICENSE",
+            "license_id": "apache-2.0",
+            "license_text_sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+            "capabilities": [
+              "completion",
+              "tools",
+              "insert"
+            ],
+            "endpoint": "http://127.0.0.1:11434"
+          }
+        },
+        "structured_output": "json_schema",
+        "context_limit_tokens": 32768,
+        "operations": [
+          "propose_contracts"
+        ],
+        "endpoint": "http://127.0.0.1:11434",
+        "probe_ms": 29.414
+      },
+      "prompt_version": "ig-contract-prompt-1",
+      "system_prompt_digest": "sha256:3618decccf8bc937d68f0dd499cf1cb71a646dbdc76776e2fa5fcf6e34cfe42c",
+      "functions": [
+        {
+          "symbol_id": "demo/math_ops.py::ratio",
+          "input_profile": "bounded_builtin_ints_v1",
+          "packet_digest": "sha256:43c570a5d0f9cea4c0800f3ed57861b8415f1f327167a2e5ef486b71afe44a66",
+          "prompt_digest": "sha256:92519436d65de5d9419d6f481095746d79baf942ef6f4fef8519ab7e166b832b",
+          "context_bytes": 464,
+          "snippets": [
+            "target"
+          ],
+          "omitted": [],
+          "status": "ANSWERED",
+          "elapsed_ms": 93865.766,
+          "prompt_tokens": 1363,
+          "output_tokens": 578,
+          "done_reason": "stop",
+          "runtime_timing_ms": {
+            "total_ms": 93843.689,
+            "load_ms": 3.96,
+            "prompt_eval_ms": 3980.131,
+            "eval_ms": 89479.996
+          },
+          "request_options": {
+            "temperature": 0.0,
+            "seed": 0,
+            "num_ctx": 8192,
+            "num_predict": 1024,
+            "keep_alive": "10m",
+            "format": "json_schema",
+            "stream": false,
+            "prompt_cached_tokens": 1181
+          },
+          "response_sha256": "sha256:11aad266a60b98031aae93a631c80901faaa0765dfdba5ecf6c2037fd3e09bd4",
+          "response_rejection": null,
+          "raw_candidates": 3
+        }
+      ],
+      "model_ms": 93865.766,
+      "authority_note": "model candidates are proposals only: INFERRED at most, never approved, never evidence or proof"
+    },
+    "falsification": {
+      "requested": true,
+      "profile": "isolated-python",
+      "backend": "docker",
+      "status": "AVAILABLE",
+      "reason": "docker 29.5.2; image python:3.13-slim (sha256:3dd7cc108ec1…); all required capabilities verified from inside the boundary",
+      "isolated": true,
+      "capabilities": [
+        {
+          "name": "deny_network",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "interfaces_up": [],
+            "interfaces": [
+              "erspan0",
+              "gre0",
+              "gretap0",
+              "ip6_vti0",
+              "ip6gre0",
+              "ip6tnl0",
+              "ip_vti0",
+              "lo",
+              "sit0",
+              "tunl0"
+            ],
+            "ipv4_routes": 0,
+            "ipv6_routes_off_lo": 0,
+            "connect_test": "refused: ENETUNREACH"
+          }
+        },
+        {
+          "name": "readonly_source",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "write_attempt": {
+              "path": "/work/src/.ig-write-probe",
+              "written": false,
+              "errno": "EROFS"
+            },
+            "mount_read_only": true
+          }
+        },
+        {
+          "name": "no_host_credentials",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "env_keys": [
+              "GPG_KEY",
+              "HOME",
+              "HOSTNAME",
+              "LANG",
+              "PATH",
+              "PYTHONHASHSEED",
+              "PYTHON_SHA256",
+              "PYTHON_VERSION"
+            ],
+            "unexpected_env": [],
+            "credential_paths_present": [],
+            "uid": 65534,
+            "effective_capabilities": "0000000000000000"
+          }
+        },
+        {
+          "name": "scratch_only_writes",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "write_attempts": [
+              {
+                "path": "/ig-write-probe",
+                "written": false,
+                "errno": "EROFS"
+              },
+              {
+                "path": "/etc/ig-write-probe",
+                "written": false,
+                "errno": "EROFS"
+              },
+              {
+                "path": "/usr/ig-write-probe",
+                "written": false,
+                "errno": "EROFS"
+              },
+              {
+                "path": "/work/ig-write-probe",
+                "written": false,
+                "errno": "EROFS"
+              }
+            ],
+            "scratch_writable": true,
+            "root_read_only": true,
+            "writable_non_virtual_mounts": [],
+            "writable_tmpfs": [
+              "/dev",
+              "/proc/interrupts",
+              "/proc/kcore",
+              "/proc/keys",
+              "/proc/timer_list",
+              "/tmp"
+            ],
+            "container_managed_files": [
+              "/etc/hostname",
+              "/etc/hosts",
+              "/etc/resolv.conf"
+            ]
+          }
+        },
+        {
+          "name": "resource_limits",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "observed_vs_expected": {
+              "memory_bytes": [
+                "268435456",
+                "268435456"
+              ],
+              "pids": [
+                "32",
+                "32"
+              ],
+              "cpu_max": [
+                "100000 100000",
+                "100000 100000"
+              ],
+              "rlimit_cpu_seconds": [
+                "10",
+                "10"
+              ]
+            }
+          }
+        },
+        {
+          "name": "interpreter_minor_matches_host",
+          "required": true,
+          "status": "VERIFIED",
+          "detail": {
+            "verified": true,
+            "observed": [
+              3,
+              13
+            ],
+            "expected": [
+              3,
+              13
+            ]
+          }
+        }
+      ],
+      "environment": {
+        "docker_server": "29.5.2",
+        "image": "python:3.13-slim",
+        "image_id": "sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f",
+        "repo_digests": [
+          "python@sha256:3dd7cc108ec1493442514f5c2a871af6af0ec31d768ff6e378a93340c3b3db5f"
+        ],
+        "os": "linux",
+        "architecture": "arm64",
+        "harness_digest": "sha256:14e9788cc6282f462afbb65bc2cb0a7ddbb30c3dd1e47769da1f1057d67bbf67",
+        "interpreter": {
+          "implementation": "cpython",
+          "version": "3.13.16",
+          "version_info": [
+            3,
+            13,
+            16
+          ],
+          "platform": "linux",
+          "machine": "aarch64",
+          "executable_flags": {
+            "isolated": true,
+            "no_site": true,
+            "dont_write_bytecode": true
+          },
+          "hash_seed": "0"
+        }
+      },
+      "environment_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+      "run_profile": {
+        "schema_version": "1.0",
+        "profile_id": "isolated-python",
+        "allowed_targets": [
+          "demo/*.py::*"
+        ],
+        "input_templates": [
+          "bounded_builtin_finite_floats_v1",
+          "bounded_builtin_int_list_v1",
+          "bounded_builtin_ints_v1",
+          "bounded_builtin_numeric_list_v1"
+        ],
+        "interpreter": {
+          "implementation": "cpython",
+          "version": "3.13.16"
+        },
+        "environment_lock_digest": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+        "isolation": {
+          "backend": "container",
+          "required_capabilities": [
+            "deny_network",
+            "readonly_source",
+            "no_host_credentials",
+            "scratch_only_writes",
+            "resource_limits"
+          ]
+        },
+        "network_policy": "deny",
+        "writable_paths": [
+          "/tmp (tmpfs, 16 MiB, noexec)"
+        ],
+        "limits": {
+          "cpu_seconds": 10,
+          "memory_mb": 256,
+          "wall_seconds": 120,
+          "max_processes": 32
+        },
+        "env_allowlist": [],
+        "max_sizes": {
+          "input_bytes": 1048576,
+          "output_bytes": 4194304,
+          "artifact_bytes": 4194304
+        },
+        "baseline_environment": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+        "candidate_environment": "sha256:66056bd1a46949a29906615f09068d332caae3896fd24298c55260b2953bc011",
+        "source_retention": false,
+        "witness_storage": true,
+        "allow_unisolated": false
+      },
+      "run_profile_digest": "sha256:51ca0f1e35bad23ff6a4f784fd60cbc3ab39eff7c1bc0746a87f8005e23b71a3",
+      "note": "falsification runs every validated candidate (template or model) on the current snapshot; it is discovery evidence only",
+      "elapsed_ms": 3283.593,
+      "results": {
+        "TESTED": 1,
+        "REFUTED": 1,
+        "UNKNOWN": 0,
+        "UNSTABLE": 0,
+        "NOT_ALLOWED": 0,
+        "ENGINE_ERROR": 0
+      }
+    },
+    "timing_ms": {
+      "templates": 0.881,
+      "model": 93865.766,
+      "validation": 133.808,
+      "falsification": 3283.593,
+      "total": 99199.725
+    },
+    "log": [
+      "runner docker: docker 29.5.2; image python:3.13-slim (sha256:3dd7cc108ec1…); all required capabilities verified from inside the boundary"
+    ]
+  }
+}

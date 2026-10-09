@@ -1,0 +1,39 @@
+[
+ {
+  "finding_id": "BD-e09612061aac",
+  "kind": "behavior_change",
+  "changed_symbol": "more_itertools/more.py::random_ordered_combs_with_replacement",
+  "observed_through": {
+   "target": "more_itertools/more.py::random_ordered_combs_with_replacement",
+   "relation": "direct"
+  },
+  "property_id": "behavior.base_equivalence",
+  "property_result": "OBSERVED_DIFFERENCE",
+  "scope_validity": "EXECUTED",
+  "authority": "INFERRED",
+  "patch_relation": "CHANGED",
+  "severity": "WARNING",
+  "difference_class": "different_return",
+  "witness": {
+   "call": "random_ordered_combs_with_replacement({}, 591764)",
+   "input_origin": "stub",
+   "base": "returned <iter generator: []>",
+   "patch": "returned <iter generator: [()]>"
+  },
+  "cluster": {
+   "examples_in_cluster": 2,
+   "outcome_shape": {
+    "base": "returned",
+    "patch": "returned"
+   },
+   "input_origins": [
+    "stub"
+   ]
+  },
+  "confirmation": "reproduced in fresh containers: first pass base x2 + patch x1, confirmation base x1 + patch x2 (string-hash randomization is active: the runner passes -I, which ignores PYTHONHASHSEED)",
+  "question": "Your patch changed the behavior of random_ordered_combs_with_replacement on random_ordered_combs_with_replacement({}, 591764): base returned <iter generator: []>; patch returned <iter generator: [()]>. Was this intended?",
+  "if_intended": "say so in the patch rationale and record it: `guard behavior accept BD-e09612061aac --reason TEXT` (adds an auditable revision; the same witness then reports INFO)",
+  "if_not_intended": "fix the patch; re-run verify_patch to replay the same witness",
+  "acknowledged_by_patch_tests": false
+ }
+]

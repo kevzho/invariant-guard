@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "guard",
+    "init",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3"
+  ],
+  "exit_code": 0,
+  "wall_ms": 124.188,
+  "stdout": "# Suggested ignore rules for InvariantGuard local state (not applied automatically):\n.guard/cache/\n.guard/runs/\n.guard/artifacts/\n.guard/snapshots/\n.guard/state.sqlite*\n"
+}

@@ -1,0 +1,16 @@
+diff --git a/demo/math_ops.py b/demo/math_ops.py
+index 70d02b7..c1dd8e4 100644
+--- a/demo/math_ops.py
++++ b/demo/math_ops.py
+@@ -1,10 +1,8 @@
+ def ratio(a: int, b: int):
+     d = a - b
+-    if d == 0:
+-        return 0.0
+     return 100 / d
+ 
+ 
+ def normalize(xs):
+-    total = sum(xs)
++    total = sum(xs) + 1.0
+     return [x / total for x in xs]

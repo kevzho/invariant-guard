@@ -1,0 +1,50 @@
+{
+ "dateutil_easter_result_encoding": [
+  {
+   "kind": "returned",
+   "value": {
+    "t": "opaque",
+    "type": "datetime.date",
+    "why": "unsupported type"
+   }
+  }
+ ],
+ "dateutil_parser_import_under_trusted_harness": {
+  "status": "import_error",
+  "detail": {
+   "type": "ModuleNotFoundError",
+   "message": "No module named 'six'",
+   "frames": [
+    {
+     "path": "src/dateutil/parser/__init__.py",
+     "line": 2,
+     "function": "<module>"
+    },
+    {
+     "path": "src/dateutil/parser/_parser.py",
+     "line": 42,
+     "function": "<module>"
+    }
+   ]
+  }
+ },
+ "generator_results": [
+  {
+   "kind": "returned",
+   "value": {
+    "t": "opaque",
+    "type": "builtins.generator",
+    "why": "unsupported type"
+   }
+  },
+  {
+   "kind": "returned",
+   "value": {
+    "t": "opaque",
+    "type": "builtins.generator",
+    "why": "unsupported type"
+   }
+  }
+ ],
+ "generator_results_equal": true
+}

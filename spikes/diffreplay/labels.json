@@ -1,0 +1,706 @@
+[
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a33",
+  "symbol": "ichunked",
+  "via": "ichunked",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-44dc72769f1c",
+  "label": "INTENDED",
+  "justification": "Commit title: make ichunked match chunked for n=0. Base lazily raised islice ValueError for n=0; patch yields nothing."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a33",
+  "symbol": "ichunked",
+  "via": "ichunked",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "lazily raised ValueError",
+  "n": 4,
+  "origins": [
+   "stub",
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8644897a85bb",
+  "label": "INTENDED",
+  "justification": "Same commit covers negative n: islice's ValueError is replaced by an explicit 'n must be at least 0' ValueError."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "d032cab7",
+  "symbol": "constrained_batches",
+  "via": "constrained_batches",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "lazily raised ValueError",
+  "n": 1,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a12810d9ede8",
+  "label": "INTENDED_CONSEQUENCE",
+  "justification": "Commit 'fix nonpositive item limits': max_count<=0 is now validated before items are consumed, so the error for (oversize item, max_count=-1) changes from 'item size exceeds' to 'maximum count must be greater than zero'."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "caaec943",
+  "symbol": "random_ordered_combs_with_replacement",
+  "via": "random_ordered_combs_with_replacement",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "stub"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-e09612061aac",
+  "label": "UNINTENDED",
+  "justification": "caaec94 ('Add random ordered combinatoric functions') re-adds `if not sequence: yield ()`, so an empty pool with r>0 yields [()] although combinations_with_replacement([], r>0) yields nothing; not mentioned in the message; the function was deleted 24 minutes later (ddd6782), so no later fix exists. Probable real regression (found by a .pyi-stub Hypothesis input)."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dee22c93",
+  "symbol": "random_ordered_combs_with_replacement",
+  "via": "random_ordered_combs_with_replacement",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "stub"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-3bc5dc5ee493",
+  "label": "INTENDED",
+  "justification": "dee22c9 'Remove special case logic for cwr': removing the empty-sequence special case is exactly what changes empty-pool output from [()] to []."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "split_before",
+  "via": "split_before",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "defaults"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-9c76fd00f3a5",
+  "label": "INTENDED",
+  "justification": "Commit title: do not yield an empty list for an empty iterable when maxsplit is 0 (split_before)."
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "split_when",
+  "via": "split_when",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "defaults",
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-1b56c062070d",
+  "label": "INTENDED",
+  "justification": "Same commit, split_when."
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "SpooledBytesIO.write",
+  "via": "SpooledBytesIO.write",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 4,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-ef8032c1aa0c",
+  "label": "INTENDED",
+  "justification": "Commit 'Fix spooled stream write compatibility': write() now returns the number of bytes written (io contract)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "SpooledStringIO.write",
+  "via": "SpooledStringIO.write",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-6bfd12f3d4e4",
+  "label": "INTENDED",
+  "justification": "Same commit for SpooledStringIO.write (returns character count)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "LRI.update",
+  "via": "LRI.update",
+  "class": "removed_exception",
+  "base": "raised TypeError",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8d835f1411d7",
+  "label": "INTENDED",
+  "justification": "Changelog #478: LRI.update no longer rejects empty and keyword-only updates."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "ThresholdCounter.update",
+  "via": "ThresholdCounter.update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-261508db3163",
+  "label": "INTENDED",
+  "justification": "Changelog #476: ThresholdCounter.update no longer ignores mapping and keyword counts (receiver counts differ)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "reverse_iter_lines",
+  "via": "reverse_iter_lines",
+  "class": "different_return",
+  "base": "lazily raised UnicodeDecodeError",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-a5cf6dccb536",
+  "label": "INTENDED",
+  "justification": "Changelog #463: reverse_iter_lines honours explicit encodings (latin-1 now decodes instead of UnicodeDecodeError)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "reverse_iter_lines",
+  "via": "reverse_iter_lines",
+  "class": "different_return",
+  "base": "lazily raised UnicodeDecodeError",
+  "patch": "lazily raised LookupError",
+  "n": 5,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-fd1be8246b7c",
+  "label": "INTENDED_CONSEQUENCE",
+  "justification": "Once the encoding argument is honoured, an invalid encoding name raises LookupError instead of being ignored; direct consequence of #463, not mentioned explicitly."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "bytes2human",
+  "via": "bytes2human",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 3,
+  "origins": [
+   "defaults",
+   "doctest_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a3a969a2674d",
+  "label": "INTENDED",
+  "justification": "Changelog #459: bytes2human uses the Y suffix. Note: the function body changed only in its docstring; the behavior change comes from module-level data, so this was replayed only because of the docstring edit."
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "URL.get_authority",
+  "via": "URL.get_authority",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a6c5dacef24c",
+  "label": "INTENDED",
+  "justification": "Changelog #477: get_authority no longer drops passwords when the username is empty."
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc04",
+  "symbol": "Bits.__getitem__",
+  "via": "Bits.__getitem__",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-918260c2fd88",
+  "label": "INTENDED",
+  "justification": "Commit 'resolve negative Bits indices' (#450): negative indices now count from the end."
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc04",
+  "symbol": "Bits.__getitem__",
+  "via": "Bits.__getitem__",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised IndexError",
+  "n": 2,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-414869f24f84",
+  "label": "INTENDED",
+  "justification": "Same commit: out-of-range negative indices now raise IndexError instead of silently returning False."
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedtuple",
+  "via": "namedtuple",
+  "class": "different_exception",
+  "base": "raised IndexError",
+  "patch": "raised ValueError",
+  "n": 5,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-05607683f948",
+  "label": "INTENDED",
+  "justification": "Commit #462: empty type/field names raise ValueError instead of IndexError."
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedtuple",
+  "via": "namedtuple",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-e338c4062f95",
+  "label": "INTENDED",
+  "justification": "Same commit explicitly extends the ValueError message ('must be non-empty and ...')."
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedlist",
+  "via": "namedlist",
+  "class": "different_exception",
+  "base": "raised IndexError",
+  "patch": "raised ValueError",
+  "n": 4,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-2136ba286afe",
+  "label": "INTENDED",
+  "justification": "Commit #462 applies the same fix to namedlist."
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedlist",
+  "via": "namedlist",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-2bf805c13528",
+  "label": "INTENDED",
+  "justification": "Same message extension for namedlist."
+ },
+ {
+  "repo": "boltons",
+  "commit": "a1ea1030",
+  "symbol": "OrderedMultiDict.addlist",
+  "via": "OrderedMultiDict.addlist",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8d0d5de559c2",
+  "label": "INTENDED",
+  "justification": "Commit #458: addlist materializes one-shot iterators, so values are no longer dropped (receiver contents differ)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414",
+  "symbol": "parse_qsl",
+  "via": "parse_qsl",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 4,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-185252266114",
+  "label": "INTENDED",
+  "justification": "Commit #455: parse_qsl honours the encoding argument (latin-1 %E9 decodes to e-acute)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414",
+  "symbol": "parse_qsl",
+  "via": "parse_qsl",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised LookupError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-75b2401c9167",
+  "label": "INTENDED_CONSEQUENCE",
+  "justification": "Honouring encoding makes an invalid encoding name raise LookupError where it was previously ignored; consequence of #455, not stated."
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "args2sh",
+  "via": "args2sh",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-3f36821bd33d",
+  "label": "INTENDED",
+  "justification": "Commit #454: args2sh uses its sep argument."
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "args2cmd",
+  "via": "args2cmd",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-150c9a723ae3",
+  "label": "INTENDED",
+  "justification": "Commit #454: args2cmd uses its sep argument."
+ },
+ {
+  "repo": "boltons",
+  "commit": "c1c25da3",
+  "symbol": "Bits.__init__",
+  "via": "Bits",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-9fbe48bbe1e5",
+  "label": "INTENDED",
+  "justification": "Commit 'Fix off-by-one in Bits length check': values that do not fit now raise ValueError."
+ },
+ {
+  "repo": "boltons",
+  "commit": "3e9983db",
+  "symbol": "xfrange",
+  "via": "xfrange",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-94ca55567c87",
+  "label": "INTENDED",
+  "justification": "Commit 'unify xfrange with frange's count-based semantics': element count/direction change by design."
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c",
+  "symbol": "IndexedSet.update",
+  "via": "IndexedSet.update",
+  "class": "removed_exception",
+  "base": "raised TypeError",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-6c81243fb146",
+  "label": "INTENDED",
+  "justification": "Commit #474: IndexedSet.update flattens multiple inputs instead of adding the lists themselves (TypeError unhashable before)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c",
+  "symbol": "IndexedSet.update",
+  "via": "IndexedSet.update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-08f58fd1da91",
+  "label": "INTENDED",
+  "justification": "Same commit: tuples/iterators are flattened, receiver contents differ."
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "BarrelList._translate_index",
+  "via": "BarrelList.pop",
+  "class": "exception_message",
+  "base": "raised IndexError",
+  "patch": "raised IndexError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-a110a4508a23",
+  "label": "UNINTENDED",
+  "justification": "Cosmetic: BarrelList().pop(i) on an empty list now raises IndexError with an empty message instead of 'pop from empty list'. The commit fixes bounds handling; losing the message is not mentioned. Message-only, INFO; observed through pop as a caller of _translate_index (duplicate of cluster 31)."
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "BarrelList.pop",
+  "via": "BarrelList.pop",
+  "class": "exception_message",
+  "base": "raised IndexError",
+  "patch": "raised IndexError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-a110a4508a23",
+  "label": "UNINTENDED",
+  "justification": "Same observation as cluster 30, attributed to the directly changed BarrelList.pop."
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "IndexedSet.intersection_update",
+  "via": "IndexedSet.intersection_update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-78f0f61da817",
+  "label": "ARTIFACT",
+  "justification": "Perf-only change (single-pass rebuild). Logical set identical; base keeps tombstones in public-named internals dead_indices/item_list, patch compacts (verified on raw observations). The encoder compares non-underscore instance state."
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "IndexedSet.difference_update",
+  "via": "IndexedSet.difference_update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-ad2589f97c91",
+  "label": "ARTIFACT",
+  "justification": "Same as cluster 32 for difference_update."
+ },
+ {
+  "repo": "dateutil",
+  "commit": "5cf3e3cb",
+  "symbol": "isoparser.parse_isodate",
+  "via": "isoparser.parse_isodate",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test",
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-549cd09498d6",
+  "label": "INTENDED",
+  "justification": "Commit 'Decode input str when reporting an error in parse_isodate': message shows str instead of bytes."
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd",
+  "symbol": "isoparser._parse_isotime",
+  "via": "isoparser.isoparse",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 1,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8ee204f4d460",
+  "label": "INTENDED",
+  "justification": "Commit 'isoparse: Fail with inconsistent time separators': '01:2000' now raises."
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd",
+  "symbol": "isoparser._parse_isotime",
+  "via": "isoparser.parse_isotime",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 1,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-7a53762d9ea7",
+  "label": "INTENDED",
+  "justification": "Same commit via parse_isotime ('14:3015')."
+ },
+ {
+  "repo": "dateutil",
+  "commit": "79d2e486",
+  "symbol": "parser.parse",
+  "via": "parse",
+  "class": "different_exception",
+  "base": "raised TypeError",
+  "patch": "raised dateutil.parser._parser.ParserError",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-6f77d73f0d3b",
+  "label": "INTENDED",
+  "justification": "Commit 'Fix TypeError in parser wrapper logic': TypeError becomes ParserError."
+ }
+]

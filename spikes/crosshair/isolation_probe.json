@@ -1,0 +1,2 @@
+{"network": "denied: OSError", "write /case/base/x_probe": "denied: OSError", "write /usr/x_probe": "denied: OSError", "write /tmp": "allowed (tmpfs)", "uid": 65534, "env_keys": ["GPG_KEY", "HOME", "HOSTNAME", "LC_CTYPE", "PATH", "PYTHON_SHA256", "PYTHON_VERSION"]}
+

@@ -1,0 +1,305 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::mean_of",
+ "context_packet_digest": "sha256:edfb07a3887bdb1eef78dace60a209df64bd07823688ed4cfcee90bba5e916b8",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1000
+      }
+     }
+    ]
+   },
+   "rationale": "Mean of values in [0,1000] lies in [0,1000].",
+   "uncertainty": "float rounding at the edges",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      1000.0,
+      1000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "Mean of one element equals that element.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -2.5
+     ]
+    },
+    {
+     "xs": [
+      0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Computing a mean must not mutate the input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0,
+      2.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_finite",
+    "value": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Mean of finite bounded values is finite.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000000.0,
+      1000000.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Mean of nonnegatives is nonnegative.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": -1000000.0,
+    "upper": 0
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Mean of nonpositives is nonpositive.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 0
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Mean of zeros is zero.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0,
+      0.0
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  }
+ ]
+}

@@ -1,0 +1,992 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:common:1.0",
+  "title": "InvariantGuard shared definitions",
+  "$defs": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run-[0-9a-f]{32}$"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^plan-[0-9a-f]{32}$"
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^fnd-[0-9a-f]{32}$"
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^ev-[0-9a-f]{32}$"
+    },
+    "symbol_id": {
+      "type": "string",
+      "pattern": "^[^\\s:][^:]*::[^\\s].*$"
+    },
+    "obligation_id": {
+      "type": "string",
+      "pattern": "^[^\\s:][^:]*::.+::[a-z_.]+#[0-9]+$"
+    },
+    "property_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+    },
+    "rel_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!(.*/)?\\.\\.(/|$)).+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    },
+    "property_result": {
+      "enum": [
+        "PROVED_SAFE",
+        "PROVED_UNSAFE",
+        "POSSIBLY_UNSAFE",
+        "TESTED",
+        "OBSERVED_FAILURE",
+        "OBSERVED_REGRESSION",
+        "UNVERIFIED",
+        "UNKNOWN"
+      ]
+    },
+    "scope_validity": {
+      "enum": [
+        "EXACT_MODEL",
+        "CONDITIONAL",
+        "OVERAPPROXIMATE",
+        "BOUNDED",
+        "EXECUTED"
+      ]
+    },
+    "authority": {
+      "enum": [
+        "DECLARED",
+        "APPROVED",
+        "INFERRED",
+        "REJECTED",
+        "RETIRED"
+      ]
+    },
+    "patch_relation": {
+      "enum": [
+        "INTRODUCED",
+        "PRE_EXISTING",
+        "RESOLVED",
+        "CHANGED",
+        "UNDETERMINED"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "ERROR",
+        "WARNING",
+        "INFO"
+      ]
+    },
+    "run_outcome": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR",
+        "CANCELLED"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "WARN",
+        "BLOCK",
+        "INCOMPLETE",
+        "ERROR"
+      ]
+    },
+    "domain_source": {
+      "enum": [
+        "CONFIG_DECLARED",
+        "ANNOTATION",
+        "LITERAL_ONLY",
+        "NONE",
+        "CONTRACT_PRECONDITION"
+      ]
+    },
+    "analysis_method": {
+      "enum": [
+        "INTERVAL",
+        "UNREACHABLE",
+        "SMT",
+        "WITNESS_SEARCH",
+        "UNSUPPORTED",
+        "BUDGET",
+        "PATH_FACT",
+        "PROBE"
+      ]
+    },
+    "solver_status": {
+      "enum": [
+        "SAT",
+        "UNSAT",
+        "UNKNOWN",
+        "TIMEOUT",
+        "RESOURCE_LIMIT",
+        "UNAVAILABLE",
+        "DISABLED"
+      ]
+    },
+    "witness": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^(?!\\d)\\w+$"
+      },
+      "additionalProperties": {
+        "description": "Concrete input value: exact int/bool, None (optional parameters), a finite float (contract probes), or a list of numbers/bools (a built-in list/tuple witness).",
+        "anyOf": [
+          {
+            "type": [
+              "number",
+              "boolean",
+              "null"
+            ]
+          },
+          {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": [
+                "number",
+                "boolean"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "solver_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "solver": {
+          "const": "z3"
+        },
+        "solver_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "response": {
+          "$ref": "#/$defs/solver_status"
+        },
+        "reason_unknown": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "elapsed_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rlimit": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exact_encoding": {
+          "type": "boolean"
+        },
+        "assertions_constraint": {
+          "enum": [
+            "any",
+            "enabled"
+          ]
+        }
+      },
+      "required": [
+        "assertions_constraint",
+        "elapsed_ms",
+        "exact_encoding",
+        "query_digest",
+        "reason_unknown",
+        "response",
+        "rlimit",
+        "solver",
+        "solver_version",
+        "timeout_ms"
+      ]
+    },
+    "dsl_node": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "arg"
+            },
+            "name": {
+              "type": "string",
+              "pattern": "^(?!\\d)\\w+$"
+            }
+          },
+          "required": [
+            "kind",
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "result"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "before_arg"
+            },
+            "name": {
+              "type": "string",
+              "pattern": "^(?!\\d)\\w+$"
+            }
+          },
+          "required": [
+            "kind",
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "after_arg"
+            },
+            "name": {
+              "type": "string",
+              "pattern": "^(?!\\d)\\w+$"
+            }
+          },
+          "required": [
+            "kind",
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "literal"
+            },
+            "value": {
+              "type": [
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "eq"
+            },
+            "left": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "right": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "lt"
+            },
+            "left": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "right": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "le"
+            },
+            "left": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "right": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "gt"
+            },
+            "left": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "right": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "and"
+            },
+            "args": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "$ref": "#/$defs/dsl_node"
+              }
+            }
+          },
+          "required": [
+            "args",
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "or"
+            },
+            "args": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "$ref": "#/$defs/dsl_node"
+              }
+            }
+          },
+          "required": [
+            "args",
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "not"
+            },
+            "arg": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "arg",
+            "kind"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "len"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "sum"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "all_finite"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "approx_eq"
+            },
+            "left": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "right": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "atol": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rtol": {
+              "type": "number",
+              "minimum": 0
+            },
+            "require_finite": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "atol",
+            "kind",
+            "left",
+            "require_finite",
+            "right",
+            "rtol"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "all_between"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "lower": {
+              "type": "number"
+            },
+            "upper": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "kind",
+            "lower",
+            "upper",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "unchanged_argument"
+            },
+            "name": {
+              "type": "string",
+              "pattern": "^(?!\\d)\\w+$"
+            }
+          },
+          "required": [
+            "kind",
+            "name"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "repeatability"
+            },
+            "repeats": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 1000
+            },
+            "seed": {
+              "type": "integer"
+            },
+            "comparison": {
+              "enum": [
+                "exact",
+                "approx"
+              ]
+            }
+          },
+          "required": [
+            "comparison",
+            "kind",
+            "repeats",
+            "seed"
+          ]
+        }
+      ]
+    },
+    "result_scope_rules": {
+      "description": "Allowed scope_validity per property_result (docs/03; audit A-06). A proof is exact or conditional; bounded or overapproximate work never yields PROVED_SAFE; an overapproximate SAT is at best POSSIBLY_UNSAFE; UNKNOWN carries no scope.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "PROVED_SAFE"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "EXACT_MODEL",
+                  "CONDITIONAL"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "PROVED_UNSAFE"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "EXACT_MODEL",
+                  "CONDITIONAL",
+                  "BOUNDED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "POSSIBLY_UNSAFE"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "OVERAPPROXIMATE",
+                  "CONDITIONAL",
+                  "BOUNDED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "TESTED"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "BOUNDED",
+                  "EXECUTED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "OBSERVED_FAILURE"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "EXECUTED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "OBSERVED_REGRESSION"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "EXECUTED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "description": "How a verify finding was attributed: the same witness evaluated against the base model (docs/05, docs/07).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base_obligation_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/obligation_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "base_result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/property_result"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "match": {
+          "enum": [
+            "anchor",
+            "anchor_renamed_symbol",
+            "anchor_renamed_file",
+            "none",
+            "uncertain_rename",
+            "base_unavailable",
+            "contract_scope"
+          ]
+        },
+        "witness_in_base": {
+          "enum": [
+            "FAILED_SAME_SITE",
+            "FAILED_OTHER_SITE",
+            "PASSED",
+            "RAISED_OTHER",
+            "STUCK",
+            "SIGNATURE_CHANGED",
+            "NOT_EVALUATED"
+          ]
+        },
+        "witness_in_candidate": {
+          "enum": [
+            "FAILED_SAME_SITE",
+            "FAILED_OTHER_SITE",
+            "PASSED",
+            "RAISED_OTHER",
+            "STUCK",
+            "SIGNATURE_CHANGED",
+            "NOT_EVALUATED"
+          ]
+        },
+        "base_witness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/witness"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "base_obligation_id",
+        "base_result",
+        "match",
+        "reason",
+        "witness_in_base"
+      ]
+    },
+    "contract_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{1,96}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "semantic_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "authority": {
+          "$ref": "#/$defs/authority"
+        },
+        "proposer": {
+          "$ref": "#/$defs/proposer"
+        }
+      },
+      "required": [
+        "contract_id",
+        "revision",
+        "semantic_digest"
+      ]
+    },
+    "data_egress": {
+      "description": "Disclosure that a bounded context packet was sent to a contract proposer endpoint (remote_model provenance). The API key is never part of it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "loopback",
+            "openai_compatible",
+            "anthropic"
+          ]
+        },
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "context_left_machine": {
+          "type": "boolean"
+        },
+        "context_packet_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "context_packet_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "request_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "request_sha256": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "provider",
+        "host",
+        "model_id",
+        "context_left_machine",
+        "context_packet_digest",
+        "context_packet_bytes"
+      ]
+    },
+    "proposer_client": {
+      "description": "The proposing agent client as it reported itself (MCP clientInfo or the CLI --client flag); self-reported, not authenticated.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+    "proposer": {
+      "description": "Who proposed an INFERRED contract (only present when it was a remote model or an agent).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data_egress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/data_egress"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "client": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/proposer_client"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kinds",
+        "data_egress",
+        "client"
+      ]
+    }
+  }
+}

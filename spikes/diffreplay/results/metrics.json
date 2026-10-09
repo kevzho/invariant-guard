@@ -1,0 +1,182 @@
+{
+ "per_repo": {
+  "more-itertools": {
+   "commits": 30,
+   "commits_with_replayed_fn": 27,
+   "commits_errors": 0,
+   "changed_fns_attempted": 57,
+   "changed_fns_skipped": {
+    "deleted in patch": 4,
+    "added in patch": 9
+   },
+   "changed_fns_replayed": 44,
+   "fns_with_any_input": 41,
+   "fns_with_executable_input": 41,
+   "fns_with_direct_executable_input": 37,
+   "fns_with_differences": 6,
+   "fns_with_nondeterminism": 6,
+   "fns_with_internal_only": 8,
+   "doc_only_fns": 5,
+   "doc_only_fns_with_differences": 0,
+   "inputs_total": 1776,
+   "inputs_by_source": {
+    "test": 177,
+    "doctest": 82,
+    "shape": 1257,
+    "test_new": 4,
+    "stub": 201,
+    "defaults": 55
+   },
+   "executable_inputs": 1769,
+   "classes": {
+    "same": 1497,
+    "timeout_both": 7,
+    "different_return": 34,
+    "internal_state_only": 232,
+    "nondeterministic": 6
+   },
+   "wall_s_total": 636.3,
+   "wall_s_median_per_commit_with_fn": 18.2,
+   "probe_cpu_s_total": 137.3,
+   "t_prepare_s": 238.2,
+   "t_generate_s": 200.3,
+   "t_replay_s": 178.1,
+   "ext_encoded_observations": 2310
+  },
+  "boltons": {
+   "commits": 30,
+   "commits_with_replayed_fn": 25,
+   "commits_errors": 0,
+   "changed_fns_attempted": 49,
+   "changed_fns_skipped": {
+    "added in patch": 3
+   },
+   "changed_fns_replayed": 46,
+   "fns_with_any_input": 34,
+   "fns_with_executable_input": 34,
+   "fns_with_direct_executable_input": 29,
+   "fns_with_differences": 21,
+   "fns_with_nondeterminism": 2,
+   "fns_with_internal_only": 0,
+   "doc_only_fns": 1,
+   "doc_only_fns_with_differences": 1,
+   "inputs_total": 1175,
+   "inputs_by_source": {
+    "test": 88,
+    "shape": 938,
+    "test_new": 46,
+    "doctest": 25,
+    "defaults": 77,
+    "doctest_new": 1
+   },
+   "executable_inputs": 1175,
+   "classes": {
+    "different_return": 131,
+    "removed_exception": 31,
+    "same": 854,
+    "different_mutation": 64,
+    "internal_state_only": 1,
+    "new_exception": 11,
+    "nondeterministic": 7,
+    "different_exception": 9,
+    "exception_message": 67
+   },
+   "wall_s_total": 354.3,
+   "wall_s_median_per_commit_with_fn": 10.9,
+   "probe_cpu_s_total": 87.2,
+   "t_prepare_s": 118.4,
+   "t_generate_s": 96.8,
+   "t_replay_s": 106.2,
+   "ext_encoded_observations": 292
+  },
+  "dateutil": {
+   "commits": 30,
+   "commits_with_replayed_fn": 22,
+   "commits_errors": 0,
+   "changed_fns_attempted": 32,
+   "changed_fns_skipped": {
+    "added in patch": 4
+   },
+   "changed_fns_replayed": 28,
+   "fns_with_any_input": 15,
+   "fns_with_executable_input": 15,
+   "fns_with_direct_executable_input": 9,
+   "fns_with_differences": 3,
+   "fns_with_nondeterminism": 0,
+   "fns_with_internal_only": 0,
+   "doc_only_fns": 9,
+   "doc_only_fns_with_differences": 0,
+   "inputs_total": 1090,
+   "inputs_by_source": {
+    "test": 564,
+    "shape": 517,
+    "test_new": 2,
+    "doctest": 2,
+    "defaults": 5
+   },
+   "executable_inputs": 1090,
+   "classes": {
+    "same": 1080,
+    "exception_message": 7,
+    "new_exception": 2,
+    "different_exception": 1
+   },
+   "wall_s_total": 349.3,
+   "wall_s_median_per_commit_with_fn": 14.9,
+   "probe_cpu_s_total": 20.6,
+   "t_prepare_s": 162.7,
+   "t_generate_s": 70.0,
+   "t_replay_s": 103.8,
+   "ext_encoded_observations": 714
+  }
+ },
+ "totals": {
+  "commits": 90,
+  "commits_with_replayed_fn": 74,
+  "changed_fns_replayed": 118,
+  "fns_with_any_input": 90,
+  "fns_with_executable_input": 90,
+  "fns_with_direct_executable_input": 75,
+  "fns_with_differences": 30,
+  "fns_with_nondeterminism": 8,
+  "fns_with_internal_only": 8,
+  "doc_only_fns": 15,
+  "doc_only_fns_with_differences": 1,
+  "inputs_total": 4041,
+  "executable_inputs": 4034,
+  "wall_s_total": 1339.9,
+  "probe_cpu_s_total": 245.1,
+  "inputs_by_source": {
+   "test": 829,
+   "doctest": 109,
+   "shape": 2712,
+   "test_new": 52,
+   "stub": 201,
+   "defaults": 137,
+   "doctest_new": 1
+  },
+  "classes": {
+   "same": 3431,
+   "timeout_both": 7,
+   "different_return": 165,
+   "internal_state_only": 233,
+   "nondeterministic": 13,
+   "removed_exception": 31,
+   "different_mutation": 64,
+   "new_exception": 13,
+   "different_exception": 10,
+   "exception_message": 74
+  },
+  "executable_rate_by_source": {
+   "defaults": "137/137",
+   "doctest": "106/109",
+   "doctest_new": "1/1",
+   "shape": "2712/2712",
+   "stub": "200/201",
+   "test": "826/829",
+   "test_new": "52/52"
+  },
+  "commits_with_any_difference": 19,
+  "commits_with_executable_replay": 59
+ }
+}

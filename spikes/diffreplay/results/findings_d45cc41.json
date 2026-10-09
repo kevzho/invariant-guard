@@ -1,0 +1,77 @@
+[
+ {
+  "finding_id": "BD-185252266114",
+  "kind": "behavior_change",
+  "changed_symbol": "boltons/urlutils.py::parse_qsl",
+  "observed_through": {
+   "target": "boltons/urlutils.py::parse_qsl",
+   "relation": "direct"
+  },
+  "property_id": "behavior.base_equivalence",
+  "property_result": "OBSERVED_DIFFERENCE",
+  "scope_validity": "EXECUTED",
+  "authority": "INFERRED",
+  "patch_relation": "CHANGED",
+  "severity": "WARNING",
+  "difference_class": "different_return",
+  "witness": {
+   "call": "parse_qsl('%E9=v', encoding='latin-1')",
+   "input_origin": "test_new",
+   "base": "returned [('\ufffd', 'v')]",
+   "patch": "returned [('\u00e9', 'v')]"
+  },
+  "cluster": {
+   "examples_in_cluster": 4,
+   "outcome_shape": {
+    "base": "returned",
+    "patch": "returned"
+   },
+   "input_origins": [
+    "defaults",
+    "test_new"
+   ]
+  },
+  "confirmation": "reproduced in fresh containers: first pass base x2 + patch x1, confirmation base x1 + patch x2 (string-hash randomization is active: the runner passes -I, which ignores PYTHONHASHSEED)",
+  "question": "Your patch changed the behavior of parse_qsl on parse_qsl('%E9=v', encoding='latin-1'): base returned [('\ufffd', 'v')]; patch returned [('\u00e9', 'v')]. Was this intended?",
+  "if_intended": "say so in the patch rationale and record it: `guard behavior accept BD-185252266114 --reason TEXT` (adds an auditable revision; the same witness then reports INFO)",
+  "if_not_intended": "fix the patch; re-run verify_patch to replay the same witness",
+  "acknowledged_by_patch_tests": false
+ },
+ {
+  "finding_id": "BD-75b2401c9167",
+  "kind": "behavior_change",
+  "changed_symbol": "boltons/urlutils.py::parse_qsl",
+  "observed_through": {
+   "target": "boltons/urlutils.py::parse_qsl",
+   "relation": "direct"
+  },
+  "property_id": "behavior.base_equivalence",
+  "property_result": "OBSERVED_DIFFERENCE",
+  "scope_validity": "EXECUTED",
+  "authority": "INFERRED",
+  "patch_relation": "CHANGED",
+  "severity": "WARNING",
+  "difference_class": "new_exception",
+  "witness": {
+   "call": "parse_qsl('%EEv', encoding='n-1')",
+   "input_origin": "shape",
+   "base": "returned [('\ufffdv', None)]",
+   "patch": "raised LookupError: unknown encoding: n-1"
+  },
+  "cluster": {
+   "examples_in_cluster": 6,
+   "outcome_shape": {
+    "base": "returned",
+    "patch": "raised LookupError"
+   },
+   "input_origins": [
+    "shape"
+   ]
+  },
+  "confirmation": "reproduced in fresh containers: first pass base x2 + patch x1, confirmation base x1 + patch x2 (string-hash randomization is active: the runner passes -I, which ignores PYTHONHASHSEED)",
+  "question": "Your patch changed the behavior of parse_qsl on parse_qsl('%EEv', encoding='n-1'): base returned [('\ufffdv', None)]; patch raised LookupError: unknown encoding: n-1. Was this intended?",
+  "if_intended": "say so in the patch rationale and record it: `guard behavior accept BD-75b2401c9167 --reason TEXT` (adds an auditable revision; the same witness then reports INFO)",
+  "if_not_intended": "fix the patch; re-run verify_patch to replay the same witness",
+  "acknowledged_by_patch_tests": false
+ }
+]

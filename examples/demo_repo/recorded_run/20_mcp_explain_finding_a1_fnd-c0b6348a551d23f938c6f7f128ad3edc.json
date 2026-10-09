@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "tool": "explain_finding",
+  "status": "OK",
+  "repository": "demo",
+  "finding_id": "fnd-c0b6348a551d23f938c6f7f128ad3edc",
+  "run": {
+    "run_id": "run-a6e924ebdc994d5baa6798f92f53b55c",
+    "command": "verify",
+    "verdict": "BLOCK",
+    "run_outcome": "INCOMPLETE",
+    "base_snapshot": "sha256:3442a743ce0d55388453aca4ca7ba0f7157ff2d4f642ebeb8631b22fc746ffdb",
+    "candidate_snapshot": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+    "report_digest": "sha256:6e3fb0dd4300f98ee34c33833e02772d513c5a328761552275d149f2ae6fe45b",
+    "scope": ".",
+    "source": "state_index",
+    "recorded_at": "2026-10-08T17:01:43.047016Z",
+    "policy_id": "default-v1"
+  },
+  "freshness": {
+    "evidence_status": "CURRENT",
+    "evidence_snapshot": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+    "current_snapshot": "sha256:05008e6f95c65cd1cfab0c4ccb1e39758e9e31b6643eb7b63bdd9d4659b330ba",
+    "superseded_by_run": null
+  },
+  "explanation": {
+    "summary": "`100 / d` raises ZeroDivisionError for admitted input {'a': 0, 'b': 0}: divisor `d` is 0",
+    "location": "demo/math_ops.py:3:12",
+    "symbol_id": "demo/math_ops.py::ratio",
+    "property_id": "division.zero_denominator",
+    "result": {
+      "value": "PROVED_UNSAFE",
+      "meaning": "a failure is proved to exist within the modeled semantics, the stated domain and assumptions (an existential claim over admitted inputs)"
+    },
+    "scope_validity": {
+      "value": "EXACT_MODEL",
+      "meaning": "exact with respect to the modeled semantics of the declared domain"
+    },
+    "patch_relation": {
+      "value": "INTRODUCED",
+      "meaning": "the base does not have this failure on the same witness: the patch introduced it",
+      "comparison": {
+        "base_obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "base_result": "PROVED_SAFE",
+        "match": "anchor",
+        "reason": "the same witness {'a': 0, 'b': 0} runs without this failure in the base",
+        "witness_in_base": "PASSED"
+      }
+    },
+    "severity": "ERROR",
+    "authority": "DECLARED",
+    "quantifier": "exists admitted function input",
+    "domain": "a, b: exact Python built-in integers",
+    "domain_source": "CONFIG_DECLARED",
+    "assumptions": [
+      "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+    ],
+    "path_constraints": [
+      "d == a - b",
+      "d == 0"
+    ],
+    "witness": {
+      "a": 0,
+      "b": 0
+    },
+    "witness_validated": true,
+    "observations": null,
+    "contract": null,
+    "evidence": [
+      {
+        "evidence_id": "ev-20d407470ce1a79b25c3b2e48d6548a5",
+        "kind": "SOLVER"
+      }
+    ],
+    "what_this_does_not_show": [
+      "this is a function-input claim (exists admitted function input); it does not establish that any production caller reaches this input",
+      "other properties and runtime errors outside division.zero_denominator are not covered by this finding"
+    ],
+    "what_would_resolve_it": "change the code so that division.zero_denominator holds for the witness input {'a': 0, 'b': 0} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents",
+    "explainer": "deterministic template over the stored evidence (no model; the local model's explain_finding operation is not implemented)"
+  },
+  "text": "demo/math_ops.py:3:12  demo/math_ops.py::ratio  [division.zero_denominator]\n`100 / d` raises ZeroDivisionError for admitted input {'a': 0, 'b': 0}: divisor `d` is 0\n\nresult: PROVED_UNSAFE: a failure is proved to exist within the modeled semantics, the stated domain and assumptions (an existential claim over admitted inputs)\nscope: EXACT_MODEL: exact with respect to the modeled semantics of the declared domain\npatch relation: INTRODUCED: the base does not have this failure on the same witness: the patch introduced it\nseverity ERROR, authority DECLARED\nquantifier: exists admitted function input\ndomain (CONFIG_DECLARED): a, b: exact Python built-in integers\nassumes: domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs\npath: d == a - b AND d == 0\nwitness: {\"a\": 0, \"b\": 0}\ndoes not show:\n  - this is a function-input claim (exists admitted function input); it does not establish that any production caller reaches this input\n  - other properties and runtime errors outside division.zero_denominator are not covered by this finding\nto resolve: change the code so that division.zero_denominator holds for the witness input {'a': 0, 'b': 0} and every other admitted input, then call verify_patch again: the finding should disappear or be reported RESOLVED against the base. Changing the contract, domain or baseline instead is a maintainer decision and is not available to agents",
+  "service_ms": 79.258
+}

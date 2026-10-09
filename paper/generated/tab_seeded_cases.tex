@@ -1,0 +1,48 @@
+\begin{table*}[h!]
+\centering
+\small
+
+\caption{Seeded baseline/patch pairs, one row per case (labels frozen before any tool run; ``?'' = execution did not confirm the label). Predictions: F = flagged (an INTRODUCED/CHANGED failure finding), C = clear, A = abstained (required coverage missing); the verdict follows the slash. \emph{execute} adds dynamic contract checks in the Docker runner (cases with contracts only).}
+\label{tab:seeded-cases}
+\begin{tabular}{lllllll}
+\toprule
+ID & class & label & quick & no-solver & full & execute \\
+\midrule
+S01 & div. guard removed & defect & F/BLOCK & F & F/BLOCK & -- \\
+S02 & div. expression changed & defect & F/BLOCK & F & F/BLOCK & -- \\
+S03 & div. guard weakened & defect & F/BLOCK & F & F/BLOCK & -- \\
+S04 & div. guard weakened & defect & F/WARN & F & F/WARN & -- \\
+S05 & div. guard reordered & defect & F/BLOCK & F & F/BLOCK & -- \\
+S06 & changed callee & defect & F/BLOCK & F & F/BLOCK & -- \\
+S07 & changed callee & defect & F/WARN & F & F/WARN & -- \\
+S08 & changed constant & defect & F/BLOCK & F & F/BLOCK & -- \\
+S09 & index guard removed & defect & F/BLOCK & F & F/BLOCK & -- \\
+S10 & index off by one & defect & F/BLOCK & F & F/BLOCK & -- \\
+S11 & index off by one & defect & F/BLOCK & F & F/BLOCK & -- \\
+S12 & None guard removed & defect & F/BLOCK & F & F/BLOCK & -- \\
+S13 & None from callee & defect & F/BLOCK & F & F/BLOCK & -- \\
+D01 & contract: normalization & defect & A/INCOMPLETE & A & A/INCOMPLETE & F/BLOCK \\
+D02 & contract: purity & defect & C/PASS & C & C/PASS & F/BLOCK \\
+D03 & contract: length & defect & C/PASS & C & C/PASS & F/BLOCK \\
+D04 & contract: range & defect & C/PASS & C & C/PASS & F/BLOCK \\
+D05 & contract + static div. & defect & A/INCOMPLETE & A & A/INCOMPLETE & F/BLOCK \\
+I01 & intentional, revised & none & A/INCOMPLETE & A & A/INCOMPLETE & A/INCOMPLETE \\
+I02 & intentional, inferred & intent. & C/PASS & C & C/PASS & F/WARN \\
+I03 & intentional, static & none & C/PASS & C & C/PASS & -- \\
+I04 & intentional, unrevised & intent. & A/INCOMPLETE & A & A/INCOMPLETE & F/BLOCK \\
+N01 & safe refactor & none & C/PASS & C & C/PASS & -- \\
+N02 & safe refactor & none & C/PASS & C & C/PASS & -- \\
+N03 & safe refactor & none & C/PASS & C & C/PASS & -- \\
+N04 & safe refactor & none & C/PASS & C & C/PASS & -- \\
+N05 & safe refactor & none & C/PASS & C & C/PASS & -- \\
+N06 & safe refactor (contract) & none & A/INCOMPLETE & A & A/INCOMPLETE & A/INCOMPLETE \\
+N07 & safe refactor (contract) & none & C/PASS & C & C/PASS & C/PASS \\
+U01 & unsupported: loop & defect & A/INCOMPLETE & A & A/INCOMPLETE & -- \\
+U02 & unsupported: nested def & defect & C/PASS & C & A/INCOMPLETE & -- \\
+U03 & unsupported: loop & none & A/INCOMPLETE & A & A/INCOMPLETE & -- \\
+U04 & unsupported: ext. call & defect & A/INCOMPLETE & A & A/INCOMPLETE & -- \\
+P01 & pre-existing (static) & none & A/INCOMPLETE & A & A/INCOMPLETE & -- \\
+P02 & pre-existing (contract) & none & A/INCOMPLETE & A & A/INCOMPLETE & A/INCOMPLETE \\
+\bottomrule
+\end{tabular}
+\end{table*}

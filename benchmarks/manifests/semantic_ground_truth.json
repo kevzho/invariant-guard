@@ -1,0 +1,1376 @@
+{
+ "schema_version": "1.0",
+ "benchmark": "semantic_fixture_ground_truth",
+ "description": "Independent ground truth for tests/semantic_fixtures/manifest.json cases: whether some admitted input reaches the bad state of the case's property. 'defect' labels are confirmed by executing the witness in a separate python -I process (benchmarks/gt_oracle.py); 'safe' labels are hand arguments, corroborated (not proved) by executing the finite grid; 'indeterminate'/'excluded' cases have no label and are reported but kept out of precision/recall. These fixtures were written during development and used as regression tests, so they are not held out. A safe label with site_line counts only failures raised at that line (functions with several sites).",
+ "written_at": "2026-10-08T17:45:26Z",
+ "cases": {
+  "A-baseline-guarded": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "division only where d = a - b != 0",
+   "grid_inputs": [
+    {
+     "a": -3,
+     "b": -3
+    },
+    {
+     "a": -3,
+     "b": -2
+    },
+    {
+     "a": -3,
+     "b": -1
+    },
+    {
+     "a": -3,
+     "b": 0
+    },
+    {
+     "a": -3,
+     "b": 1
+    },
+    {
+     "a": -3,
+     "b": 2
+    },
+    {
+     "a": -3,
+     "b": 3
+    },
+    {
+     "a": -2,
+     "b": -3
+    },
+    {
+     "a": -2,
+     "b": -2
+    },
+    {
+     "a": -2,
+     "b": -1
+    },
+    {
+     "a": -2,
+     "b": 0
+    },
+    {
+     "a": -2,
+     "b": 1
+    },
+    {
+     "a": -2,
+     "b": 2
+    },
+    {
+     "a": -2,
+     "b": 3
+    },
+    {
+     "a": -1,
+     "b": -3
+    },
+    {
+     "a": -1,
+     "b": -2
+    },
+    {
+     "a": -1,
+     "b": -1
+    },
+    {
+     "a": -1,
+     "b": 0
+    },
+    {
+     "a": -1,
+     "b": 1
+    },
+    {
+     "a": -1,
+     "b": 2
+    },
+    {
+     "a": -1,
+     "b": 3
+    },
+    {
+     "a": 0,
+     "b": -3
+    },
+    {
+     "a": 0,
+     "b": -2
+    },
+    {
+     "a": 0,
+     "b": -1
+    },
+    {
+     "a": 0,
+     "b": 0
+    },
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": 0,
+     "b": 2
+    },
+    {
+     "a": 0,
+     "b": 3
+    },
+    {
+     "a": 1,
+     "b": -3
+    },
+    {
+     "a": 1,
+     "b": -2
+    },
+    {
+     "a": 1,
+     "b": -1
+    },
+    {
+     "a": 1,
+     "b": 0
+    },
+    {
+     "a": 1,
+     "b": 1
+    },
+    {
+     "a": 1,
+     "b": 2
+    },
+    {
+     "a": 1,
+     "b": 3
+    },
+    {
+     "a": 2,
+     "b": -3
+    },
+    {
+     "a": 2,
+     "b": -2
+    },
+    {
+     "a": 2,
+     "b": -1
+    },
+    {
+     "a": 2,
+     "b": 0
+    },
+    {
+     "a": 2,
+     "b": 1
+    },
+    {
+     "a": 2,
+     "b": 2
+    },
+    {
+     "a": 2,
+     "b": 3
+    },
+    {
+     "a": 3,
+     "b": -3
+    },
+    {
+     "a": 3,
+     "b": -2
+    },
+    {
+     "a": 3,
+     "b": -1
+    },
+    {
+     "a": 3,
+     "b": 0
+    },
+    {
+     "a": 3,
+     "b": 1
+    },
+    {
+     "a": 3,
+     "b": 2
+    },
+    {
+     "a": 3,
+     "b": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "A-candidate-unguarded": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": 1,
+    "b": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "a == b"
+  },
+  "C-imported-ratio": {
+   "label": "indeterminate",
+   "method": "hand_label",
+   "note": "divisor comes from an external module that is not part of the fixture"
+  },
+  "guarded-nonzero": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "d != 0 on the only path to the division",
+   "grid_inputs": [
+    {
+     "a": -3,
+     "b": -3
+    },
+    {
+     "a": -3,
+     "b": -2
+    },
+    {
+     "a": -3,
+     "b": -1
+    },
+    {
+     "a": -3,
+     "b": 0
+    },
+    {
+     "a": -3,
+     "b": 1
+    },
+    {
+     "a": -3,
+     "b": 2
+    },
+    {
+     "a": -3,
+     "b": 3
+    },
+    {
+     "a": -2,
+     "b": -3
+    },
+    {
+     "a": -2,
+     "b": -2
+    },
+    {
+     "a": -2,
+     "b": -1
+    },
+    {
+     "a": -2,
+     "b": 0
+    },
+    {
+     "a": -2,
+     "b": 1
+    },
+    {
+     "a": -2,
+     "b": 2
+    },
+    {
+     "a": -2,
+     "b": 3
+    },
+    {
+     "a": -1,
+     "b": -3
+    },
+    {
+     "a": -1,
+     "b": -2
+    },
+    {
+     "a": -1,
+     "b": -1
+    },
+    {
+     "a": -1,
+     "b": 0
+    },
+    {
+     "a": -1,
+     "b": 1
+    },
+    {
+     "a": -1,
+     "b": 2
+    },
+    {
+     "a": -1,
+     "b": 3
+    },
+    {
+     "a": 0,
+     "b": -3
+    },
+    {
+     "a": 0,
+     "b": -2
+    },
+    {
+     "a": 0,
+     "b": -1
+    },
+    {
+     "a": 0,
+     "b": 0
+    },
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": 0,
+     "b": 2
+    },
+    {
+     "a": 0,
+     "b": 3
+    },
+    {
+     "a": 1,
+     "b": -3
+    },
+    {
+     "a": 1,
+     "b": -2
+    },
+    {
+     "a": 1,
+     "b": -1
+    },
+    {
+     "a": 1,
+     "b": 0
+    },
+    {
+     "a": 1,
+     "b": 1
+    },
+    {
+     "a": 1,
+     "b": 2
+    },
+    {
+     "a": 1,
+     "b": 3
+    },
+    {
+     "a": 2,
+     "b": -3
+    },
+    {
+     "a": 2,
+     "b": -2
+    },
+    {
+     "a": 2,
+     "b": -1
+    },
+    {
+     "a": 2,
+     "b": 0
+    },
+    {
+     "a": 2,
+     "b": 1
+    },
+    {
+     "a": 2,
+     "b": 2
+    },
+    {
+     "a": 2,
+     "b": 3
+    },
+    {
+     "a": 3,
+     "b": -3
+    },
+    {
+     "a": 3,
+     "b": -2
+    },
+    {
+     "a": 3,
+     "b": -1
+    },
+    {
+     "a": 3,
+     "b": 0
+    },
+    {
+     "a": 3,
+     "b": 1
+    },
+    {
+     "a": 3,
+     "b": 2
+    },
+    {
+     "a": 3,
+     "b": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "unreachable-bad-branch": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "x > 5 and x < 3 is infeasible",
+   "grid_inputs": [
+    {
+     "x": -3
+    },
+    {
+     "x": -2
+    },
+    {
+     "x": -1
+    },
+    {
+     "x": 0
+    },
+    {
+     "x": 1
+    },
+    {
+     "x": 2
+    },
+    {
+     "x": 3
+    },
+    {
+     "x": 4
+    },
+    {
+     "x": 5
+    },
+    {
+     "x": 6
+    },
+    {
+     "x": 7
+    },
+    {
+     "x": 8
+    },
+    {
+     "x": 9
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "two-variable-equality": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "a != b implies a - b != 0 for exact ints",
+   "grid_inputs": [
+    {
+     "a": -3,
+     "b": -3
+    },
+    {
+     "a": -3,
+     "b": -2
+    },
+    {
+     "a": -3,
+     "b": -1
+    },
+    {
+     "a": -3,
+     "b": 0
+    },
+    {
+     "a": -3,
+     "b": 1
+    },
+    {
+     "a": -3,
+     "b": 2
+    },
+    {
+     "a": -3,
+     "b": 3
+    },
+    {
+     "a": -2,
+     "b": -3
+    },
+    {
+     "a": -2,
+     "b": -2
+    },
+    {
+     "a": -2,
+     "b": -1
+    },
+    {
+     "a": -2,
+     "b": 0
+    },
+    {
+     "a": -2,
+     "b": 1
+    },
+    {
+     "a": -2,
+     "b": 2
+    },
+    {
+     "a": -2,
+     "b": 3
+    },
+    {
+     "a": -1,
+     "b": -3
+    },
+    {
+     "a": -1,
+     "b": -2
+    },
+    {
+     "a": -1,
+     "b": -1
+    },
+    {
+     "a": -1,
+     "b": 0
+    },
+    {
+     "a": -1,
+     "b": 1
+    },
+    {
+     "a": -1,
+     "b": 2
+    },
+    {
+     "a": -1,
+     "b": 3
+    },
+    {
+     "a": 0,
+     "b": -3
+    },
+    {
+     "a": 0,
+     "b": -2
+    },
+    {
+     "a": 0,
+     "b": -1
+    },
+    {
+     "a": 0,
+     "b": 0
+    },
+    {
+     "a": 0,
+     "b": 1
+    },
+    {
+     "a": 0,
+     "b": 2
+    },
+    {
+     "a": 0,
+     "b": 3
+    },
+    {
+     "a": 1,
+     "b": -3
+    },
+    {
+     "a": 1,
+     "b": -2
+    },
+    {
+     "a": 1,
+     "b": -1
+    },
+    {
+     "a": 1,
+     "b": 0
+    },
+    {
+     "a": 1,
+     "b": 1
+    },
+    {
+     "a": 1,
+     "b": 2
+    },
+    {
+     "a": 1,
+     "b": 3
+    },
+    {
+     "a": 2,
+     "b": -3
+    },
+    {
+     "a": 2,
+     "b": -2
+    },
+    {
+     "a": 2,
+     "b": -1
+    },
+    {
+     "a": 2,
+     "b": 0
+    },
+    {
+     "a": 2,
+     "b": 1
+    },
+    {
+     "a": 2,
+     "b": 2
+    },
+    {
+     "a": 2,
+     "b": 3
+    },
+    {
+     "a": 3,
+     "b": -3
+    },
+    {
+     "a": 3,
+     "b": -2
+    },
+    {
+     "a": 3,
+     "b": -1
+    },
+    {
+     "a": 3,
+     "b": 0
+    },
+    {
+     "a": 3,
+     "b": 1
+    },
+    {
+     "a": 3,
+     "b": 2
+    },
+    {
+     "a": 3,
+     "b": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "unknown-call-unrelated": {
+   "label": "indeterminate",
+   "method": "hand_label",
+   "note": "audit_log is not defined in the fixture; reaching the division depends on an external definition"
+  },
+  "annotation-only": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": 1,
+    "b": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "exact ints a == b (annotation not enforced, so the scope is conditional)"
+  },
+  "bool-subclass-isinstance": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": 1,
+    "b": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "exact ints pass isinstance and a - b == 0"
+  },
+  "negative-index-m1": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "xs": [
+     0
+    ]
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "last element 0 divides by zero (division obligation; element values unmodeled)"
+  },
+  "widened-caller-m1": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "n": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "shifted(1) == 0"
+  },
+  "exception-handler": {
+   "label": "excluded",
+   "method": "hand_label",
+   "note": "b == 0 reaches a zero divisor at the site but the handler catches it; whether that counts depends on the property reading (site vs escaping exception), so the case has no unambiguous label"
+  },
+  "solver-timeout-cubes": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "x": {
+     "bigint": "8866128975287528"
+    },
+    "y": {
+     "bigint": "-8778405442862239"
+    },
+    "z": {
+     "bigint": "-2736111468807040"
+    }
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "Booker (2019) representation of 33 as a sum of three cubes"
+  },
+  "float-nan": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "x": 1.0
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "x - x == 0.0 for finite x"
+  },
+  "assert-runtime-mode": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": 1,
+    "b": 0
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "only under python -O (assertions removed)",
+   "optimize": true
+  },
+  "literal-zero": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {},
+   "failure_exception": "ZeroDivisionError",
+   "note": "constant divisor 3 - 3"
+  },
+  "floor-semantics-safe-const": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "constant divisor 2; the function's other site (line 5) fails at a=-1, so the grid check counts failures at line 3 only",
+   "grid_inputs": [
+    {
+     "a": -3
+    },
+    {
+     "a": -2
+    },
+    {
+     "a": -1
+    },
+    {
+     "a": 0
+    },
+    {
+     "a": 1
+    },
+    {
+     "a": 2
+    },
+    {
+     "a": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError",
+   "site_line": 3
+  },
+  "floor-semantics-unsafe": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": -1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "-1 // 2 == -1 under floor semantics, then a + 1 == 0"
+  },
+  "modulo-guard-positive": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "n > 0",
+   "grid_inputs": [
+    {
+     "a": -3,
+     "n": -3
+    },
+    {
+     "a": -3,
+     "n": -2
+    },
+    {
+     "a": -3,
+     "n": -1
+    },
+    {
+     "a": -3,
+     "n": 0
+    },
+    {
+     "a": -3,
+     "n": 1
+    },
+    {
+     "a": -3,
+     "n": 2
+    },
+    {
+     "a": -3,
+     "n": 3
+    },
+    {
+     "a": -2,
+     "n": -3
+    },
+    {
+     "a": -2,
+     "n": -2
+    },
+    {
+     "a": -2,
+     "n": -1
+    },
+    {
+     "a": -2,
+     "n": 0
+    },
+    {
+     "a": -2,
+     "n": 1
+    },
+    {
+     "a": -2,
+     "n": 2
+    },
+    {
+     "a": -2,
+     "n": 3
+    },
+    {
+     "a": -1,
+     "n": -3
+    },
+    {
+     "a": -1,
+     "n": -2
+    },
+    {
+     "a": -1,
+     "n": -1
+    },
+    {
+     "a": -1,
+     "n": 0
+    },
+    {
+     "a": -1,
+     "n": 1
+    },
+    {
+     "a": -1,
+     "n": 2
+    },
+    {
+     "a": -1,
+     "n": 3
+    },
+    {
+     "a": 0,
+     "n": -3
+    },
+    {
+     "a": 0,
+     "n": -2
+    },
+    {
+     "a": 0,
+     "n": -1
+    },
+    {
+     "a": 0,
+     "n": 0
+    },
+    {
+     "a": 0,
+     "n": 1
+    },
+    {
+     "a": 0,
+     "n": 2
+    },
+    {
+     "a": 0,
+     "n": 3
+    },
+    {
+     "a": 1,
+     "n": -3
+    },
+    {
+     "a": 1,
+     "n": -2
+    },
+    {
+     "a": 1,
+     "n": -1
+    },
+    {
+     "a": 1,
+     "n": 0
+    },
+    {
+     "a": 1,
+     "n": 1
+    },
+    {
+     "a": 1,
+     "n": 2
+    },
+    {
+     "a": 1,
+     "n": 3
+    },
+    {
+     "a": 2,
+     "n": -3
+    },
+    {
+     "a": 2,
+     "n": -2
+    },
+    {
+     "a": 2,
+     "n": -1
+    },
+    {
+     "a": 2,
+     "n": 0
+    },
+    {
+     "a": 2,
+     "n": 1
+    },
+    {
+     "a": 2,
+     "n": 2
+    },
+    {
+     "a": 2,
+     "n": 3
+    },
+    {
+     "a": 3,
+     "n": -3
+    },
+    {
+     "a": 3,
+     "n": -2
+    },
+    {
+     "a": 3,
+     "n": -1
+    },
+    {
+     "a": 3,
+     "n": 0
+    },
+    {
+     "a": 3,
+     "n": 1
+    },
+    {
+     "a": 3,
+     "n": 2
+    },
+    {
+     "a": 3,
+     "n": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "modulo-guard-negative": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "n <= 0 implies n - 1 <= -1",
+   "grid_inputs": [
+    {
+     "a": -3,
+     "n": -3
+    },
+    {
+     "a": -3,
+     "n": -2
+    },
+    {
+     "a": -3,
+     "n": -1
+    },
+    {
+     "a": -3,
+     "n": 0
+    },
+    {
+     "a": -3,
+     "n": 1
+    },
+    {
+     "a": -3,
+     "n": 2
+    },
+    {
+     "a": -3,
+     "n": 3
+    },
+    {
+     "a": -2,
+     "n": -3
+    },
+    {
+     "a": -2,
+     "n": -2
+    },
+    {
+     "a": -2,
+     "n": -1
+    },
+    {
+     "a": -2,
+     "n": 0
+    },
+    {
+     "a": -2,
+     "n": 1
+    },
+    {
+     "a": -2,
+     "n": 2
+    },
+    {
+     "a": -2,
+     "n": 3
+    },
+    {
+     "a": -1,
+     "n": -3
+    },
+    {
+     "a": -1,
+     "n": -2
+    },
+    {
+     "a": -1,
+     "n": -1
+    },
+    {
+     "a": -1,
+     "n": 0
+    },
+    {
+     "a": -1,
+     "n": 1
+    },
+    {
+     "a": -1,
+     "n": 2
+    },
+    {
+     "a": -1,
+     "n": 3
+    },
+    {
+     "a": 0,
+     "n": -3
+    },
+    {
+     "a": 0,
+     "n": -2
+    },
+    {
+     "a": 0,
+     "n": -1
+    },
+    {
+     "a": 0,
+     "n": 0
+    },
+    {
+     "a": 0,
+     "n": 1
+    },
+    {
+     "a": 0,
+     "n": 2
+    },
+    {
+     "a": 0,
+     "n": 3
+    },
+    {
+     "a": 1,
+     "n": -3
+    },
+    {
+     "a": 1,
+     "n": -2
+    },
+    {
+     "a": 1,
+     "n": -1
+    },
+    {
+     "a": 1,
+     "n": 0
+    },
+    {
+     "a": 1,
+     "n": 1
+    },
+    {
+     "a": 1,
+     "n": 2
+    },
+    {
+     "a": 1,
+     "n": 3
+    },
+    {
+     "a": 2,
+     "n": -3
+    },
+    {
+     "a": 2,
+     "n": -2
+    },
+    {
+     "a": 2,
+     "n": -1
+    },
+    {
+     "a": 2,
+     "n": 0
+    },
+    {
+     "a": 2,
+     "n": 1
+    },
+    {
+     "a": 2,
+     "n": 2
+    },
+    {
+     "a": 2,
+     "n": 3
+    },
+    {
+     "a": 3,
+     "n": -3
+    },
+    {
+     "a": 3,
+     "n": -2
+    },
+    {
+     "a": 3,
+     "n": -1
+    },
+    {
+     "a": 3,
+     "n": 0
+    },
+    {
+     "a": 3,
+     "n": 1
+    },
+    {
+     "a": 3,
+     "n": 2
+    },
+    {
+     "a": 3,
+     "n": 3
+    }
+   ],
+   "failure_exception": "ZeroDivisionError"
+  },
+  "loop-unsupported": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "n": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "range(1) sums to 0"
+  },
+  "decorated-unsupported": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "a": 0
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "1 / 0"
+  },
+  "method-unsupported": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "x": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "Scaler(0).scale(1)",
+   "construct": {
+    "k": 0
+   }
+  },
+  "unicode-source-map": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "größe": 1,
+    "b": 1
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "größe == b"
+  },
+  "empty-list": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "xs": []
+   },
+   "failure_exception": "IndexError",
+   "note": "xs[0] on []"
+  },
+  "negative-index-guarded": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "bool(list) is len != 0, and -1 is valid for nonempty lists",
+   "grid_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      0
+     ]
+    },
+    {
+     "xs": [
+      1
+     ]
+    },
+    {
+     "xs": [
+      -1
+     ]
+    },
+    {
+     "xs": [
+      2,
+      1
+     ]
+    },
+    {
+     "xs": [
+      0,
+      0
+     ]
+    },
+    {
+     "xs": [
+      3,
+      1,
+      2
+     ]
+    }
+   ],
+   "failure_exception": "IndexError"
+  },
+  "negative-index-annotation": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "xs": []
+   },
+   "failure_exception": "IndexError",
+   "note": "xs[-1] on []"
+  },
+  "alias-mutation": {
+   "label": "safe",
+   "method": "exhaustive_execution",
+   "note": "no parameters: the single execution returns 2",
+   "grid_inputs": [
+    {}
+   ],
+   "failure_exception": "IndexError"
+  },
+  "none-flow-unguarded": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "code": null
+   },
+   "failure_exception": "AttributeError",
+   "note": "None.bit_length"
+  },
+  "none-flow-guarded": {
+   "label": "safe",
+   "method": "hand_label",
+   "note": "is None returns early",
+   "grid_inputs": [
+    {
+     "code": null
+    },
+    {
+     "code": 0
+    },
+    {
+     "code": 1
+    },
+    {
+     "code": 5
+    },
+    {
+     "code": -3
+    }
+   ],
+   "failure_exception": "AttributeError"
+  },
+  "changed-callee-single-snapshot": {
+   "label": "defect",
+   "method": "isolated_execution",
+   "witness": {
+    "x": 0
+   },
+   "failure_exception": "ZeroDivisionError",
+   "note": "denominator(0) == 0"
+  }
+ }
+}

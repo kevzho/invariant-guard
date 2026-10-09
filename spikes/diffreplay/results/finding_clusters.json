@@ -1,0 +1,630 @@
+[
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a33",
+  "symbol": "ichunked",
+  "via": "ichunked",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-44dc72769f1c"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a33",
+  "symbol": "ichunked",
+  "via": "ichunked",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "lazily raised ValueError",
+  "n": 4,
+  "origins": [
+   "stub",
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8644897a85bb"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "d032cab7",
+  "symbol": "constrained_batches",
+  "via": "constrained_batches",
+  "class": "different_return",
+  "base": "lazily raised ValueError",
+  "patch": "lazily raised ValueError",
+  "n": 1,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a12810d9ede8"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "caaec943",
+  "symbol": "random_ordered_combs_with_replacement",
+  "via": "random_ordered_combs_with_replacement",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "stub"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-e09612061aac"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dee22c93",
+  "symbol": "random_ordered_combs_with_replacement",
+  "via": "random_ordered_combs_with_replacement",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "stub"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-3bc5dc5ee493"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "split_before",
+  "via": "split_before",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "defaults"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-9c76fd00f3a5"
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "split_when",
+  "via": "split_when",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "defaults",
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-1b56c062070d"
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "SpooledBytesIO.write",
+  "via": "SpooledBytesIO.write",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 4,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-ef8032c1aa0c"
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "SpooledStringIO.write",
+  "via": "SpooledStringIO.write",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-6bfd12f3d4e4"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "LRI.update",
+  "via": "LRI.update",
+  "class": "removed_exception",
+  "base": "raised TypeError",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8d835f1411d7"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "ThresholdCounter.update",
+  "via": "ThresholdCounter.update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-261508db3163"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "reverse_iter_lines",
+  "via": "reverse_iter_lines",
+  "class": "different_return",
+  "base": "lazily raised UnicodeDecodeError",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-a5cf6dccb536"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "reverse_iter_lines",
+  "via": "reverse_iter_lines",
+  "class": "different_return",
+  "base": "lazily raised UnicodeDecodeError",
+  "patch": "lazily raised LookupError",
+  "n": 5,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-fd1be8246b7c"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "bytes2human",
+  "via": "bytes2human",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 3,
+  "origins": [
+   "defaults",
+   "doctest_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a3a969a2674d"
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "URL.get_authority",
+  "via": "URL.get_authority",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-a6c5dacef24c"
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc04",
+  "symbol": "Bits.__getitem__",
+  "via": "Bits.__getitem__",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-918260c2fd88"
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc04",
+  "symbol": "Bits.__getitem__",
+  "via": "Bits.__getitem__",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised IndexError",
+  "n": 2,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-414869f24f84"
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedtuple",
+  "via": "namedtuple",
+  "class": "different_exception",
+  "base": "raised IndexError",
+  "patch": "raised ValueError",
+  "n": 5,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-05607683f948"
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedtuple",
+  "via": "namedtuple",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-e338c4062f95"
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedlist",
+  "via": "namedlist",
+  "class": "different_exception",
+  "base": "raised IndexError",
+  "patch": "raised ValueError",
+  "n": 4,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-2136ba286afe"
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "namedlist",
+  "via": "namedlist",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-2bf805c13528"
+ },
+ {
+  "repo": "boltons",
+  "commit": "a1ea1030",
+  "symbol": "OrderedMultiDict.addlist",
+  "via": "OrderedMultiDict.addlist",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8d0d5de559c2"
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414",
+  "symbol": "parse_qsl",
+  "via": "parse_qsl",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 4,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-185252266114"
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414",
+  "symbol": "parse_qsl",
+  "via": "parse_qsl",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised LookupError",
+  "n": 6,
+  "origins": [
+   "shape"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-75b2401c9167"
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "args2sh",
+  "via": "args2sh",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-3f36821bd33d"
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "args2cmd",
+  "via": "args2cmd",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-150c9a723ae3"
+ },
+ {
+  "repo": "boltons",
+  "commit": "c1c25da3",
+  "symbol": "Bits.__init__",
+  "via": "Bits",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-9fbe48bbe1e5"
+ },
+ {
+  "repo": "boltons",
+  "commit": "3e9983db",
+  "symbol": "xfrange",
+  "via": "xfrange",
+  "class": "different_return",
+  "base": "returned",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "defaults",
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-94ca55567c87"
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c",
+  "symbol": "IndexedSet.update",
+  "via": "IndexedSet.update",
+  "class": "removed_exception",
+  "base": "raised TypeError",
+  "patch": "returned",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test_new"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-6c81243fb146"
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c",
+  "symbol": "IndexedSet.update",
+  "via": "IndexedSet.update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 2,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-08f58fd1da91"
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "BarrelList._translate_index",
+  "via": "BarrelList.pop",
+  "class": "exception_message",
+  "base": "raised IndexError",
+  "patch": "raised IndexError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-a110a4508a23"
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "BarrelList.pop",
+  "via": "BarrelList.pop",
+  "class": "exception_message",
+  "base": "raised IndexError",
+  "patch": "raised IndexError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-a110a4508a23"
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "IndexedSet.intersection_update",
+  "via": "IndexedSet.intersection_update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-78f0f61da817"
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "IndexedSet.difference_update",
+  "via": "IndexedSet.difference_update",
+  "class": "different_mutation",
+  "base": "returned",
+  "patch": "returned",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-ad2589f97c91"
+ },
+ {
+  "repo": "dateutil",
+  "commit": "5cf3e3cb",
+  "symbol": "isoparser.parse_isodate",
+  "via": "isoparser.parse_isodate",
+  "class": "exception_message",
+  "base": "raised ValueError",
+  "patch": "raised ValueError",
+  "n": 6,
+  "origins": [
+   "shape",
+   "test",
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": false,
+  "finding_id": "BD-549cd09498d6"
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd",
+  "symbol": "isoparser._parse_isotime",
+  "via": "isoparser.isoparse",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 1,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-8ee204f4d460"
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd",
+  "symbol": "isoparser._parse_isotime",
+  "via": "isoparser.parse_isotime",
+  "class": "new_exception",
+  "base": "returned",
+  "patch": "raised ValueError",
+  "n": 1,
+  "origins": [
+   "test"
+  ],
+  "severity": "WARNING",
+  "ack": false,
+  "finding_id": "BD-7a53762d9ea7"
+ },
+ {
+  "repo": "dateutil",
+  "commit": "79d2e486",
+  "symbol": "parser.parse",
+  "via": "parse",
+  "class": "different_exception",
+  "base": "raised TypeError",
+  "patch": "raised dateutil.parser._parser.ParserError",
+  "n": 1,
+  "origins": [
+   "test_new"
+  ],
+  "severity": "INFO",
+  "ack": true,
+  "finding_id": "BD-6f77d73f0d3b"
+ }
+]

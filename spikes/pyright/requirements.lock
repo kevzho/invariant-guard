@@ -1,0 +1,3 @@
+nodeenv==1.11.0
+pyright==1.1.408
+typing_extensions==4.16.0

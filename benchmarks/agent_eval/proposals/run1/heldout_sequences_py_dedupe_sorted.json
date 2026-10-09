@@ -1,0 +1,281 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/sequences.py::dedupe_sorted",
+ "context_packet_digest": "sha256:286645b28168a7e4d8ace2615c62229723340462da710524bdd564cccad41e1e",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Docstring: input list is not modified, but xs.sort() mutates it.",
+   "uncertainty": "code calls xs.sort() in place",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      3,
+      1,
+      2
+     ]
+    },
+    {
+     "xs": [
+      2,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Removing duplicates never adds elements.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      1,
+      1,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Empty input gives empty output.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "gt",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Nonempty input has at least one distinct value.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0
+     ]
+    },
+    {
+     "xs": [
+      2,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "For nonnegative values, summing distinct values cannot exceed summing all.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      1,
+      2
+     ]
+    },
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": -1000,
+    "upper": 1000
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Output values come from the input and stay in range.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1000,
+      1000
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 11
+   },
+   "rationale": "Repeated calls on the same list give identical results.",
+   "uncertainty": "in-place sort may interact",
+   "unsupported_dependencies": [
+    "list.sort/append mutation"
+   ],
+   "boundary_inputs": []
+  }
+ ]
+}

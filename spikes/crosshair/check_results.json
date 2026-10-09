@@ -1,0 +1,114 @@
+[
+ {
+  "kind": "default",
+  "module": "more_itertools.recipes",
+  "rc": 0,
+  "wall_s": 3.2,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "boltons.listutils",
+  "rc": 0,
+  "wall_s": 2.3,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "boltons.setutils",
+  "rc": 0,
+  "wall_s": 5.1,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "boltons.timeutils",
+  "rc": 0,
+  "wall_s": 10.5,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "boltons.funcutils",
+  "rc": 0,
+  "wall_s": 5.6,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "dateutil.relativedelta",
+  "rc": 0,
+  "wall_s": 5.9,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "default",
+  "module": "dateutil.parser._parser",
+  "rc": 0,
+  "wall_s": 4.5,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "more_itertools.recipes",
+  "rc": 1,
+  "wall_s": 10.4,
+  "n_messages": 1,
+  "out": "/case/patch/more_itertools/recipes.py:1219: error: TypeError:  when calling _strong_probable_prime(3, '')\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "boltons.listutils",
+  "rc": 0,
+  "wall_s": 5.2,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\nHINT: Ensure that your functions to analyze lead with assert statements.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "boltons.setutils",
+  "rc": 0,
+  "wall_s": 5.2,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\nHINT: Ensure that your functions to analyze lead with assert statements.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "boltons.timeutils",
+  "rc": 0,
+  "wall_s": 3.6,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\nHINT: Ensure that your functions to analyze lead with assert statements.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "boltons.funcutils",
+  "rc": 0,
+  "wall_s": 3.9,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\nHINT: Ensure that your functions to analyze lead with assert statements.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "dateutil.relativedelta",
+  "rc": 0,
+  "wall_s": 4.4,
+  "n_messages": 0,
+  "out": "WARNING: Targets found, but contain no checkable functions.\nHINT: Ensure that your functions to analyze lead with assert statements.\n"
+ },
+ {
+  "kind": "asserts",
+  "module": "dateutil.parser._parser",
+  "rc": 0,
+  "wall_s": 14.4,
+  "n_messages": 0,
+  "out": ""
+ }
+]

@@ -1,0 +1,10 @@
+{
+  "tools": [
+    "verify_patch",
+    "check_scope",
+    "get_contracts",
+    "get_finding",
+    "explain_finding",
+    "get_capabilities"
+  ]
+}

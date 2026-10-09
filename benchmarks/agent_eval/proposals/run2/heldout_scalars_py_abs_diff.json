@@ -1,0 +1,243 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/scalars.py::abs_diff",
+ "context_packet_digest": "sha256:943e3582eb6f9651358ded752355fb5f7b7d8226ba604fd1b641a00374b107a8",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Docstring: never negative.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 0,
+     "b": 5
+    },
+    {
+     "a": -3,
+     "b": -9
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "arg",
+     "name": "a"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "b"
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Equal inputs give zero difference.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 4,
+     "b": 4
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "not",
+    "arg": {
+     "kind": "eq",
+     "left": {
+      "kind": "arg",
+      "name": "a"
+     },
+     "right": {
+      "kind": "arg",
+      "name": "b"
+     }
+    }
+   },
+   "predicate": {
+    "kind": "gt",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Distinct inputs give a strictly positive difference.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 1,
+     "b": 2
+    },
+    {
+     "a": 2,
+     "b": 1
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 2000000
+    }
+   },
+   "rationale": "Difference of values in [-1e6,1e6] is at most 2e6.",
+   "uncertainty": "bound from profile",
+   "boundary_inputs": [
+    {
+     "a": 1000000,
+     "b": -1000000
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic scalar function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "a"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "arg",
+       "name": "a"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1000000.0
+      }
+     },
+     {
+      "kind": "eq",
+      "left": {
+       "kind": "arg",
+       "name": "b"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "a"
+    }
+   },
+   "rationale": "With b=0 and a>=0 the difference equals a.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "a": 7,
+     "b": 0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_ints_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   }
+  }
+ ]
+}

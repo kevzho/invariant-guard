@@ -1,0 +1,13 @@
+{
+ "schema_version": "1.0",
+ "command": ".venv/bin/python -m pytest -q -p no:cacheprovider",
+ "exit": 0,
+ "summary_line": "788 passed, 2 skipped, 1 xfailed in 205.98s (0:03:25)",
+ "short_test_summary": [
+  "SKIPPED [1] tests/integration/test_real_model.py:31: real-model test is opt-in (IG_REAL_MODEL=1; takes minutes)",
+  "SKIPPED [1] tests/integration/test_real_model.py:61: real-model test is opt-in (IG_REAL_MODEL=1; takes minutes)",
+  "XFAIL tests/integration/test_paper_findings.py::test_quick_mode_does_not_pass_a_changed_nested_function - seeded case U02: an unsupported (nested) symbol's fingerprint covers only its division nodes, so a guard removed elsewhere in its body is not a modification; quick mode leaves it outside the slice and says PASS"
+ ],
+ "elapsed_s": 206.4,
+ "finished_at": "2026-10-08T23:11:39Z"
+}

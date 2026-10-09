@@ -1,0 +1,239 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::normalize_to_unit",
+ "context_packet_digest": "sha256:b73ea24e453d4bcce63f0779a3d66a874034f6b124bd17b4bb99ab4c14f900f5",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "approx_eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1.0
+    },
+    "atol": 1e-09,
+    "rtol": 1e-09,
+    "require_finite": true
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "Docstring: values sum to 1.0 when total is positive.",
+   "uncertainty": "code adds 1e-3 to total",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      0.5,
+      0.5
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "Docstring: one entry per input value.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    },
+    {
+     "xs": [
+      1.0,
+      2.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": 0,
+    "upper": 1
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "Nonnegative inputs yield proportions in [0,1].",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      1000000.0,
+      1000000.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "Normalized total should not exceed 1 for positive totals.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1e-06
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "List comprehension should not mutate xs.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 20
+   },
+   "rationale": "Pure float function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

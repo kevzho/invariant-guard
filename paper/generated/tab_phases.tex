@@ -1,0 +1,25 @@
+\begin{table*}[h!]
+\centering
+\small
+
+\caption{Where cold \texttt{guard verify} time goes (p50 per phase, ms). \emph{capture}: reading and hashing the candidate snapshot (working tree); \emph{base capture}: the base commit (Git object reads); \emph{analysis}: lowering and static analysis of the candidate (solver time included); \emph{solver}: Z3 time alone; \emph{impact}: matching symbols and computing the slice. \emph{engine} is the sum of the report's timing fields excluding solver; \emph{wall} adds interpreter start, imports and report serialization/validation. No model is involved in any of these runs.}
+\label{tab:phases}
+\begin{tabular}{rllrrrrrrrr}
+\toprule
+fns & change & mode & capture & base capture & analysis & base analysis & solver & impact & engine & wall \\
+\midrule
+101 & leaf & quick & 31 & 29 & 46 & 47 & 0 & 3 & 156 & 493 \\
+101 & leaf & full & 31 & 29 & 421 & 443 & 91 & 3 & 932 & 1{,}456 \\
+101 & hub & quick & 31 & 29 & 181 & 190 & 26 & 3 & 439 & 855 \\
+101 & hub & full & 31 & 29 & 425 & 437 & 91 & 3 & 927 & 1{,}450 \\
+1{,}001 & leaf & quick & 35 & 34 & 487 & 429 & 0 & 31 & 1{,}016 & 1{,}445 \\
+1{,}001 & leaf & full & 34 & 36 & 3{,}488 & 3{,}434 & 659 & 30 & 7{,}046 & 9{,}334 \\
+1{,}001 & hub & quick & 35 & 34 & 1{,}366 & 1{,}665 & 136 & 31 & 3{,}145 & 4{,}483 \\
+1{,}001 & hub & full & 37 & 38 & 3{,}704 & 3{,}803 & 699 & 32 & 7{,}671 & 9{,}930 \\
+10{,}001 & leaf & quick & 75 & 116 & 7{,}329 & 5{,}476 & 0 & 337 & 13{,}223 & 14{,}335 \\
+10{,}001 & leaf & full & 115 & 133 & 41{,}194 & 43{,}222 & 7{,}000 & 357 & 91{,}375 & 116{,}354 \\
+10{,}001 & hub & quick & 117 & 151 & 13{,}227 & 13{,}508 & 0 & 605 & 27{,}315 & 39{,}896 \\
+10{,}001 & hub & full & 129 & 152 & 56{,}804 & 50{,}899 & 8{,}813 & 367 & 107{,}396 & 129{,}902 \\
+\bottomrule
+\end{tabular}
+\end{table*}

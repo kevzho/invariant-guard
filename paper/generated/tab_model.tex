@@ -1,0 +1,25 @@
+\begin{table*}[t]
+\centering
+\small
+
+\caption{Contract proposers on the held-out set (13 functions, 5 seeded bugs), all through the same validation, non-vacuity filter, de-duplication and Docker falsification (32 probes). \emph{Templates}: deterministic, 3 repeats. \emph{Local model}: qwen2.5-coder:7b, temperature 0, at most 3 candidates per function, 3 repeats. \emph{Agent-proposed}: Claude Sonnet 5.5 subagents that saw only the context packets and the protocol README, at most 8 candidates per function, 3 independent runs; templates ran in the same pass so duplicates of template claims are excluded from \emph{new beyond templates}. Rates use each source's raw candidates as denominator. Wall time includes model inference (local model) or only validation and falsification (agent: proposals were written beforehand; each run took under two minutes by its session timestamps).}
+\label{tab:model}
+\begin{tabular}{llll}
+\toprule
+metric (one value per repeat) & templates & local model & agent-proposed \\
+\midrule
+raw candidates & 23, 23, 23 & 35, 35, 35 & 81, 89, 84 \\
+schema-valid rate & 1.00, 1.00, 1.00 & 0.77, 0.77, 0.83 & 1.00, 1.00, 1.00 \\
+non-vacuous rate & 1.00, 1.00, 1.00 & 0.66, 0.63, 0.69 & 1.00, 1.00, 1.00 \\
+mech.\ checkable rate & 1.00, 1.00, 1.00 & 0.66, 0.63, 0.69 & 1.00, 1.00, 1.00 \\
+distinct validated & 23, 23, 23 & 11, 9, 12 & 58, 66, 65 \\
+\quad new beyond templates & -- & 11, 9, 12 & 58, 66, 65 \\
+TESTED (distinct) & 23, 23, 23 & 1, 1, 2 & 52, 56, 56 \\
+REFUTED (distinct) & 0, 0, 0 & 10, 8, 10 & 6, 10, 9 \\
+\quad false claim & 0, 0, 0 & 8, 6, 8 & 0, 0, 0 \\
+\quad valid for intent & 0, 0, 0 & 2, 2, 2 & 6, 10, 9 \\
+seeded bugs exposed (of 5) & 0, 0, 0 & 2, 2, 2 & 5, 5, 5 \\
+wall time (s) & 21, 21, 23 & 1071, 1398, 1174 & 85, 99, 83 \\
+\bottomrule
+\end{tabular}
+\end{table*}

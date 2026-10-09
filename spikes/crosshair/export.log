@@ -1,0 +1,3 @@
+commits per repo: {'more-itertools': 28, 'boltons': 27, 'dateutil': 23}
+changed (comparable) functions: 118 added/removed: 20
+python3 -I export_cases.py  29.85s user 36.47s system 8% cpu 13:07.96 total

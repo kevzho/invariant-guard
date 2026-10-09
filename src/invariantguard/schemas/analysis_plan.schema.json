@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:analysis_plan:1.0",
+  "title": "AnalysisPlan",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "plan_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/plan_id"
+    },
+    "command": {
+      "enum": [
+        "check",
+        "verify"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "quick",
+        "full"
+      ]
+    },
+    "base_snapshot": {
+      "anyOf": [
+        {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_snapshot": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "requested_symbols": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+      }
+    },
+    "required_properties": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/property_id"
+      }
+    },
+    "required_obligations": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/obligation_id"
+      }
+    },
+    "require_coverage": {
+      "type": "boolean"
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "per_query_timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quick_budget_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "per_query_rlimit": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "per_query_rlimit",
+        "per_query_timeout_ms",
+        "quick_budget_ms"
+      ]
+    },
+    "solver": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "available": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "available",
+        "enabled"
+      ]
+    },
+    "invalidated_summaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unresolved_changes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_before_analysis": {
+      "const": true
+    },
+    "required_contracts": {
+      "description": "guard verify --execute: APPROVED/DECLARED contracts whose dynamic check is required, fixed before analysis (M3).",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_.-]{1,96}$"
+      }
+    }
+  },
+  "required": [
+    "base_snapshot",
+    "budgets",
+    "candidate_snapshot",
+    "command",
+    "created_before_analysis",
+    "invalidated_summaries",
+    "mode",
+    "plan_id",
+    "requested_symbols",
+    "require_coverage",
+    "required_obligations",
+    "required_properties",
+    "schema_version",
+    "solver",
+    "unresolved_changes"
+  ]
+}

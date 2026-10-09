@@ -1,0 +1,30 @@
+    0.5s dateutil f2293200 'avoid deprecated utcfromtimestamp' fns=0 probes=None diffs=0 nondet=0 err=
+    0.6s dateutil 95e20ce2 'Remove trailing whitespace' fns=0 probes=None diffs=0 nondet=0 err=
+   26.8s dateutil 7c5c9895 'docs: YYYYMM is not supported (#1179)' fns=1 probes=102 diffs=0 nondet=0 err=
+    0.3s dateutil da9ecd07 'Move to src layout' fns=0 probes=None diffs=0 nondet=0 err=
+    8.2s dateutil 7d2e7f63 'Fix typo discovered by codespell' fns=1 probes=0 diffs=0 nondet=0 err=
+    0.6s dateutil e78c3c76 'Lazy-load submodules in Python 3.7+' fns=0 probes=None diffs=0 nondet=0 err=
+   19.4s dateutil 5cf3e3cb 'Decode input str when reporting an error in `parse' fns=1 probes=49 diffs=7 nondet=0 err=
+   19.6s dateutil 1376b599 'Use already existing `str_len` in isoparse' fns=3 probes=170 diffs=0 nondet=0 err=
+   22.1s dateutil 1426acd8 'Simplify parser._timelex handling of bytes and byt' fns=2 probes=32 diffs=0 nondet=0 err=
+   20.2s dateutil 34906dcd 'isoparse: Fail with inconsistent time separators' fns=3 probes=170 diffs=2 nondet=0 err=
+    4.7s dateutil 7e1ffa23 'Use fat zic binaries in zoneinfo.rebuild' fns=1 probes=0 diffs=0 nondet=0 err=
+    4.5s dateutil 1fb2ea99 'Added property test for tz.gettz()' fns=1 probes=0 diffs=0 nondet=0 err=
+    4.7s dateutil bd69e8e9 'Fix tz.gettz() behavior with empty string' fns=1 probes=0 diffs=0 nondet=0 err=
+    4.8s dateutil ab9e6102 'Fix simple typo: negilible -> negligible' fns=1 probes=3 diffs=0 nondet=0 err=
+   25.6s dateutil 7a3f5c47 'Wrap _invalidates_cache decorator to preserve docs' fns=5 probes=24 diffs=0 nondet=0 err=
+   11.7s dateutil d6820442 'Fix numbered list formatting' fns=1 probes=15 diffs=0 nondet=0 err=
+   11.6s dateutil 40c41c0f 'Fix Easter typos' fns=1 probes=15 diffs=0 nondet=0 err=
+    1.0s dateutil 6d89db3e 'Improve documentation for parser errors/warnings' fns=0 probes=None diffs=0 nondet=0 err=
+   17.9s dateutil 579cd769 'Document that parser.parse raises ParserError' fns=1 probes=88 diffs=0 nondet=0 err=
+    0.8s dateutil 6edfecd6 'Update documentation links' fns=0 probes=None diffs=0 nondet=0 err=
+   12.7s dateutil ea7f441b 'Fix custom repr for ParserError' fns=1 probes=0 diffs=0 nondet=0 err=
+   19.2s dateutil 79d2e486 'Fix TypeError in parser wrapper logic' fns=2 probes=88 diffs=1 nondet=0 err=
+   36.2s dateutil 6e92f211 'Lock around strong cache updates' fns=4 probes=0 diffs=0 nondet=0 err=
+   11.6s dateutil d8cc4ccc 'Add helpful message when passed bytes to gettz' fns=1 probes=0 diffs=0 nondet=0 err=
+    0.8s dateutil 980e5aa6 'Fix incorrect import in Python 3.7+' fns=0 probes=None diffs=0 nondet=0 err=
+   14.2s dateutil b7668eaf 'Fix typos in comments and documentation' fns=3 probes=2 diffs=0 nondet=0 err=
+    8.0s dateutil d77c0c74 'Remove unnecessary tzutc() calls in tz' fns=2 probes=7 diffs=0 nondet=0 err=
+    0.7s dateutil a6ea0336 'Move UTC definition into dateutil.tz.tz' fns=0 probes=None diffs=0 nondet=0 err=
+   15.6s dateutil 6588716b 'Use tz.UTC in parser' fns=2 probes=88 diffs=0 nondet=0 err=
+   24.7s dateutil 4d5ddce3 'Use tz.UTC in isoparser' fns=4 probes=237 diffs=0 nondet=0 err=

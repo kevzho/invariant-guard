@@ -1,0 +1,682 @@
+{
+ "totals": {
+  "commits_with_replayed_fn": 74,
+  "intending_change": 46,
+  "intending_change_with_executable_input": 36,
+  "intending_change_detected": 18,
+  "not_intending_change": 28,
+  "not_intending_change_with_difference": [
+   "caaec943"
+  ],
+  "recall_all": "18/46",
+  "recall_given_executable": "18/36"
+ },
+ "rows": [
+  {
+   "repo": "more-itertools",
+   "commit": "67fcf640",
+   "subject": "fix: honour a falsey validator in bucket (#1308)",
+   "intends_change": true,
+   "note": "bucket: a falsy validator (e.g. a callable whose truth value is False) is honoured",
+   "executable_inputs": 57,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "f89d7a33",
+   "subject": "Issue 1304: make ichunked match chunked for n=0 and negative n",
+   "intends_change": true,
+   "note": "ichunked n=0 / negative n",
+   "executable_inputs": 59,
+   "difference_reported": true
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "ca0586d5",
+   "subject": "Remove redundant seekable peek cache check",
+   "intends_change": false,
+   "note": "redundant cache check removed",
+   "executable_inputs": 19,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "ed1bd2d4",
+   "subject": "Optimize maxlen == 0",
+   "intends_change": false,
+   "note": "optimization",
+   "executable_inputs": 83,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "3eb4053e",
+   "subject": "Bound zero-cache seekable lookahead storage",
+   "intends_change": false,
+   "note": "internal storage bound (memory)",
+   "executable_inputs": 81,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "262dbb98",
+   "subject": "fix: check maxlen with getattr instead of isinstance",
+   "intends_change": true,
+   "note": "maxlen detected via getattr: duck-typed deques now honoured",
+   "executable_inputs": 18,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "288d6da0",
+   "subject": "Issue #1287: Less aggressive fix for issue #1284",
+   "intends_change": true,
+   "note": "bucket lookup should not invent a key (less aggressive fix)",
+   "executable_inputs": 118,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "0c518386",
+   "subject": "Keep the cached append within the 79-column limit",
+   "intends_change": false,
+   "note": "line length only",
+   "executable_inputs": 55,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "2b8d5cdd",
+   "subject": "Issue 1284: don't let a bucket lookup invent a key",
+   "intends_change": true,
+   "note": "bucket lookup should not invent a key",
+   "executable_inputs": 118,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "def2dabe",
+   "subject": "Fix one()/only() dropping a falsy user-supplied exception",
+   "intends_change": true,
+   "note": "falsy user exception honoured by one/only",
+   "executable_inputs": 113,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "feaddee0",
+   "subject": "Optimize numeric_range reverse iteration following review",
+   "intends_change": false,
+   "note": "optimization",
+   "executable_inputs": 1,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "e426d256",
+   "subject": "Reuse input iterators in zip_broadcast",
+   "intends_change": false,
+   "note": "reuse iterators (performance)",
+   "executable_inputs": 72,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "752799b5",
+   "subject": "Preserve numeric_range values during reverse iteration",
+   "intends_change": true,
+   "note": "numeric_range reverse iteration values preserved",
+   "executable_inputs": 1,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "d032cab7",
+   "subject": "fix nonpositive item limits in constrained_batches",
+   "intends_change": true,
+   "note": "nonpositive limits rejected",
+   "executable_inputs": 65,
+   "difference_reported": true
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "6b1907de",
+   "subject": "fix: seekable.peek/bool no longer drop items when maxlen is 0",
+   "intends_change": true,
+   "note": "seekable.peek/bool with maxlen 0",
+   "executable_inputs": 18,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "0e6dce3a",
+   "subject": "Clarify `combination_with_replacement_index` a bit",
+   "intends_change": false,
+   "note": "clarification refactor",
+   "executable_inputs": 65,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "1b74b56d",
+   "subject": "Fix/simplify `combination_with_replacement_index`",
+   "intends_change": true,
+   "note": "fix/simplify combination_with_replacement_index (message says fix)",
+   "executable_inputs": 65,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "1fd388bc",
+   "subject": "Validate running window sizes through the index protocol",
+   "intends_change": true,
+   "note": "window sizes validated through __index__ (accepts index-like objects)",
+   "executable_inputs": 199,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "b8e0cbb8",
+   "subject": "Add missing word in docstring",
+   "intends_change": false,
+   "note": "docstring only",
+   "executable_inputs": 157,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "ddd67820",
+   "subject": "Thinner API with only random_ordered_range()",
+   "intends_change": false,
+   "note": "API removal; changed private helper batch size only",
+   "executable_inputs": 15,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "caaec943",
+   "subject": "Add random ordered combinatoric functions",
+   "intends_change": false,
+   "note": "adds functions; the modified function was not meant to change on empty input",
+   "executable_inputs": 14,
+   "difference_reported": true
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "dee22c93",
+   "subject": "Remove special case logic for cwr",
+   "intends_change": true,
+   "note": "special case for cwr removed",
+   "executable_inputs": 14,
+   "difference_reported": true
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "ce676d24",
+   "subject": "Do not yield an empty list for an empty iterable when maxsplit is 0",
+   "intends_change": true,
+   "note": "no empty list for empty iterable with maxsplit=0",
+   "executable_inputs": 181,
+   "difference_reported": true
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "7847d432",
+   "subject": "Don't mask TypeError raised while iterating in value_chain",
+   "intends_change": true,
+   "note": "TypeError raised while iterating is no longer masked",
+   "executable_inputs": 54,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "dc2664b4",
+   "subject": "Issue 1247: Keep numeric_range consistent with the items it produces",
+   "intends_change": true,
+   "note": "numeric_range consistency",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "63ee5830",
+   "subject": "Clarify output order for sortable input elements",
+   "intends_change": false,
+   "note": "docstring only",
+   "executable_inputs": 64,
+   "difference_reported": false
+  },
+  {
+   "repo": "more-itertools",
+   "commit": "237388cc",
+   "subject": "Simplify and speed up nth_permutation",
+   "intends_change": false,
+   "note": "simplify/speed up",
+   "executable_inputs": 63,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "4e5faa3d",
+   "subject": "Fix spooled stream write compatibility and backwards text seeks (#513)",
+   "intends_change": true,
+   "note": "write() return value, backwards text seeks",
+   "executable_inputs": 63,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "1216b467",
+   "subject": "Complete September PR sweep for 26.2.0 (#481)",
+   "intends_change": true,
+   "note": "PR sweep of fixes",
+   "executable_inputs": 194,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "73e22c90",
+   "subject": "statsutils: finish Pearson zero-denominator review and regression coverage",
+   "intends_change": true,
+   "note": "Pearson zero-denominator",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "1cdc0e9d",
+   "subject": "statsutils: handle zero interquartile range in histograms (#467)",
+   "intends_change": true,
+   "note": "zero IQR histograms",
+   "executable_inputs": 15,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "51508029",
+   "subject": "jsonutils: accept explicit end-of-file relative seek (#465)",
+   "intends_change": true,
+   "note": "explicit EOF relative seek accepted",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "efff866a",
+   "subject": "mathutils: preserve empty Bits through conversions (#468)",
+   "intends_change": true,
+   "note": "empty Bits conversions",
+   "executable_inputs": 42,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "5eb6cc04",
+   "subject": "mathutils: resolve negative Bits indices (#450)",
+   "intends_change": true,
+   "note": "negative Bits indices",
+   "executable_inputs": 32,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "8789df2c",
+   "subject": "timeutils: match timezone for default relative time (#469)",
+   "intends_change": true,
+   "note": "aware datetimes with omitted comparison time",
+   "executable_inputs": 25,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "f5f5cd86",
+   "subject": "iterutils: correct inclusive GUIDerator size message (#451)",
+   "intends_change": true,
+   "note": "error message text",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "970051b6",
+   "subject": "namedutils: reject empty type and field names (#462)",
+   "intends_change": true,
+   "note": "empty names rejected with ValueError",
+   "executable_inputs": 84,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "9decba3e",
+   "subject": "ecoutils: skip identifying lookups when scrubbing (#461)",
+   "intends_change": true,
+   "note": "no identifying lookups when scrubbing",
+   "executable_inputs": 3,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "a1ea1030",
+   "subject": "dictutils: preserve iterator values in addlist (#458)",
+   "intends_change": true,
+   "note": "addlist with iterators",
+   "executable_inputs": 106,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "d45cc414",
+   "subject": "urlutils: honor parse_qsl encoding (#455)",
+   "intends_change": true,
+   "note": "parse_qsl encoding",
+   "executable_inputs": 43,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "91b2bb47",
+   "subject": "Keep the stop barrel valid during cross-barrel deletion",
+   "intends_change": true,
+   "note": "cross-barrel deletion",
+   "executable_inputs": 1,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "448b1db1",
+   "subject": "Normalize BarrelList slice bounds and reverse steps",
+   "intends_change": true,
+   "note": "slice bounds/reverse steps",
+   "executable_inputs": 35,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "1a04b637",
+   "subject": "Support relative seeking in binary JSONL streams",
+   "intends_change": true,
+   "note": "relative seeking in binary streams",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "5df26592",
+   "subject": "Use the sep argument in args2sh and args2cmd (#454)",
+   "intends_change": true,
+   "note": "sep argument used",
+   "executable_inputs": 100,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "580a9c2d",
+   "subject": "setutils: cover _ComplementSet __ge__'s double-complement branch, drop duplicated NotImplemented checks (#446)",
+   "intends_change": false,
+   "note": "coverage + duplicated NotImplemented checks dropped",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "ec1ff9f6",
+   "subject": "Fix issupserset typo in _ComplementSet comparisons (#438)",
+   "intends_change": true,
+   "note": "issupserset typo fix",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "b5c495be",
+   "subject": "funcutils: forward target-keyword-only args as keywords in wraps invocations (#445)",
+   "intends_change": true,
+   "note": "keyword-only args forwarded",
+   "executable_inputs": 4,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "c1c25da3",
+   "subject": "Fix off-by-one in Bits length check",
+   "intends_change": true,
+   "note": "Bits length off-by-one",
+   "executable_inputs": 99,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "3e9983db",
+   "subject": "iterutils: unify xfrange with frange's count-based semantics",
+   "intends_change": true,
+   "note": "xfrange semantics",
+   "executable_inputs": 67,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "f1034b07",
+   "subject": "jsonutils: fix JSONLIterator nontermination at EOF and negative rel_seek",
+   "intends_change": true,
+   "note": "nontermination at EOF / negative rel_seek",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "boltons",
+   "commit": "a180020c",
+   "subject": "setutils: flatten inputs to IndexedSet.update (#474)",
+   "intends_change": true,
+   "note": "IndexedSet.update flattens",
+   "executable_inputs": 18,
+   "difference_reported": true
+  },
+  {
+   "repo": "boltons",
+   "commit": "e00c10a8",
+   "subject": "setutils, listutils: streamline bulk removal and fix list bounds (#440)",
+   "intends_change": true,
+   "note": "BarrelList bounds fixes + perf",
+   "executable_inputs": 244,
+   "difference_reported": true
+  },
+  {
+   "repo": "dateutil",
+   "commit": "7c5c9895",
+   "subject": "docs: YYYYMM is not supported (#1179)",
+   "intends_change": false,
+   "note": "docstring only",
+   "executable_inputs": 102,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "7d2e7f63",
+   "subject": "Fix typo discovered by codespell",
+   "intends_change": false,
+   "note": "typo in docstring",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "5cf3e3cb",
+   "subject": "Decode input str when reporting an error in `parse_isodate`",
+   "intends_change": true,
+   "note": "error message decoding",
+   "executable_inputs": 49,
+   "difference_reported": true
+  },
+  {
+   "repo": "dateutil",
+   "commit": "1376b599",
+   "subject": "Use already existing `str_len` in isoparse",
+   "intends_change": false,
+   "note": "refactor",
+   "executable_inputs": 170,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "1426acd8",
+   "subject": "Simplify parser._timelex handling of bytes and bytearray",
+   "intends_change": false,
+   "note": "simplify bytes handling",
+   "executable_inputs": 32,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "34906dcd",
+   "subject": "isoparse: Fail with inconsistent time separators",
+   "intends_change": true,
+   "note": "fail on inconsistent separators",
+   "executable_inputs": 170,
+   "difference_reported": true
+  },
+  {
+   "repo": "dateutil",
+   "commit": "7e1ffa23",
+   "subject": "Use fat zic binaries in zoneinfo.rebuild",
+   "intends_change": false,
+   "note": "zoneinfo rebuild tooling (not replayable)",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "1fb2ea99",
+   "subject": "Added property test for tz.gettz()",
+   "intends_change": false,
+   "note": "property test added; function change is incidental",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "bd69e8e9",
+   "subject": "Fix tz.gettz() behavior with empty string",
+   "intends_change": true,
+   "note": "gettz('') behavior",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "ab9e6102",
+   "subject": "Fix simple typo: negilible -> negligible",
+   "intends_change": false,
+   "note": "docstring typo",
+   "executable_inputs": 3,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "7a3f5c47",
+   "subject": "Wrap _invalidates_cache decorator to preserve docstring",
+   "intends_change": true,
+   "note": "decorator preserves docstring (wrapped function metadata)",
+   "executable_inputs": 24,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "d6820442",
+   "subject": "Fix numbered list formatting",
+   "intends_change": false,
+   "note": "docstring",
+   "executable_inputs": 15,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "40c41c0f",
+   "subject": "Fix Easter typos",
+   "intends_change": false,
+   "note": "docstring",
+   "executable_inputs": 15,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "579cd769",
+   "subject": "Document that parser.parse raises ParserError",
+   "intends_change": false,
+   "note": "docstring",
+   "executable_inputs": 88,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "ea7f441b",
+   "subject": "Fix custom repr for ParserError",
+   "intends_change": true,
+   "note": "ParserError repr",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "79d2e486",
+   "subject": "Fix TypeError in parser wrapper logic",
+   "intends_change": true,
+   "note": "TypeError in wrapper logic",
+   "executable_inputs": 88,
+   "difference_reported": true
+  },
+  {
+   "repo": "dateutil",
+   "commit": "6e92f211",
+   "subject": "Lock around strong cache updates",
+   "intends_change": false,
+   "note": "locking (not observable single-threaded)",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "d8cc4ccc",
+   "subject": "Add helpful message when passed bytes to gettz",
+   "intends_change": true,
+   "note": "helpful message for bytes in gettz",
+   "executable_inputs": 0,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "b7668eaf",
+   "subject": "Fix typos in comments and documentation",
+   "intends_change": false,
+   "note": "docstring typos",
+   "executable_inputs": 2,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "d77c0c74",
+   "subject": "Remove unnecessary tzutc() calls in tz",
+   "intends_change": false,
+   "note": "refactor tzutc() -> UTC",
+   "executable_inputs": 7,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "6588716b",
+   "subject": "Use tz.UTC in parser",
+   "intends_change": false,
+   "note": "refactor",
+   "executable_inputs": 88,
+   "difference_reported": false
+  },
+  {
+   "repo": "dateutil",
+   "commit": "4d5ddce3",
+   "subject": "Use tz.UTC in isoparser",
+   "intends_change": false,
+   "note": "refactor",
+   "executable_inputs": 237,
+   "difference_reported": false
+  }
+ ]
+}

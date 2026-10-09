@@ -1,0 +1,231 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/sequences.py::clip_negatives",
+ "context_packet_digest": "sha256:01c0a440c94eede98299ec1018ccc5b84ac27ec0183d860b6b3b173919e497f6",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "Docstring: all results are >= 0.",
+   "uncertainty": "code compares against -1, not 0",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1
+     ]
+    },
+    {
+     "xs": [
+      -1,
+      0,
+      5
+     ]
+    },
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "One output entry per input entry.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      -3,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "List comprehension should not mutate xs.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "Already nonnegative input passes through unchanged.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0,
+      1,
+      1000
+     ]
+    },
+    {
+     "xs": []
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "result"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "Replacing negatives by zero cannot reduce the total.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      -5,
+      -1
+     ]
+    },
+    {
+     "xs": [
+      -1000,
+      1000
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 19,
+    "end_line": 21
+   },
+   "rationale": "Pure function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

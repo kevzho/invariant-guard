@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:source_span:1.0",
+  "title": "SourceSpan",
+  "description": "One-based lines, zero-based UTF-8 byte columns, exclusive end; absolute byte offsets into the captured file.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/rel_path"
+    },
+    "start_line": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "start_column": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "end_line": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "end_column": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "start_byte": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "end_byte": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "snapshot_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    }
+  },
+  "required": [
+    "end_byte",
+    "end_column",
+    "end_line",
+    "path",
+    "snapshot_id",
+    "start_byte",
+    "start_column",
+    "start_line"
+  ]
+}

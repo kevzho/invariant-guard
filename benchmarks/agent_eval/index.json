@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "manifest": "benchmarks/manifests/m4_heldout.json",
+  "functions": [
+    {
+      "symbol": "heldout/stats.py::mean_of",
+      "file": "packets/heldout_stats_py_mean_of.json",
+      "context_packet_digest": "sha256:edfb07a3887bdb1eef78dace60a209df64bd07823688ed4cfcee90bba5e916b8",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_numeric_list_v1"
+    },
+    {
+      "symbol": "heldout/stats.py::spread",
+      "file": "packets/heldout_stats_py_spread.json",
+      "context_packet_digest": "sha256:db758f0c1ebb116dd97a84be5d01133fd330cb1690b0696e1b2a9fe8e90b4c8f",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_numeric_list_v1"
+    },
+    {
+      "symbol": "heldout/stats.py::normalize_to_unit",
+      "file": "packets/heldout_stats_py_normalize_to_unit.json",
+      "context_packet_digest": "sha256:b73ea24e453d4bcce63f0779a3d66a874034f6b124bd17b4bb99ab4c14f900f5",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_numeric_list_v1"
+    },
+    {
+      "symbol": "heldout/stats.py::running_total",
+      "file": "packets/heldout_stats_py_running_total.json",
+      "context_packet_digest": "sha256:4b5a2e6f4dc1e5242721bd57ed4b9e8a7717b5d00fb0bae65f404b94594709fe",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_int_list_v1"
+    },
+    {
+      "symbol": "heldout/stats.py::count_positive",
+      "file": "packets/heldout_stats_py_count_positive.json",
+      "context_packet_digest": "sha256:b143c8edc69b7475e6f3733c66d59936a42a989860131b57be7645e0d372e0ba",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_numeric_list_v1"
+    },
+    {
+      "symbol": "heldout/sequences.py::dedupe_sorted",
+      "file": "packets/heldout_sequences_py_dedupe_sorted.json",
+      "context_packet_digest": "sha256:286645b28168a7e4d8ace2615c62229723340462da710524bdd564cccad41e1e",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_int_list_v1"
+    },
+    {
+      "symbol": "heldout/sequences.py::pairwise_diffs",
+      "file": "packets/heldout_sequences_py_pairwise_diffs.json",
+      "context_packet_digest": "sha256:359e8d81b2bc7eb3b74848e99dfd5246b1a1a35863c2eac10a4b6d8bd36e9b7f",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_int_list_v1"
+    },
+    {
+      "symbol": "heldout/sequences.py::clip_negatives",
+      "file": "packets/heldout_sequences_py_clip_negatives.json",
+      "context_packet_digest": "sha256:01c0a440c94eede98299ec1018ccc5b84ac27ec0183d860b6b3b173919e497f6",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_int_list_v1"
+    },
+    {
+      "symbol": "heldout/sequences.py::rotate_left",
+      "file": "packets/heldout_sequences_py_rotate_left.json",
+      "context_packet_digest": "sha256:231e0c42fc3feec4b854ab67e61848a1436735088560284d81273f95e69fb816",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_int_list_v1"
+    },
+    {
+      "symbol": "heldout/scalars.py::abs_diff",
+      "file": "packets/heldout_scalars_py_abs_diff.json",
+      "context_packet_digest": "sha256:943e3582eb6f9651358ded752355fb5f7b7d8226ba604fd1b641a00374b107a8",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_ints_v1"
+    },
+    {
+      "symbol": "heldout/scalars.py::clamp_percent",
+      "file": "packets/heldout_scalars_py_clamp_percent.json",
+      "context_packet_digest": "sha256:c74ca2e4abd423d36cdb4161cd84dcb39a522313ef39bc6e490c45c09b9aa014",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_finite_floats_v1"
+    },
+    {
+      "symbol": "heldout/scalars.py::floor_div_or_zero",
+      "file": "packets/heldout_scalars_py_floor_div_or_zero.json",
+      "context_packet_digest": "sha256:d1d4e05b344b9d9144cd7fe40fa6c5e5aa468f4cf5a453eaa460a9e0bdd55828",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_ints_v1"
+    },
+    {
+      "symbol": "heldout/report.py::summary_score",
+      "file": "packets/heldout_report_py_summary_score.json",
+      "context_packet_digest": "sha256:d8b437b66266d79d2726ac3212039b0448bd8ea11e283404400757c61bbbe0bf",
+      "snapshot_id": "sha256:7b0520c7d68cd8825834a8a0f5d7b4739acba74da3b83114b41d1334722144e9",
+      "input_profile": "bounded_builtin_numeric_list_v1"
+    }
+  ]
+}

@@ -1,0 +1,1162 @@
+{
+  "schema_version": "1.0",
+  "description": "Semantic fixture manifest (M1 + M2). Properties: division.zero_denominator, index.out_of_range, none.attribute_access. Expected results are derived from Python semantics, not from tool output. patch_cases are two-snapshot (guard verify) cases implemented as integration tests that build throwaway Git repositories. M3 adds dynamic_cases (docs/12 dynamic suites), each pointing at the test that checks it.",
+  "config": "examples/python_demo/.guard/config.toml",
+  "solver": "z3-solver 5.1.0.0, per-query timeout 100 ms, random_seed 0",
+  "cases": [
+    {
+      "case_id": "A-baseline-guarded",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/baseline/ratio.py",
+      "symbol_id": "baseline/ratio.py::ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": "baseline/ratio.py",
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "division only on the path where d == a - b != 0"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "A-candidate-unguarded",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/candidate/ratio.py",
+      "symbol_id": "candidate/ratio.py::ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": "baseline/ratio.py",
+      "patch_source": "candidate/ratio.py",
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "any a == b (e.g. a=1, b=1) raises ZeroDivisionError; replayed in tests/differential"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "C-imported-ratio",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/unknown/imported_ratio.py",
+      "symbol_id": "unknown/imported_ratio.py::imported_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "none (unannotated, undeclared)",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/13 Fixture C: unknown call result -> UNKNOWN, required coverage -> INCOMPLETE"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "guarded-nonzero",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/guarded_nonzero.py",
+      "symbol_id": "adversarial/guarded_nonzero.py::ratio_nonzero",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "docs/04 example: d != 0 AND d == 0 is unsatisfiable"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "unreachable-bad-branch",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/unreachable_branch.py",
+      "symbol_id": "adversarial/unreachable_branch.py::unreachable_bad_branch",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "x > 5 AND x < 3 is infeasible over integers"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "two-variable-equality",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/two_variable_equality.py",
+      "symbol_id": "adversarial/two_variable_equality.py::guarded_difference",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "a != b implies a - b != 0"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository",
+      "note": "relational fact: intervals alone cannot prove it; without the solver the honest result is UNKNOWN"
+    },
+    {
+      "case_id": "unknown-call-unrelated",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/unknown_call_unrelated.py",
+      "symbol_id": "adversarial/unknown_call_unrelated.py::logged_inverse",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "POSSIBLY_UNSAFE",
+        "scope_validity": "OVERAPPROXIMATE"
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "a == 0 fails only if audit_log returns normally, which cannot be established statically"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "annotation-only",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/annotation_only.py",
+      "symbol_id": "adversarial/annotation_only.py::ratio_annotated",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "int annotations only (not enforced)",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution + specification",
+        "detail": "a == b raises for exact ints; annotation-only domain must stay CONDITIONAL (docs/03, docs/11 M1 gate)"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "bool-subclass-isinstance",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/isinstance_guard.py",
+      "symbol_id": "adversarial/isinstance_guard.py::ratio_isinstance",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "isinstance(x, int) admits bool and int subclasses",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "operands may be int subclasses overriding __sub__; calls to isinstance not modeled in M1"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "negative-index-m1",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/negative_index.py",
+      "symbol_id": "adversarial/negative_index.py::last_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "list[int] annotation",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "list element values/bounds are M2 work; M1 must report UNKNOWN, not guess"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "widened-caller-m1",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/local_helper_call.py",
+      "symbol_id": "adversarial/local_helper_call.py::caller_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "none",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "M2 instantiates shifted(n), but n has no declared domain, so n - 1 may dispatch to user code; shifted(1) == 0 is a real failure for int inputs, the tool abstains"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "exception-handler",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/exception_handler.py",
+      "symbol_id": "adversarial/exception_handler.py::safe_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "none",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "try/except is outside the M1 subset"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "solver-timeout-cubes",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/sum_of_cubes.py",
+      "symbol_id": "adversarial/sum_of_cubes.py::cube_sum_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "published number theory + isolated execution",
+        "detail": "Booker (2019): 33 = 8866128975287528^3 + (-8778405442862239)^3 + (-2736111468807040)^3, so a failing input exists; a 100 ms query must not find or refute it (honest UNKNOWN, solver TIMEOUT)"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository",
+      "note": "ground truth is UNSAFE; the expected tool result is an abstention, counted as such"
+    },
+    {
+      "case_id": "float-nan",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/float_nan.py",
+      "symbol_id": "adversarial/float_nan.py::float_gap",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "float annotation",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution + specification",
+        "detail": "x=1.0 gives 0.0 divisor (fails); x=inf gives NaN (no failure); float semantics unmodeled in M1"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "assert-runtime-mode",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/assert_guard.py",
+      "symbol_id": "adversarial/assert_guard.py::checked_ratio",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL",
+        "runtime_mode": "python -O (assertions disabled)"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL",
+        "runtime_mode": "python -O (assertions disabled)"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution (python -O)",
+        "detail": "b == 0 raises ZeroDivisionError only when assertions are disabled; AssertionError otherwise"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "literal-zero",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/literal_zero.py",
+      "symbol_id": "adversarial/literal_zero.py::literal_offset",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "no inputs",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "10 // (3 - 3) always raises"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository",
+      "expected_witness": {}
+    },
+    {
+      "case_id": "floor-semantics-safe-const",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/floor_semantics.py",
+      "symbol_id": "adversarial/floor_semantics.py::floor_bucket",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "constant divisor 2"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "floor-semantics-unsafe",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/floor_semantics.py",
+      "symbol_id": "adversarial/floor_semantics.py::floor_bucket",
+      "obligation_ordinal": 1,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "only a = -1 reaches with a + 1 == 0 under floor semantics (-1 // 2 == -1); truncation semantics would make it unreachable"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository",
+      "expected_witness": {
+        "a": -1
+      }
+    },
+    {
+      "case_id": "modulo-guard-positive",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/modulo_guard.py",
+      "symbol_id": "adversarial/modulo_guard.py::wrap",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "n > 0"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "modulo-guard-negative",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/modulo_guard.py",
+      "symbol_id": "adversarial/modulo_guard.py::wrap",
+      "obligation_ordinal": 1,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "n <= 0 implies n - 1 <= -1"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "loop-unsupported",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/loop_total.py",
+      "symbol_id": "adversarial/loop_total.py::mean_inverse",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "loops are outside the M1 subset (n <= 1 actually fails)"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "decorated-unsupported",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/decorated.py",
+      "symbol_id": "adversarial/decorated.py::cached_inverse",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "none",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "decorated functions are unsupported symbols"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "method-unsupported",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/method_division.py",
+      "symbol_id": "adversarial/method_division.py::Scaler.scale",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "none",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "methods are unsupported symbols"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "case_id": "unicode-source-map",
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "path": "examples/python_demo/adversarial/unicode_names.py",
+      "symbol_id": "adversarial/unicode_names.py::ratio_ünïcode",
+      "obligation_ordinal": 0,
+      "baseline_source": null,
+      "patch_source": null,
+      "property": "division.zero_denominator",
+      "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "scope": "function input domain (not a repository reachability claim)",
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "größe == b raises; spans use UTF-8 byte columns"
+      },
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/13)",
+      "license": "same as repository"
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "empty-list",
+      "path": "examples/python_demo/adversarial/empty_list.py",
+      "symbol_id": "adversarial/empty_list.py::first_item",
+      "obligation_ordinal": 0,
+      "property": "index.out_of_range",
+      "domain": "exact built-in list, declared",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "first_item([]) raises IndexError at xs[0]; witness {'xs': []}"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "negative-index-guarded",
+      "path": "examples/python_demo/adversarial/guarded_index.py",
+      "symbol_id": "adversarial/guarded_index.py::last_or_zero",
+      "obligation_ordinal": 0,
+      "property": "index.out_of_range",
+      "domain": "exact built-in list, declared",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "bool(xs) for a built-in list is len(xs) != 0, and -n <= -1 < n for every n >= 1"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "negative-index-annotation",
+      "path": "examples/python_demo/adversarial/negative_index.py",
+      "symbol_id": "adversarial/negative_index.py::last_ratio",
+      "obligation_ordinal": 0,
+      "property": "index.out_of_range",
+      "domain": "list[int] annotation only (conditional)",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "CONDITIONAL"
+      },
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "last_ratio([]) raises IndexError at xs[-1]; the annotation is not enforced, hence conditional"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "alias-mutation",
+      "path": "examples/python_demo/adversarial/alias_mutation.py",
+      "symbol_id": "adversarial/alias_mutation.py::grow_then_read",
+      "obligation_ordinal": 0,
+      "property": "index.out_of_range",
+      "domain": "literal list",
+      "expected": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "expected_without_solver": {
+        "property_result": "UNKNOWN",
+        "scope_validity": null
+      },
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/05: bounds through aliases are unknown until alias/effect support is sound (the call happens to make it valid: CPython returns 2)"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "none-flow-unguarded",
+      "path": "examples/python_demo/adversarial/none_flow.py",
+      "symbol_id": "adversarial/none_flow.py::port_bits",
+      "obligation_ordinal": 0,
+      "property": "none.attribute_access",
+      "domain": "None or exact int, declared",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "port_bits(None) raises AttributeError at code.bit_length"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "none-flow-guarded",
+      "path": "examples/python_demo/adversarial/none_flow.py",
+      "symbol_id": "adversarial/none_flow.py::safe_port_bits",
+      "obligation_ordinal": 0,
+      "property": "none.attribute_access",
+      "domain": "None or exact int, declared",
+      "expected": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "ground_truth": {
+        "method": "hand proof",
+        "detail": "the `is None` test returns early, so code is an int at the attribute load"
+      }
+    },
+    {
+      "language": "python",
+      "language_version": "CPython 3.13 grammar (host 3.13.9)",
+      "baseline_source": null,
+      "patch_source": null,
+      "scope": "function input domain (not a repository reachability claim)",
+      "environment_lock": "requirements.lock",
+      "seed": 0,
+      "origin": "authored for this repository (docs/05, docs/07, docs/12)",
+      "license": "same as repository",
+      "case_id": "changed-callee-single-snapshot",
+      "path": "examples/python_demo/adversarial/summary_caller.py",
+      "symbol_id": "adversarial/summary_caller.py::scaled",
+      "obligation_ordinal": 0,
+      "property": "division.zero_denominator",
+      "domain": "exact ints, declared",
+      "expected": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "expected_without_solver": {
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
+      },
+      "ground_truth": {
+        "method": "isolated execution",
+        "detail": "scaled(0): denominator(0) == 0 raises ZeroDivisionError in the caller (Fixture D candidate)"
+      }
+    }
+  ],
+  "skip_cases": [
+    {
+      "case_id": "syntax-error",
+      "path": "examples/python_demo/adversarial/syntax_error.py",
+      "expected_skip": "parse_failure",
+      "expected_run_outcome": "INCOMPLETE",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "unparsable file: required coverage missing -> INCOMPLETE, never PASS"
+      }
+    }
+  ],
+  "deferred_cases": [],
+  "patch_cases": [
+    {
+      "case_id": "changed-callee",
+      "milestone": "M2",
+      "test": "tests/integration/test_verify.py::test_fixture_d_changed_callee_invalidates_unchanged_caller",
+      "expected": "unchanged caller invalidated; PROVED_UNSAFE EXACT_MODEL witness {'x': 0}; INTRODUCED; BLOCK",
+      "ground_truth": {
+        "method": "isolated execution of both revisions",
+        "detail": "base scaled(0) returns 100.0; candidate raises ZeroDivisionError"
+      }
+    },
+    {
+      "case_id": "changed-callee-cross-module",
+      "milestone": "M2",
+      "test": "tests/integration/test_verify.py::test_fixture_d_cross_module_callee_is_conditional_and_invalidates_importer",
+      "expected": "importer invalidated; PROVED_UNSAFE CONDITIONAL (import resolution assumed); INTRODUCED; WARN",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/07: an unchanged caller can become unsafe when a callee changes"
+      }
+    },
+    {
+      "case_id": "mid-run-edit-restart",
+      "milestone": "M2",
+      "test": "tests/integration/test_verify.py::test_verify_restarts_once_then_reports_incomplete",
+      "expected": "one restart, then INCOMPLETE with source_changed_during_run",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/07: restart once or return INCOMPLETE"
+      }
+    },
+    {
+      "case_id": "changed-global-limit",
+      "milestone": "M2",
+      "test": "tests/integration/test_verify.py::test_changed_global_limit_rechecks_dependent_index",
+      "expected": "dependent index rechecked; PROVED_UNSAFE INTRODUCED",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/07 fixture acceptance"
+      }
+    },
+    {
+      "case_id": "comment-only",
+      "milestone": "M2",
+      "test": "tests/integration/test_cache.py::test_comment_only_edit_reuses_analysis_with_current_spans",
+      "expected": "analysis reused after span remapping",
+      "ground_truth": {
+        "method": "specification",
+        "detail": "docs/07 fixture acceptance"
+      }
+    }
+  ],
+  "dynamic_cases": [
+    {
+      "case_id": "fixture-b-positive-sum-regression",
+      "test": "tests/integration/test_docker_isolation.py::test_fixture_b_through_containers",
+      "expected": "approved normalize.sum.v1: OBSERVED_REGRESSION EXECUTED INTRODUCED, BLOCK; original witness xs=[1.0, 1.0]; same input in both containers",
+      "ground_truth": {
+        "method": "isolated execution of both snapshots",
+        "detail": "base normalize([1.0, 1.0]) = [0.5, 0.5] (sum 1); candidate = [1/3, 1/3] (sum 2/3)"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "fixture-b-unisolated",
+      "test": "tests/integration/test_contracts_dynamic.py::test_fixture_b_positive_sum_regression_blocks",
+      "expected": "same as fixture-b, explicit unisolated profile; evidence labelled unisolated",
+      "ground_truth": {
+        "method": "execution of both snapshots on the host",
+        "detail": "as fixture-b"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "all-zero-excluded",
+      "test": "tests/integration/test_contracts_dynamic.py::test_fixture_b_positive_sum_regression_blocks",
+      "expected": "xs=[0.0, 0.0] is excluded by the precondition (sum > 0), never probed and never a regression",
+      "ground_truth": {
+        "method": "hand derivation",
+        "detail": "sum([0.0, 0.0]) = 0 violates the declared precondition"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "both-versions-fail",
+      "test": "tests/integration/test_contracts_dynamic.py::test_both_versions_fail_is_pre_existing_not_a_regression",
+      "expected": "OBSERVED_FAILURE PRE_EXISTING WARNING; no block",
+      "ground_truth": {
+        "method": "isolated execution of both snapshots",
+        "detail": "base raises ZeroDivisionError on all-zero input; candidate returns zeros whose sum is not 1"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "passing-probes-tested",
+      "test": "tests/integration/test_contracts_dynamic.py::test_passing_probes_are_tested_not_proved",
+      "expected": "TESTED EXECUTED with a finite quantifier; no finding",
+      "ground_truth": {
+        "method": "execution",
+        "detail": "len(result) == len(xs) for every admitted input in both versions"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "inferred-change-warns",
+      "test": "tests/integration/test_contracts_dynamic.py::test_inferred_contract_change_only_warns",
+      "expected": "INFERRED contract regression: WARNING, verdict WARN",
+      "ground_truth": {
+        "method": "execution",
+        "detail": "as fixture-b, authority INFERRED"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "fixture-e-purity-regression",
+      "test": "tests/integration/test_contracts_dynamic.py::test_fixture_e_mutation_regression",
+      "expected": "unchanged_argument: OBSERVED_REGRESSION INTRODUCED; original witness [2, 1]",
+      "ground_truth": {
+        "method": "execution with before/after argument snapshots",
+        "detail": "sorted(xs) leaves xs unchanged; xs.sort() mutates it"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "controlled-repeatability",
+      "test": "tests/integration/test_contracts_dynamic.py::test_repeatability_regression_with_finite_observations",
+      "expected": "repeatability(3): base 1 distinct result, candidate 3; OBSERVED_REGRESSION",
+      "ground_truth": {
+        "method": "execution",
+        "detail": "module-level call counter changes every result"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "shrinking-preserves-domain",
+      "test": "tests/integration/test_contracts_dynamic.py::test_shrinking_preserves_the_contract_domain",
+      "expected": "minimized witness keeps len >= 3 and elements in [2, 60]",
+      "ground_truth": {
+        "method": "property check of every accepted shrink step",
+        "detail": "precondition re-evaluated for every candidate"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "missing-baseline-environment",
+      "test": "tests/integration/test_contracts_dynamic.py::test_missing_baseline_target_is_undetermined_and_incomplete",
+      "expected": "OBSERVED_FAILURE UNDETERMINED; INCOMPLETE, never BLOCK",
+      "ground_truth": {
+        "method": "hand derivation",
+        "detail": "the base snapshot has no target to replay"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "isolation-denial",
+      "test": "tests/integration/test_docker_isolation.py::test_network_is_denied_inside_a_probe",
+      "expected": "in-container connect fails with ENETUNREACH; DNS fails",
+      "ground_truth": {
+        "method": "execution in the container",
+        "detail": "--network none"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    },
+    {
+      "case_id": "runner-unavailable",
+      "test": "tests/integration/test_execution_failclosed.py::test_missing_docker_is_runner_unavailable_incomplete_without_fallback",
+      "expected": "RUNNER_UNAVAILABLE -> INCOMPLETE; no unisolated fallback",
+      "ground_truth": {
+        "method": "configuration",
+        "detail": "docker CLI absent"
+      },
+      "language": "python",
+      "language_version": "CPython 3.13 (host 3.13.9; container python:3.13-slim 3.13.16)",
+      "environment_lock": "requirements.lock + runner image id",
+      "origin": "authored for this repository (docs/06, docs/12, docs/13)",
+      "license": "same as repository",
+      "milestone": "M3"
+    }
+  ]
+}

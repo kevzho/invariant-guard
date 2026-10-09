@@ -1,0 +1,41 @@
+[2026-10-08T17:01:25.926527Z] model: qwen2.5-coder:7b at http://127.0.0.1:11434 (ollama 0.35.1)
+[2026-10-08T17:01:26.108301Z] $ guard init /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3  -> exit 0 (0.12 s)
+[2026-10-08T17:01:26.414061Z] $ guard contracts declare --file /var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-contract-_60esd8m/normalize.sum.v1.json --reason maintainer: positive-sum inputs must normalize to a sum of 1 (docs/13 Fixture B) --path /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3  -> exit 0 (0.30 s)
+[2026-10-08T17:01:26.483098Z] repository /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3; BASE_REF = b40ba95fa53eb5a761ee742e93ce282658fb02eb
+[2026-10-08T17:01:28.924154Z] $ guard runner probe --run-profile isolated-python --path /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3  -> exit 0 (2.44 s)
+[2026-10-08T17:01:29.287809Z] $ guard baseline create /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3 --label demo-base --rev b40ba95fa53eb5a761ee742e93ce282658fb02eb --reason maintainer: reviewed baseline before the agent patch  -> exit 0 (0.36 s)
+[2026-10-08T17:01:34.891625Z] $ guard verify /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3 --base b40ba95fa53eb5a761ee742e93ce282658fb02eb --format json --execute --run-profile isolated-python  -> exit 1 (5.59 s)
+[2026-10-08T17:01:36.189678Z] MCP: connected to invariantguard 0.4.0 (protocol 2025-11-25)
+[2026-10-08T17:01:43.200212Z] MCP verify_patch [attempt0_candidate]: status OK verdict BLOCK exit 1 (3 findings; verifier 6.83 s, round trip 7.00 s)
+[2026-10-08T17:01:43.594267Z] agent: asking qwen2.5-coder:7b for a repair of demo/math_ops.py::normalize (attempt 1)
+[2026-10-08T17:02:01.868676Z] agent: applied replacement of demo/math_ops.py::normalize (model 18.3 s, 113 output tokens)
+--- a/demo/math_ops.py
++++ b/demo/math_ops.py
+@@ -4,5 +4,5 @@
+ 
+ 
+ def normalize(xs):
+-    total = sum(xs) + 1.0
++    total = sum(xs)
+     return [x / total for x in xs]
+
+[2026-10-08T17:02:01.870058Z] agent: asking qwen2.5-coder:7b for a repair of demo/math_ops.py::ratio (attempt 1)
+[2026-10-08T17:02:27.104291Z] agent: applied replacement of demo/math_ops.py::ratio (model 25.2 s, 144 output tokens)
+--- a/demo/math_ops.py
++++ b/demo/math_ops.py
+@@ -1,5 +1,7 @@
+ def ratio(a: int, b: int):
+     d = a - b
++    if d == 0:
++        return None  # or some other appropriate value or handling
+     return 100 / d
+ 
+ 
+
+[2026-10-08T17:02:33.413437Z] MCP verify_patch [attempt1]: status OK verdict PASS exit 0 (0 findings; verifier 6.21 s, round trip 6.30 s)
+[2026-10-08T17:02:33.682293Z] MCP get_finding fnd-c0b6348a551d23f938c6f7f128ad3edc after the repair: STALE_SNAPSHOT (the working tree changed after this evidence was produced: it describes snapshot sha256:05008e6f95c65cd1cfab0c4ccb1e3975)
+[2026-10-08T17:02:33.938431Z] MCP get_finding fnd-170d5f01159090000faea33b166bafbc after the repair: STALE_SNAPSHOT (the working tree changed after this evidence was produced: it describes snapshot sha256:05008e6f95c65cd1cfab0c4ccb1e3975)
+[2026-10-08T17:02:39.086143Z] $ guard verify /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3 --base b40ba95fa53eb5a761ee742e93ce282658fb02eb --format json --execute --run-profile isolated-python  -> exit 0 (4.87 s)
+[2026-10-08T17:02:39.500845Z] $ guard check /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3/demo --format json  -> exit 2 (0.41 s)
+[2026-10-08T17:04:18.920916Z] $ guard contracts discover --model local --execute --run-profile isolated-python --dry-run --path /private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3  -> exit 0 (99.42 s)
+[2026-10-08T17:04:18.926848Z] done

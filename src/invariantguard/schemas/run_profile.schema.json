@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:run_profile:1.0",
+  "title": "RunProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+$"
+    },
+    "allowed_targets": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+      }
+    },
+    "input_templates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "interpreter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "implementation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "implementation",
+        "version"
+      ]
+    },
+    "environment_lock_digest": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "enum": [
+            "container",
+            "os_sandbox",
+            "unisolated"
+          ]
+        },
+        "required_capabilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "deny_network",
+              "readonly_source",
+              "no_host_credentials",
+              "scratch_only_writes",
+              "resource_limits"
+            ]
+          }
+        }
+      },
+      "required": [
+        "backend",
+        "required_capabilities"
+      ]
+    },
+    "network_policy": {
+      "enum": [
+        "deny"
+      ]
+    },
+    "writable_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "memory_mb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "wall_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_processes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "cpu_seconds",
+        "max_processes",
+        "memory_mb",
+        "wall_seconds"
+      ]
+    },
+    "env_allowlist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_sizes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifact_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "artifact_bytes",
+        "input_bytes",
+        "output_bytes"
+      ]
+    },
+    "baseline_environment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_environment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_retention": {
+      "type": "boolean"
+    },
+    "witness_storage": {
+      "type": "boolean"
+    },
+    "allow_unisolated": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "allow_unisolated",
+    "allowed_targets",
+    "baseline_environment",
+    "candidate_environment",
+    "env_allowlist",
+    "environment_lock_digest",
+    "input_templates",
+    "interpreter",
+    "isolation",
+    "limits",
+    "max_sizes",
+    "network_policy",
+    "profile_id",
+    "schema_version",
+    "source_retention",
+    "witness_storage",
+    "writable_paths"
+  ],
+  "if": {
+    "properties": {
+      "isolation": {
+        "properties": {
+          "backend": {
+            "const": "unisolated"
+          }
+        }
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "allow_unisolated": {
+        "const": true
+      }
+    }
+  }
+}

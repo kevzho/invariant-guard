@@ -1,0 +1,232 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::count_positive",
+ "context_packet_digest": "sha256:b143c8edc69b7475e6f3733c66d59936a42a989860131b57be7645e0d372e0ba",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": -1000000.0,
+    "upper": 0
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "No strictly positive value exists in a nonpositive list, so count is 0.",
+   "uncertainty": "code uses >= 0",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      -1,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": -1000000.0,
+    "upper": -1e-09
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "Strictly negative values are never counted.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      -1.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 1e-09,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "All strictly positive values are counted.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0,
+      2.5
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "len",
+       "value": {
+        "kind": "arg",
+        "name": "xs"
+       }
+      }
+     }
+    ]
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "Docstring: count is between 0 and len(xs).",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0.0
+     ]
+    },
+    {
+     "xs": [
+      1.0,
+      -1.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "Counting should not mutate xs.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 33,
+    "end_line": 35
+   },
+   "rationale": "Pure function is repeatable.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  }
+ ]
+}

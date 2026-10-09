@@ -1,0 +1,43 @@
+== latency_repeat: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000 --out-name paper_latency_repeat
+   101 leaf   quick cold n=30  wall p50     493.2 p95     517.4 engine p50     156.1 rss p50   39.2 affected [2] ['PASS/COMPLETE'] introduced [0]
+   101 leaf   quick warm n=30  wall p50     495.9 p95     597.6 engine p50     154.6 rss p50   39.9 affected [2] ['PASS/COMPLETE'] introduced [0]
+   101 leaf   full  cold n=30  wall p50    1456.2 p95    1606.8 engine p50     931.6 rss p50   82.0 affected [2] ['PASS/COMPLETE'] introduced [0]
+   101 leaf   full  warm n=30  wall p50     668.0 p95     690.2 engine p50     167.2 rss p50   45.5 affected [2] ['PASS/COMPLETE'] introduced [0]
+   consistency 100 leaf: {"quick_obligations": 3, "full_obligations": 149, "compared": 3, "equal": 3, "mismatched": 0, "coverage_loss": 0, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "PASS", "full_verdict": "PASS", "quick_run_outcome": "COMPLETE", "full_run_outcome": "COMPLETE"}
+   101 hub    quick cold n=30  wall p50     855.2 p95     915.7 engine p50     438.6 rss p50   66.1 affected [48] ['PASS/COMPLETE'] introduced [0]
+   101 hub    quick warm n=30  wall p50     562.6 p95     603.5 engine p50     158.8 rss p50   41.6 affected [48] ['PASS/COMPLETE'] introduced [0]
+   101 hub    full  cold n=30  wall p50    1450.3 p95    1535.6 engine p50     927.0 rss p50   81.3 affected [48] ['PASS/COMPLETE'] introduced [0]
+   101 hub    full  warm n=30  wall p50     672.5 p95     703.8 engine p50     168.2 rss p50   45.4 affected [48] ['PASS/COMPLETE'] introduced [0]
+   consistency 100 hub: {"quick_obligations": 61, "full_obligations": 149, "compared": 61, "equal": 61, "mismatched": 0, "coverage_loss": 0, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "PASS", "full_verdict": "PASS", "quick_run_outcome": "COMPLETE", "full_run_outcome": "COMPLETE"}
+   101 callee quick cold n=1   wall p50     852.5 p95     852.5 engine p50     433.5 rss p50   75.4 affected [22] ['WARN/COMPLETE'] introduced [21]
+   101 callee full  cold n=1   wall p50    1609.2 p95    1609.2 engine p50    1068.9 rss p50   82.4 affected [22] ['WARN/COMPLETE'] introduced [21]
+   consistency 100 callee: {"quick_obligations": 48, "full_obligations": 149, "compared": 48, "equal": 48, "mismatched": 0, "coverage_loss": 0, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 21, "introduced_quick": 21, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "WARN", "full_verdict": "WARN", "quick_run_outcome": "COMPLETE", "full_run_outcome": "COMPLETE"}
+  1001 leaf   quick cold n=30  wall p50    1444.8 p95    1488.4 engine p50    1015.9 rss p50   84.3 affected [2] ['PASS/COMPLETE'] introduced [0]
+  1001 leaf   quick warm n=30  wall p50    1435.2 p95    1495.1 engine p50    1011.3 rss p50   84.2 affected [2] ['PASS/COMPLETE'] introduced [0]
+  1001 leaf   full  cold n=30  wall p50    9334.2 p95   13710.9 engine p50    7046.2 rss p50  179.8 affected [2] ['PASS/COMPLETE'] introduced [0]
+  1001 leaf   full  warm n=30  wall p50    3388.2 p95    3598.7 engine p50    1197.3 rss p50  151.6 affected [2] ['PASS/COMPLETE'] introduced [0]
+   consistency 1000 leaf: {"quick_obligations": 3, "full_obligations": 1500, "compared": 3, "equal": 3, "mismatched": 0, "coverage_loss": 0, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "PASS", "full_verdict": "PASS", "quick_run_outcome": "COMPLETE", "full_run_outcome": "COMPLETE"}
+  1001 hub    quick cold n=30  wall p50    4482.9 p95    4711.2 engine p50    3144.8 rss p50  134.8 affected [570] ['INCOMPLETE/INCOMPLETE'] introduced [0]
+  1001 hub    quick warm n=30  wall p50    2400.6 p95    2740.6 engine p50    1116.3 rss p50  118.3 affected [570] ['PASS/COMPLETE'] introduced [0]
+  1001 hub    full  cold n=30  wall p50    9930.5 p95   15753.4 engine p50    7671.4 rss p50  173.1 affected [570] ['PASS/COMPLETE'] introduced [0]
+  1001 hub    full  warm n=30  wall p50    3577.7 p95    4293.2 engine p50    1260.4 rss p50  151.6 affected [570] ['PASS/COMPLETE'] introduced [0]
+   consistency 1000 hub: {"quick_obligations": 722, "full_obligations": 1500, "compared": 722, "equal": 658, "mismatched": 0, "coverage_loss": 64, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "PASS", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
+  1001 callee quick cold n=1   wall p50    4608.8 p95    4608.8 engine p50    3288.1 rss p50  125.4 affected [216] ['INCOMPLETE/INCOMPLETE'] introduced [112]
+  1001 callee full  cold n=1   wall p50   11434.6 p95   11434.6 engine p50    8909.8 rss p50  181.2 affected [216] ['WARN/COMPLETE'] introduced [215]
+   consistency 1000 callee: {"quick_obligations": 517, "full_obligations": 1500, "compared": 517, "equal": 356, "mismatched": 0, "coverage_loss": 161, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 215, "introduced_quick": 112, "missed_introduced": 103, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "WARN", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
+ 10001 leaf   quick cold n=5   wall p50   14334.8 p95   17925.2 engine p50   13222.9 rss p50  380.5 affected [2] ['PASS/COMPLETE'] introduced [0]
+ 10001 leaf   quick warm n=5   wall p50   13961.0 p95   14307.1 engine p50   12850.9 rss p50  374.8 affected [2] ['PASS/COMPLETE'] introduced [0]
+ 10001 leaf   full  cold n=5   wall p50  116353.6 p95  124783.7 engine p50   91375.2 rss p50  549.1 affected [2] ['INCOMPLETE/INCOMPLETE', 'PASS/COMPLETE'] introduced [0]
+ 10001 leaf   full  warm n=5   wall p50   42714.0 p95   54784.9 engine p50   18945.1 rss p50  599.4 affected [2] ['PASS/COMPLETE'] introduced [0]
+   consistency 10000 leaf: {"quick_obligations": 3, "full_obligations": 14808, "compared": 3, "equal": 3, "mismatched": 0, "coverage_loss": 0, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "PASS", "full_verdict": "INCOMPLETE", "quick_run_outcome": "COMPLETE", "full_run_outcome": "INCOMPLETE"}
+ 10001 hub    quick cold n=5   wall p50   39895.9 p95   45567.0 engine p50   27314.8 rss p50  492.5 affected [5749] ['INCOMPLETE/INCOMPLETE'] introduced [0]
+ 10001 hub    quick warm n=5   wall p50   32328.0 p95   33836.6 engine p50   18678.7 rss p50  513.6 affected [5749] ['INCOMPLETE/INCOMPLETE'] introduced [0]
+ 10001 hub    full  cold n=5   wall p50  129901.7 p95  135368.1 engine p50  107396.3 rss p50  565.1 affected [5749] ['PASS/COMPLETE'] introduced [0]
+ 10001 hub    full  warm n=5   wall p50   35696.5 p95   42446.9 engine p50   17783.2 rss p50  697.7 affected [5749] ['PASS/COMPLETE'] introduced [0]
+   consistency 10000 hub: {"quick_obligations": 7132, "full_obligations": 14808, "compared": 7132, "equal": 5131, "mismatched": 0, "coverage_loss": 2001, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 0, "introduced_quick": 0, "missed_introduced": 0, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "PASS", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
+ 10001 callee quick cold n=1   wall p50   23807.6 p95   23807.6 engine p50   15494.3 rss p50  563.8 affected [1929] ['INCOMPLETE/INCOMPLETE'] introduced [0]
+ 10001 callee full  cold n=1   wall p50  101155.6 p95  101155.6 engine p50   80608.4 rss p50  604.7 affected [1929] ['WARN/COMPLETE'] introduced [1928]
+   consistency 10000 callee: {"quick_obligations": 4721, "full_obligations": 14808, "compared": 4721, "equal": 1642, "mismatched": 0, "coverage_loss": 3079, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 1928, "introduced_quick": 0, "missed_introduced": 1928, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "WARN", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
+wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_latency_repeat.json
+wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_manifest.json
+exit 0

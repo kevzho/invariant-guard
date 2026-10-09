@@ -1,0 +1,285 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/sequences.py::pairwise_diffs",
+ "context_packet_digest": "sha256:359e8d81b2bc7eb3b74848e99dfd5246b1a1a35863c2eac10a4b6d8bd36e9b7f",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "rationale": "Computing differences must not mutate the input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      2,
+      3
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "lt",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "There is one fewer difference than elements.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      5
+     ]
+    },
+    {
+     "xs": [
+      1,
+      2
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "le",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "rationale": "Fewer than two elements give no differences.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      4
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    }
+   },
+   "rationale": "Output never longer than input.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": []
+    },
+    {
+     "xs": [
+      1,
+      2,
+      3
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "all_between",
+    "value": {
+     "kind": "result"
+    },
+    "lower": -2000,
+    "upper": 2000
+   },
+   "rationale": "Differences of values in [-1000,1000] lie in [-2000,2000].",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000,
+      -1000
+     ]
+    },
+    {
+     "xs": [
+      -1000,
+      1000
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 2
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "result"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "rationale": "Two elements give exactly one difference.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      2
+     ]
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_int_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 14,
+    "end_line": 16
+   }
+  }
+ ]
+}

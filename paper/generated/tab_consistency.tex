@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\small
+
+\caption{Incremental (quick, affected slice) versus full analysis at equal configuration: obligations of the quick report compared by ID with the full report. \emph{mismatch}: both make a claim and the claims differ; \emph{cov. loss}: quick is UNKNOWN (budget) where full decides; \emph{missed}: INTRODUCED findings of the full run absent from the quick run. \emph{callee}: a shared helper change that introduces real defects in unchanged callers.}
+\label{tab:consistency}
+\begin{tabular}{rlrrrrrrll}
+\toprule
+fns & change & compared & mismatch & cov. loss & intro.\textsubscript{full} & intro.\textsubscript{quick} & missed & verdict q/f & warm c/m/l \\
+\midrule
+101 & leaf & 3 & 0 & 0 & 0 & 0 & 0 & PASS/PASS & 3/0/0 \\
+101 & hub & 61 & 0 & 0 & 0 & 0 & 0 & PASS/PASS & 61/0/0 \\
+101 & callee & 48 & 0 & 0 & 21 & 21 & 0 & WARN/WARN & -- \\
+1{,}001 & leaf & 3 & 0 & 0 & 0 & 0 & 0 & PASS/PASS & 3/0/0 \\
+1{,}001 & hub & 722 & 0 & 64 & 0 & 0 & 0 & INCOMPLETE/PASS & 722/0/0 \\
+1{,}001 & callee & 517 & 0 & 161 & 215 & 112 & 103 & INCOMPLETE/WARN & -- \\
+10{,}001 & leaf & 3 & 0 & 0 & 0 & 0 & 0 & PASS/INCOMPLETE & 3/0/0 \\
+10{,}001 & hub & 7{,}132 & 0 & 2{,}001 & 0 & 0 & 0 & INCOMPLETE/PASS & 7{,}132/0/2{,}001 \\
+10{,}001 & callee & 4{,}721 & 0 & 3{,}079 & 1{,}928 & 0 & 1{,}928 & INCOMPLETE/WARN & -- \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,325 @@
+{
+  "argv": [
+    "guard",
+    "check",
+    "/private/var/folders/fl/g9s9mg_572x7t70z3v23sy380000gn/T/ig-m5-demo-0h8bryz3/demo",
+    "--format",
+    "json"
+  ],
+  "exit_code": 2,
+  "wall_ms": 405.877,
+  "stdout": {
+    "schema_version": "1.0",
+    "tool": {
+      "name": "invariantguard",
+      "engine_version": "0.4.0",
+      "ir_version": "ir-0.2",
+      "python": "3.13.9",
+      "grammar": "3.13"
+    },
+    "command": "check",
+    "run_id": "run-1cb664005bdd41819a87b67ebe3baaea",
+    "base_snapshot": null,
+    "candidate_snapshot": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89",
+    "snapshot": {
+      "schema_version": "1.0",
+      "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89",
+      "kind": "working_tree_capture",
+      "root_label": "ig-m5-demo-0h8bryz3",
+      "scope": [
+        "demo"
+      ],
+      "files": [
+        {
+          "path": "demo/math_ops.py",
+          "sha256": "sha256:9a4424212afce841e066d75b281ef77fc69311bfcc07d492b30bad24016b260c",
+          "size_bytes": 218
+        }
+      ],
+      "excluded": [],
+      "config_digest": "sha256:9bce4e59a090727688ce7dab3f4549de2a9d04a23b84676b700af5819eb207ec",
+      "semantics_profile": "python3.13-cpython-builtin-v3",
+      "dependency_lock_digests": [],
+      "dependency_locks": [],
+      "source_retained": false
+    },
+    "analysis_plan": {
+      "schema_version": "1.0",
+      "plan_id": "plan-39336c8b7ca136ebeae4440a6b9e12b2",
+      "command": "check",
+      "mode": "quick",
+      "base_snapshot": null,
+      "candidate_snapshot": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89",
+      "requested_symbols": [
+        "demo/math_ops.py::normalize",
+        "demo/math_ops.py::ratio"
+      ],
+      "required_properties": [
+        "division.zero_denominator",
+        "index.out_of_range",
+        "none.attribute_access"
+      ],
+      "required_obligations": [
+        "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "demo/math_ops.py::ratio::division.zero_denominator#0"
+      ],
+      "require_coverage": true,
+      "budgets": {
+        "per_query_timeout_ms": 100,
+        "quick_budget_ms": 20000,
+        "per_query_rlimit": 0
+      },
+      "solver": {
+        "enabled": true,
+        "available": true
+      },
+      "invalidated_summaries": [],
+      "unresolved_changes": [],
+      "created_before_analysis": true
+    },
+    "run_outcome": "INCOMPLETE",
+    "verdict": "INCOMPLETE",
+    "verdict_reasons": [
+      "1 required obligation(s) UNKNOWN"
+    ],
+    "policy_id": "default-v1",
+    "coverage": {
+      "requested_symbols": 2,
+      "analyzed_symbols": 2,
+      "required_obligations": 2,
+      "resolved_required_obligations": 1,
+      "files_captured": 1,
+      "files_analyzed": 1,
+      "unknown_obligations": [
+        {
+          "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+          "symbol_id": "demo/math_ops.py::normalize",
+          "reason": "unsupported: ListComp expression is outside the supported subset",
+          "required": true
+        }
+      ],
+      "skipped_checks": [],
+      "unsupported_symbols": [],
+      "advisory_obligations": 0
+    },
+    "timing_ms": {
+      "capture": 0.909,
+      "static": 1.599,
+      "solver": 0.0,
+      "dynamic": null,
+      "model": null
+    },
+    "findings": [
+      {
+        "finding_id": "fnd-dc37aa36b4d2e9f37b44ef2e91c29017",
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "property_result": "UNKNOWN",
+        "scope_validity": null,
+        "authority": "INFERRED",
+        "patch_relation": "UNDETERMINED",
+        "severity": "INFO",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 10,
+          "start_column": 12,
+          "end_line": 10,
+          "end_column": 21,
+          "start_byte": 195,
+          "end_byte": 204,
+          "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89"
+        },
+        "message": "zero-divisor safety of `x / total` is UNKNOWN: unsupported: ListComp expression is outside the supported subset",
+        "quantifier": "none (no claim)",
+        "domain": "not established (unsupported construct)",
+        "domain_source": "NONE",
+        "assumptions": [],
+        "path_constraints": [],
+        "reasons": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "witness": null,
+        "witness_validated": false,
+        "runtime_mode": null,
+        "evidence_ids": [
+          "ev-d060af32ff65bf9d05c958ff015ff16d"
+        ],
+        "replay_available": false
+      }
+    ],
+    "obligation_results": [
+      {
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "operation": "DIV",
+        "operation_text": "x / total",
+        "divisor_text": "total",
+        "property_result": "UNKNOWN",
+        "scope_validity": null,
+        "authority": "INFERRED",
+        "domain": "not established (unsupported construct)",
+        "domain_source": "NONE",
+        "assumptions": [],
+        "quantifier": "none (no claim)",
+        "method": "UNSUPPORTED",
+        "reasons": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 10,
+          "start_column": 12,
+          "end_line": 10,
+          "end_column": 21,
+          "start_byte": 195,
+          "end_byte": 204,
+          "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89"
+        },
+        "required": true,
+        "witness": null,
+        "witness_validated": false,
+        "path_constraints": [],
+        "evidence_ids": [
+          "ev-d060af32ff65bf9d05c958ff015ff16d"
+        ],
+        "finding_id": "fnd-dc37aa36b4d2e9f37b44ef2e91c29017",
+        "runtime_mode": null,
+        "divisor_fact": null,
+        "anchor": "division.zero_denominator:af9695636342bb7e#0"
+      },
+      {
+        "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "operation": "DIV",
+        "operation_text": "100 / d",
+        "divisor_text": "d",
+        "property_result": "PROVED_SAFE",
+        "scope_validity": "EXACT_MODEL",
+        "authority": "DECLARED",
+        "domain": "a, b: exact Python built-in integers",
+        "domain_source": "CONFIG_DECLARED",
+        "assumptions": [
+          "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+        ],
+        "quantifier": "for all admitted function inputs",
+        "method": "INTERVAL",
+        "reasons": [
+          "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+        ],
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 5,
+          "start_column": 11,
+          "end_line": 5,
+          "end_column": 18,
+          "start_byte": 134,
+          "end_byte": 141,
+          "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89"
+        },
+        "required": true,
+        "witness": null,
+        "witness_validated": false,
+        "path_constraints": [],
+        "evidence_ids": [
+          "ev-61ce541e647f50d375d4bc6195847a46"
+        ],
+        "finding_id": null,
+        "runtime_mode": null,
+        "divisor_fact": "[-inf, +inf] ≠0",
+        "anchor": "division.zero_denominator:02423d59d086f933#0"
+      }
+    ],
+    "evidence": [
+      {
+        "schema_version": "1.0",
+        "kind": "UNSUPPORTED",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "ir-0.2"
+        },
+        "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89",
+        "symbol_id": "demo/math_ops.py::normalize",
+        "property_id": "division.zero_denominator",
+        "obligation_id": "demo/math_ops.py::normalize::division.zero_denominator#0",
+        "result_label": "UNKNOWN",
+        "domain": "not established (unsupported construct)",
+        "assumptions": [],
+        "precision": null,
+        "method": "UNSUPPORTED",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 10,
+          "start_column": 12,
+          "end_line": 10,
+          "end_column": 21,
+          "start_byte": 195,
+          "end_byte": 204,
+          "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89"
+        },
+        "details": [
+          "unsupported: ListComp expression is outside the supported subset"
+        ],
+        "solver_runs": [],
+        "witness": null,
+        "witness_validation": "NOT_APPLICABLE",
+        "evidence_id": "ev-d060af32ff65bf9d05c958ff015ff16d",
+        "run_id": "run-1cb664005bdd41819a87b67ebe3baaea",
+        "created_at": "2026-10-08T17:02:39.304368Z"
+      },
+      {
+        "schema_version": "1.0",
+        "kind": "STATIC_ANALYSIS",
+        "engine": {
+          "name": "invariantguard",
+          "version": "0.4.0",
+          "ir_version": "ir-0.2"
+        },
+        "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89",
+        "symbol_id": "demo/math_ops.py::ratio",
+        "property_id": "division.zero_denominator",
+        "obligation_id": "demo/math_ops.py::ratio::division.zero_denominator#0",
+        "result_label": "PROVED_SAFE",
+        "domain": "a, b: exact Python built-in integers",
+        "assumptions": [
+          "domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs"
+        ],
+        "precision": "EXACT_MODEL",
+        "method": "INTERVAL",
+        "source_span": {
+          "path": "demo/math_ops.py",
+          "start_line": 5,
+          "start_column": 11,
+          "end_line": 5,
+          "end_column": 18,
+          "start_byte": 134,
+          "end_byte": 141,
+          "snapshot_id": "sha256:1cba514489234e8035b2d5e71ee08881567af3513e0dffdddc2f00b0e3b9fb89"
+        },
+        "details": [
+          "divisor d has interval/nonzero fact [-inf, +inf] ≠0, which excludes 0"
+        ],
+        "solver_runs": [],
+        "witness": null,
+        "witness_validation": "NOT_APPLICABLE",
+        "evidence_id": "ev-61ce541e647f50d375d4bc6195847a46",
+        "run_id": "run-1cb664005bdd41819a87b67ebe3baaea",
+        "created_at": "2026-10-08T17:02:39.304368Z"
+      }
+    ],
+    "capabilities": {
+      "solver": "configured",
+      "solver_detail": "z3 5.1.0",
+      "execution": "disabled",
+      "model": "disabled",
+      "frontends": [
+        "python (stdlib ast, grammar 3.13)"
+      ]
+    },
+    "diagnostics": [],
+    "errors": []
+  }
+}

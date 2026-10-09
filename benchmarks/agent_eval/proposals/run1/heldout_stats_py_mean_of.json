@@ -1,0 +1,254 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/stats.py::mean_of",
+ "context_packet_digest": "sha256:edfb07a3887bdb1eef78dace60a209df64bd07823688ed4cfcee90bba5e916b8",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "unchanged_argument",
+    "name": "xs"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "Docstring describes a pure mean; the function should not mutate xs.",
+   "uncertainty": "low risk",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1.0,
+      2.0,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "A deterministic arithmetic mean returns identical results on repeated calls.",
+   "uncertainty": "float summation is deterministic",
+   "unsupported_dependencies": [],
+   "boundary_inputs": []
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "len",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 1
+    }
+   },
+   "predicate": {
+    "kind": "approx_eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "atol": 1e-09,
+    "rtol": 1e-09,
+    "require_finite": true
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "The mean of a single value is that value.",
+   "uncertainty": "float rounding for large values",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      5.0
+     ]
+    },
+    {
+     "xs": [
+      -1000000.0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "all_between",
+    "value": {
+     "kind": "arg",
+     "name": "xs"
+    },
+    "lower": 0,
+    "upper": 1000000.0
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "The mean of nonnegative values is nonnegative.",
+   "uncertainty": "none expected",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      0
+     ]
+    },
+    {
+     "xs": [
+      1000000.0,
+      0.5
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "eq",
+    "left": {
+     "kind": "sum",
+     "value": {
+      "kind": "arg",
+      "name": "xs"
+     }
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0
+    }
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "A list whose total is exactly zero has mean zero.",
+   "uncertainty": "signed zero comparison",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1,
+      -1
+     ]
+    },
+    {
+     "xs": [
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": -1000000.0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1000000.0
+      }
+     }
+    ]
+   },
+   "input_profile": "bounded_builtin_numeric_list_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 4,
+    "end_line": 6
+   },
+   "rationale": "A mean of values in [-1e6,1e6] stays in that range.",
+   "uncertainty": "weak property",
+   "unsupported_dependencies": [],
+   "boundary_inputs": [
+    {
+     "xs": [
+      1000000.0,
+      1000000.0
+     ]
+    },
+    {
+     "xs": [
+      -1000000.0
+     ]
+    }
+   ]
+  }
+ ]
+}

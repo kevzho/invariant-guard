@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:invariantguard:schema:evidence:1.0",
+  "title": "Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/schema_version"
+    },
+    "evidence_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/evidence_id"
+    },
+    "kind": {
+      "enum": [
+        "STATIC_ANALYSIS",
+        "SOLVER",
+        "WITNESS_SEARCH",
+        "UNSUPPORTED",
+        "ENGINE_ERROR",
+        "EXECUTION"
+      ]
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "invariantguard"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ir_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "ir_version",
+        "name",
+        "version"
+      ]
+    },
+    "run_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/run_id"
+    },
+    "snapshot_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+    },
+    "symbol_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+    },
+    "property_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/property_id"
+    },
+    "obligation_id": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/obligation_id"
+    },
+    "result_label": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/property_result"
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "precision": {
+      "anyOf": [
+        {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/scope_validity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "method": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/analysis_method"
+    },
+    "source_span": {
+      "$ref": "urn:invariantguard:schema:source_span:1.0"
+    },
+    "created_at": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/timestamp"
+    },
+    "details": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "solver_runs": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:invariantguard:schema:common:1.0#/$defs/solver_run"
+      }
+    },
+    "witness": {
+      "anyOf": [
+        {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/witness"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "witness_validation": {
+      "enum": [
+        "VALIDATED",
+        "NOT_VALIDATED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "contract": {
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/contract_ref"
+    },
+    "execution": {
+      "description": "Execution evidence (M3, docs/03): run profile digest, environment identity, isolation capabilities, inputs, observations and predicate evaluations.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "side": {
+          "enum": [
+            "base",
+            "candidate"
+          ]
+        },
+        "backend": {
+          "enum": [
+            "docker",
+            "unisolated"
+          ]
+        },
+        "isolated": {
+          "type": "boolean"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "environment_digest": {
+          "anyOf": [
+            {
+              "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "type": "object"
+        },
+        "interpreter": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "run_profile_digest": {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+        },
+        "dependency_locks": {
+          "type": "array"
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "probe",
+              "input",
+              "verdict",
+              "reason"
+            ],
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "UNKNOWN"
+                ]
+              }
+            }
+          }
+        },
+        "confirmations": {},
+        "witness_storage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "backend",
+        "isolated",
+        "capabilities",
+        "environment_digest",
+        "run_profile_digest",
+        "probes",
+        "witness_storage"
+      ]
+    }
+  },
+  "required": [
+    "assumptions",
+    "created_at",
+    "details",
+    "domain",
+    "engine",
+    "evidence_id",
+    "kind",
+    "method",
+    "obligation_id",
+    "precision",
+    "property_id",
+    "result_label",
+    "run_id",
+    "schema_version",
+    "snapshot_id",
+    "solver_runs",
+    "source_span",
+    "symbol_id",
+    "witness",
+    "witness_validation"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "EXECUTION"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "contract",
+          "execution"
+        ],
+        "properties": {
+          "method": {
+            "const": "PROBE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "const": "EXECUTION"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "contract"
+              ]
+            },
+            {
+              "required": [
+                "execution"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

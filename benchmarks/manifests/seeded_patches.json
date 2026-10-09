@@ -1,0 +1,5454 @@
+{
+ "schema_version": "1.0",
+ "benchmark": "seeded_patches",
+ "description": "Hand-written baseline/patch pairs for the paper benchmark (docs/12 track 2). Sources: benchmarks/fixtures/seeded/<case>/{base,patch}; patch/ overlays base/. Labels, oracle inputs and the anticipated tool outcome were written before any InvariantGuard run on these cases; the manifest digest is recorded in docs/IMPLEMENTATION_STATUS.md and in every result file. The author also wrote the tool, so the set reflects knowledge of its supported subset (threat to validity).",
+ "origin": "authored for this repository on 2026-10-08",
+ "license": "same as repository",
+ "labels_frozen_at": "2026-10-08T17:44:28Z",
+ "label_definitions": {
+  "defect_introduced": "some admitted input makes the base satisfy the property and the patch violate it (confirmed by execution)",
+  "no_defect_introduced": "no such input on the finite grid; hand argument in the description (finite execution is corroboration, not proof)",
+  "intentional_change": "behavior changes against an existing contract on purpose (documented API change); reported separately as false-block analysis"
+ },
+ "oracle_kinds": {
+  "exception": "failure iff the call raises one of failure_exceptions",
+  "sum_approx": "failure iff the call raises, or the result is not a list of finite numbers whose sum is within atol + rtol*|target| of target",
+  "unchanged_argument": "failure iff the call raises or the argument differs (==) from a deep copy taken before the call",
+  "length_preserved": "failure iff the call raises or len(result) != len(xs)",
+  "all_between": "failure iff the call raises or some result element is outside [lower, upper]"
+ },
+ "cases": [
+  {
+   "case_id": "S01",
+   "class": "div_zero_guard_removed",
+   "description": "zero-quantity guard deleted; qty=0 now reaches total // qty",
+   "symbol": "app/pricing.py::unit_price",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "total": 10,
+      "qty": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "total": -3,
+      "qty": -3
+     },
+     {
+      "total": -3,
+      "qty": -2
+     },
+     {
+      "total": -3,
+      "qty": -1
+     },
+     {
+      "total": -3,
+      "qty": 0
+     },
+     {
+      "total": -3,
+      "qty": 1
+     },
+     {
+      "total": -3,
+      "qty": 2
+     },
+     {
+      "total": -3,
+      "qty": 3
+     },
+     {
+      "total": -2,
+      "qty": -3
+     },
+     {
+      "total": -2,
+      "qty": -2
+     },
+     {
+      "total": -2,
+      "qty": -1
+     },
+     {
+      "total": -2,
+      "qty": 0
+     },
+     {
+      "total": -2,
+      "qty": 1
+     },
+     {
+      "total": -2,
+      "qty": 2
+     },
+     {
+      "total": -2,
+      "qty": 3
+     },
+     {
+      "total": -1,
+      "qty": -3
+     },
+     {
+      "total": -1,
+      "qty": -2
+     },
+     {
+      "total": -1,
+      "qty": -1
+     },
+     {
+      "total": -1,
+      "qty": 0
+     },
+     {
+      "total": -1,
+      "qty": 1
+     },
+     {
+      "total": -1,
+      "qty": 2
+     },
+     {
+      "total": -1,
+      "qty": 3
+     },
+     {
+      "total": 0,
+      "qty": -3
+     },
+     {
+      "total": 0,
+      "qty": -2
+     },
+     {
+      "total": 0,
+      "qty": -1
+     },
+     {
+      "total": 0,
+      "qty": 0
+     },
+     {
+      "total": 0,
+      "qty": 1
+     },
+     {
+      "total": 0,
+      "qty": 2
+     },
+     {
+      "total": 0,
+      "qty": 3
+     },
+     {
+      "total": 1,
+      "qty": -3
+     },
+     {
+      "total": 1,
+      "qty": -2
+     },
+     {
+      "total": 1,
+      "qty": -1
+     },
+     {
+      "total": 1,
+      "qty": 0
+     },
+     {
+      "total": 1,
+      "qty": 1
+     },
+     {
+      "total": 1,
+      "qty": 2
+     },
+     {
+      "total": 1,
+      "qty": 3
+     },
+     {
+      "total": 2,
+      "qty": -3
+     },
+     {
+      "total": 2,
+      "qty": -2
+     },
+     {
+      "total": 2,
+      "qty": -1
+     },
+     {
+      "total": 2,
+      "qty": 0
+     },
+     {
+      "total": 2,
+      "qty": 1
+     },
+     {
+      "total": 2,
+      "qty": 2
+     },
+     {
+      "total": 2,
+      "qty": 3
+     },
+     {
+      "total": 3,
+      "qty": -3
+     },
+     {
+      "total": 3,
+      "qty": -2
+     },
+     {
+      "total": 3,
+      "qty": -1
+     },
+     {
+      "total": 3,
+      "qty": 0
+     },
+     {
+      "total": 3,
+      "qty": 1
+     },
+     {
+      "total": 3,
+      "qty": 2
+     },
+     {
+      "total": 3,
+      "qty": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/pricing.py::unit_price",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S02",
+   "class": "div_zero_expression_changed",
+   "description": "divisor y*y+1 (always >= 1) changed to y*y-1, which is 0 at y=+-1",
+   "symbol": "app/geometry.py::bucket",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "x": 5,
+      "y": 1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "x": -3,
+      "y": -3
+     },
+     {
+      "x": -3,
+      "y": -2
+     },
+     {
+      "x": -3,
+      "y": -1
+     },
+     {
+      "x": -3,
+      "y": 0
+     },
+     {
+      "x": -3,
+      "y": 1
+     },
+     {
+      "x": -3,
+      "y": 2
+     },
+     {
+      "x": -3,
+      "y": 3
+     },
+     {
+      "x": -2,
+      "y": -3
+     },
+     {
+      "x": -2,
+      "y": -2
+     },
+     {
+      "x": -2,
+      "y": -1
+     },
+     {
+      "x": -2,
+      "y": 0
+     },
+     {
+      "x": -2,
+      "y": 1
+     },
+     {
+      "x": -2,
+      "y": 2
+     },
+     {
+      "x": -2,
+      "y": 3
+     },
+     {
+      "x": -1,
+      "y": -3
+     },
+     {
+      "x": -1,
+      "y": -2
+     },
+     {
+      "x": -1,
+      "y": -1
+     },
+     {
+      "x": -1,
+      "y": 0
+     },
+     {
+      "x": -1,
+      "y": 1
+     },
+     {
+      "x": -1,
+      "y": 2
+     },
+     {
+      "x": -1,
+      "y": 3
+     },
+     {
+      "x": 0,
+      "y": -3
+     },
+     {
+      "x": 0,
+      "y": -2
+     },
+     {
+      "x": 0,
+      "y": -1
+     },
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 0,
+      "y": 1
+     },
+     {
+      "x": 0,
+      "y": 2
+     },
+     {
+      "x": 0,
+      "y": 3
+     },
+     {
+      "x": 1,
+      "y": -3
+     },
+     {
+      "x": 1,
+      "y": -2
+     },
+     {
+      "x": 1,
+      "y": -1
+     },
+     {
+      "x": 1,
+      "y": 0
+     },
+     {
+      "x": 1,
+      "y": 1
+     },
+     {
+      "x": 1,
+      "y": 2
+     },
+     {
+      "x": 1,
+      "y": 3
+     },
+     {
+      "x": 2,
+      "y": -3
+     },
+     {
+      "x": 2,
+      "y": -2
+     },
+     {
+      "x": 2,
+      "y": -1
+     },
+     {
+      "x": 2,
+      "y": 0
+     },
+     {
+      "x": 2,
+      "y": 1
+     },
+     {
+      "x": 2,
+      "y": 2
+     },
+     {
+      "x": 2,
+      "y": 3
+     },
+     {
+      "x": 3,
+      "y": -3
+     },
+     {
+      "x": 3,
+      "y": -2
+     },
+     {
+      "x": 3,
+      "y": -1
+     },
+     {
+      "x": 3,
+      "y": 0
+     },
+     {
+      "x": 3,
+      "y": 1
+     },
+     {
+      "x": 3,
+      "y": 2
+     },
+     {
+      "x": 3,
+      "y": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED (nonlinear; solver)",
+   "domains": [
+    {
+     "symbol": "app/geometry.py::bucket",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S03",
+   "class": "div_zero_guard_weakened",
+   "description": "modulo guard buckets > 0 weakened to buckets >= 0",
+   "symbol": "app/hashing.py::slot",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "key": 7,
+      "buckets": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "key": -3,
+      "buckets": -3
+     },
+     {
+      "key": -3,
+      "buckets": -2
+     },
+     {
+      "key": -3,
+      "buckets": -1
+     },
+     {
+      "key": -3,
+      "buckets": 0
+     },
+     {
+      "key": -3,
+      "buckets": 1
+     },
+     {
+      "key": -3,
+      "buckets": 2
+     },
+     {
+      "key": -3,
+      "buckets": 3
+     },
+     {
+      "key": -2,
+      "buckets": -3
+     },
+     {
+      "key": -2,
+      "buckets": -2
+     },
+     {
+      "key": -2,
+      "buckets": -1
+     },
+     {
+      "key": -2,
+      "buckets": 0
+     },
+     {
+      "key": -2,
+      "buckets": 1
+     },
+     {
+      "key": -2,
+      "buckets": 2
+     },
+     {
+      "key": -2,
+      "buckets": 3
+     },
+     {
+      "key": -1,
+      "buckets": -3
+     },
+     {
+      "key": -1,
+      "buckets": -2
+     },
+     {
+      "key": -1,
+      "buckets": -1
+     },
+     {
+      "key": -1,
+      "buckets": 0
+     },
+     {
+      "key": -1,
+      "buckets": 1
+     },
+     {
+      "key": -1,
+      "buckets": 2
+     },
+     {
+      "key": -1,
+      "buckets": 3
+     },
+     {
+      "key": 0,
+      "buckets": -3
+     },
+     {
+      "key": 0,
+      "buckets": -2
+     },
+     {
+      "key": 0,
+      "buckets": -1
+     },
+     {
+      "key": 0,
+      "buckets": 0
+     },
+     {
+      "key": 0,
+      "buckets": 1
+     },
+     {
+      "key": 0,
+      "buckets": 2
+     },
+     {
+      "key": 0,
+      "buckets": 3
+     },
+     {
+      "key": 1,
+      "buckets": -3
+     },
+     {
+      "key": 1,
+      "buckets": -2
+     },
+     {
+      "key": 1,
+      "buckets": -1
+     },
+     {
+      "key": 1,
+      "buckets": 0
+     },
+     {
+      "key": 1,
+      "buckets": 1
+     },
+     {
+      "key": 1,
+      "buckets": 2
+     },
+     {
+      "key": 1,
+      "buckets": 3
+     },
+     {
+      "key": 2,
+      "buckets": -3
+     },
+     {
+      "key": 2,
+      "buckets": -2
+     },
+     {
+      "key": 2,
+      "buckets": -1
+     },
+     {
+      "key": 2,
+      "buckets": 0
+     },
+     {
+      "key": 2,
+      "buckets": 1
+     },
+     {
+      "key": 2,
+      "buckets": 2
+     },
+     {
+      "key": 2,
+      "buckets": 3
+     },
+     {
+      "key": 3,
+      "buckets": -3
+     },
+     {
+      "key": 3,
+      "buckets": -2
+     },
+     {
+      "key": 3,
+      "buckets": -1
+     },
+     {
+      "key": 3,
+      "buckets": 0
+     },
+     {
+      "key": 3,
+      "buckets": 1
+     },
+     {
+      "key": 3,
+      "buckets": 2
+     },
+     {
+      "key": 3,
+      "buckets": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/hashing.py::slot",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S04",
+   "class": "div_zero_guard_weakened",
+   "description": "off-by-one guard count > 1 -> count > 0 lets count=1 divide by count-1 = 0; no declared domain (annotations only)",
+   "symbol": "app/spacing.py::average_gap",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "span": 5,
+      "count": 1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "span": -3,
+      "count": -3
+     },
+     {
+      "span": -3,
+      "count": -2
+     },
+     {
+      "span": -3,
+      "count": -1
+     },
+     {
+      "span": -3,
+      "count": 0
+     },
+     {
+      "span": -3,
+      "count": 1
+     },
+     {
+      "span": -3,
+      "count": 2
+     },
+     {
+      "span": -3,
+      "count": 3
+     },
+     {
+      "span": -2,
+      "count": -3
+     },
+     {
+      "span": -2,
+      "count": -2
+     },
+     {
+      "span": -2,
+      "count": -1
+     },
+     {
+      "span": -2,
+      "count": 0
+     },
+     {
+      "span": -2,
+      "count": 1
+     },
+     {
+      "span": -2,
+      "count": 2
+     },
+     {
+      "span": -2,
+      "count": 3
+     },
+     {
+      "span": -1,
+      "count": -3
+     },
+     {
+      "span": -1,
+      "count": -2
+     },
+     {
+      "span": -1,
+      "count": -1
+     },
+     {
+      "span": -1,
+      "count": 0
+     },
+     {
+      "span": -1,
+      "count": 1
+     },
+     {
+      "span": -1,
+      "count": 2
+     },
+     {
+      "span": -1,
+      "count": 3
+     },
+     {
+      "span": 0,
+      "count": -3
+     },
+     {
+      "span": 0,
+      "count": -2
+     },
+     {
+      "span": 0,
+      "count": -1
+     },
+     {
+      "span": 0,
+      "count": 0
+     },
+     {
+      "span": 0,
+      "count": 1
+     },
+     {
+      "span": 0,
+      "count": 2
+     },
+     {
+      "span": 0,
+      "count": 3
+     },
+     {
+      "span": 1,
+      "count": -3
+     },
+     {
+      "span": 1,
+      "count": -2
+     },
+     {
+      "span": 1,
+      "count": -1
+     },
+     {
+      "span": 1,
+      "count": 0
+     },
+     {
+      "span": 1,
+      "count": 1
+     },
+     {
+      "span": 1,
+      "count": 2
+     },
+     {
+      "span": 1,
+      "count": 3
+     },
+     {
+      "span": 2,
+      "count": -3
+     },
+     {
+      "span": 2,
+      "count": -2
+     },
+     {
+      "span": 2,
+      "count": -1
+     },
+     {
+      "span": 2,
+      "count": 0
+     },
+     {
+      "span": 2,
+      "count": 1
+     },
+     {
+      "span": 2,
+      "count": 2
+     },
+     {
+      "span": 2,
+      "count": 3
+     },
+     {
+      "span": 3,
+      "count": -3
+     },
+     {
+      "span": 3,
+      "count": -2
+     },
+     {
+      "span": 3,
+      "count": -1
+     },
+     {
+      "span": 3,
+      "count": 0
+     },
+     {
+      "span": 3,
+      "count": 1
+     },
+     {
+      "span": 3,
+      "count": 2
+     },
+     {
+      "span": 3,
+      "count": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "WARN: PROVED_UNSAFE CONDITIONAL INTRODUCED (annotation-only domain)",
+   "domains": [],
+   "contracts": []
+  },
+  {
+   "case_id": "S05",
+   "class": "div_zero_guard_reordered",
+   "description": "the zero check was moved after the division it protected",
+   "symbol": "app/share.py::share",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "part": 1,
+      "whole": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "part": -3,
+      "whole": -3
+     },
+     {
+      "part": -3,
+      "whole": -2
+     },
+     {
+      "part": -3,
+      "whole": -1
+     },
+     {
+      "part": -3,
+      "whole": 0
+     },
+     {
+      "part": -3,
+      "whole": 1
+     },
+     {
+      "part": -3,
+      "whole": 2
+     },
+     {
+      "part": -3,
+      "whole": 3
+     },
+     {
+      "part": -2,
+      "whole": -3
+     },
+     {
+      "part": -2,
+      "whole": -2
+     },
+     {
+      "part": -2,
+      "whole": -1
+     },
+     {
+      "part": -2,
+      "whole": 0
+     },
+     {
+      "part": -2,
+      "whole": 1
+     },
+     {
+      "part": -2,
+      "whole": 2
+     },
+     {
+      "part": -2,
+      "whole": 3
+     },
+     {
+      "part": -1,
+      "whole": -3
+     },
+     {
+      "part": -1,
+      "whole": -2
+     },
+     {
+      "part": -1,
+      "whole": -1
+     },
+     {
+      "part": -1,
+      "whole": 0
+     },
+     {
+      "part": -1,
+      "whole": 1
+     },
+     {
+      "part": -1,
+      "whole": 2
+     },
+     {
+      "part": -1,
+      "whole": 3
+     },
+     {
+      "part": 0,
+      "whole": -3
+     },
+     {
+      "part": 0,
+      "whole": -2
+     },
+     {
+      "part": 0,
+      "whole": -1
+     },
+     {
+      "part": 0,
+      "whole": 0
+     },
+     {
+      "part": 0,
+      "whole": 1
+     },
+     {
+      "part": 0,
+      "whole": 2
+     },
+     {
+      "part": 0,
+      "whole": 3
+     },
+     {
+      "part": 1,
+      "whole": -3
+     },
+     {
+      "part": 1,
+      "whole": -2
+     },
+     {
+      "part": 1,
+      "whole": -1
+     },
+     {
+      "part": 1,
+      "whole": 0
+     },
+     {
+      "part": 1,
+      "whole": 1
+     },
+     {
+      "part": 1,
+      "whole": 2
+     },
+     {
+      "part": 1,
+      "whole": 3
+     },
+     {
+      "part": 2,
+      "whole": -3
+     },
+     {
+      "part": 2,
+      "whole": -2
+     },
+     {
+      "part": 2,
+      "whole": -1
+     },
+     {
+      "part": 2,
+      "whole": 0
+     },
+     {
+      "part": 2,
+      "whole": 1
+     },
+     {
+      "part": 2,
+      "whole": 2
+     },
+     {
+      "part": 2,
+      "whole": 3
+     },
+     {
+      "part": 3,
+      "whole": -3
+     },
+     {
+      "part": 3,
+      "whole": -2
+     },
+     {
+      "part": 3,
+      "whole": -1
+     },
+     {
+      "part": 3,
+      "whole": 0
+     },
+     {
+      "part": 3,
+      "whole": 1
+     },
+     {
+      "part": 3,
+      "whole": 2
+     },
+     {
+      "part": 3,
+      "whole": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/share.py::share",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S06",
+   "class": "changed_callee",
+   "description": "callee denominator(n) changed from n+1 to n; caller unchanged; n=0 now divides by zero",
+   "symbol": "app/rates.py::per_item",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "total": 10,
+      "n": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "total": -3,
+      "n": -3
+     },
+     {
+      "total": -3,
+      "n": -2
+     },
+     {
+      "total": -3,
+      "n": -1
+     },
+     {
+      "total": -3,
+      "n": 0
+     },
+     {
+      "total": -3,
+      "n": 1
+     },
+     {
+      "total": -3,
+      "n": 2
+     },
+     {
+      "total": -3,
+      "n": 3
+     },
+     {
+      "total": -2,
+      "n": -3
+     },
+     {
+      "total": -2,
+      "n": -2
+     },
+     {
+      "total": -2,
+      "n": -1
+     },
+     {
+      "total": -2,
+      "n": 0
+     },
+     {
+      "total": -2,
+      "n": 1
+     },
+     {
+      "total": -2,
+      "n": 2
+     },
+     {
+      "total": -2,
+      "n": 3
+     },
+     {
+      "total": -1,
+      "n": -3
+     },
+     {
+      "total": -1,
+      "n": -2
+     },
+     {
+      "total": -1,
+      "n": -1
+     },
+     {
+      "total": -1,
+      "n": 0
+     },
+     {
+      "total": -1,
+      "n": 1
+     },
+     {
+      "total": -1,
+      "n": 2
+     },
+     {
+      "total": -1,
+      "n": 3
+     },
+     {
+      "total": 0,
+      "n": -3
+     },
+     {
+      "total": 0,
+      "n": -2
+     },
+     {
+      "total": 0,
+      "n": -1
+     },
+     {
+      "total": 0,
+      "n": 0
+     },
+     {
+      "total": 0,
+      "n": 1
+     },
+     {
+      "total": 0,
+      "n": 2
+     },
+     {
+      "total": 0,
+      "n": 3
+     },
+     {
+      "total": 1,
+      "n": -3
+     },
+     {
+      "total": 1,
+      "n": -2
+     },
+     {
+      "total": 1,
+      "n": -1
+     },
+     {
+      "total": 1,
+      "n": 0
+     },
+     {
+      "total": 1,
+      "n": 1
+     },
+     {
+      "total": 1,
+      "n": 2
+     },
+     {
+      "total": 1,
+      "n": 3
+     },
+     {
+      "total": 2,
+      "n": -3
+     },
+     {
+      "total": 2,
+      "n": -2
+     },
+     {
+      "total": 2,
+      "n": -1
+     },
+     {
+      "total": 2,
+      "n": 0
+     },
+     {
+      "total": 2,
+      "n": 1
+     },
+     {
+      "total": 2,
+      "n": 2
+     },
+     {
+      "total": 2,
+      "n": 3
+     },
+     {
+      "total": 3,
+      "n": -3
+     },
+     {
+      "total": 3,
+      "n": -2
+     },
+     {
+      "total": 3,
+      "n": -1
+     },
+     {
+      "total": 3,
+      "n": 0
+     },
+     {
+      "total": 3,
+      "n": 1
+     },
+     {
+      "total": 3,
+      "n": 2
+     },
+     {
+      "total": 3,
+      "n": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED in the unchanged caller",
+   "domains": [
+    {
+     "symbol": "app/rates.py::per_item",
+     "profile": "python_exact_builtin_ints"
+    },
+    {
+     "symbol": "app/rates.py::denominator",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S07",
+   "class": "changed_callee",
+   "description": "cross-module callee capacity(level) changed from level+2 to level*2; importer unchanged; level=0",
+   "symbol": "app/alloc.py::per_slot",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "total": 10,
+      "level": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "total": -3,
+      "level": -3
+     },
+     {
+      "total": -3,
+      "level": -2
+     },
+     {
+      "total": -3,
+      "level": -1
+     },
+     {
+      "total": -3,
+      "level": 0
+     },
+     {
+      "total": -3,
+      "level": 1
+     },
+     {
+      "total": -3,
+      "level": 2
+     },
+     {
+      "total": -3,
+      "level": 3
+     },
+     {
+      "total": -2,
+      "level": -3
+     },
+     {
+      "total": -2,
+      "level": -2
+     },
+     {
+      "total": -2,
+      "level": -1
+     },
+     {
+      "total": -2,
+      "level": 0
+     },
+     {
+      "total": -2,
+      "level": 1
+     },
+     {
+      "total": -2,
+      "level": 2
+     },
+     {
+      "total": -2,
+      "level": 3
+     },
+     {
+      "total": -1,
+      "level": -3
+     },
+     {
+      "total": -1,
+      "level": -2
+     },
+     {
+      "total": -1,
+      "level": -1
+     },
+     {
+      "total": -1,
+      "level": 0
+     },
+     {
+      "total": -1,
+      "level": 1
+     },
+     {
+      "total": -1,
+      "level": 2
+     },
+     {
+      "total": -1,
+      "level": 3
+     },
+     {
+      "total": 0,
+      "level": -3
+     },
+     {
+      "total": 0,
+      "level": -2
+     },
+     {
+      "total": 0,
+      "level": -1
+     },
+     {
+      "total": 0,
+      "level": 0
+     },
+     {
+      "total": 0,
+      "level": 1
+     },
+     {
+      "total": 0,
+      "level": 2
+     },
+     {
+      "total": 0,
+      "level": 3
+     },
+     {
+      "total": 1,
+      "level": -3
+     },
+     {
+      "total": 1,
+      "level": -2
+     },
+     {
+      "total": 1,
+      "level": -1
+     },
+     {
+      "total": 1,
+      "level": 0
+     },
+     {
+      "total": 1,
+      "level": 1
+     },
+     {
+      "total": 1,
+      "level": 2
+     },
+     {
+      "total": 1,
+      "level": 3
+     },
+     {
+      "total": 2,
+      "level": -3
+     },
+     {
+      "total": 2,
+      "level": -2
+     },
+     {
+      "total": 2,
+      "level": -1
+     },
+     {
+      "total": 2,
+      "level": 0
+     },
+     {
+      "total": 2,
+      "level": 1
+     },
+     {
+      "total": 2,
+      "level": 2
+     },
+     {
+      "total": 2,
+      "level": 3
+     },
+     {
+      "total": 3,
+      "level": -3
+     },
+     {
+      "total": 3,
+      "level": -2
+     },
+     {
+      "total": 3,
+      "level": -1
+     },
+     {
+      "total": 3,
+      "level": 0
+     },
+     {
+      "total": 3,
+      "level": 1
+     },
+     {
+      "total": 3,
+      "level": 2
+     },
+     {
+      "total": 3,
+      "level": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "WARN: PROVED_UNSAFE CONDITIONAL (import resolution) INTRODUCED in the importer",
+   "domains": [
+    {
+     "symbol": "app/alloc.py::per_slot",
+     "profile": "python_exact_builtin_ints"
+    },
+    {
+     "symbol": "app/limits.py::capacity",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S08",
+   "class": "changed_constant",
+   "description": "module constant PAGE_SIZE changed from 20 to 0; function body unchanged",
+   "symbol": "app/paging.py::page_count",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "items": 5
+     }
+    ],
+    "grid_inputs": [
+     {
+      "items": -3
+     },
+     {
+      "items": -2
+     },
+     {
+      "items": -1
+     },
+     {
+      "items": 0
+     },
+     {
+      "items": 1
+     },
+     {
+      "items": 2
+     },
+     {
+      "items": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/paging.py::page_count",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S09",
+   "class": "index_guard_removed",
+   "description": "emptiness guard removed before xs[0]",
+   "symbol": "app/queue.py::head_or_default",
+   "property": "index.out_of_range",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "IndexError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "xs": []
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/queue.py::head_or_default",
+     "profile": "python_exact_builtin_list"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S10",
+   "class": "index_off_by_one",
+   "description": "xs[len(xs)-1] changed to xs[len(xs)]",
+   "symbol": "app/seq.py::last",
+   "property": "index.out_of_range",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "IndexError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "xs": [
+       1
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/seq.py::last",
+     "profile": "python_exact_builtin_list"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S11",
+   "class": "index_off_by_one",
+   "description": "3-tuple index 2 changed to 3",
+   "symbol": "app/color.py::blue",
+   "property": "index.out_of_range",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "IndexError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "r": 1,
+      "g": 2,
+      "b": 3
+     }
+    ],
+    "grid_inputs": [
+     {
+      "r": 1,
+      "g": 2,
+      "b": 3
+     },
+     {
+      "r": 0,
+      "g": 0,
+      "b": 0
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/color.py::blue",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S12",
+   "class": "none_guard_removed",
+   "description": "`is None` early return removed before code.bit_length()",
+   "symbol": "app/ports.py::port_bits",
+   "property": "none.attribute_access",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "AttributeError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "code": null
+     }
+    ],
+    "grid_inputs": [
+     {
+      "code": null
+     },
+     {
+      "code": 0
+     },
+     {
+      "code": 1
+     },
+     {
+      "code": 5
+     },
+     {
+      "code": -3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED",
+   "domains": [
+    {
+     "symbol": "app/ports.py::port_bits",
+     "profile": "python_optional_exact_builtin_int"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "S13",
+   "class": "none_from_callee",
+   "description": "callee lookup(k) now returns None for k < 0; caller width(k) unchanged",
+   "symbol": "app/registry.py::width",
+   "property": "none.attribute_access",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "AttributeError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "k": -1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "k": -3
+     },
+     {
+      "k": -2
+     },
+     {
+      "k": -1
+     },
+     {
+      "k": 0
+     },
+     {
+      "k": 1
+     },
+     {
+      "k": 2
+     },
+     {
+      "k": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "BLOCK: PROVED_UNSAFE EXACT_MODEL INTRODUCED in the unchanged caller (via call summary)",
+   "domains": [
+    {
+     "symbol": "app/registry.py::width",
+     "profile": "python_exact_builtin_ints"
+    },
+    {
+     "symbol": "app/registry.py::lookup",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "D01",
+   "class": "contract_regression_normalization",
+   "description": "normalizes by max instead of sum; declared contract: positive-sum inputs give shares summing to 1",
+   "symbol": "app/weights.py::to_shares",
+   "property": "contract:shares.sum.v1",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "sum_approx",
+     "target": 1.0,
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "param": "ws",
+     "precondition": "positive_sum_0_100"
+    },
+    "witness_inputs": [
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "ws": [
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       3.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       2.0
+      ]
+     },
+     {
+      "ws": [
+       100.0,
+       50.0,
+       25.0
+      ]
+     },
+     {
+      "ws": [
+       0.5,
+       0.25,
+       0.25
+      ]
+     },
+     {
+      "ws": [
+       7.0,
+       0.0,
+       3.0
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static: UNKNOWN (list comprehension) -> INCOMPLETE; --execute: OBSERVED_REGRESSION INTRODUCED -> BLOCK",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "shares.sum.v1",
+     "scope": "app/weights.py::to_shares",
+     "precondition": {
+      "kind": "and",
+      "args": [
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "len",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0
+        }
+       },
+       {
+        "kind": "all_between",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        },
+        "lower": 0.0,
+        "upper": 100.0
+       },
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "sum",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0.0
+        }
+       }
+      ]
+     },
+     "predicate": {
+      "kind": "approx_eq",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09,
+      "require_finite": true
+     },
+     "input_profile": "bounded_builtin_numeric_list_v1",
+     "examples": [
+      {
+       "ws": [
+        1.0,
+        1.0
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "D02",
+   "class": "contract_regression_purity",
+   "description": "now sorts the caller's list in place; declared contract: argument unchanged",
+   "symbol": "app/uniq.py::unique_sorted",
+   "property": "contract:uniq.pure.v1",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "unchanged_argument",
+     "param": "xs"
+    },
+    "witness_inputs": [
+     {
+      "xs": [
+       2,
+       1
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static: no division; possibly UNKNOWN index in comprehension; --execute: OBSERVED_REGRESSION -> BLOCK",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "uniq.pure.v1",
+     "scope": "app/uniq.py::unique_sorted",
+     "precondition": {
+      "kind": "literal",
+      "value": true
+     },
+     "predicate": {
+      "kind": "unchanged_argument",
+      "name": "xs"
+     },
+     "input_profile": "bounded_builtin_int_list_v1",
+     "examples": [
+      {
+       "xs": [
+        2,
+        1
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "D03",
+   "class": "contract_regression_length",
+   "description": "now drops zeros; declared contract: len(result) == len(xs)",
+   "symbol": "app/scale.py::doubled",
+   "property": "contract:doubled.len.v1",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "length_preserved",
+     "param": "xs"
+    },
+    "witness_inputs": [
+     {
+      "xs": [
+       0
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static: no obligation; --execute: OBSERVED_REGRESSION -> BLOCK",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "doubled.len.v1",
+     "scope": "app/scale.py::doubled",
+     "precondition": {
+      "kind": "literal",
+      "value": true
+     },
+     "predicate": {
+      "kind": "eq",
+      "left": {
+       "kind": "len",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "len",
+       "value": {
+        "kind": "arg",
+        "name": "xs"
+       }
+      }
+     },
+     "input_profile": "bounded_builtin_int_list_v1",
+     "examples": [
+      {
+       "xs": [
+        0,
+        1
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "D04",
+   "class": "contract_regression_range",
+   "description": "lower clamp removed; declared contract: every result in [0, 100]",
+   "symbol": "app/scores.py::clamp_scores",
+   "property": "contract:scores.range.v1",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "all_between",
+     "lower": 0,
+     "upper": 100
+    },
+    "witness_inputs": [
+     {
+      "xs": [
+       -1
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static: no obligation; --execute: OBSERVED_REGRESSION -> BLOCK",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "scores.range.v1",
+     "scope": "app/scores.py::clamp_scores",
+     "precondition": {
+      "kind": "literal",
+      "value": true
+     },
+     "predicate": {
+      "kind": "all_between",
+      "value": {
+       "kind": "result"
+      },
+      "lower": 0,
+      "upper": 100
+     },
+     "input_profile": "bounded_builtin_int_list_v1",
+     "examples": [
+      {
+       "xs": [
+        5,
+        200
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "D05",
+   "class": "contract_and_static_div_zero",
+   "description": "empty-list guard removed before sum(xs) / len(xs); declared list domain and a declared bounded-result contract",
+   "symbol": "app/stats.py::mean",
+   "property": "division.zero_denominator + contract:mean.bounded.v1",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "xs": []
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static: PROVED_UNSAFE or POSSIBLY_UNSAFE (dividend is an unmodeled builtin call); --execute: OBSERVED_REGRESSION at xs=[] -> BLOCK",
+   "domains": [
+    {
+     "symbol": "app/stats.py::mean",
+     "profile": "python_exact_builtin_list"
+    }
+   ],
+   "contracts": [
+    {
+     "contract_id": "mean.bounded.v1",
+     "scope": "app/stats.py::mean",
+     "precondition": {
+      "kind": "literal",
+      "value": true
+     },
+     "predicate": {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1000
+      }
+     },
+     "input_profile": "bounded_builtin_int_list_v1",
+     "examples": [
+      {
+       "xs": []
+      },
+      {
+       "xs": [
+        1,
+        2
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "I01",
+   "class": "intentional_change_revised",
+   "description": "API v2 returns percentages; the maintainer revises the declared contract to sum 100 through `guard contracts revise`",
+   "symbol": "app/weights.py::to_shares",
+   "property": "contract:shares.sum.v1 (revised to sum 100)",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "intentional",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "sum_approx",
+     "target": 100.0,
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "param": "ws",
+     "precondition": "positive_sum_0_100"
+    },
+    "witness_inputs": [
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "ws": [
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       3.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       2.0
+      ]
+     },
+     {
+      "ws": [
+       100.0,
+       50.0,
+       25.0
+      ]
+     },
+     {
+      "ws": [
+       0.5,
+       0.25,
+       0.25
+      ]
+     },
+     {
+      "ws": [
+       7.0,
+       0.0,
+       3.0
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static INCOMPLETE (comprehension); --execute: revised contract TESTED (base fails it: RESOLVED INFO); no block",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "shares.sum.v1",
+     "scope": "app/weights.py::to_shares",
+     "precondition": {
+      "kind": "and",
+      "args": [
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "len",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0
+        }
+       },
+       {
+        "kind": "all_between",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        },
+        "lower": 0.0,
+        "upper": 100.0
+       },
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "sum",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0.0
+        }
+       }
+      ]
+     },
+     "predicate": {
+      "kind": "approx_eq",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09,
+      "require_finite": true
+     },
+     "input_profile": "bounded_builtin_numeric_list_v1",
+     "examples": [
+      {
+       "ws": [
+        1.0,
+        1.0
+       ]
+      }
+     ]
+    }
+   ],
+   "revise": {
+    "contract_id": "shares.sum.v1",
+    "scope": "app/weights.py::to_shares",
+    "precondition": {
+     "kind": "and",
+     "args": [
+      {
+       "kind": "gt",
+       "left": {
+        "kind": "len",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        }
+       },
+       "right": {
+        "kind": "literal",
+        "value": 0
+       }
+      },
+      {
+       "kind": "all_between",
+       "value": {
+        "kind": "arg",
+        "name": "ws"
+       },
+       "lower": 0.0,
+       "upper": 100.0
+      },
+      {
+       "kind": "gt",
+       "left": {
+        "kind": "sum",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        }
+       },
+       "right": {
+        "kind": "literal",
+        "value": 0.0
+       }
+      }
+     ]
+    },
+    "predicate": {
+     "kind": "approx_eq",
+     "left": {
+      "kind": "sum",
+      "value": {
+       "kind": "result"
+      }
+     },
+     "right": {
+      "kind": "literal",
+      "value": 100.0
+     },
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "require_finite": true
+    },
+    "input_profile": "bounded_builtin_numeric_list_v1",
+    "examples": [
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "case_id": "I02",
+   "class": "intentional_change_inferred",
+   "description": "API v2 documents in-place scaling; the only contracts are template-inferred (INFERRED, never approved)",
+   "symbol": "app/vec.py::scale_all",
+   "property": "contract:(template purity, INFERRED)",
+   "ground_truth": {
+    "label": "intentional_change",
+    "intent": "intentional",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "unchanged_argument",
+     "param": "xs"
+    },
+    "witness_inputs": [
+     {
+      "xs": [
+       1
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "--execute: INFERRED purity OBSERVED_REGRESSION -> WARN, never BLOCK",
+   "domains": [],
+   "contracts": [],
+   "discover_templates": true
+  },
+  {
+   "case_id": "I03",
+   "class": "intentional_change_static",
+   "description": "b == 0 now raises ValueError on purpose instead of returning 0.0; the division stays guarded",
+   "symbol": "app/ratio.py::ratio",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "intentional",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "a": 1,
+      "b": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE in both",
+   "domains": [
+    {
+     "symbol": "app/ratio.py::ratio",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "I04",
+   "class": "intentional_change_unrevised",
+   "description": "same intentional percentage API as I01 but the declared contract was NOT revised",
+   "symbol": "app/weights.py::to_shares",
+   "property": "contract:shares.sum.v1",
+   "ground_truth": {
+    "label": "intentional_change",
+    "intent": "intentional",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "sum_approx",
+     "target": 1.0,
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "param": "ws",
+     "precondition": "positive_sum_0_100"
+    },
+    "witness_inputs": [
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "ws": [
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       3.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       2.0
+      ]
+     },
+     {
+      "ws": [
+       100.0,
+       50.0,
+       25.0
+      ]
+     },
+     {
+      "ws": [
+       0.5,
+       0.25,
+       0.25
+      ]
+     },
+     {
+      "ws": [
+       7.0,
+       0.0,
+       3.0
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "--execute: OBSERVED_REGRESSION of a DECLARED contract -> BLOCK (policy requires an explicit revision)",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "shares.sum.v1",
+     "scope": "app/weights.py::to_shares",
+     "precondition": {
+      "kind": "and",
+      "args": [
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "len",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0
+        }
+       },
+       {
+        "kind": "all_between",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        },
+        "lower": 0.0,
+        "upper": 100.0
+       },
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "sum",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0.0
+        }
+       }
+      ]
+     },
+     "predicate": {
+      "kind": "approx_eq",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09,
+      "require_finite": true
+     },
+     "input_profile": "bounded_builtin_numeric_list_v1",
+     "examples": [
+      {
+       "ws": [
+        1.0,
+        1.0
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "N01",
+   "class": "safe_refactor",
+   "description": "variable renamed and guard inverted (gap != 0); division still only on nonzero gap",
+   "symbol": "app/ratio.py::ratio",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE",
+   "domains": [
+    {
+     "symbol": "app/ratio.py::ratio",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "N02",
+   "class": "safe_refactor",
+   "description": "divisor wrapped in a new helper nonzero(d) that never returns 0",
+   "symbol": "app/rates.py::per_unit",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "total": -3,
+      "n": -3
+     },
+     {
+      "total": -3,
+      "n": -2
+     },
+     {
+      "total": -3,
+      "n": -1
+     },
+     {
+      "total": -3,
+      "n": 0
+     },
+     {
+      "total": -3,
+      "n": 1
+     },
+     {
+      "total": -3,
+      "n": 2
+     },
+     {
+      "total": -3,
+      "n": 3
+     },
+     {
+      "total": -2,
+      "n": -3
+     },
+     {
+      "total": -2,
+      "n": -2
+     },
+     {
+      "total": -2,
+      "n": -1
+     },
+     {
+      "total": -2,
+      "n": 0
+     },
+     {
+      "total": -2,
+      "n": 1
+     },
+     {
+      "total": -2,
+      "n": 2
+     },
+     {
+      "total": -2,
+      "n": 3
+     },
+     {
+      "total": -1,
+      "n": -3
+     },
+     {
+      "total": -1,
+      "n": -2
+     },
+     {
+      "total": -1,
+      "n": -1
+     },
+     {
+      "total": -1,
+      "n": 0
+     },
+     {
+      "total": -1,
+      "n": 1
+     },
+     {
+      "total": -1,
+      "n": 2
+     },
+     {
+      "total": -1,
+      "n": 3
+     },
+     {
+      "total": 0,
+      "n": -3
+     },
+     {
+      "total": 0,
+      "n": -2
+     },
+     {
+      "total": 0,
+      "n": -1
+     },
+     {
+      "total": 0,
+      "n": 0
+     },
+     {
+      "total": 0,
+      "n": 1
+     },
+     {
+      "total": 0,
+      "n": 2
+     },
+     {
+      "total": 0,
+      "n": 3
+     },
+     {
+      "total": 1,
+      "n": -3
+     },
+     {
+      "total": 1,
+      "n": -2
+     },
+     {
+      "total": 1,
+      "n": -1
+     },
+     {
+      "total": 1,
+      "n": 0
+     },
+     {
+      "total": 1,
+      "n": 1
+     },
+     {
+      "total": 1,
+      "n": 2
+     },
+     {
+      "total": 1,
+      "n": 3
+     },
+     {
+      "total": 2,
+      "n": -3
+     },
+     {
+      "total": 2,
+      "n": -2
+     },
+     {
+      "total": 2,
+      "n": -1
+     },
+     {
+      "total": 2,
+      "n": 0
+     },
+     {
+      "total": 2,
+      "n": 1
+     },
+     {
+      "total": 2,
+      "n": 2
+     },
+     {
+      "total": 2,
+      "n": 3
+     },
+     {
+      "total": 3,
+      "n": -3
+     },
+     {
+      "total": 3,
+      "n": -2
+     },
+     {
+      "total": 3,
+      "n": -1
+     },
+     {
+      "total": 3,
+      "n": 0
+     },
+     {
+      "total": 3,
+      "n": 1
+     },
+     {
+      "total": 3,
+      "n": 2
+     },
+     {
+      "total": 3,
+      "n": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE via call summary",
+   "domains": [
+    {
+     "symbol": "app/rates.py::per_unit",
+     "profile": "python_exact_builtin_ints"
+    },
+    {
+     "symbol": "app/rates.py::nonzero",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "N03",
+   "class": "safe_refactor",
+   "description": "docstring and comments only",
+   "symbol": "app/pricing.py::unit_price",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "total": -3,
+      "qty": -3
+     },
+     {
+      "total": -3,
+      "qty": -2
+     },
+     {
+      "total": -3,
+      "qty": -1
+     },
+     {
+      "total": -3,
+      "qty": 0
+     },
+     {
+      "total": -3,
+      "qty": 1
+     },
+     {
+      "total": -3,
+      "qty": 2
+     },
+     {
+      "total": -3,
+      "qty": 3
+     },
+     {
+      "total": -2,
+      "qty": -3
+     },
+     {
+      "total": -2,
+      "qty": -2
+     },
+     {
+      "total": -2,
+      "qty": -1
+     },
+     {
+      "total": -2,
+      "qty": 0
+     },
+     {
+      "total": -2,
+      "qty": 1
+     },
+     {
+      "total": -2,
+      "qty": 2
+     },
+     {
+      "total": -2,
+      "qty": 3
+     },
+     {
+      "total": -1,
+      "qty": -3
+     },
+     {
+      "total": -1,
+      "qty": -2
+     },
+     {
+      "total": -1,
+      "qty": -1
+     },
+     {
+      "total": -1,
+      "qty": 0
+     },
+     {
+      "total": -1,
+      "qty": 1
+     },
+     {
+      "total": -1,
+      "qty": 2
+     },
+     {
+      "total": -1,
+      "qty": 3
+     },
+     {
+      "total": 0,
+      "qty": -3
+     },
+     {
+      "total": 0,
+      "qty": -2
+     },
+     {
+      "total": 0,
+      "qty": -1
+     },
+     {
+      "total": 0,
+      "qty": 0
+     },
+     {
+      "total": 0,
+      "qty": 1
+     },
+     {
+      "total": 0,
+      "qty": 2
+     },
+     {
+      "total": 0,
+      "qty": 3
+     },
+     {
+      "total": 1,
+      "qty": -3
+     },
+     {
+      "total": 1,
+      "qty": -2
+     },
+     {
+      "total": 1,
+      "qty": -1
+     },
+     {
+      "total": 1,
+      "qty": 0
+     },
+     {
+      "total": 1,
+      "qty": 1
+     },
+     {
+      "total": 1,
+      "qty": 2
+     },
+     {
+      "total": 1,
+      "qty": 3
+     },
+     {
+      "total": 2,
+      "qty": -3
+     },
+     {
+      "total": 2,
+      "qty": -2
+     },
+     {
+      "total": 2,
+      "qty": -1
+     },
+     {
+      "total": 2,
+      "qty": 0
+     },
+     {
+      "total": 2,
+      "qty": 1
+     },
+     {
+      "total": 2,
+      "qty": 2
+     },
+     {
+      "total": 2,
+      "qty": 3
+     },
+     {
+      "total": 3,
+      "qty": -3
+     },
+     {
+      "total": 3,
+      "qty": -2
+     },
+     {
+      "total": 3,
+      "qty": -1
+     },
+     {
+      "total": 3,
+      "qty": 0
+     },
+     {
+      "total": 3,
+      "qty": 1
+     },
+     {
+      "total": 3,
+      "qty": 2
+     },
+     {
+      "total": 3,
+      "qty": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE",
+   "domains": [
+    {
+     "symbol": "app/pricing.py::unit_price",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "N04",
+   "class": "safe_refactor",
+   "description": "guard b == 0 rewritten as `not b` (same truth value for exact ints)",
+   "symbol": "app/ratio.py::safe_div",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE",
+   "domains": [
+    {
+     "symbol": "app/ratio.py::safe_div",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "N05",
+   "class": "safe_refactor",
+   "description": "guard `if xs` rewritten as `if len(xs) > 0` before xs[-1]",
+   "symbol": "app/seq.py::last_or_zero",
+   "property": "index.out_of_range",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "IndexError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PASS: PROVED_SAFE",
+   "domains": [
+    {
+     "symbol": "app/seq.py::last_or_zero",
+     "profile": "python_exact_builtin_list"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "N06",
+   "class": "safe_refactor_contract",
+   "description": "comprehension rewritten as map(lambda ...); same floating-point operations",
+   "symbol": "app/weights.py::to_shares",
+   "property": "contract:shares.sum.v1",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "sum_approx",
+     "target": 1.0,
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "param": "ws",
+     "precondition": "positive_sum_0_100"
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "ws": [
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       3.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       2.0
+      ]
+     },
+     {
+      "ws": [
+       100.0,
+       50.0,
+       25.0
+      ]
+     },
+     {
+      "ws": [
+       0.5,
+       0.25,
+       0.25
+      ]
+     },
+     {
+      "ws": [
+       7.0,
+       0.0,
+       3.0
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "static INCOMPLETE (comprehension/lambda); --execute: TESTED",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "shares.sum.v1",
+     "scope": "app/weights.py::to_shares",
+     "precondition": {
+      "kind": "and",
+      "args": [
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "len",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0
+        }
+       },
+       {
+        "kind": "all_between",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        },
+        "lower": 0.0,
+        "upper": 100.0
+       },
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "sum",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0.0
+        }
+       }
+      ]
+     },
+     "predicate": {
+      "kind": "approx_eq",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09,
+      "require_finite": true
+     },
+     "input_profile": "bounded_builtin_numeric_list_v1",
+     "examples": [
+      {
+       "ws": [
+        1.0,
+        1.0
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "N07",
+   "class": "safe_refactor_contract",
+   "description": "sorted(xs) rewritten as copy-then-sort",
+   "symbol": "app/listy.py::sorted_copy",
+   "property": "contract:sorted_copy.pure.v1",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "unchanged_argument",
+     "param": "xs"
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "--execute: TESTED; PASS",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "sorted_copy.pure.v1",
+     "scope": "app/listy.py::sorted_copy",
+     "precondition": {
+      "kind": "literal",
+      "value": true
+     },
+     "predicate": {
+      "kind": "unchanged_argument",
+      "name": "xs"
+     },
+     "input_profile": "bounded_builtin_int_list_v1",
+     "examples": [
+      {
+       "xs": [
+        2,
+        1
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case_id": "U01",
+   "class": "unsupported_loop",
+   "description": "zero-total guard removed after a for loop (n=1 gives total 0)",
+   "symbol": "app/loops.py::mean_step",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "n": 1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "n": -3
+     },
+     {
+      "n": -2
+     },
+     {
+      "n": -1
+     },
+     {
+      "n": 0
+     },
+     {
+      "n": 1
+     },
+     {
+      "n": 2
+     },
+     {
+      "n": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "INCOMPLETE: UNKNOWN (for loop unsupported)",
+   "domains": [
+    {
+     "symbol": "app/loops.py::mean_step",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "U02",
+   "class": "unsupported_nested_function",
+   "description": "guard removed inside a nested function",
+   "symbol": "app/nested.py::outer",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "a": 1,
+      "b": 1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "INCOMPLETE: UNKNOWN (nested def unsupported)",
+   "domains": [
+    {
+     "symbol": "app/nested.py::outer",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "U03",
+   "class": "unsupported_loop",
+   "description": "loop-based mean with an emptiness guard; parameter and locals renamed",
+   "symbol": "app/loops.py::mean_of",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "refactor",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [],
+    "grid_inputs": [
+     {
+      "xs": []
+     },
+     {
+      "xs": [
+       0
+      ]
+     },
+     {
+      "xs": [
+       1
+      ]
+     },
+     {
+      "xs": [
+       -1
+      ]
+     },
+     {
+      "xs": [
+       2,
+       1
+      ]
+     },
+     {
+      "xs": [
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       0,
+       0
+      ]
+     },
+     {
+      "xs": [
+       3,
+       1,
+       2
+      ]
+     },
+     {
+      "xs": [
+       -2,
+       5,
+       -2
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "INCOMPLETE: UNKNOWN (for loop unsupported)",
+   "domains": [
+    {
+     "symbol": "app/loops.py::mean_of",
+     "profile": "python_exact_builtin_list"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "U04",
+   "class": "unsupported_external_call",
+   "description": "guard on math.gcd(a, b) == 0 removed (gcd(0, 0) == 0)",
+   "symbol": "app/frac.py::reduce_ratio",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "defect_introduced",
+    "intent": "defect",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "a": 0,
+      "b": 0
+     }
+    ],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "INCOMPLETE: UNKNOWN (math.gcd is an unmodeled call)",
+   "domains": [
+    {
+     "symbol": "app/frac.py::reduce_ratio",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "P01",
+   "class": "pre_existing_static",
+   "description": "1 / (a + b) fails at a = -b in both versions; the patch only introduces a local",
+   "symbol": "app/inv.py::inverse_sum",
+   "property": "division.zero_denominator",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "pre_existing",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "exception",
+     "failure_exceptions": [
+      "ZeroDivisionError"
+     ]
+    },
+    "witness_inputs": [
+     {
+      "a": 1,
+      "b": -1
+     }
+    ],
+    "grid_inputs": [
+     {
+      "a": -3,
+      "b": -3
+     },
+     {
+      "a": -3,
+      "b": -2
+     },
+     {
+      "a": -3,
+      "b": -1
+     },
+     {
+      "a": -3,
+      "b": 0
+     },
+     {
+      "a": -3,
+      "b": 1
+     },
+     {
+      "a": -3,
+      "b": 2
+     },
+     {
+      "a": -3,
+      "b": 3
+     },
+     {
+      "a": -2,
+      "b": -3
+     },
+     {
+      "a": -2,
+      "b": -2
+     },
+     {
+      "a": -2,
+      "b": -1
+     },
+     {
+      "a": -2,
+      "b": 0
+     },
+     {
+      "a": -2,
+      "b": 1
+     },
+     {
+      "a": -2,
+      "b": 2
+     },
+     {
+      "a": -2,
+      "b": 3
+     },
+     {
+      "a": -1,
+      "b": -3
+     },
+     {
+      "a": -1,
+      "b": -2
+     },
+     {
+      "a": -1,
+      "b": -1
+     },
+     {
+      "a": -1,
+      "b": 0
+     },
+     {
+      "a": -1,
+      "b": 1
+     },
+     {
+      "a": -1,
+      "b": 2
+     },
+     {
+      "a": -1,
+      "b": 3
+     },
+     {
+      "a": 0,
+      "b": -3
+     },
+     {
+      "a": 0,
+      "b": -2
+     },
+     {
+      "a": 0,
+      "b": -1
+     },
+     {
+      "a": 0,
+      "b": 0
+     },
+     {
+      "a": 0,
+      "b": 1
+     },
+     {
+      "a": 0,
+      "b": 2
+     },
+     {
+      "a": 0,
+      "b": 3
+     },
+     {
+      "a": 1,
+      "b": -3
+     },
+     {
+      "a": 1,
+      "b": -2
+     },
+     {
+      "a": 1,
+      "b": -1
+     },
+     {
+      "a": 1,
+      "b": 0
+     },
+     {
+      "a": 1,
+      "b": 1
+     },
+     {
+      "a": 1,
+      "b": 2
+     },
+     {
+      "a": 1,
+      "b": 3
+     },
+     {
+      "a": 2,
+      "b": -3
+     },
+     {
+      "a": 2,
+      "b": -2
+     },
+     {
+      "a": 2,
+      "b": -1
+     },
+     {
+      "a": 2,
+      "b": 0
+     },
+     {
+      "a": 2,
+      "b": 1
+     },
+     {
+      "a": 2,
+      "b": 2
+     },
+     {
+      "a": 2,
+      "b": 3
+     },
+     {
+      "a": 3,
+      "b": -3
+     },
+     {
+      "a": 3,
+      "b": -2
+     },
+     {
+      "a": 3,
+      "b": -1
+     },
+     {
+      "a": 3,
+      "b": 0
+     },
+     {
+      "a": 3,
+      "b": 1
+     },
+     {
+      "a": 3,
+      "b": 2
+     },
+     {
+      "a": 3,
+      "b": 3
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "PRE_EXISTING finding; no INTRODUCED finding; not BLOCK",
+   "domains": [
+    {
+     "symbol": "app/inv.py::inverse_sum",
+     "profile": "python_exact_builtin_ints"
+    }
+   ],
+   "contracts": []
+  },
+  {
+   "case_id": "P02",
+   "class": "pre_existing_contract",
+   "description": "declared contract omits the positive-sum precondition; all-zero input fails in both versions (ZeroDivisionError)",
+   "symbol": "app/weights.py::to_shares",
+   "property": "contract:shares.nonneg.v1",
+   "ground_truth": {
+    "label": "no_defect_introduced",
+    "intent": "pre_existing",
+    "method": "execution of both versions in a separate python -I process (benchmarks/gt_oracle.py); positives need >=1 input with base OK and patch failing; negatives need no such input on the finite grid plus the hand argument in 'description'",
+    "oracle": {
+     "kind": "sum_approx",
+     "target": 1.0,
+     "atol": 1e-09,
+     "rtol": 1e-09,
+     "param": "ws",
+     "precondition": "nonneg_0_100"
+    },
+    "witness_inputs": [
+     {
+      "ws": [
+       0.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       0.0
+      ]
+     }
+    ],
+    "grid_inputs": [
+     {
+      "ws": [
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "ws": [
+       1.0,
+       3.0
+      ]
+     },
+     {
+      "ws": [
+       0.0,
+       2.0
+      ]
+     },
+     {
+      "ws": [
+       100.0,
+       50.0,
+       25.0
+      ]
+     },
+     {
+      "ws": [
+       0.5,
+       0.25,
+       0.25
+      ]
+     },
+     {
+      "ws": [
+       7.0,
+       0.0,
+       3.0
+      ]
+     }
+    ]
+   },
+   "anticipated_tool_outcome": "--execute: OBSERVED_FAILURE PRE_EXISTING (WARN), not BLOCK",
+   "domains": [],
+   "contracts": [
+    {
+     "contract_id": "shares.nonneg.v1",
+     "scope": "app/weights.py::to_shares",
+     "precondition": {
+      "kind": "and",
+      "args": [
+       {
+        "kind": "gt",
+        "left": {
+         "kind": "len",
+         "value": {
+          "kind": "arg",
+          "name": "ws"
+         }
+        },
+        "right": {
+         "kind": "literal",
+         "value": 0
+        }
+       },
+       {
+        "kind": "all_between",
+        "value": {
+         "kind": "arg",
+         "name": "ws"
+        },
+        "lower": 0.0,
+        "upper": 100.0
+       }
+      ]
+     },
+     "predicate": {
+      "kind": "approx_eq",
+      "left": {
+       "kind": "sum",
+       "value": {
+        "kind": "result"
+       }
+      },
+      "right": {
+       "kind": "literal",
+       "value": 1.0
+      },
+      "atol": 1e-09,
+      "rtol": 1e-09,
+      "require_finite": true
+     },
+     "input_profile": "bounded_builtin_numeric_list_v1",
+     "examples": [
+      {
+       "ws": [
+        0.0
+       ]
+      },
+      {
+       "ws": [
+        1.0,
+        1.0
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

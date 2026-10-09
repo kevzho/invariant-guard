@@ -1,0 +1,282 @@
+{
+ "schema_version": "1.0",
+ "symbol": "heldout/scalars.py::clamp_percent",
+ "context_packet_digest": "sha256:c74ca2e4abd423d36cdb4161cd84dcb39a522313ef39bc6e490c45c09b9aa014",
+ "candidates": [
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0.0
+      },
+      "right": {
+       "kind": "result"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "result"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 100.0
+      }
+     }
+    ]
+   },
+   "rationale": "Docstring: result lies in [0,100]; the code lacks a lower clamp.",
+   "uncertainty": "negative inputs may violate",
+   "boundary_inputs": [
+    {
+     "p": -5.0
+    },
+    {
+     "p": 150.0
+    },
+    {
+     "p": 0.0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 100.0
+    }
+   },
+   "rationale": "Result never exceeds 100.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "p": 100.0
+    },
+    {
+     "p": 1000000.0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "and",
+    "args": [
+     {
+      "kind": "le",
+      "left": {
+       "kind": "literal",
+       "value": 0.0
+      },
+      "right": {
+       "kind": "arg",
+       "name": "p"
+      }
+     },
+     {
+      "kind": "le",
+      "left": {
+       "kind": "arg",
+       "name": "p"
+      },
+      "right": {
+       "kind": "literal",
+       "value": 100.0
+      }
+     }
+    ]
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "arg",
+     "name": "p"
+    }
+   },
+   "rationale": "In-range percentages are returned unchanged.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "p": 0.0
+    },
+    {
+     "p": 100.0
+    },
+    {
+     "p": 42.5
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "lt",
+    "left": {
+     "kind": "arg",
+     "name": "p"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0.0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 0.0
+    }
+   },
+   "rationale": "Negative percentages should clamp to 0.",
+   "uncertainty": "code may not clamp low",
+   "boundary_inputs": [
+    {
+     "p": -0.5
+    },
+    {
+     "p": -1000000.0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "gt",
+    "left": {
+     "kind": "arg",
+     "name": "p"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 100.0
+    }
+   },
+   "predicate": {
+    "kind": "eq",
+    "left": {
+     "kind": "result"
+    },
+    "right": {
+     "kind": "literal",
+     "value": 100.0
+    }
+   },
+   "rationale": "Percentages above 100 clamp to 100.",
+   "uncertainty": "none",
+   "boundary_inputs": [
+    {
+     "p": 100.5
+    },
+    {
+     "p": 1000000.0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "le",
+    "left": {
+     "kind": "literal",
+     "value": 0.0
+    },
+    "right": {
+     "kind": "result"
+    }
+   },
+   "rationale": "Result is nonnegative per the closed range.",
+   "uncertainty": "negative inputs may violate",
+   "boundary_inputs": [
+    {
+     "p": -1.0
+    }
+   ],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  },
+  {
+   "precondition": {
+    "kind": "literal",
+    "value": true
+   },
+   "predicate": {
+    "kind": "repeatability",
+    "repeats": 3,
+    "seed": 0,
+    "comparison": "exact"
+   },
+   "rationale": "Deterministic scalar function.",
+   "uncertainty": "none",
+   "boundary_inputs": [],
+   "unsupported_dependencies": [],
+   "input_profile": "bounded_builtin_finite_floats_v1",
+   "source_ref": {
+    "snippet": 0,
+    "start_line": 9,
+    "end_line": 11
+   }
+  }
+ ]
+}

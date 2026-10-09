@@ -1,0 +1,32 @@
+schema_version = "1.0"
+
+[analysis]
+quick_budget_ms = 20000
+require_coverage = true
+
+[execution]
+enabled = true
+profile = "isolated-python"
+allow_unisolated = false
+
+[execution.profiles.isolated-python]
+backend = "docker"
+image = "python:3.13-slim"
+allowed_targets = ["demo/*.py::*"]
+
+[semantic]
+enabled = true
+endpoint = "http://127.0.0.1:11434"
+model_id = "qwen2.5-coder:7b"
+model_digest = "sha256:dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364"
+request_timeout_s = 900
+
+[privacy]
+telemetry = false
+store_raw_model_context = false
+
+[[domains]]
+symbol = "demo/math_ops.py::ratio"
+profile = "python_exact_builtin_ints"
+authority = "DECLARED"
+reason = "demo public API admits exact built-in integer inputs"
