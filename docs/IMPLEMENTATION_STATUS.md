@@ -1112,6 +1112,29 @@ Commands and outcomes (2026-10-09, `nice -n 19`, single process):
 - The default-profile Docker test found a defect, now fixed. The harness requested RLIMIT_CPU (10 s soft, 11 s hard) above the container's 10 s hard limit, so `setrlimit` failed and every probe reported `crashed`.
 - `pytest tests`: 841 passed, 2 skipped (opt-in real-model tests), 1 failed. The failure was `test_engine_source_has_no_execution_primitives`, which flagged the replay harness's `eval`/`compile`/`fork`/`import_module`. It was resolved with a per-file allowlist plus `test_replay_harness_evaluates_only_repository_inputs`, which pins the only `eval`/`compile` site to `materialize_arg` and checks that no engine module imports the harness. `tests/integration/test_audit_regressions.py` was rerun: 57 passed.
 
+## Phase 3 (pivot): input harvesting and generation
+
+Decisions I-120 to I-122.
+
+- `replay/harvest.py` (host side, AST only) finds calls to a target in test files and in its module's doctests. It handles:
+  - parametrize rows, local bindings, module-qualified calls and class aliases;
+  - alternate constructors, and same-module subclasses that inherit the member;
+  - properties and operator dunders.
+  - Method targets get the earlier calls on the same local object as `steps`.
+  - Inputs are exact repository text plus verbatim bindings (no inlining); `default_variants` perturbs omitted defaults.
+- `replay/generate.py` with the harness's `generate` mode runs Hypothesis inside the boundary: `shape`, `annotation` and `stub` sources, derandomized, keyword-passed typed inputs. Without Hypothesis in the image, generation is reported `unavailable`.
+- Not yet captured: test files and `.pyi` stubs as a snapshot-identified source set. Phase 3 works on path-to-bytes maps; phase 4 captures them with the run.
+
+Commands and outcomes (2026-10-09, `nice -n 19`):
+- `pytest tests/integration/test_replay_harvest.py tests/integration/test_replay_generate.py`: all pass. Generation runs in Docker with `invariantguard-diffreplay:spike` (python:3.13-slim + hypothesis 6.165.0), checks determinism across two runs, replays the generated inputs, and has the stub reproduce a `caaec94`-style empty-pool case.
+- Defects found and fixed while testing:
+  - duplicate generation job ids overwrote results;
+  - a receiver bound to a local variable got an empty namespace;
+  - re-parsing an indented multi-line binding raised IndentationError (dateutil `parse`).
+  - The audit scan also flagged `__import__` in the stub path, now replaced by `importlib.import_module`; its pin test now allows `eval`/`compile` only in `materialize_arg` and `generate_job`.
+- `spikes/diffreplay/harvest_compare_phase3.py` (harvesting only, no execution; 90 commits): 106 directly changed functions. 66 have harvested inputs, the same count as the spike, with 666 inputs vs. the spike's 514. One function has inputs only from the spike: `urlutils.OrderedMultiDict.addlist`, where the spike matched `dictutils.OMD` by name, which is a different class. One function has inputs only from the new harvester. Output: `spikes/diffreplay/results/harvest_compare_phase3.json`.
+- `pytest tests`: 855 passed, 2 skipped (opt-in real-model tests).
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

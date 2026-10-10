@@ -52,19 +52,45 @@ class Namespace:
 
 
 @dataclass(frozen=True)
+class Binding:
+    """``name = <text>``: a local assignment (or parametrize value) an expression depends on."""
+
+    name: str
+    text: str
+    line: int
+
+
+@dataclass(frozen=True)
 class Expr:
-    """A repository-authored expression (from a test or doctest), with its source location."""
+    """A repository-authored expression (from a test or doctest), with its source location.
+
+    ``bindings`` are evaluated in order before ``text`` (exact source text each; never
+    inlined or rewritten), so every executed piece can be verified against the snapshot.
+    """
 
     text: str
     path: str
     line: int
     namespace: Namespace = Namespace()
+    bindings: tuple[Binding, ...] = ()
 
     def spec(self, ns_ids: dict[Any, str]) -> dict[str, Any]:
-        return {"x": self.text, "ns": ns_ids[self.namespace]}
+        out: dict[str, Any] = {"x": self.text, "ns": ns_ids[self.namespace]}
+        if self.bindings:
+            out["b"] = [[b.name, b.text] for b in self.bindings]
+        return out
 
 
 Input = Union[Value, Expr]
+
+
+@dataclass(frozen=True)
+class Step:
+    """A method call on the receiver made before the target call (stateful sequences)."""
+
+    method: str
+    args: tuple[Input, ...] = ()
+    kwargs: tuple[tuple[str, Input], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -107,9 +133,12 @@ class Probe:
     kwargs: tuple[tuple[str, Input], ...] = ()
     receiver: Input | Construct | None = None
     seed: int = 0
+    steps: tuple[Step, ...] = ()
 
     def inputs(self) -> list[Input]:
         out = list(self.args) + [v for _, v in self.kwargs]
+        for s in self.steps:
+            out += list(s.args) + [v for _, v in s.kwargs]
         if isinstance(self.receiver, Construct):
             out += list(self.receiver.args) + [v for _, v in self.receiver.kwargs]
         elif self.receiver is not None:
@@ -145,9 +174,13 @@ def check_inputs(probe: Probe, provenance: dict[str, bytes]) -> None:
         if src is None:
             raise InputRejected(f"probe {probe.id}: expression source {inp.path} is not in the snapshot")
         lines = src.decode("utf-8", "replace").splitlines()
-        window = "\n".join(lines[max(0, inp.line - 1): inp.line + 40])
-        if inp.text not in window and " ".join(inp.text.split()) not in " ".join(window.split()):
-            raise InputRejected(f"probe {probe.id}: expression text does not occur at {inp.path}:{inp.line}")
+        for text, line in [(b.text, b.line) for b in inp.bindings] + [(inp.text, inp.line)]:
+            window = "\n".join(lines[max(0, line - 1): line + 40])
+            if text not in window and " ".join(text.split()) not in " ".join(window.split()):
+                raise InputRejected(f"probe {probe.id}: expression text does not occur at {inp.path}:{line}")
+    for s in probe.steps:
+        if not s.method.isidentifier():
+            raise InputRejected(f"probe {probe.id}: step method {s.method!r} is not an identifier")
 
 
 def _probe_spec(p: Probe, tid: str, ns_ids: dict[Namespace, str]) -> dict[str, Any]:
@@ -157,6 +190,9 @@ def _probe_spec(p: Probe, tid: str, ns_ids: dict[Namespace, str]) -> dict[str, A
         out["receiver"] = {"construct": {"args": [a.spec(ns_ids) for a in p.receiver.args], "kwargs": {k: v.spec(ns_ids) for k, v in p.receiver.kwargs}}}
     elif p.receiver is not None:
         out["receiver"] = p.receiver.spec(ns_ids)
+    if p.steps:
+        out["steps"] = [{"method": s.method, "args": [a.spec(ns_ids) for a in s.args], "kwargs": {k: v.spec(ns_ids) for k, v in s.kwargs}}
+                        for s in p.steps]
     return out
 
 
@@ -186,7 +222,15 @@ def validate_observation(o: Any) -> dict[str, Any]:
                 return bad(f"{key} malformed")
     if "receiver_after" in o and check_node(o["receiver_after"]):
         return bad("receiver_after malformed")
-    return {k: o[k] for k in ("status", "result", "mutated", "receiver_after", "elapsed_ms") if k in o}
+    if "steps" in o:
+        if type(o["steps"]) is not list:
+            return bad("steps malformed")
+        for s in o["steps"]:
+            if type(s) is not dict or s.get("kind") not in ("returned", "raised"):
+                return bad("step outcome malformed")
+            if s["kind"] == "returned" and check_node(s.get("value")):
+                return bad("step value malformed")
+    return {k: o[k] for k in ("status", "result", "mutated", "receiver_after", "steps", "elapsed_ms") if k in o}
 
 
 def run_replay(backend: Backend, files: dict[str, bytes], probes: list[Probe], *, provenance: dict[str, bytes],

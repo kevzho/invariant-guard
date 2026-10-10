@@ -374,7 +374,7 @@ def test_engine_source_has_no_execution_primitives():
 
 
 def test_replay_harness_evaluates_only_repository_inputs():
-    """eval/compile occur once, in materialize_arg, and the engine never imports the harness."""
+    """eval/compile occur only where repository text is evaluated, and the engine never imports the harness."""
     path = REPO / "src" / "invariantguard" / "execution" / "replay_harness.py"
     tree = ast.parse(path.read_text(encoding="utf-8"))
     sites = []
@@ -383,7 +383,8 @@ def test_replay_harness_evaluates_only_repository_inputs():
             for n in ast.walk(fn):
                 if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in ("eval", "compile", "exec"):
                     sites.append((fn.name, n.func.id))
-    assert sorted(sites) == [("materialize_arg", "compile"), ("materialize_arg", "eval")]
+    # materialize_arg: test/doctest bindings and expressions; generate_job: .pyi stub annotation text.
+    assert sorted(sites) == sorted([("generate_job", "compile"), ("generate_job", "eval")] + [("materialize_arg", "compile"), ("materialize_arg", "eval")] * 2)
     for p in (REPO / "src" / "invariantguard").rglob("*.py"):
         for n in ast.walk(ast.parse(p.read_text(encoding="utf-8"))):
             if isinstance(n, ast.ImportFrom) and n.module:

@@ -283,6 +283,9 @@ def build_ns(spec, cache):
     for local, modname, attr in spec.get("imports", []):
         try:
             m = importlib.import_module(modname)
+            if attr and not hasattr(m, attr):
+                m = importlib.import_module(modname + "." + attr)  # `from pkg import submodule`
+                attr = None
             ns[local] = getattr(m, attr) if attr else m
         except BaseException:  # noqa: BLE001 - a missing name makes the expression fail (input_error)
             pass
@@ -293,10 +296,12 @@ def build_ns(spec, cache):
 def materialize_arg(spec, namespaces, cache):
     if "v" in spec:
         return decode(spec["v"])
-    ns = build_ns(namespaces[spec["ns"]], cache)
-    # Repository-authored test/doctest text (the host verified it occurs in the snapshot);
-    # evaluated inside the isolation boundary only.
-    return eval(compile(spec["x"], "<repository input>", "eval"), dict(ns))
+    ns = dict(build_ns(namespaces[spec["ns"]], cache))
+    # Repository-authored test/doctest text (the host verified each piece occurs in the
+    # snapshot); evaluated inside the isolation boundary only. Bindings first, in order.
+    for name, text in spec.get("b", []):
+        ns[name] = eval(compile(text, "<repository input>", "eval"), ns)
+    return eval(compile(spec["x"], "<repository input>", "eval"), ns)
 
 
 def resolve(target):
@@ -361,6 +366,20 @@ def run_probe(req, probe):
         return {"status": "input_error", "detail": {"type": "NoReceiver", "message": "instance method or property without a receiver"}}
     limit = int(req.get("max_observation_bytes", 65536))
     prefix = int(req.get("iter_prefix", 100))
+    steps = []
+    if probe.get("steps"):
+        if recv is None:
+            return {"status": "input_error", "detail": {"type": "NoReceiver", "message": "steps without a receiver"}}
+        for s in probe["steps"]:
+            try:
+                sargs = [materialize_arg(a, namespaces, cache) for a in s.get("args", [])]
+                skw = {k: materialize_arg(a, namespaces, cache) for k, a in s.get("kwargs", {}).items()}
+            except BaseException as exc:  # noqa: BLE001
+                return {"status": "input_error", "detail": exc_summary(exc)}
+            try:
+                steps.append({"kind": "returned", "value": _cap(encode(getattr(recv, s["method"])(*sargs, **skw), prefix), limit)})
+            except BaseException as exc:  # noqa: BLE001 - a step raised; later steps and the call still run
+                steps.append({"kind": "raised", "exception": exc_summary(exc)})
     mutable = _mutables(args, kwargs)
     before = {k: encode(v) for k, v in mutable.items()}
     recv_before = encode(recv, materialize=False) if recv is not None else None
@@ -375,6 +394,8 @@ def run_probe(req, probe):
     except BaseException as exc:  # noqa: BLE001 - the target raised
         res = {"kind": "raised", "exception": exc_summary(exc)}
     out = {"status": "ok", "result": res}
+    if steps:
+        out["steps"] = steps
     mut = {}
     for k, v in mutable.items():
         after = encode(v)
@@ -511,6 +532,10 @@ def zygote(req, wfd):
             import_errors[t["module"]] = exc_summary(exc)
     wall = float(req.get("probe_wall_seconds", 2.0))
     cpu = max(1, int(req.get("probe_cpu_seconds", 2)))
+    if req["mode"] == "generate":
+        _generate_all(req, import_errors, results, cpu)
+        _write_frame(wfd, {"results": results, "import_errors": import_errors})
+        return
     chunk_size = max(1, int(req.get("chunk", 10)))
     pending = []
     for p in req["probes"]:
@@ -558,6 +583,121 @@ def zygote(req, wfd):
     _write_frame(wfd, {"results": results, "import_errors": import_errors})
 
 
+# -- generation (Hypothesis, inside the boundary) ---------------------------------------------------
+def _generate_all(req, import_errors, results, cpu):
+    try:
+        import hypothesis  # noqa: F401 - trusted pinned library from the image, imported once before forking
+    except ImportError as exc:
+        for job in req["jobs"]:
+            results[job["id"]] = {"status": "unavailable", "detail": exc_summary(exc)}
+        return
+    wall = float(req.get("job_wall_seconds", 20.0))
+    for job in req["jobs"]:
+        t = req["targets"][job["tid"]]
+        if t["module"] in import_errors:
+            results[job["id"]] = {"status": "import_error", "detail": import_errors[t["module"]]}
+            continue
+        results[job["id"]] = _forked(lambda job=job, t=t: generate_job(job, t), wall, max(cpu, int(wall)))
+
+
+def _shape_strategy(st, node, depth=0):
+    """A strategy shaped like an observed built-in example value."""
+    t = node.get("t")
+    if t == "none":
+        return st.none()
+    if t == "bool":
+        return st.booleans()
+    if t == "int":
+        v = int(node["v"])
+        return st.integers(min(-3, v - 3, -abs(v)), max(10, v + 3, abs(v)))
+    if t == "float":
+        return st.floats(allow_nan=False, allow_infinity=False, min_value=-1e6, max_value=1e6) | st.sampled_from([0.0, -0.0, 1.0, 0.5])
+    if t == "str":
+        alphabet = sorted(set(node["v"])) or ["a"]
+        return st.text(alphabet=st.sampled_from(alphabet + [" ", "-"]), max_size=max(8, 2 * len(node["v"])))
+    if t in ("bytes", "bytearray"):
+        return st.binary(max_size=max(8, len(node["v"]))).map(bytes if t == "bytes" else bytearray)
+    if t in ("list", "tuple", "set", "frozenset") and depth < 3:
+        elems = node["v"]
+        inner = st.one_of(*[_shape_strategy(st, e, depth + 1) for e in elems[:3]]) if elems else st.integers(-3, 10)
+        lists = st.lists(inner, max_size=max(6, len(elems) + 2))
+        return {"list": lists, "tuple": lists.map(tuple), "set": lists.map(set), "frozenset": lists.map(frozenset)}[t]
+    if t == "dict" and depth < 3:
+        vals = [v for _, v in node["v"]]
+        keys = [k for k, _ in node["v"]] or ["a"]
+        inner = st.one_of(*[_shape_strategy(st, v, depth + 1) for v in vals[:3]]) if vals else st.integers()
+        return st.dictionaries(st.sampled_from(keys + ["z"]), inner, max_size=len(keys) + 1)
+    return None
+
+
+def generate_job(job, target):
+    """Draw up to job["n"] examples for the job's varied parameters; returns encoded built-in values."""
+    import typing
+
+    from hypothesis import HealthCheck, Phase, given, settings
+    from hypothesis import strategies as st
+
+    strats = {}
+    for slot, spec in job["vary"].items():
+        k = spec["k"]
+        name = spec.get("param", slot)
+        if k == "shape":
+            s = _shape_strategy(st, spec["value"])
+        elif k == "annotation":
+            kind, fn, owner = resolve(target)
+            f = getattr(fn, "__func__", fn)
+            if isinstance(f, type):
+                f = f.__init__
+            s = st.from_type(typing.get_type_hints(f)[name])
+        elif k == "stub":
+            ns = {}
+            for local, modname, attr in spec.get("imports", []):
+                try:
+                    import importlib
+
+                    m = importlib.import_module(modname)
+                    ns[local] = getattr(m, attr) if attr else m
+                except (ImportError, AttributeError):  # stub-only names (type_check_only, ...)
+                    ns[local] = (lambda f: f) if attr == "type_check_only" else typing.Any
+            for tv in spec.get("typevars", []):
+                ns[tv] = typing.TypeVar(tv)
+            # Annotation text from the repository's .pyi stub (the host verified it occurs there).
+            s = st.from_type(eval(compile(spec["ann"], "<repository stub>", "eval"), ns))
+        else:
+            s = None
+        if s is None:
+            return {"status": "ok", "examples": [], "unsupported": "%s for %s" % (k, name)}
+        strats[slot] = s
+    examples = []
+    dropped = [0]
+
+    @settings(max_examples=int(job.get("n", 30)), derandomize=True, database=None, deadline=None, phases=[Phase.generate],
+              suppress_health_check=list(HealthCheck))
+    @given(st.fixed_dictionaries(strats))
+    def collect(d):
+        out = {}
+        for name, value in d.items():
+            node = encode(value, materialize=False)
+            try:
+                if decode(node) != value and value == value:
+                    dropped[0] += 1
+                    return
+            except (ValueError, TypeError, KeyError):
+                dropped[0] += 1
+                return
+            out[name] = node
+        examples.append(out)
+
+    collect()
+    uniq, seen = [], set()
+    for e in examples:
+        key = json.dumps(e, sort_keys=True)
+        if key not in seen:
+            seen.add(key)
+            uniq.append(e)
+    return {"status": "ok", "examples": uniq, "dropped_unencodable": dropped[0]}
+
+
 def _distributions():
     try:
         from importlib import metadata
@@ -587,7 +727,7 @@ def main():
         mode = req.get("mode")
         if mode == "identity":
             resp = {"protocol": PROTOCOL, "mode": mode, "identity": _identity(req)}
-        elif mode == "replay":
+        elif mode in ("replay", "generate"):
             rfd, wfd = os.pipe()
             pid = os.fork()
             if pid == 0:

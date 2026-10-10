@@ -1,0 +1,1276 @@
+[
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a33",
+  "symbol": "more_itertools/more.py::ichunked",
+  "spike": 8,
+  "ours": 8,
+  "stats": {
+   "calls_seen": 9,
+   "unharvestable_args": 2,
+   "duplicates": 1,
+   "harvested": 8
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ca0586d5",
+  "symbol": "more_itertools/more.py::seekable.peek",
+  "spike": 4,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ed1bd2d4",
+  "symbol": "more_itertools/more.py::seekable.peek",
+  "spike": 4,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "3eb4053e",
+  "symbol": "more_itertools/more.py::seekable.peek",
+  "spike": 4,
+  "ours": 7,
+  "stats": {
+   "calls_seen": 7,
+   "duplicates": 0,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "262dbb98",
+  "symbol": "more_itertools/more.py::seekable.peek",
+  "spike": 3,
+  "ours": 2,
+  "stats": {
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "288d6da0",
+  "symbol": "more_itertools/more.py::bucket._get_values",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "288d6da0",
+  "symbol": "more_itertools/more.py::bucket.__iter__",
+  "spike": 6,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "0c518386",
+  "symbol": "more_itertools/more.py::bucket._get_values",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "2b8d5cdd",
+  "symbol": "more_itertools/more.py::bucket._get_values",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "2b8d5cdd",
+  "symbol": "more_itertools/more.py::bucket.__iter__",
+  "spike": 6,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "def2dabe",
+  "symbol": "more_itertools/more.py::one",
+  "spike": 9,
+  "ours": 21,
+  "stats": {
+   "calls_seen": 5,
+   "duplicates": 0,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "def2dabe",
+  "symbol": "more_itertools/more.py::only",
+  "spike": 12,
+  "ours": 33,
+  "stats": {
+   "calls_seen": 10,
+   "duplicates": 1,
+   "harvested": 9
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "feaddee0",
+  "symbol": "more_itertools/more.py::numeric_range.__reversed__",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "calls_seen": 1,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "e426d256",
+  "symbol": "more_itertools/more.py::zip_broadcast",
+  "spike": 12,
+  "ours": 12,
+  "stats": {
+   "unharvestable_args": 4,
+   "unharvestable_starred": 12,
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "752799b5",
+  "symbol": "more_itertools/more.py::numeric_range.__reversed__",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "calls_seen": 1,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "d032cab7",
+  "symbol": "more_itertools/more.py::constrained_batches",
+  "spike": 10,
+  "ours": 19,
+  "stats": {
+   "unharvestable_args": 4,
+   "calls_seen": 8,
+   "duplicates": 2,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "6b1907de",
+  "symbol": "more_itertools/more.py::seekable.peek",
+  "spike": 3,
+  "ours": 2,
+  "stats": {
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "0e6dce3a",
+  "symbol": "more_itertools/more.py::combination_with_replacement_index",
+  "spike": 6,
+  "ours": 6,
+  "stats": {
+   "unharvestable_args": 15,
+   "calls_seen": 9,
+   "duplicates": 3,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1b74b56d",
+  "symbol": "more_itertools/more.py::combination_with_replacement_index",
+  "spike": 6,
+  "ours": 6,
+  "stats": {
+   "unharvestable_args": 6,
+   "calls_seen": 9,
+   "duplicates": 3,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1fd388bc",
+  "symbol": "more_itertools/recipes.py::running_mean",
+  "spike": 6,
+  "ours": 10,
+  "stats": {
+   "unharvestable_args": 6,
+   "calls_seen": 7,
+   "duplicates": 1,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1fd388bc",
+  "symbol": "more_itertools/recipes.py::running_min",
+  "spike": 7,
+  "ours": 11,
+  "stats": {
+   "unharvestable_args": 6,
+   "calls_seen": 8,
+   "duplicates": 1,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1fd388bc",
+  "symbol": "more_itertools/recipes.py::running_max",
+  "spike": 7,
+  "ours": 11,
+  "stats": {
+   "unharvestable_args": 6,
+   "calls_seen": 8,
+   "duplicates": 1,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1fd388bc",
+  "symbol": "more_itertools/recipes.py::running_statistics",
+  "spike": 6,
+  "ours": 12,
+  "stats": {
+   "calls_seen": 10,
+   "unharvestable_args": 5,
+   "duplicates": 4,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8e0cbb8",
+  "symbol": "more_itertools/recipes.py::random_product",
+  "spike": 11,
+  "ours": 11,
+  "stats": {
+   "calls_seen": 5,
+   "duplicates": 0,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8e0cbb8",
+  "symbol": "more_itertools/recipes.py::random_permutation",
+  "spike": 3,
+  "ours": 7,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 1,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8e0cbb8",
+  "symbol": "more_itertools/recipes.py::random_combination",
+  "spike": 4,
+  "ours": 3,
+  "stats": {
+   "calls_seen": 5,
+   "duplicates": 2,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8e0cbb8",
+  "symbol": "more_itertools/recipes.py::random_combination_with_replacement",
+  "spike": 3,
+  "ours": 3,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 1,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ddd67820",
+  "symbol": "more_itertools/more.py::_random_ordered_indices",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "caaec943",
+  "symbol": "more_itertools/more.py::random_ordered_combs_with_replacement",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "test_file_unparsable": 1,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dee22c93",
+  "symbol": "more_itertools/more.py::random_ordered_combs_with_replacement",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "test_file_unparsable": 1,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "more_itertools/more.py::split_before",
+  "spike": 24,
+  "ours": 21,
+  "stats": {
+   "calls_seen": 6,
+   "unharvestable_args": 3,
+   "unharvestable_starred": 2,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "more_itertools/more.py::split_after",
+  "spike": 20,
+  "ours": 21,
+  "stats": {
+   "calls_seen": 6,
+   "unharvestable_args": 3,
+   "unharvestable_starred": 2,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24",
+  "symbol": "more_itertools/more.py::split_when",
+  "spike": 12,
+  "ours": 9,
+  "stats": {
+   "unharvestable_args": 5,
+   "calls_seen": 3,
+   "unharvestable_starred": 2,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "7847d432",
+  "symbol": "more_itertools/more.py::value_chain",
+  "spike": 9,
+  "ours": 9,
+  "stats": {
+   "calls_seen": 9,
+   "unharvestable_args": 2,
+   "duplicates": 0,
+   "harvested": 9
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dc2664b4",
+  "symbol": "more_itertools/more.py::numeric_range.__contains__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dc2664b4",
+  "symbol": "more_itertools/more.py::numeric_range._len",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dc2664b4",
+  "symbol": "more_itertools/more.py::numeric_range.index",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "63ee5830",
+  "symbol": "more_itertools/more.py::distinct_permutations",
+  "spike": 8,
+  "ours": 23,
+  "stats": {
+   "calls_seen": 9,
+   "unharvestable_args": 9,
+   "duplicates": 0,
+   "harvested": 9
+  }
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "237388cc",
+  "symbol": "more_itertools/more.py::nth_permutation",
+  "spike": 5,
+  "ours": 5,
+  "stats": {
+   "unharvestable_args": 9,
+   "calls_seen": 7,
+   "duplicates": 2,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "boltons/ioutils.py::SpooledBytesIO.write",
+  "spike": 4,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "boltons/ioutils.py::SpooledStringIO.write",
+  "spike": 4,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d",
+  "symbol": "boltons/ioutils.py::SpooledStringIO.seek",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/cacheutils.py::LRI.update",
+  "spike": 3,
+  "ours": 1,
+  "stats": {
+   "calls_seen": 1,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/cacheutils.py::ThresholdCounter.most_common",
+  "spike": 3,
+  "ours": 5,
+  "stats": {
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/cacheutils.py::ThresholdCounter.update",
+  "spike": 6,
+  "ours": 5,
+  "stats": {
+   "calls_seen": 5,
+   "duplicates": 0,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/jsonutils.py::reverse_iter_lines",
+  "spike": 2,
+  "ours": 2,
+  "stats": {
+   "unharvestable_args": 6,
+   "calls_seen": 1,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/strutils.py::bytes2human",
+  "spike": 17,
+  "ours": 17,
+  "stats": {
+   "calls_seen": 5,
+   "duplicates": 0,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467",
+  "symbol": "boltons/urlutils.py::URL.get_authority",
+  "spike": 11,
+  "ours": 5,
+  "stats": {
+   "calls_seen": 2,
+   "unharvestable_args": 6,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "73e22c90",
+  "symbol": "boltons/statsutils.py::Stats._calc_pearson_type",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1cdc0e9d",
+  "symbol": "boltons/statsutils.py::Stats._get_bin_bounds",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "efff866a",
+  "symbol": "boltons/mathutils.py::Bits.as_bin",
+  "spike": 2,
+  "ours": 3,
+  "stats": {
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "efff866a",
+  "symbol": "boltons/mathutils.py::Bits.as_hex",
+  "spike": 2,
+  "ours": 2,
+  "stats": {
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "efff866a",
+  "symbol": "boltons/mathutils.py::Bits.from_hex",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "calls_seen": 1,
+   "unharvestable_args": 5,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc04",
+  "symbol": "boltons/mathutils.py::Bits.__getitem__",
+  "spike": 9,
+  "ours": 7,
+  "stats": {
+   "calls_seen": 8,
+   "duplicates": 1,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "8789df2c",
+  "symbol": "boltons/timeutils.py::decimal_relative_time",
+  "spike": 9,
+  "ours": 9,
+  "stats": {
+   "unharvestable_args": 2,
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "boltons/namedutils.py::namedtuple",
+  "spike": 8,
+  "ours": 8,
+  "stats": {
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b6",
+  "symbol": "boltons/namedutils.py::namedlist",
+  "spike": 5,
+  "ours": 5,
+  "stats": {
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "9decba3e",
+  "symbol": "boltons/ecoutils.py::get_profile",
+  "spike": 2,
+  "ours": 2,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 2,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "a1ea1030",
+  "symbol": "boltons/dictutils.py::OrderedMultiDict.addlist",
+  "spike": 10,
+  "ours": 7,
+  "stats": {
+   "unharvestable_args": 7,
+   "calls_seen": 7,
+   "duplicates": 0,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "a1ea1030",
+  "symbol": "boltons/urlutils.py::OrderedMultiDict.addlist",
+  "spike": 3,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414",
+  "symbol": "boltons/urlutils.py::parse_qsl",
+  "spike": 6,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "91b2bb47",
+  "symbol": "boltons/listutils.py::BarrelList.del_slice",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "448b1db1",
+  "symbol": "boltons/listutils.py::BarrelList.iter_slice",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "1a04b637",
+  "symbol": "boltons/jsonutils.py::JSONLIterator._align_to_newline",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "boltons/strutils.py::args2sh",
+  "spike": 8,
+  "ours": 8,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 0,
+   "harvested": 4
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592",
+  "symbol": "boltons/strutils.py::args2cmd",
+  "spike": 8,
+  "ours": 8,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 0,
+   "harvested": 4
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "580a9c2d",
+  "symbol": "boltons/setutils.py::_ComplementSet.__le__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "580a9c2d",
+  "symbol": "boltons/setutils.py::_ComplementSet.__lt__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "ec1ff9f6",
+  "symbol": "boltons/setutils.py::_ComplementSet.__le__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "ec1ff9f6",
+  "symbol": "boltons/setutils.py::_ComplementSet.__ge__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "b5c495be",
+  "symbol": "boltons/funcutils.py::update_wrapper",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 3,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "b5c495be",
+  "symbol": "boltons/funcutils.py::FunctionBuilder.get_invocation_str",
+  "spike": 4,
+  "ours": 12,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 0,
+   "harvested": 4
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "3e9983db",
+  "symbol": "boltons/iterutils.py::xfrange",
+  "spike": 10,
+  "ours": 16,
+  "stats": {
+   "calls_seen": 9,
+   "duplicates": 2,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "f1034b07",
+  "symbol": "boltons/jsonutils.py::JSONLIterator._align_to_newline",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c",
+  "symbol": "boltons/setutils.py::IndexedSet.update",
+  "spike": 4,
+  "ours": 4,
+  "stats": {
+   "calls_seen": 4,
+   "unharvestable_args": 34,
+   "duplicates": 0,
+   "harvested": 4
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/listutils.py::BarrelList._translate_index",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/listutils.py::BarrelList.insert",
+  "spike": 5,
+  "ours": 6,
+  "stats": {
+   "calls_seen": 6,
+   "duplicates": 0,
+   "harvested": 6
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/listutils.py::BarrelList.pop",
+  "spike": 4,
+  "ours": 4,
+  "stats": {
+   "calls_seen": 4,
+   "duplicates": 0,
+   "harvested": 4
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/setutils.py::IndexedSet._cull",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 34,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/setutils.py::IndexedSet.intersection_update",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "unharvestable_args": 34,
+   "calls_seen": 1,
+   "duplicates": 0,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a8",
+  "symbol": "boltons/setutils.py::IndexedSet.difference_update",
+  "spike": 2,
+  "ours": 2,
+  "stats": {
+   "unharvestable_args": 34,
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7c5c9895",
+  "symbol": "src/dateutil/parser/isoparser.py::isoparser.isoparse",
+  "spike": 60,
+  "ours": 5,
+  "stats": {
+   "calls_seen": 5,
+   "unharvestable_args": 4,
+   "duplicates": 0,
+   "harvested": 5
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7d2e7f63",
+  "symbol": "dateutil/rrule.py::rrulebase.count",
+  "spike": 0,
+  "ours": 15,
+  "stats": {
+   "calls_seen": 15,
+   "duplicates": 0,
+   "harvested": 15
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "5cf3e3cb",
+  "symbol": "dateutil/parser/isoparser.py::isoparser.parse_isodate",
+  "spike": 7,
+  "ours": 8,
+  "stats": {
+   "unharvestable_args": 4,
+   "calls_seen": 16,
+   "duplicates": 8,
+   "harvested": 8
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "1376b599",
+  "symbol": "dateutil/parser/isoparser.py::isoparser._parse_isotime",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 4,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd",
+  "symbol": "dateutil/parser/isoparser.py::isoparser._parse_isotime",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 4,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7e1ffa23",
+  "symbol": "dateutil/zoneinfo/rebuild.py::rebuild",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "1fb2ea99",
+  "symbol": "dateutil/tz/tz.py::__get_gettz",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "bd69e8e9",
+  "symbol": "dateutil/tz/tz.py::__get_gettz",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "ab9e6102",
+  "symbol": "dateutil/utils.py::within_delta",
+  "spike": 3,
+  "ours": 3,
+  "stats": {
+   "calls_seen": 3,
+   "duplicates": 0,
+   "harvested": 3
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7a3f5c47",
+  "symbol": "dateutil/rrule.py::_invalidates_cache",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d6820442",
+  "symbol": "dateutil/easter.py::easter",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "unharvestable_args": 3,
+   "calls_seen": 2,
+   "duplicates": 1,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "40c41c0f",
+  "symbol": "dateutil/easter.py::easter",
+  "spike": 1,
+  "ours": 1,
+  "stats": {
+   "unharvestable_args": 3,
+   "calls_seen": 2,
+   "duplicates": 1,
+   "harvested": 1
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "579cd769",
+  "symbol": "dateutil/parser/_parser.py::parse",
+  "spike": 60,
+  "ours": 162,
+  "stats": {
+   "unharvestable_args": 30,
+   "calls_seen": 156,
+   "duplicates": 24,
+   "harvested": 132
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "ea7f441b",
+  "symbol": "dateutil/parser/_parser.py::ParserError.__str__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "79d2e486",
+  "symbol": "dateutil/parser/_parser.py::parser.parse",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 2,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6e92f211",
+  "symbol": "dateutil/tz/_factories.py::_TzOffsetFactory.__call__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6e92f211",
+  "symbol": "dateutil/tz/_factories.py::_TzStrFactory.__call__",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d8cc4ccc",
+  "symbol": "dateutil/tz/tz.py::__get_gettz",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "b7668eaf",
+  "symbol": "dateutil/tz/_common.py::_tzinfo._fromutc",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "b7668eaf",
+  "symbol": "dateutil/tz/_common.py::_tzinfo.fromutc",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "b7668eaf",
+  "symbol": "dateutil/utils.py::default_tzinfo",
+  "spike": 2,
+  "ours": 2,
+  "stats": {
+   "unharvestable_args": 2,
+   "calls_seen": 2,
+   "duplicates": 0,
+   "harvested": 2
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d77c0c74",
+  "symbol": "dateutil/tz/tz.py::__get_gettz",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d77c0c74",
+  "symbol": "dateutil/tz/tz.py::datetime_exists",
+  "spike": 7,
+  "ours": 13,
+  "stats": {
+   "calls_seen": 8,
+   "unharvestable_args": 2,
+   "duplicates": 1,
+   "harvested": 7
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6588716b",
+  "symbol": "dateutil/parser/_parser.py::parser._build_tzaware",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "duplicates": 0,
+   "harvested": 0
+  }
+ },
+ {
+  "repo": "dateutil",
+  "commit": "4d5ddce3",
+  "symbol": "dateutil/parser/isoparser.py::isoparser._parse_tzstr",
+  "spike": 0,
+  "ours": 0,
+  "stats": {
+   "unharvestable_args": 4,
+   "duplicates": 0,
+   "harvested": 0
+  }
+ }
+]
