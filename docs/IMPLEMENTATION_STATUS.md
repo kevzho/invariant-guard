@@ -1149,6 +1149,18 @@ Commands and outcomes (2026-10-10, Docker daemon not running):
 - `pytest -q`: 870 passed, 17 skipped (Docker-backed tests: no daemon; opt-in real-model tests).
 - Not run in this session: the Docker-backed replay tests (`test_replay_in_docker`, `test_mcp_verify_patch_replay`, the Docker cases of `test_replay_harness.py` and `test_replay_generate.py`).
 
+## Release preparation (2026-10-10)
+
+- License MIT OR Apache-2.0; README rewritten as an alpha / research preview; CONTRIBUTING, SECURITY; build-kit files moved to `docs/build_kit/`.
+- Absolute host paths in recorded outputs replaced by `$REPO`. `benchmarks/results/paper_manifest.json` keeps the run-time `results_sha256` and adds `results_sha256_redacted` and a `redaction` record. Earlier Git history still contains the original paths. Future `benchmarks/run_all.py` runs record absolute paths again until `bench_common.host_manifest` is changed.
+- Portability defect found and fixed: `symtable.SymbolTableType` exists only from Python 3.13, so every lowering failed on 3.11/3.12 despite `requires-python = ">=3.11"`. The comparison now uses the string value (a `StrEnum` on 3.13+). `tests/integration/test_agent_eval_tools.py` is skipped off 3.13: its shipped packets carry 3.13 snapshot IDs (the semantics profile `python3.13-...` is part of snapshot identity, by design).
+- CI: `.github/workflows/ci.yml` (Linux 3.11-3.13, macOS 3.13, a Docker job, sdist/wheel build).
+
+Commands and outcomes:
+- `pytest -q` (CPython 3.13.9): 870 passed, 17 skipped.
+- `pytest -q` (CPython 3.12, Homebrew, `pip install -r requirements.lock`): before the fix 359 failed; after it 868 passed, 19 skipped (the two agent_eval packet tests). Python 3.11 was not available locally; CI covers it.
+- `pip wheel . --no-deps`: metadata `License-Expression: MIT OR Apache-2.0`, both license files included.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

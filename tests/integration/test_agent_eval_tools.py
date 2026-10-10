@@ -10,9 +10,15 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 from ..conftest import REPO
 
 AE = REPO / "benchmarks" / "agent_eval"
+
+# The shipped packets were generated under CPython 3.13. Snapshot identity includes the
+# semantics profile (python<major.minor>-cpython-...), so they are reproducible only there.
+pytestmark = pytest.mark.skipif(sys.version_info[:2] != (3, 13), reason="shipped agent_eval packets were generated under CPython 3.13 (snapshot identity includes the semantics profile)")
 
 
 def _import():

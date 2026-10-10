@@ -124,7 +124,7 @@ class LoweringError(Exception):
 
 
 def find_table(module_table: symtable.SymbolTable, node: ast.FunctionDef) -> symtable.SymbolTable | None:
-    candidates = [c for c in module_table.get_children() if c.get_name() == node.name and c.get_type() == symtable.SymbolTableType.FUNCTION]
+    candidates = [c for c in module_table.get_children() if c.get_name() == node.name and c.get_type() == "function"]  # a str on 3.11-3.12, a StrEnum on 3.13+
     for c in candidates:
         if c.get_lineno() == node.lineno:
             return c
