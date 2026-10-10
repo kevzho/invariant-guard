@@ -7,7 +7,7 @@
   "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
   "machine": "arm64",
   "python": "3.13.9",
-  "python_executable": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python",
+  "python_executable": "$REPO/.venv/bin/python",
   "cpu": "Apple M4",
   "memory_bytes": "17179869184",
   "model": "Mac16,12",

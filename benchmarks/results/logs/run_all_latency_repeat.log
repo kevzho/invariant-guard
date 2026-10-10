@@ -1,4 +1,4 @@
-== latency_repeat: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000 --out-name paper_latency_repeat
+== latency_repeat: $REPO/.venv/bin/python $REPO/benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000 --out-name paper_latency_repeat
    101 leaf   quick cold n=30  wall p50     493.2 p95     517.4 engine p50     156.1 rss p50   39.2 affected [2] ['PASS/COMPLETE'] introduced [0]
    101 leaf   quick warm n=30  wall p50     495.9 p95     597.6 engine p50     154.6 rss p50   39.9 affected [2] ['PASS/COMPLETE'] introduced [0]
    101 leaf   full  cold n=30  wall p50    1456.2 p95    1606.8 engine p50     931.6 rss p50   82.0 affected [2] ['PASS/COMPLETE'] introduced [0]
@@ -38,6 +38,6 @@
  10001 callee quick cold n=1   wall p50   23807.6 p95   23807.6 engine p50   15494.3 rss p50  563.8 affected [1929] ['INCOMPLETE/INCOMPLETE'] introduced [0]
  10001 callee full  cold n=1   wall p50  101155.6 p95  101155.6 engine p50   80608.4 rss p50  604.7 affected [1929] ['WARN/COMPLETE'] introduced [1928]
    consistency 10000 callee: {"quick_obligations": 4721, "full_obligations": 14808, "compared": 4721, "equal": 1642, "mismatched": 0, "coverage_loss": 3079, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 1928, "introduced_quick": 0, "missed_introduced": 1928, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "WARN", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_latency_repeat.json
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_manifest.json
+wrote $REPO/benchmarks/results/paper_latency_repeat.json
+wrote $REPO/benchmarks/results/paper_manifest.json
 exit 0

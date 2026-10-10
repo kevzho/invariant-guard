@@ -10,7 +10,7 @@
     "seeded_bugs": 5
   },
   "proposals": {
-    "directory": "/Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run3",
+    "directory": "$REPO/benchmarks/agent_eval/proposals/run3",
     "files": [
       {
         "file": "heldout_report_py_summary_score.json",
@@ -4452,5 +4452,5 @@
   },
   "finished_at": "2026-10-08T23:18:39Z",
   "label": "agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch",
-  "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run3.json"
+  "command": ".venv/bin/python benchmarks/agent_eval/score.py --proposals $REPO/benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out $REPO/benchmarks/results/paper_agent_eval_run3.json"
 }

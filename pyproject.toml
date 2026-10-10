@@ -1,13 +1,27 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "invariantguard"
 version = "0.5.0"
-description = "Local-first, change-scoped verification layer for coding-agent patches (M0-M5: static Python slice, change-aware verification, behavioral contracts with an isolated probe runner, local open-weight contract proposals, opt-in remote and agent contract proposers, stdio MCP server)"
+description = "Local-first verifier for coding-agent patches: modeled runtime-failure analysis, behavioral contracts and differential replay for Python (alpha research preview)"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+authors = [{ name = "Kevin Zhou" }]
+keywords = ["static-analysis", "verification", "coding-agents", "mcp", "smt"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
 # The core has no runtime dependencies: stdlib ast/symtable/tomllib/argparse only.
 dependencies = []
 

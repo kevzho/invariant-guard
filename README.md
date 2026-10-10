@@ -1,105 +1,117 @@
-# InvariantGuard build kit
+# InvariantGuard
 
-Version 1.0 | 4 October 2026 | Implementation specification, not an implemented product
+> **Status: alpha / research preview (engine 0.5.0).** Python only. Interfaces, report schemas and storage formats may change without notice. Nothing has been released to PyPI. Read [What it does not do](#what-it-does-not-do-yet) before relying on a verdict.
 
-InvariantGuard is a local-first, change-scoped verification layer for coding agents. It learns repository-specific behavioral contract candidates, checks relevant contracts and modeled runtime-failure paths, and returns evidence into an agent repair loop. Open-weight inference proposes semantic properties; mechanical analysis and explicitly enabled execution establish the evidence.
+InvariantGuard is a local-first verifier for patches written by coding agents. It checks only what a patch can affect, and it returns machine-readable evidence that an agent can use to repair the patch:
 
-## Start here
+- **Modeled runtime-failure analysis.** It lowers Python source (never importing it) to a small typed IR. Interval and path reasoning, plus an optional Z3 query, then decides whether operations such as division, indexing or attribute access on `None` can fail. Each concrete witness is re-validated before it is reported.
+- **Behavioral contracts.** It checks repository-specific properties written in a typed DSL. They run in an isolated Docker probe runner, where the same witness runs against the base and the patch.
+- **Differential replay.** It replays inputs harvested from tests and doctests (plus Hypothesis-generated inputs) on the base and the patch. Any difference is reported as a question ("was this intended?"). Maintainers can record the answer with `guard behavior accept|pin`.
+- **Agent interface.** `guard mcp serve --stdio` exposes eight MCP tools over the same engine as the CLI.
 
-1. Put this entire folder at the root of the repository you want Claude to build.
-2. Keep `CLAUDE.md` at that root. Keep these specifications in `docs/`.
-3. Start Claude in the folder and paste the opening task from `BUILD_START.md`.
-4. Build milestone M0, then M1. Use `docs/15_TASK_BACKLOG.md` as the checklist.
-5. Read the PDF manifest for the same complete plan in a reviewable document.
+Proof status, execution evidence, coverage, authority and severity are kept separate. `PROVED_SAFE` holds only for the declared property, the modeled semantics and the stated assumptions. Passing probes count as `TESTED`, not as proof. Missing required coverage makes a run `INCOMPLETE`, never `PASS`. Model output is never evidence. See [docs/03_EVIDENCE_AND_POLICY.md](docs/03_EVIDENCE_AND_POLICY.md).
 
-This kit started as planning documents only. Milestones M0-M5 are now implemented:
+## Example
 
-- a static Python slice (`guard check`, `guard capabilities`, `guard init`);
-- change-aware static verification (`guard verify --base REF|baseline:LABEL --mode quick|full`, `guard baseline create|list|show`);
-- behavioral contracts:
-  - a typed DSL;
-  - lifecycle and authority (`guard contracts list|show|declare|approve|reject|retire|revise|import|discover`);
-  - an isolated, capability-checked Docker probe runner (`guard runner setup|probe`);
-  - differential replay of the same witness in base and candidate (`guard verify ... --execute --run-profile NAME`);
-- local open-weight contract proposals (`guard contracts discover --model local [--execute]`, `guard model status`):
-  - bounded context packets;
-  - an Ollama adapter restricted to a validated loopback endpoint;
-  - strict parsing of model output, followed by the same validation, non-vacuity and falsification pipeline as template candidates;
-  - model candidates are INFERRED at most and never evidence. Evaluated with qwen2.5-coder:7b only (see `benchmarks/results/m4_model_eval.json`);
-- two more contract-proposer sources (user-requested extension, engine 0.5.0; DECISIONS I-105-I-109). Both feed the same validation, falsification and authority pipeline, and neither can produce more than INFERRED:
-  - **bring-your-own-key remote models** (`guard contracts discover --model remote`): an OpenAI-compatible chat-completions adapter and an Anthropic Messages adapter. They are opt-in and never a fallback. They need https, `remote_allowed = true` and an `api_key_env` that names an environment variable; the key itself is never stored. **Context packets leave the machine**, and every run, contract, report and evidence record says where they went. Hosted providers were not exercised here (no key on this host);
-  - **agent-proposed contracts**: the calling coding agent proposes. Use `guard contracts context SYMBOL --format json` and `guard contracts propose --file F`, or the MCP tools `get_context_packet` and `propose_contracts`;
-- an agent interface (`guard mcp serve --stdio`, optional extra `mcp`):
-  - eight tools over the same orchestration as the CLI: `verify_patch`, `check_scope`, `get_contracts`, `get_finding`, `explain_finding`, `get_context_packet`, `propose_contracts` (INFERRED only), `get_capabilities`;
-  - root, path and preauthorized-profile restrictions; no approval, baseline or command tools;
-  - cancellation, timeouts and stale-snapshot responses;
-  - `guard explain FINDING_ID`;
-  - a recorded repair loop (`examples/demo_repo/`) and a Claude Code `.mcp.json` example (`docs/MCP_INTEGRATION.md`). Alpha checklist: `docs/ALPHA_CHECKLIST.md`.
-
-See `docs/IMPLEMENTATION_STATUS.md` for exactly what exists and what does not. There is no Kotlin adapter: M6 is deferred because this host has no JDK or Kotlin toolchain (feasibility note in `docs/DECISIONS.md` I-101). Other example commands in `docs/` describe the intended interface; they do not imply they are already implemented. The PDF is a rendering of the Markdown files as delivered with the kit.
-
-Quick start (from this folder):
-
-```sh
-python3 -m venv .venv && .venv/bin/pip install -r requirements.lock && .venv/bin/pip install -e . --no-deps
-.venv/bin/guard check examples/python_demo/candidate --format json      # single snapshot: exit 1, validated witness
-.venv/bin/python examples/patch_demo/run_demo.py                       # throwaway Git repo: Fixture D via guard verify
-.venv/bin/python examples/contract_demo/run_demo.py --setup            # Fixtures B+E in Docker containers (--setup pulls python:3.13-slim explicitly)
-.venv/bin/python examples/contract_demo/run_demo.py --backend unisolated  # same, explicitly unisolated on the host (no Docker)
-.venv/bin/python -m pytest -q                                          # test suite (offline, no model; Docker tests skip if no daemon/image)
-.venv/bin/python benchmarks/model_eval.py --repeats 3                  # M4 evaluation with a local Ollama model (installed separately; never downloaded by guard)
-.venv/bin/guard mcp serve --stdio --root app=/abs/path/to/repo         # M5 MCP server (stdio; see docs/MCP_INTEGRATION.md)
-.venv/bin/python examples/demo_repo/run_demo.py --out /tmp/ig-m5-run   # M5 repair loop: MCP + local model + Docker (recorded run in examples/demo_repo/recorded_run/)
-.venv/bin/guard contracts context pkg/mod.py::fn --format json          # exact context packet + candidate schema for an agent proposer (contacts nothing)
-.venv/bin/guard contracts propose --file batch.json --client my-agent/1.0 # agent candidates -> same pipeline; recorded INFERRED only
-.venv/bin/guard contracts discover --model remote --dry-run            # opt-in remote proposer (see the [semantic] example below; sends context off-machine)
-.venv/bin/guard capabilities --path .                                  # shows the configured proposer and whether its context leaves the machine
+```python
+# examples/python_demo/candidate/ratio.py
+def ratio(a: int, b: int):
+    d = a - b
+    return 100 / d
 ```
 
-Remote proposer configuration (opt-in; `.guard/config.toml`). There is no default and no fallback in either direction:
+```console
+$ guard check examples/python_demo/candidate
+InvariantGuard check  verdict=BLOCK  run_outcome=COMPLETE  policy=default-v1
+coverage: 1/1 symbols analyzed, 1/1 required obligations resolved
+
+candidate/ratio.py:3:12  PROVED_UNSAFE [EXACT_MODEL]  `100 / d`  (ratio, division.zero_denominator, SMT)
+    witness: {'a': 0, 'b': 0}
+    path: d == a - b AND d == 0
+    domain: a, b: exact Python built-in integers
+    assumes: domain explicitly admitted in configuration: demo public API admits exact built-in integer inputs
+    why: SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation
+```
+
+Add `if d == 0: return 0.0` and the same obligation becomes `PROVED_SAFE [EXACT_MODEL]`. Use `--format json` for the stable, schema-validated report.
+
+## Install
+
+Requires Python 3.11+. The core has no runtime dependencies.
+
+```sh
+git clone https://github.com/kevzho/invariant-guard && cd invariant-guard
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.lock && .venv/bin/pip install -e . --no-deps   # pinned, as tested
+# or, minimal:  .venv/bin/pip install -e '.[solver]'
+```
+
+Optional extras: `solver` (z3), `mcp` (the MCP server), `dev` (tests and report self-validation). Dynamic checks (contracts, replay) need a local Docker daemon. Local contract proposals need a separately installed [Ollama](https://ollama.com) model; `guard` never downloads models.
+
+## Commands
+
+| Command | What it does | Executes repository code? |
+| --- | --- | --- |
+| `guard check PATH` | Static analysis of one snapshot | No |
+| `guard verify --base REF` | Change-aware static verification against a Git ref or a saved baseline, including unchanged callers of changed callees | No |
+| `guard verify --base REF --execute --run-profile NAME [--replay]` | Adds contract probes and differential replay in an isolated runner | Yes, in Docker (`--network none`) |
+| `guard contracts list\|show\|declare\|approve\|revise\|retire\|discover` | Contract lifecycle and authority; `discover --model local` uses a loopback model | Only with `--execute` |
+| `guard behavior accept\|pin\|retire\|list` | Maintainer decisions about replayed behavior changes (CLI only) | No |
+| `guard baseline create\|list\|show` | Explicit, immutable baselines | No |
+| `guard mcp serve --stdio --root NAME=PATH` | MCP server for coding agents ([docs/MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md)) | Only through a preauthorized Docker profile |
+| `guard explain FINDING_ID`, `guard capabilities` | Evidence retrieval and the configured capabilities | No |
+
+Exit codes: `0` PASS, `1` BLOCK, `2` INCOMPLETE/UNKNOWN, `3` ENGINE ERROR, `4` usage error.
+
+Static commands never import the repository, install dependencies or run its hooks or tests. InvariantGuard never modifies the repository it checks.
+
+## Demos
+
+```sh
+.venv/bin/python examples/patch_demo/run_demo.py                          # guard verify on a throwaway Git repo
+.venv/bin/python examples/contract_demo/run_demo.py --setup               # contracts in Docker (pulls python:3.13-slim explicitly)
+.venv/bin/python examples/contract_demo/run_demo.py --backend unisolated  # same, explicitly unisolated (no Docker)
+.venv/bin/python examples/demo_repo/run_demo.py --out /tmp/ig-run         # MCP repair loop (local model + Docker)
+```
+
+`examples/demo_repo/recorded_run/` holds a recorded repair loop: BLOCK, then one model repair, then PASS.
+
+## What it does not do (yet)
+
+- **Most real-world Python is outside the modeled subset.** Closures, most attribute access, methods through dynamic dispatch, and unmodeled library types give `UNKNOWN`, so a whole-repository `guard check` usually ends `INCOMPLETE`. `guard verify` limits required work to what a patch touches, and `--replay` limits it to changed public symbols. Both reduce this but do not remove it. The exact subset is in [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) ("Supported Python subset", "Known gaps").
+- **No enforcement.** MCP is advisory. There is no shipped pre-commit hook or CI gate yet.
+- **No effectiveness claims.** The benchmarks are author-written and seeded, not a held-out set of real agent patches.
+- **Python only.** The Kotlin adapter (M6) is deferred.
+- **A subprocess is not a sandbox.** The Docker capability checks describe what the profile claims as observed from inside the container. They are not a claim of containment against kernel exploits.
+
+## Optional: remote contract proposers
+
+Contract *proposals* can come from a bring-your-own-key remote model. This is opt-in and never a fallback. Proposals are recorded as `INFERRED` at most and go through the same validation and falsification as any other candidate. In `.guard/config.toml`:
 
 ```toml
 [semantic]
 enabled = true
-provider = "anthropic"                 # or "openai_compatible" with base_url = "https://HOST/v1" (or "http://127.0.0.1:PORT/v1" for a local server)
+provider = "anthropic"                 # or "openai_compatible" with base_url = "https://HOST/v1"
 model_id = "claude-sonnet-5-5"
-api_key_env = "ANTHROPIC_API_KEY"      # the NAME of the environment variable; the key is never written to config, logs or reports
+api_key_env = "ANTHROPIC_API_KEY"      # the NAME of the variable; the key is never written to config, logs or reports
 remote_allowed = true                  # required before any non-loopback destination is contacted
-# base_url = "https://api.anthropic.com"   (default for provider = "anthropic")
 ```
 
-**Privacy warning.** With a remote provider, bounded context packets are sent to that host. Each packet holds the target function, selected callers, callees and tests, and static facts. Provider terms apply. Free tiers in particular may retain submitted data or train on it. Use the local model or agent proposals when code must not leave the machine.
+**Privacy warning:** with a remote provider, bounded context packets (target function, selected callers, callees and tests) leave the machine. Use the local model or agent proposals (`guard contracts context` / `guard contracts propose`) when code must not leave the machine. Verification itself never uses the network.
 
-## File map
+## Documentation
 
-| File | Purpose |
-| --- | --- |
-| CLAUDE.md | Root-level implementation instructions and hard evidence rules |
-| BUILD_START.md | Copyable first task, follow-up tasks and first-session definition of done |
-| docs/01_PRODUCT_AND_SCOPE.md | Product thesis, users, release scope and boundaries |
-| docs/02_ARCHITECTURE.md | Modules, data flow, repository layout and dependencies |
-| docs/03_EVIDENCE_AND_POLICY.md | Proof, observation, provenance and gate semantics |
-| docs/04_VERIFICATION_IR.md | Shared IR, explicit language semantics and frontend contract |
-| docs/05_STATIC_ENGINE.md | Supported Python subset, analyses and solver behavior |
-| docs/06_CONTRACT_ENGINE.md | Candidate discovery, typed property DSL and lifecycle |
-| docs/07_INCREMENTAL_AND_BASELINES.md | Snapshots, impact analysis, invalidation and comparison |
-| docs/08_LOCAL_MODELS.md | Open-weight reasoning, offline operation and model protocol |
-| docs/09_INTERFACES_AND_STORAGE.md | CLI, MCP, report examples, configuration and persistence |
-| docs/10_EXECUTION_AND_PRIVACY.md | Execution boundary, sandbox behavior and data handling |
-| docs/11_ROADMAP_AND_GATES.md | Dependency-ordered milestones and release criteria |
-| docs/12_TESTING_AND_RESEARCH.md | Semantic fixtures, benchmarks, ablations and reproducibility |
-| docs/13_DEMO_AND_ACCEPTANCE.md | Exact demo fixtures and acceptance scenarios |
-| docs/14_DECISIONS_AND_REFERENCES.md | Decision record, risks and primary-source reading |
-| docs/15_TASK_BACKLOG.md | Ordered implementation tasks with concrete completion checks |
+- [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md): exactly what exists, the commands that verified it, and the known gaps.
+- [docs/ALPHA_CHECKLIST.md](docs/ALPHA_CHECKLIST.md): release gates and their evidence.
+- `docs/01`-`docs/15`: the original design specification (product, architecture, evidence policy, IR, engines, roadmap). Commands in these documents describe the intended interface, not necessarily what is implemented.
+- [docs/DECISIONS.md](docs/DECISIONS.md): the implementation decision log.
+- `paper/`: a research write-up of the engine and its benchmarks.
+- `docs/build_kit/`: the build kit this project was implemented from with Claude Code. [CLAUDE.md](CLAUDE.md) holds the evidence rules any contributor (human or agent) must follow.
 
-## Build sequence
+## Contributing
 
-M0 foundation -> M1 Python static CLI -> M2 patch impact and baselines -> M3 behavioral contracts -> M4 local semantic discovery -> M5 MCP -> M6 Kotlin -> M7 broader language and library adapters.
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). Report security problems privately; see [SECURITY.md](SECURITY.md).
 
-The first integrated product milestone is M5. Python static checks alone are an engineering checkpoint. They do not fulfill the whole project. Kotlin remains part of the planned beta; broader language support follows only after semantic adapter tests exist.
+## License
 
-## Important interpretation
-
-All timings, model sizes, supported-language counts and quality targets are proposed goals unless explicitly labeled as measured. No name, package identifier, trademark or license choice is finalized by this kit. No prior research code is included or assumed available.
-
-A successful scan means selected checks completed without a blocking finding. It never means the entire repository is correct. An observed regularity remains a candidate until its evidence and specification authority are recorded.
+Dual-licensed under either of [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option. Unless you state otherwise, any contribution you intentionally submit for inclusion is dual-licensed in the same way, without additional terms or conditions.

@@ -1,5 +1,5 @@
 tests: 788 passed, 2 skipped, 1 xfailed in 205.98s (0:03:25)
-== semantic: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/bench_semantic.py
+== semantic: $REPO/.venv/bin/python $REPO/benchmarks/bench_semantic.py
 A-baseline-guarded               solver=PROVED_SAFE     nosolver=PROVED_SAFE     gt=safe:True
 A-candidate-unguarded            solver=PROVED_UNSAFE   nosolver=PROVED_UNSAFE   gt=defect:True
 C-imported-ratio                 solver=UNKNOWN         nosolver=UNKNOWN         gt=indeterminate:None
@@ -31,8 +31,8 @@ alias-mutation                   solver=UNKNOWN         nosolver=UNKNOWN        
 none-flow-unguarded              solver=PROVED_UNSAFE   nosolver=PROVED_UNSAFE   gt=defect:True
 none-flow-guarded                solver=PROVED_SAFE     nosolver=PROVED_SAFE     gt=safe:True
 changed-callee-single-snapshot   solver=PROVED_UNSAFE   nosolver=PROVED_UNSAFE   gt=defect:True
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_semantic_fixtures.json
-== seeded: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/bench_seeded.py
+wrote $REPO/benchmarks/results/paper_semantic_fixtures.json
+== seeded: $REPO/.venv/bin/python $REPO/benchmarks/bench_seeded.py
 S01  div_zero_guard_removed             gt=defect_introduced quick=flag/BLOCK exec=-/- nosolver=flag
 S02  div_zero_expression_changed        gt=defect_introduced quick=flag/BLOCK exec=-/- nosolver=flag
 S03  div_zero_guard_weakened            gt=defect_introduced quick=flag/BLOCK exec=-/- nosolver=flag
@@ -68,14 +68,14 @@ U03  unsupported_loop                   gt=no_defect_introduced quick=abstain/IN
 U04  unsupported_external_call          gt=defect_introduced quick=abstain/INCOMPLETE exec=-/- nosolver=abstain
 P01  pre_existing_static                gt=no_defect_introduced quick=abstain/INCOMPLETE exec=-/- nosolver=abstain
 P02  pre_existing_contract              gt=no_defect_introduced quick=abstain/INCOMPLETE exec=abstain/INCOMPLETE nosolver=abstain
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_seeded_patches.json
-== agent run1: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/score.py --proposals /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run1 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run1: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run1.json
-COMPLETE: 81 candidates, 81 nonvacuous, 6 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run1.json
-== agent run2: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/score.py --proposals /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run2 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run2: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run2.json
-COMPLETE: 89 candidates, 89 nonvacuous, 10 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run2.json
-== agent run3: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/score.py --proposals /Users/kevinzhou/Desktop/invariant-guard/benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run3.json
-COMPLETE: 84 candidates, 84 nonvacuous, 9 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_agent_eval_run3.json
-== latency: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000
+wrote $REPO/benchmarks/results/paper_seeded_patches.json
+== agent run1: $REPO/.venv/bin/python $REPO/benchmarks/agent_eval/score.py --proposals $REPO/benchmarks/agent_eval/proposals/run1 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run1: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out $REPO/benchmarks/results/paper_agent_eval_run1.json
+COMPLETE: 81 candidates, 81 nonvacuous, 6 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote $REPO/benchmarks/results/paper_agent_eval_run1.json
+== agent run2: $REPO/.venv/bin/python $REPO/benchmarks/agent_eval/score.py --proposals $REPO/benchmarks/agent_eval/proposals/run2 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run2: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out $REPO/benchmarks/results/paper_agent_eval_run2.json
+COMPLETE: 89 candidates, 89 nonvacuous, 10 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote $REPO/benchmarks/results/paper_agent_eval_run2.json
+== agent run3: $REPO/.venv/bin/python $REPO/benchmarks/agent_eval/score.py --proposals $REPO/benchmarks/agent_eval/proposals/run3 --client claude-code-subagent/claude-sonnet-5-5 --label agent-proposed run3: Claude Sonnet 5.5 subagent, packets + README only (blinded), cap 8/batch --out $REPO/benchmarks/results/paper_agent_eval_run3.json
+COMPLETE: 84 candidates, 84 nonvacuous, 9 refuted, seeded bugs exposed ['heldout/scalars.py::clamp_percent', 'heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive', 'heldout/stats.py::normalize_to_unit']; wrote $REPO/benchmarks/results/paper_agent_eval_run3.json
+== latency: $REPO/.venv/bin/python $REPO/benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000
    101 leaf   quick cold n=30  wall p50     497.5 p95     521.9 engine p50     157.5 rss p50   39.2 affected [2] ['PASS/COMPLETE'] introduced [0]
    101 leaf   quick warm n=30  wall p50     485.6 p95     500.6 engine p50     151.7 rss p50   39.3 affected [2] ['PASS/COMPLETE'] introduced [0]
    101 leaf   full  cold n=30  wall p50    1653.4 p95    2696.8 engine p50    1068.1 rss p50   81.9 affected [2] ['PASS/COMPLETE'] introduced [0]
@@ -115,17 +115,17 @@ COMPLETE: 84 candidates, 84 nonvacuous, 9 refuted, seeded bugs exposed ['heldout
  10001 callee quick cold n=1   wall p50   24294.8 p95   24294.8 engine p50   15846.5 rss p50  478.2 affected [1929] ['INCOMPLETE/INCOMPLETE'] introduced [0]
  10001 callee full  cold n=1   wall p50  104775.0 p95  104775.0 engine p50   84002.0 rss p50  594.2 affected [1929] ['WARN/COMPLETE'] introduced [1928]
    consistency 10000 callee: {"quick_obligations": 4721, "full_obligations": 14808, "compared": 4721, "equal": 1642, "mismatched": 0, "coverage_loss": 3079, "quick_more_precise": 0, "missing_in_full": 0, "introduced_full": 1928, "introduced_quick": 0, "missed_introduced": 1928, "extra_introduced_in_quick": 0, "quick_verdict": "INCOMPLETE", "full_verdict": "WARN", "quick_run_outcome": "INCOMPLETE", "full_run_outcome": "COMPLETE"}
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_latency.json
-== model: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/model_eval.py --repeats 3 --template-repeats 3 --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_model_eval.json
+wrote $REPO/benchmarks/results/paper_latency.json
+== model: $REPO/.venv/bin/python $REPO/benchmarks/model_eval.py --repeats 3 --template-repeats 3 --out $REPO/benchmarks/results/paper_model_eval.json
 templates repeat 0: 23 cands, refuted 0, wall 20880 ms
 templates repeat 1: 23 cands, refuted 0, wall 20546 ms
 templates repeat 2: 23 cands, refuted 0, wall 22706 ms
 model repeat 0: status AVAILABLE, 35 cands, valid 23, refuted 10, exposed ['heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted'], wall 1071 s
 model repeat 1: status AVAILABLE, 35 cands, valid 22, refuted 8, exposed ['heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted'], wall 1398 s
 model repeat 2: status AVAILABLE, 35 cands, valid 24, refuted 10, exposed ['heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted'], wall 1174 s
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_model_eval.json
-== transport: /Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python /Users/kevinzhou/Desktop/invariant-guard/benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_transport_openai_compat.json
+wrote $REPO/benchmarks/results/paper_model_eval.json
+== transport: $REPO/.venv/bin/python $REPO/benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out $REPO/benchmarks/results/paper_transport_openai_compat.json
 model repeat 0: status AVAILABLE, 35 cands, valid 24, refuted 12, exposed ['heldout/sequences.py::clip_negatives', 'heldout/sequences.py::dedupe_sorted', 'heldout/stats.py::count_positive'], wall 988 s
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_transport_openai_compat.json
-wrote /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_manifest.json
+wrote $REPO/benchmarks/results/paper_transport_openai_compat.json
+wrote $REPO/benchmarks/results/paper_manifest.json
 exit 0

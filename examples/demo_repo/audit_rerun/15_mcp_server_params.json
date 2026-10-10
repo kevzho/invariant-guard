@@ -1,5 +1,5 @@
 {
-  "command": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/guard",
+  "command": "$REPO/.venv/bin/guard",
   "args": [
     "mcp",
     "serve",

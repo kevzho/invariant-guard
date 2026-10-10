@@ -1,6 +1,6 @@
 # Claude implementation instructions
 
-You are implementing InvariantGuard from the specifications in this folder. Read `README.md`, `BUILD_START.md`, `docs/03_EVIDENCE_AND_POLICY.md`, `docs/11_ROADMAP_AND_GATES.md` and the tasks for the active milestone before changing code. Read the relevant technical specification before building its module.
+You are implementing InvariantGuard from the specifications in this folder. Read `README.md`, `docs/build_kit/BUILD_START.md`, `docs/03_EVIDENCE_AND_POLICY.md`, `docs/11_ROADMAP_AND_GATES.md` and the tasks for the active milestone before changing code. Read the relevant technical specification before building its module.
 
 ## Product definition
 

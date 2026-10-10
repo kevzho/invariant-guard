@@ -3,7 +3,7 @@
   "benchmark": "m4_model_eval",
   "started_at": "2026-10-09T02:00:35Z",
   "engine_version": "0.5.0",
-  "command": ".venv/bin/python benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out /Users/kevinzhou/Desktop/invariant-guard/benchmarks/results/paper_transport_openai_compat.json",
+  "command": ".venv/bin/python benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out $REPO/benchmarks/results/paper_transport_openai_compat.json",
   "heldout": {
     "manifest": "benchmarks/manifests/m4_heldout.json",
     "functions": 13,

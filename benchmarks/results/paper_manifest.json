@@ -17,7 +17,8 @@
    "elapsed_s": 13.5,
    "exit": 0,
    "results_file": "benchmarks/results/paper_semantic_fixtures.json",
-   "results_sha256": "sha256:e9f28cee7d343a24e47df90bbc9a09bba9a640995dd03e58bc100bebadb896dd"
+   "results_sha256": "sha256:e9f28cee7d343a24e47df90bbc9a09bba9a640995dd03e58bc100bebadb896dd",
+   "results_sha256_redacted": "sha256:5abdeebe34411f103042881c0554c0e7200d8d4c52dc2dbe369d86bf66616d00"
   },
   "seeded": {
    "command": ".venv/bin/python benchmarks/bench_seeded.py",
@@ -26,7 +27,8 @@
    "elapsed_s": 137.1,
    "exit": 0,
    "results_file": "benchmarks/results/paper_seeded_patches.json",
-   "results_sha256": "sha256:c0e70a262c31c91ae37da4c275e8537880d55d5c9eabd8ebbf430d84bf65b6be"
+   "results_sha256": "sha256:c0e70a262c31c91ae37da4c275e8537880d55d5c9eabd8ebbf430d84bf65b6be",
+   "results_sha256_redacted": "sha256:3c5c9a537939e4945874bcddf5eef31973e6f42b0f933e941379b5233d039161"
   },
   "agent": {
    "started_at": "2026-10-08T23:14:09Z",
@@ -40,7 +42,8 @@
      "exit": 0,
      "elapsed_s": 86.0,
      "results_file": "benchmarks/results/paper_agent_eval_run1.json",
-     "results_sha256": "sha256:94bfd88c59a13f7820039a2ed9ad7d4afc549a75055da78a147d759af1f51532"
+     "results_sha256": "sha256:94bfd88c59a13f7820039a2ed9ad7d4afc549a75055da78a147d759af1f51532",
+     "results_sha256_redacted": "sha256:24546caebb51458a8d42b614d104d011773c7d7df4763378d1fee993666ec293"
     },
     {
      "run": "run2",
@@ -48,7 +51,8 @@
      "exit": 0,
      "elapsed_s": 99.5,
      "results_file": "benchmarks/results/paper_agent_eval_run2.json",
-     "results_sha256": "sha256:805321aa7721c157f5a449e58c0ec4bcbae9ede17e58b2528ffad90c8eb55d17"
+     "results_sha256": "sha256:805321aa7721c157f5a449e58c0ec4bcbae9ede17e58b2528ffad90c8eb55d17",
+     "results_sha256_redacted": "sha256:74a29b5ac60061bd097ae8dfda0dc57a218e6875ac2affcd60207e5f9350397c"
     },
     {
      "run": "run3",
@@ -56,7 +60,8 @@
      "exit": 0,
      "elapsed_s": 83.8,
      "results_file": "benchmarks/results/paper_agent_eval_run3.json",
-     "results_sha256": "sha256:539d16d34b39327956050ef1c5b5cc5bfff45af2b571f6002678c87e3b15a32e"
+     "results_sha256": "sha256:539d16d34b39327956050ef1c5b5cc5bfff45af2b571f6002678c87e3b15a32e",
+     "results_sha256_redacted": "sha256:0bfb732e0a1eda5f53d24d02ad8eb41bca347dc15ff3937ab4127eefadcbc03b"
     }
    ]
   },
@@ -67,7 +72,8 @@
    "elapsed_s": 5219.6,
    "exit": 0,
    "results_file": "benchmarks/results/paper_latency.json",
-   "results_sha256": "sha256:e00affd85b89d679bae33818c909af52e602ff9eb203ddaba0f043c20facb6af"
+   "results_sha256": "sha256:e00affd85b89d679bae33818c909af52e602ff9eb203ddaba0f043c20facb6af",
+   "results_sha256_redacted": "sha256:5f3593efe515fbfe895146792a1afbd18e5778cfd3db64ef8426baac2a81786b"
   },
   "model": {
    "command": ".venv/bin/python benchmarks/model_eval.py --repeats 3 --template-repeats 3 --out benchmarks/results/paper_model_eval.json",
@@ -76,7 +82,8 @@
    "elapsed_s": 3710.6,
    "exit": 0,
    "results_file": "benchmarks/results/paper_model_eval.json",
-   "results_sha256": "sha256:657dadb2081802a28df0854d595bbf1f63b34e560ec24503dff7f81fcb9f1165"
+   "results_sha256": "sha256:657dadb2081802a28df0854d595bbf1f63b34e560ec24503dff7f81fcb9f1165",
+   "results_sha256_redacted": "sha256:c09010dc99729d10a0b8d5806be8e25b57492dca282a697b7bd2033fa118c76d"
   },
   "transport": {
    "command": ".venv/bin/python benchmarks/model_eval.py --provider openai_compatible --base-url http://127.0.0.1:11434/v1 --repeats 1 --template-repeats 0 --out benchmarks/results/paper_transport_openai_compat.json",
@@ -85,7 +92,8 @@
    "elapsed_s": 989.4,
    "exit": 0,
    "results_file": "benchmarks/results/paper_transport_openai_compat.json",
-   "results_sha256": "sha256:3a442188a6eafa796f1e390b9553bd9f3a9c9ab84bb0c3793fdfa834ff89d259"
+   "results_sha256": "sha256:3a442188a6eafa796f1e390b9553bd9f3a9c9ab84bb0c3793fdfa834ff89d259",
+   "results_sha256_redacted": "sha256:6eb41cd6639fa22a35102104c40419c17880de3af3c8bab44c6c4aeef1b64dfa"
   },
   "latency_repeat": {
    "command": ".venv/bin/python benchmarks/bench_latency.py --reps 30 --reps-large 5 --scales 100,1000,10000 --out-name paper_latency_repeat",
@@ -94,7 +102,8 @@
    "elapsed_s": 3929.5,
    "exit": 0,
    "results_file": "benchmarks/results/paper_latency_repeat.json",
-   "results_sha256": "sha256:7ec7e73d39e4d46655dd2ff56bd65d03bc54926c9154bb1104e5fd29714a500f"
+   "results_sha256": "sha256:7ec7e73d39e4d46655dd2ff56bd65d03bc54926c9154bb1104e5fd29714a500f",
+   "results_sha256_redacted": "sha256:02739ad504a045558fe97395963aaf570ab9ceb84db7d19d6860c6f37cc0b353"
   }
  },
  "last_invocation": {
@@ -105,7 +114,7 @@
    "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
    "machine": "arm64",
    "python": "3.13.9",
-   "python_executable": "/Users/kevinzhou/Desktop/invariant-guard/.venv/bin/python",
+   "python_executable": "$REPO/.venv/bin/python",
    "cpu": "Apple M4",
    "memory_bytes": "17179869184",
    "model": "Mac16,12",
@@ -130,5 +139,29 @@
    ]
   },
   "finished_at": "2026-10-09T03:27:05Z"
+ },
+ "redaction": {
+  "date": "2026-10-10",
+  "substitution": {
+   "from": "<absolute path of the author's checkout>",
+   "to": "$REPO"
+  },
+  "note": "Absolute host paths were replaced before publication. results_sha256 is the digest recorded at run time (pre-redaction); results_sha256_redacted is the digest of the published file. No other byte changed.",
+  "files": [
+   "benchmarks/results/logs/run_all.log",
+   "benchmarks/results/logs/run_all_latency_repeat.log",
+   "benchmarks/results/paper_agent_eval_run1.json",
+   "benchmarks/results/paper_agent_eval_run2.json",
+   "benchmarks/results/paper_agent_eval_run3.json",
+   "benchmarks/results/paper_latency.json",
+   "benchmarks/results/paper_latency_repeat.json",
+   "benchmarks/results/paper_manifest.json",
+   "benchmarks/results/paper_model_eval.json",
+   "benchmarks/results/paper_seeded_patches.json",
+   "benchmarks/results/paper_semantic_fixtures.json",
+   "benchmarks/results/paper_transport_openai_compat.json",
+   "examples/demo_repo/audit_rerun/15_mcp_server_params.json",
+   "examples/demo_repo/recorded_run/15_mcp_server_params.json"
+  ]
  }
 }
