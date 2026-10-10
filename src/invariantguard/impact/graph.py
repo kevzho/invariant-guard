@@ -70,6 +70,7 @@ class Sym:
     body_fingerprint: str
     params: tuple[str, ...]
     key: str
+    code_fingerprint: str = ""  # docstrings blanked; "" when unknown (stored baselines before v2)
 
 
 def symbol_table(lowered: Any, keys: dict[str, str]) -> dict[str, Sym]:
@@ -78,10 +79,10 @@ def symbol_table(lowered: Any, keys: dict[str, str]) -> dict[str, Sym]:
         for fn in m.functions:
             path, q = fn.symbol_id.split("::", 1)
             out[fn.symbol_id] = Sym(fn.symbol_id, path, q, "function", fn.fingerprint, fn.body_fingerprint,
-                                    tuple(p.name for p in fn.params), keys.get(fn.symbol_id, ""))
+                                    tuple(p.name for p in fn.params), keys.get(fn.symbol_id, ""), fn.code_fingerprint)
         for u in m.unsupported_symbols:
             path, q = u.symbol_id.split("::", 1)
-            out[u.symbol_id] = Sym(u.symbol_id, path, q, "unsupported", u.fingerprint, u.fingerprint, (), keys.get(u.symbol_id, ""))
+            out[u.symbol_id] = Sym(u.symbol_id, path, q, "unsupported", u.fingerprint, u.fingerprint, (), keys.get(u.symbol_id, ""), u.code_fingerprint)
     return out
 
 
@@ -91,6 +92,7 @@ class SymbolMatch:
     added: list[str] = field(default_factory=list)  # candidate-only symbols
     deleted: list[str] = field(default_factory=list)  # base-only symbols
     modified: list[str] = field(default_factory=list)  # candidate ids whose definition changed
+    doc_only: list[str] = field(default_factory=list)  # subset of modified: only docstrings differ
     unchanged: list[str] = field(default_factory=list)
     uncertain: dict[str, str] = field(default_factory=dict)  # cand -> base (possible rename; not matched)
 
@@ -99,7 +101,7 @@ class SymbolMatch:
 
     def to_json(self) -> dict[str, Any]:
         return {
-            "added": self.added, "deleted": self.deleted, "modified": self.modified, "unchanged_count": len(self.unchanged),
+            "added": self.added, "deleted": self.deleted, "modified": self.modified, "doc_only": self.doc_only, "unchanged_count": len(self.unchanged),
             "renamed": sorted([{"from": b, "to": c, "match": how} for c, (b, how) in self.cand_to_base.items() if how != "anchor"], key=lambda x: x["to"]),
             "uncertain_renames": [{"from": b, "to": c} for c, b in sorted(self.uncertain.items())],
         }
@@ -150,6 +152,8 @@ def match_symbols(base: dict[str, Sym], cand: dict[str, Sym], files: FileChanges
     for c, (b, how) in sorted(m.cand_to_base.items()):
         same = cand[c].body_fingerprint == base[b].body_fingerprint if how == "anchor_renamed_symbol" else cand[c].fingerprint == base[b].fingerprint
         (m.unchanged if same else m.modified).append(c)
+        if not same and how == "anchor" and cand[c].code_fingerprint and cand[c].code_fingerprint == base[b].code_fingerprint:
+            m.doc_only.append(c)
     return m
 
 
@@ -188,6 +192,14 @@ def build_graph(lowered: Any) -> DepGraph:
                     g.descriptors.setdefault(t, set()).add(f"{d.get('resolution')}|{d.get('descriptor')}")
             for u in fn.unresolved_calls:
                 g.dynamic.append((fn.symbol_id, u))
+        for us in [*m.functions, *m.unsupported_symbols]:
+            # Conservative reads (impact only: changed module data, import targets and
+            # class bodies reach every reader, supported or not).
+            for d in us.reads:
+                if d["kind"] == "global":
+                    t = global_node(d["module"], d["name"])
+                    g.add(us.symbol_id, "references", t)
+                    g.descriptors.setdefault(t, set()).add(f"{d.get('resolution')}|{d.get('descriptor')}")
     return g
 
 

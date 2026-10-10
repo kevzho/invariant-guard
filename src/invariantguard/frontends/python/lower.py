@@ -55,7 +55,7 @@ from ...ir.model import (
     SemType,
 )
 from ...models.spans import LineIndex, SourceSpan, short_hex
-from .resolve import ModuleContext, Resolution, ast_fingerprint, body_fingerprint, constant_value
+from .resolve import ModuleContext, Resolution, ast_fingerprint, body_fingerprint, code_fingerprint, constant_value
 from .subset import function_unsupported_reason
 from .symbols import stored_names
 
@@ -476,6 +476,7 @@ class FunctionLowerer:
             var_names=self.var_names,
             fingerprint=ast_fingerprint(node),
             body_fingerprint=_body_fingerprint(node),
+            code_fingerprint=code_fingerprint(node),
             deps=[self.deps[k] for k in sorted(self.deps)],
             inlined=sorted(set(self.inlined)),
             unresolved_calls=sorted(set(self.unresolved_calls)),

@@ -1074,6 +1074,22 @@ Command: `.venv/bin/python benchmarks/run_all.py` (parts tests, semantic, seeded
 - the proposer comparison is therefore not controlled;
 - no hosted provider was evaluated.
 
+## Phase 1 (pivot): change detection and deterministic hashing
+
+Branch `phase1-change-detection` (from `m0-m5-checkpoint`). Motivation: spikes/diffreplay/REPORT.md gaps 5, 8 and 10 and seeded case U02. Decisions I-112 to I-115.
+
+- Unsupported symbols are fingerprinted by their whole definition; module and class bodies by their import-time code (I-112). U02 is fixed: its strict-xfail test in `tests/integration/test_paper_findings.py` is now a regular passing test. The paper's numbers were measured on the frozen engine before this fix and are unchanged.
+- Every symbol has a docstring-blind `code_fingerprint`; `patch.symbols.doc_only` lists modified symbols whose only change is in docstrings (I-113).
+- Every symbol records conservative `reads` (module-level names it loads, plus a `<Class>.<class-body>` pseudo-global for methods) that feed the impact graph only, not validity keys (I-114).
+- The probe harness runs with `python -P -s -S -B` (not `-I`, which ignored `PYTHONHASHSEED`). New required capability `deterministic_interpreter_env`; `PYTHON*` names are rejected in `env_allowlist` (I-115).
+- `.pyi` stubs are still not captured in snapshots: only differential-replay input generation (phase 3) needs them, and adding them now would feed stub files to the static frontend. Deferred to phase 3.
+
+Commands and outcomes (2026-10-09, run with `nice -n 19`, single process):
+- `pytest tests/integration/test_change_detection.py tests/integration/test_hash_seed.py`: 11 passed (new tests: methods, generators, decorated functions, doc-only, code+doc, module data, imported data, class attributes, sibling methods; hash seed honored, `-I` documented as ignoring it, `PYTHON*` allowlist rejected).
+- `pytest tests/integration/test_docker_isolation.py -k "hash or seed or capability"`: 2 passed against the real Docker backend (capability set includes `deterministic_interpreter_env`; `hash()` and str-set order agree across two containers).
+- `pytest tests`: 761 passed, 2 skipped, 16 failed, 27 errors. The failures and errors were `OSError: [Errno 28] No space left on device` (the data volume had about 4.5 GB free and briefly reached zero), plus one real failure: the fake Docker in `test_execution_failclosed.py` did not report the new capability. The fake was updated, and a fail-closed test for randomized hashing was added. All 9 affected files were then rerun: 61 + 10 passed.
+- `spikes/diffreplay/survey_changes_phase1.py` (90 commits of more-itertools, boltons and dateutil; spike detector vs. `match_symbols`): before, 53/134 changed functions found and 81 missed; after, **134/134 found, 0 missed**. Output: `spikes/diffreplay/results/changes_survey_phase1.json`. Per-commit time was 226 s total (median 1.6 s) vs. 813 s (8.5 s) in the spike run. The spike run was on a heavily loaded host, so this is not a speed claim, only no evident slowdown.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

@@ -255,9 +255,11 @@ class Function:
     # M2 impact/summary data recorded during lowering (docs/07 graph model).
     fingerprint: str = ""  # digest of the position-free AST of this def
     body_fingerprint: str = ""  # same, with the def's own name blanked (rename detection)
+    code_fingerprint: str = ""  # same as fingerprint with docstrings blanked (doc-only edits)
     deps: list[dict[str, Any]] = field(default_factory=list)  # resolution records (calls, globals, types)
     inlined: list[str] = field(default_factory=list)  # callee symbol ids instantiated at call sites
     unresolved_calls: list[str] = field(default_factory=list)  # dynamic/unknown call edges (disclosed)
+    reads: list[dict[str, Any]] = field(default_factory=list)  # conservative global reads (impact graph only, not the key)
 
     @property
     def division_sites(self) -> list[ObligationSite]:
@@ -336,7 +338,9 @@ class UnsupportedSymbol:
     reason: str
     span: SourceSpan
     division_sites: list[ObligationSite]
-    fingerprint: str = ""
+    fingerprint: str = ""  # whole definition (functions) or import-time code (module/class bodies)
+    code_fingerprint: str = ""  # same with docstrings blanked (doc-only edits)
+    reads: list[dict[str, Any]] = field(default_factory=list)  # conservative global reads (impact graph only)
 
     @property
     def sites(self) -> list[ObligationSite]:

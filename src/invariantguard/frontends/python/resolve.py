@@ -67,6 +67,71 @@ def body_fingerprint(node: ast.FunctionDef) -> str:
     return _BODY_FP_CACHE[node]
 
 
+_DOC_OWNERS = (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+
+
+def _docstring_nodes(node: ast.AST) -> list[ast.Constant]:
+    out = []
+    for n in ast.walk(node):
+        if isinstance(n, _DOC_OWNERS) and n.body:
+            first = n.body[0]
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value, str):
+                out.append(first.value)
+    return out
+
+
+def code_fingerprint(node: ast.AST) -> str:
+    """Fingerprint with every docstring (of the node and the scopes nested in it) blanked.
+
+    Equal code fingerprints with different ``ast_fingerprint`` values mean a doc-only
+    edit. Docstrings stay part of ``ast_fingerprint``: doctests are executable behavior.
+    """
+    docs = _docstring_nodes(node)
+    if not docs:
+        return digest_json(["code", ast_fingerprint(node)])
+    saved = [d.value for d in docs]
+    try:
+        for d in docs:
+            d.value = ""
+        return digest_json(["code", ast.dump(node, annotate_fields=True, include_attributes=False)])
+    finally:
+        for d, v in zip(docs, saved):
+            d.value = v
+
+
+def _outer_parts(stmt: ast.AST) -> list[ast.AST]:
+    """Parts of a def/class statement evaluated in the enclosing scope (not its body)."""
+    if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        a = stmt.args
+        return [*stmt.decorator_list, *a.defaults, *(d for d in a.kw_defaults if d is not None),
+                *(x.annotation for x in a.posonlyargs + a.args + a.kwonlyargs + [v for v in (a.vararg, a.kwarg) if v] if x.annotation is not None),
+                *([stmt.returns] if stmt.returns is not None else [])]
+    if isinstance(stmt, ast.ClassDef):
+        return [*stmt.decorator_list, *stmt.bases, *stmt.keywords]
+    return []
+
+
+def initializer_fingerprint(node: ast.Module | ast.ClassDef, code_only: bool = False) -> str:
+    """Fingerprint of the import-time code of a module or class body.
+
+    Function and class bodies are separate symbols; only the parts of their definitions
+    evaluated at import time (name, decorators, defaults, annotations, bases) count here.
+    Defs nested inside compound statements are kept whole (conservative).
+    """
+    fp = code_fingerprint if code_only else ast_fingerprint
+    parts: list[Any] = [type(node).__name__, getattr(node, "name", None)]
+    if isinstance(node, ast.ClassDef):
+        parts.append([fp(p) for p in _outer_parts(node)])
+    for stmt in node.body:
+        if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            parts.append([type(stmt).__name__, stmt.name, [fp(p) for p in _outer_parts(stmt)]])
+        elif code_only and stmt is node.body[0] and isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
+            parts.append("docstring")
+        else:
+            parts.append(fp(stmt))
+    return digest_json(parts)
+
+
 def constant_value(node: ast.AST | None) -> tuple[bool, Any]:
     """(True, value) for an immutable literal module constant we model; (False, None) otherwise."""
     if isinstance(node, ast.Constant) and isinstance(node.value, CONSTANT_TYPES):
@@ -111,6 +176,11 @@ class Resolution:
     symbol_id: str | None = None
     conditional: bool = False  # depends on cross-module import resolution
     assumption: str = ""
+
+
+def class_body_name(class_qualname: str) -> str:
+    """Pseudo-global naming the import-time code of a class body (methods depend on it)."""
+    return f"{class_qualname}.<class-body>"
 
 
 def module_name_for(path: str) -> str | None:
@@ -195,7 +265,11 @@ class ModuleContext:
         Kept after the module's AST is evicted (the slice compares these across snapshots).
         The module path is excluded so that a renamed file compares equal.
         """
-        return {name: digest_json({**self.name_descriptor(name), "module": None}) for name in self.bindings}
+        out = {name: digest_json({**self.name_descriptor(name), "module": None}) for name in self.bindings}
+        for sym in self.symbols:
+            if sym.kind == "class_body":
+                out[class_body_name(sym.qualname)] = initializer_fingerprint(sym.node)
+        return out
 
     def name_descriptor(self, name: str) -> dict[str, Any]:
         return {

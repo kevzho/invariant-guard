@@ -135,6 +135,11 @@ def parse_profile(name: str, table: Any) -> RunProfileConfig:
     bad_env = [x for x in p.env_allowlist if not _ENV_RE.match(x)]
     if bad_env:
         raise ProfileError(f"{where}.env_allowlist entries must be environment variable names: {bad_env}")
+    interp_env = [x for x in p.env_allowlist if x.startswith("PYTHON")]
+    if interp_env:
+        # The harness runs without -E (so PYTHONHASHSEED applies); interpreter variables
+        # would change how the interpreter runs the target and are not passed through.
+        raise ProfileError(f"{where}.env_allowlist must not contain interpreter variables (PYTHON*): {interp_env}")
     if p.backend == "docker":
         if not p.image or not _IMAGE_RE.match(p.image):
             raise ProfileError(f"{where}.image is required for the docker backend (for example 'python:3.13-slim')")

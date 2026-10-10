@@ -69,11 +69,20 @@ def _value(obs):
 def test_every_claimed_capability_is_verified_from_inside(backend):
     st = backend.status()
     caps = {c.name: c for c in st.capabilities}
-    assert set(caps) == {"deny_network", "readonly_source", "no_host_credentials", "scratch_only_writes", "resource_limits", "interpreter_minor_matches_host"}
+    assert set(caps) == {"deny_network", "readonly_source", "no_host_credentials", "scratch_only_writes", "resource_limits", "interpreter_minor_matches_host",
+                         "deterministic_interpreter_env"}
     assert all(c.status == "VERIFIED" for c in caps.values())
     assert caps["deny_network"].detail["interfaces_up"] == [] and caps["deny_network"].detail["connect_test"].startswith("refused")
     assert caps["no_host_credentials"].detail["uid"] != 0 and caps["no_host_credentials"].detail["effective_capabilities"] == "0000000000000000"
     assert st.environment["image_id"].startswith("sha256:") and st.environment_digest.startswith("sha256:")
+    assert caps["deterministic_interpreter_env"].detail["hash_randomization"] == 0
+
+
+def test_string_hashing_is_deterministic_across_containers(backend):
+    """PYTHONHASHSEED=0 takes effect (it did not under -I, which implies -E)."""
+    src = "def h(x):\n    return [hash(x), list({'a', 'b', 'c', 'd', 'e'})]\n"
+    first, second = (_value(_probe(backend, src, "h", {"x": "invariant"})) for _ in range(2))
+    assert first == second
 
 
 NET = '''

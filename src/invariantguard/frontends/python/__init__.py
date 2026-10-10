@@ -15,7 +15,7 @@ from ...ir.model import DIVISION_PROPERTY, Function, ModuleIR, ObligationSite, O
 from ...models.spans import digest_json, sha256_bytes, short_hex
 from .lower import PROFILE_TYPES, FunctionLowerer, find_table
 from .parse import PYTHON_GRAMMAR, ParsedFile, ParseFailure, parse_source
-from .resolve import ModuleContext, ProgramIndex, ast_fingerprint
+from .resolve import ModuleContext, ProgramIndex, ast_fingerprint, class_body_name, code_fingerprint, initializer_fingerprint
 from .subset import function_unsupported_reason
 from .symbols import SymbolInfo
 
@@ -79,15 +79,46 @@ def _make_sites(parsed: ParsedFile, snapshot_id: str, sym: SymbolInfo) -> dict[i
     return sites
 
 
-def _symbol_fingerprint(sym: SymbolInfo, reason: str | None) -> str:
-    """Fingerprint of an unsupported symbol: everything its results depend on.
+def _symbol_fingerprints(sym: SymbolInfo, reason: str | None) -> tuple[str, str]:
+    """(fingerprint, code_fingerprint) of an unsupported symbol.
 
-    Its obligations are UNKNOWN with ``reason``; their identities are the division
-    nodes (anchors). Dumping the whole node (a class body includes every method) would be
-    quadratic in nesting and is not needed for soundness of the validity key.
+    The fingerprint covers the symbol's whole definition: a function's full node
+    (nested defs included, since they are part of its behavior), or the import-time code
+    of a module or class body (method bodies are their own symbols). The code
+    fingerprint blanks docstrings, so a doc-only edit is distinguishable. Both include
+    the unsupported reason and the division anchors its UNKNOWN obligations carry.
     """
-    return digest_json({"kind": sym.kind, "qualname": sym.qualname, "reason": reason,
-                        "divisions": [ast_fingerprint(n) for n in sym.division_nodes]})
+    if isinstance(sym.node, (ast.Module, ast.ClassDef)):
+        full, code = initializer_fingerprint(sym.node), initializer_fingerprint(sym.node, code_only=True)
+    else:
+        full, code = ast_fingerprint(sym.node), code_fingerprint(sym.node)
+    head = {"kind": sym.kind, "qualname": sym.qualname, "reason": reason,
+            "divisions": [ast_fingerprint(n) for n in sym.division_nodes]}
+    return digest_json({**head, "node": full}), digest_json({**head, "node": code})
+
+
+def _read_deps(ctx: ModuleContext, sym: SymbolInfo) -> list[dict[str, Any]]:
+    """Conservative read dependencies of a symbol, for the impact graph only.
+
+    Every name loaded anywhere in the symbol's subtree that has a module-level binding
+    (or any name, when bindings cannot be resolved statically) becomes a ``global``
+    record with the same resolution descriptor lowering records, so changed module data
+    and import targets reach every reader (analysis deps cover only what lowering
+    resolved; the validity key is unaffected). A method also depends on
+    its class body (class attributes read through ``self``/``cls``).
+    """
+    if isinstance(sym.node, ast.Module):
+        return []
+    names = sorted({n.id for n in ast.walk(sym.node) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)})
+    open_world = ctx.star_import or ctx.dynamic_reason is not None
+    deps = []
+    for name in names:
+        if name in ctx.bindings or open_world:
+            deps.append(ctx.lookup(name).record)
+    if sym.kind == "method":
+        owner = sym.qualname.rsplit(".", 1)[0]
+        deps.append({"kind": "global", "module": ctx.path, "name": class_body_name(owner), "resolution": "class_body"})
+    return deps
 
 
 def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[str, Any], program: ProgramIndex | None = None) -> FrontendResult:
@@ -122,8 +153,9 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
         if reason is not None:
             for s in sites.values():
                 s.unsupported_reason = reason
+            fp, code_fp = _symbol_fingerprints(sym, reason)
             unsupported.append(UnsupportedSymbol(symbol_id, sym.kind, reason, node_span, sorted(sites.values(), key=lambda s: s.ordinal),
-                                                 fingerprint=_symbol_fingerprint(sym, reason)))
+                                                 fingerprint=fp, code_fingerprint=code_fp, reads=_read_deps(ctx, sym)))
             if symbol_id in declared_domains:
                 diagnostics.append({"kind": "domain_on_unsupported_symbol", "symbol_id": symbol_id, "message": f"declared domain not used: {reason}"})
             continue
@@ -165,6 +197,7 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
         except Exception as exc:  # noqa: BLE001 - classified as an engine error, never as unsupported
             errors.append({"symbol_id": symbol_id, "stage": "lowering", "error_type": type(exc).__name__, "message": str(exc), "_sites": sorted(sites.values(), key=lambda s: s.ordinal)})
             continue
+        fn.reads = _read_deps(ctx, sym)
         if decls:
             fn.domain_note = "; ".join(f"{d.profile} ({d.authority}): {d.reason}" for d in decls)
         functions.append(fn)

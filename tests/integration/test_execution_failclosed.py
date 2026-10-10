@@ -23,11 +23,12 @@ def _docker_repo(tmp_path, docker_path, *, allow_unisolated=True, inferred=False
     return root, base
 
 
-def _fake_docker(tmp_path, *, capabilities_ok=False, image_present=True):
+def _fake_docker(tmp_path, *, capabilities_ok=False, image_present=True, hash_seed_ok=True):
     log = tmp_path / "docker-calls.log"
     caps = {k: {"verified": capabilities_ok or k != "deny_network"} for k in
             ("deny_network", "readonly_source", "scratch_only_writes", "no_host_credentials", "resource_limits")}
     caps["interpreter"] = {"verified": True}
+    caps["interpreter_env"] = {"verified": hash_seed_ok, "hash_randomization": 0 if hash_seed_ok else 1}
     resp = json.dumps({"protocol": "ig-probe-1", "mode": "capabilities", "identity": {"version": "3.13.0"}, "capabilities": caps})
     inspect = json.dumps({"Id": "sha256:" + "a" * 64, "RepoDigests": [], "Os": "linux", "Architecture": "arm64", "Config": {"Env": ["PATH=/usr/bin"]}})
     script = tmp_path / "docker"
@@ -123,6 +124,16 @@ def test_runner_probe_command_fails_closed(tmp_path):
     (root / ".guard" / "config.toml").write_text(cfg)
     code, out, _ = run_cli(["runner", "probe", "--path", str(root)])
     assert code == 0 and json.loads(out)["status"] == "AVAILABLE"
+
+
+def test_randomized_hashing_inside_the_boundary_fails_closed(tmp_path):
+    """Phase 1 (I-115): a container whose interpreter ignores PYTHONHASHSEED is not a usable runner."""
+    fake, _ = _fake_docker(tmp_path, capabilities_ok=True, hash_seed_ok=False)
+    root, _ = _docker_repo(tmp_path, str(fake), allow_unisolated=False)
+    code, out, _ = run_cli(["runner", "probe", "--path", str(root)])
+    r = json.loads(out)
+    assert code == 2 and r["status"] == "RUNNER_UNAVAILABLE"
+    assert {c["name"]: c["status"] for c in r["capabilities"]}["deterministic_interpreter_env"] == "FAILED"
 
 
 def test_inferred_contracts_are_advisory_when_the_runner_is_unavailable(tmp_path):

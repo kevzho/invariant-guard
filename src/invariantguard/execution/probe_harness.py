@@ -1,8 +1,12 @@
 """InvariantGuard trusted probe harness (protocol ig-probe-1).
 
 This file is *not* imported by the engine. The runner copies its bytes into a read-only
-mount and executes it with ``python -I -S -B`` inside the isolation boundary (a
+mount and executes it with ``python -P -s -S -B`` inside the isolation boundary (a
 container, or an explicitly unisolated subprocess). It is standalone (stdlib only).
+``-I`` is not used: it implies ``-E``, which ignores ``PYTHONHASHSEED``, so string
+hashing (set and dict iteration order of str keys) would be randomized per run. The
+environment is fully constructed by the runner instead, and the ``interpreter_env``
+capability fails closed on any other interpreter variable (e.g. from the image).
 
 Protocol: one JSON request on stdin, one JSON response on stdout.
 
@@ -139,7 +143,24 @@ def _identity():
             "version_info": list(sys.version_info[:3]), "platform": sys.platform, "machine": platform.machine(),
             "executable_flags": {"isolated": bool(sys.flags.isolated), "no_site": bool(sys.flags.no_site),
                                  "dont_write_bytecode": bool(sys.flags.dont_write_bytecode)},
-            "hash_seed": os.environ.get("PYTHONHASHSEED")}
+            "hash_seed": os.environ.get("PYTHONHASHSEED"), "hash_randomization": sys.flags.hash_randomization,
+            "ignore_environment": bool(sys.flags.ignore_environment)}
+
+
+# Interpreter variables the runner sets on purpose, and metadata variables of the official
+# python images that CPython does not read. Any other PYTHON* variable can change how the
+# interpreter behaves (PYTHONPATH, PYTHONHOME, PYTHONWARNINGS, PYTHON_GIL, ...).
+_EXPECTED_INTERPRETER_ENV = frozenset({"PYTHONHASHSEED", "PYTHON_VERSION", "PYTHON_SHA256", "PYTHON_PIP_VERSION",
+                                       "PYTHON_SETUPTOOLS_VERSION", "PYTHON_GET_PIP_URL", "PYTHON_GET_PIP_SHA256"})
+
+
+def _cap_interpreter_env():
+    """Deterministic string hashing, and no interpreter variable beyond the runner's own."""
+    unexpected = sorted(k for k in os.environ if k.startswith("PYTHON") and k not in _EXPECTED_INTERPRETER_ENV)
+    seed = os.environ.get("PYTHONHASHSEED")
+    deterministic = seed is not None and seed.isdigit() and not sys.flags.ignore_environment and sys.flags.hash_randomization == 0
+    return {"verified": deterministic and not unexpected, "hash_seed": seed, "hash_randomization": sys.flags.hash_randomization,
+            "ignore_environment": bool(sys.flags.ignore_environment), "unexpected_interpreter_env": unexpected}
 
 
 # -- capability checks (inside the boundary) -------------------------------------------------------
@@ -269,6 +290,7 @@ def _capabilities(req):
         "no_host_credentials": _cap_credentials(set(req.get("allowed_env", []))),
         "resource_limits": _cap_limits(exp),
         "interpreter": {"verified": ver == exp.get("python_minor"), "observed": ver, "expected": exp.get("python_minor")},
+        "interpreter_env": _cap_interpreter_env(),
     }
 
 

@@ -394,7 +394,8 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
         from .impact.graph import FileChanges, Sym, SymbolMatch
 
         stored_syms, keys_b, _ = _stored_base_model(base)
-        syms_b = {s: Sym(s, s.split("::", 1)[0], s.split("::", 1)[1], v["kind"], v["fingerprint"], v["body_fingerprint"], tuple(v["params"]), v["key"])
+        syms_b = {s: Sym(s, s.split("::", 1)[0], s.split("::", 1)[1], v["kind"], v["fingerprint"], v["body_fingerprint"], tuple(v["params"]), v["key"],
+                      v.get("code_fingerprint", ""))
                   for s, v in stored_syms.items()}
         bm = {f["path"]: f["sha256"] for f in (base.manifest or {}).get("files", [])}
         cm = {f.path: f.digest for f in cand_snap.files}
@@ -745,7 +746,8 @@ def run_baseline_create(opts: BaselineOptions) -> tuple[dict[str, Any], list[str
             "schema": "baseline_results/v1",
             "global_material": g_mat,
             "global_digest": digest_json(g_mat),
-            "symbols": {s: {"kind": v.kind, "fingerprint": v.fingerprint, "body_fingerprint": v.body_fingerprint, "params": list(v.params), "key": v.key}
+            "symbols": {s: {"kind": v.kind, "fingerprint": v.fingerprint, "body_fingerprint": v.body_fingerprint,
+                            "code_fingerprint": v.code_fingerprint, "params": list(v.params), "key": v.key}
                         for s, v in sorted(syms.items())},
             "obligations": obligations,
         }

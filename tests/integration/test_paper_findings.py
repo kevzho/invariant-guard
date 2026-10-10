@@ -1,12 +1,11 @@
-"""Defects found by the paper benchmark (benchmarks/bench_seeded.py), recorded as strict xfail tests.
+"""Defects found by the paper benchmark (benchmarks/bench_seeded.py).
 
-They document behavior of the frozen engine that the evaluation reported; a fix must make them
-pass (strict xfail then fails), at which point the marker is removed and the evaluation re-run.
+U02 (quick mode said PASS for a guard removed inside an unsupported nested function) was a
+strict xfail against the frozen engine the paper evaluated; it is fixed on the phase-1 branch
+(unsupported-symbol fingerprints now cover the whole definition) and is a regular test here.
 """
 
 from __future__ import annotations
-
-import pytest
 
 from .gitrepo import config, make_repo, verify, write
 
@@ -32,8 +31,6 @@ def test_full_mode_reports_the_changed_nested_function_as_incomplete(tmp_path):
     assert any(u["symbol_id"] == "app/nested.py::outer.<locals>.inner" and u["required"] for u in r["coverage"]["unknown_obligations"])
 
 
-@pytest.mark.xfail(strict=True, reason="seeded case U02: an unsupported (nested) symbol's fingerprint covers only its division nodes, so a guard "
-                                       "removed elsewhere in its body is not a modification; quick mode leaves it outside the slice and says PASS")
 def test_quick_mode_does_not_pass_a_changed_nested_function(tmp_path):
     root, base = make_repo(tmp_path, {"app/nested.py": BASE}, config("app/nested.py::outer"))
     write(root, {"app/nested.py": PATCH})

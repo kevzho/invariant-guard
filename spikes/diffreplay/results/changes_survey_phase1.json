@@ -1,0 +1,4144 @@
+[
+ {
+  "repo": "more-itertools",
+  "commit": "67fcf640477c78605580f5ee703a54c73c1e7a8a",
+  "parent": "1ea82a711c69f590054987b5cb194157f8ce8ac4",
+  "subject": "fix: honour a falsey validator in bucket (#1308)",
+  "date": "2026-10-06 22:23:13 +0000",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ],
+    "params_patch": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::bucket.__init__"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::bucket.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.97
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "f89d7a3331ba6b5421273e556c0a738e3dd1dd35",
+  "parent": "790bb0bb2c03e7a07282e5f16f4b1fde35b8fcf5",
+  "subject": "Issue 1304: make ichunked match chunked for n=0 and negative n",
+  "date": "2026-09-29 17:58:58 +0200",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "ichunked",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "n"
+    ],
+    "params_patch": [
+     "iterable",
+     "n"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::ichunked"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::ichunked"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.91
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "237642ea8a6fa817a1067369c7c06bd5130fe0da",
+  "parent": "031c1a62bd3d7ee5820e10769fd544e060cdcd35",
+  "subject": "Use the same literal markup as the explicit-step case",
+  "date": "2026-09-27 19:07:25 +0800",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.11
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "031c1a62bd3d7ee5820e10769fd544e060cdcd35",
+  "parent": "fbb9a98d8c7b914fcc952afd4976c1bc8deebe87",
+  "subject": "Document that numeric_range's default step is typed from stop - start",
+  "date": "2026-09-27 18:21:20 +0800",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.08
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ca0586d550e0d8d7bdee97bcaacb0d260d766245",
+  "parent": "7f7c94efcf63271ac27dd000d62dd990afa71fd7",
+  "subject": "Remove redundant seekable peek cache check",
+  "date": "2026-09-25 21:03:50 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.peek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "default"
+    ],
+    "params_patch": [
+     "self",
+     "default"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.0
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ed1bd2d4706535c3b00f38aa28e104eb26744433",
+  "parent": "1dd480a08bc2a4c399c84bf21cb1558f8b5fc838",
+  "subject": "Optimize maxlen == 0",
+  "date": "2026-09-25 11:29:49 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "self",
+     "iterable",
+     "maxlen"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.peek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "default"
+    ],
+    "params_patch": [
+     "self",
+     "default"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::seekable.__init__",
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::seekable.__init__",
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.88
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "3eb4053e1aacac53853f6e0abae556f280726f01",
+  "parent": "b5e3886a37209bb880f17d82fbf4ba00ece0e41e",
+  "subject": "Bound zero-cache seekable lookahead storage",
+  "date": "2026-09-22 09:20:30 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "self",
+     "iterable",
+     "maxlen"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.peek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "default"
+    ],
+    "params_patch": [
+     "self",
+     "default"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::seekable.__init__",
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::seekable.__init__",
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.89
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "262dbb9805710cf31140f7566037e9f6178b6c28",
+  "parent": "6b1907de293a655fb77881bf81948f95fd15bd7c",
+  "subject": "fix: check maxlen with getattr instead of isinstance",
+  "date": "2026-09-21 11:50:11 +0800",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.peek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "default"
+    ],
+    "params_patch": [
+     "self",
+     "default"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.91
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "288d6da0058a3e1e56842bd1ce6f4fc669658aea",
+  "parent": "8a930acd4fa0222af8209ae84806c18f260ee9a3",
+  "subject": "Issue #1287: Less aggressive fix for issue #1284",
+  "date": "2026-09-17 12:40:19 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ],
+    "params_patch": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket._get_values",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "value"
+    ],
+    "params_patch": [
+     "self",
+     "value"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket.__iter__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::bucket.__init__",
+   "more_itertools/more.py::bucket.__iter__",
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::bucket.__init__",
+   "more_itertools/more.py::bucket.__iter__",
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.66
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "0c5183863a056c39919ae4dea470e2d7b1a3b57b",
+  "parent": "2b8d5cddce4ea01f88a973551cd50479cf5fa45f",
+  "subject": "Keep the cached append within the 79-column limit",
+  "date": "2026-09-17 09:54:27 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket._get_values",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "value"
+    ],
+    "params_patch": [
+     "self",
+     "value"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.31
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "2b8d5cddce4ea01f88a973551cd50479cf5fa45f",
+  "parent": "b2f3aff7633057d234ec9186c18a53f4df306d08",
+  "subject": "Issue 1284: don't let a bucket lookup invent a key",
+  "date": "2026-09-17 09:49:11 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ],
+    "params_patch": [
+     "self",
+     "iterable",
+     "key",
+     "validator"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket._get_values",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "value"
+    ],
+    "params_patch": [
+     "self",
+     "value"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "bucket.__iter__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::bucket.__init__",
+   "more_itertools/more.py::bucket.__iter__",
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::bucket.__init__",
+   "more_itertools/more.py::bucket.__iter__",
+   "more_itertools/more.py::bucket._get_values"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.09
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "def2dabea858b6ecb84ee0c52e6e07929f2c409c",
+  "parent": "9ed3dbb0ae527230cd156d91d0af305478558fba",
+  "subject": "Fix one()/only() dropping a falsy user-supplied exception",
+  "date": "2026-09-14 10:39:38 +0530",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "one",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "too_short",
+     "too_long"
+    ],
+    "params_patch": [
+     "iterable",
+     "too_short",
+     "too_long"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "only",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "default",
+     "too_long"
+    ],
+    "params_patch": [
+     "iterable",
+     "default",
+     "too_long"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::one",
+   "more_itertools/more.py::only"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::one",
+   "more_itertools/more.py::only"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.1
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "feaddee0ff87a1f6dd648efa1d447acb2e6a0962",
+  "parent": "752799b5c88e0823f1bd93e073edab0a6a7e5648",
+  "subject": "Optimize numeric_range reverse iteration following review",
+  "date": "2026-09-12 05:54:37 -0700",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range.__reversed__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::numeric_range.__reversed__"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::numeric_range.__reversed__"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.97
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "e426d256b90bcef9aa4509ea345fca68ff21ae0c",
+  "parent": "9ed3dbb0ae527230cd156d91d0af305478558fba",
+  "subject": "Reuse input iterators in zip_broadcast",
+  "date": "2026-09-12 15:12:51 +0300",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "zip_broadcast",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "scalar_types",
+     "strict"
+    ],
+    "params_patch": [
+     "scalar_types",
+     "strict"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::zip_broadcast",
+   "more_itertools/more.py::zip_broadcast.<locals>.get_iterator"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::zip_broadcast"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.16
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "752799b5c88e0823f1bd93e073edab0a6a7e5648",
+  "parent": "9ed3dbb0ae527230cd156d91d0af305478558fba",
+  "subject": "Preserve numeric_range values during reverse iteration",
+  "date": "2026-09-11 23:23:39 -0700",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range.__reversed__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::numeric_range.__reversed__"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::numeric_range.__reversed__"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.87
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "d032cab7798c7a072ecbb8ade4dfa50030c75cb5",
+  "parent": "19ddb972845ab0e5b9b7449d3fd5930781407441",
+  "subject": "fix nonpositive item limits in constrained_batches",
+  "date": "2026-09-09 13:12:29 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "constrained_batches",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "max_size",
+     "max_count",
+     "get_len",
+     "strict"
+    ],
+    "params_patch": [
+     "iterable",
+     "max_size",
+     "max_count",
+     "get_len",
+     "strict"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::constrained_batches"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::constrained_batches"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.07
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "6b1907de293a655fb77881bf81948f95fd15bd7c",
+  "parent": "ca711220a6657a22655f6fa497524d006a735c5f",
+  "subject": "fix: seekable.peek/bool no longer drop items when maxlen is 0",
+  "date": "2026-09-09 22:09:31 +0800",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "seekable.peek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "default"
+    ],
+    "params_patch": [
+     "self",
+     "default"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::seekable.peek"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.98
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "0e6dce3a7a8c6f9c5deb80779cc1d293c80e2974",
+  "parent": "ca711220a6657a22655f6fa497524d006a735c5f",
+  "subject": "Clarify `combination_with_replacement_index` a bit",
+  "date": "2026-09-09 07:56:07 +0200",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "combination_with_replacement_index",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "element",
+     "iterable"
+    ],
+    "params_patch": [
+     "element",
+     "iterable"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::combination_with_replacement_index"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::combination_with_replacement_index"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.17
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1b74b56d03bbe0d7496b8431aabe41598850ec0d",
+  "parent": "b656ecc0a64e328549a9858af1c4b609f9922b07",
+  "subject": "Fix/simplify `combination_with_replacement_index`",
+  "date": "2026-09-08 12:47:13 +0200",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "combination_with_replacement_index",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "element",
+     "iterable"
+    ],
+    "params_patch": [
+     "element",
+     "iterable"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::combination_with_replacement_index"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::combination_with_replacement_index"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.47
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "1fd388bc237923e92574ae272cd8c71eab4b886c",
+  "parent": "b656ecc0a64e328549a9858af1c4b609f9922b07",
+  "subject": "Validate running window sizes through the index protocol",
+  "date": "2026-09-07 22:30:07 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "running_mean",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "iterable",
+     "maxlen"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "running_min",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "iterable",
+     "maxlen"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "running_max",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "iterable",
+     "maxlen"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "running_statistics",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "maxlen"
+    ],
+    "params_patch": [
+     "iterable",
+     "maxlen"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/recipes.py::running_max",
+   "more_itertools/recipes.py::running_mean",
+   "more_itertools/recipes.py::running_min",
+   "more_itertools/recipes.py::running_statistics"
+  ],
+  "existing_key_changed": [
+   "more_itertools/recipes.py::running_max",
+   "more_itertools/recipes.py::running_mean",
+   "more_itertools/recipes.py::running_min",
+   "more_itertools/recipes.py::running_statistics"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.82
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8e0cbb8ed74e125a66bc32f050659227bce0e01",
+  "parent": "141f38bcf6a027b36f9a59f66f704cdb930ace19",
+  "subject": "Add missing word in docstring",
+  "date": "2026-09-06 20:46:37 -0700",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "random_product",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "repeat"
+    ],
+    "params_patch": [
+     "repeat"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "random_permutation",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "random_combination",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   },
+   {
+    "path": "more_itertools/recipes.py",
+    "qualname": "random_combination_with_replacement",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/recipes.py::random_combination",
+   "more_itertools/recipes.py::random_combination_with_replacement",
+   "more_itertools/recipes.py::random_permutation",
+   "more_itertools/recipes.py::random_product"
+  ],
+  "existing_key_changed": [
+   "more_itertools/recipes.py::random_combination",
+   "more_itertools/recipes.py::random_combination_with_replacement",
+   "more_itertools/recipes.py::random_permutation",
+   "more_itertools/recipes.py::random_product"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.98
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ddd678209da01d97844d61a2bd963ce4b67c0a0c",
+  "parent": "fc3690451e3b0d323cff4bc19c5669cfee7556dd",
+  "subject": "Thinner API with only random_ordered_range()",
+  "date": "2026-09-06 14:52:54 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "_random_ordered_indices",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "n"
+    ],
+    "params_patch": [
+     "n"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_product",
+    "status": "deleted",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "repeat"
+    ],
+    "params_patch": null
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_permutations",
+    "status": "deleted",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": null
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combinations",
+    "status": "deleted",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": null
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combs_with_replacement",
+    "status": "deleted",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": null
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::_random_ordered_indices"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::_random_ordered_indices",
+   "more_itertools/more.py::_sample_weighted",
+   "more_itertools/more.py::chunked",
+   "more_itertools/more.py::duplicates_justseen",
+   "more_itertools/more.py::first",
+   "more_itertools/more.py::intersperse",
+   "more_itertools/more.py::locate",
+   "more_itertools/more.py::nth_prime",
+   "more_itertools/more.py::outer_product",
+   "more_itertools/more.py::spy"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.09
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "caaec943d83fc6876f7032032a4c83e4f5183239",
+  "parent": "dee22c93f7617380875b68bfa55c3cb0e0b35570",
+  "subject": "Add random ordered combinatoric functions",
+  "date": "2026-09-06 14:28:41 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combs_with_replacement",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::random_ordered_combs_with_replacement"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::random_ordered_combs_with_replacement"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.0
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dee22c93f7617380875b68bfa55c3cb0e0b35570",
+  "parent": "b8fe92096c4693ed0b134be7de88e00efed131f7",
+  "subject": "Remove special case logic for cwr",
+  "date": "2026-09-06 14:27:56 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combs_with_replacement",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::random_ordered_combs_with_replacement"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::random_ordered_combs_with_replacement"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.84
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "b8fe92096c4693ed0b134be7de88e00efed131f7",
+  "parent": "3e87c08ac878f4bb79349d38ac69ba75c45dc5bf",
+  "subject": "Add random ordered combinatoric functions",
+  "date": "2026-09-06 14:27:12 -0500",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "_full_period_lcg",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "n"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "_random_ordered_indices",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "n"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_range",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": []
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_product",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "repeat"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_permutations",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combinations",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "random_ordered_combs_with_replacement",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::_full_period_lcg",
+   "more_itertools/more.py::_random_ordered_indices",
+   "more_itertools/more.py::random_ordered_combinations",
+   "more_itertools/more.py::random_ordered_combs_with_replacement",
+   "more_itertools/more.py::random_ordered_permutations",
+   "more_itertools/more.py::random_ordered_product",
+   "more_itertools/more.py::random_ordered_range"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::_sample_weighted",
+   "more_itertools/more.py::chunked",
+   "more_itertools/more.py::duplicates_justseen",
+   "more_itertools/more.py::first",
+   "more_itertools/more.py::intersperse",
+   "more_itertools/more.py::locate",
+   "more_itertools/more.py::nth_prime",
+   "more_itertools/more.py::outer_product",
+   "more_itertools/more.py::spy"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.91
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "ce676d24136e6efa932df8a4f3bf4801b89e1dd0",
+  "parent": "d92f081a089714e0aa92434c797fdd1a06da1290",
+  "subject": "Do not yield an empty list for an empty iterable when maxsplit is 0",
+  "date": "2026-09-04 00:44:41 +0300",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "split_before",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ],
+    "params_patch": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "split_after",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ],
+    "params_patch": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "split_when",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ],
+    "params_patch": [
+     "iterable",
+     "pred",
+     "maxsplit"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::split_after",
+   "more_itertools/more.py::split_before",
+   "more_itertools/more.py::split_when"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::split_after",
+   "more_itertools/more.py::split_before",
+   "more_itertools/more.py::split_when"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.91
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "7847d4324a581da8d0919734a8e50b2a6573b780",
+  "parent": "bc8be1013ac90fe3c1df8aae646b02605d578818",
+  "subject": "Don't mask TypeError raised while iterating in value_chain",
+  "date": "2026-09-03 11:22:05 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "value_chain",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::value_chain"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::value_chain"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.95
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "dc2664b4a7c66209485c9f5e359137bf4b365eb3",
+  "parent": "2fe1b2eeb9d75f994113fe3ac76d14b6bcd6fb10",
+  "subject": "Issue 1247: Keep numeric_range consistent with the items it produces",
+  "date": "2026-09-02 11:49:42 -0400",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range.__contains__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "elem"
+    ],
+    "params_patch": [
+     "self",
+     "elem"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range._len",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range._before_stop",
+    "status": "added",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": null,
+    "params_patch": [
+     "self",
+     "i"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range.index",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "value"
+    ],
+    "params_patch": [
+     "self",
+     "value"
+    ]
+   },
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "numeric_range._index_near",
+    "status": "added",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": null,
+    "params_patch": [
+     "self",
+     "i",
+     "value"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::numeric_range.__contains__",
+   "more_itertools/more.py::numeric_range._before_stop",
+   "more_itertools/more.py::numeric_range._index_near",
+   "more_itertools/more.py::numeric_range._len",
+   "more_itertools/more.py::numeric_range.index"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::numeric_range.__contains__",
+   "more_itertools/more.py::numeric_range._len",
+   "more_itertools/more.py::numeric_range.index"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.78
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "63ee583047181a055c21e64e732a7011290ca837",
+  "parent": "2fe1b2eeb9d75f994113fe3ac76d14b6bcd6fb10",
+  "subject": "Clarify output order for sortable input elements",
+  "date": "2026-08-29 21:44:27 -0700",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "distinct_permutations",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r"
+    ],
+    "params_patch": [
+     "iterable",
+     "r"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::distinct_permutations"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::distinct_permutations"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.47
+ },
+ {
+  "repo": "more-itertools",
+  "commit": "237388cc3220bdc7cfacc6f766304a49b42fb8e7",
+  "parent": "3a259350f28cd17f09b4f0af21c6ebc03cf725cf",
+  "subject": "Simplify and speed up nth_permutation",
+  "date": "2026-08-10 20:36:09 +0200",
+  "pkg": "more_itertools",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "more_itertools/more.py",
+    "qualname": "nth_permutation",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "iterable",
+     "r",
+     "index"
+    ],
+    "params_patch": [
+     "iterable",
+     "r",
+     "index"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "more_itertools/more.py::nth_permutation"
+  ],
+  "existing_key_changed": [
+   "more_itertools/more.py::_nth_prime_bounds",
+   "more_itertools/more.py::_sample_weighted",
+   "more_itertools/more.py::combination_index",
+   "more_itertools/more.py::nth_permutation",
+   "more_itertools/more.py::nth_prime"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.5
+ },
+ {
+  "repo": "boltons",
+  "commit": "4e5faa3d7e4008d89e0d8bf1ea87b6d9a061a16d",
+  "parent": "961dcff3f42e73b245aef65e377fe82763b257bb",
+  "subject": "Fix spooled stream write compatibility and backwards text seeks (#513)",
+  "date": "2026-09-23 16:55:31 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/ioutils.py",
+    "qualname": "SpooledBytesIO.write",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "s"
+    ],
+    "params_patch": [
+     "self",
+     "s"
+    ]
+   },
+   {
+    "path": "boltons/ioutils.py",
+    "qualname": "SpooledStringIO.write",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "s"
+    ],
+    "params_patch": [
+     "self",
+     "s"
+    ]
+   },
+   {
+    "path": "boltons/ioutils.py",
+    "qualname": "SpooledStringIO.seek",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "pos",
+     "mode"
+    ],
+    "params_patch": [
+     "self",
+     "pos",
+     "mode"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/ioutils.py::SpooledBytesIO.write",
+   "boltons/ioutils.py::SpooledStringIO.seek",
+   "boltons/ioutils.py::SpooledStringIO.write"
+  ],
+  "existing_key_changed": [
+   "boltons/ioutils.py::SpooledBytesIO.write",
+   "boltons/ioutils.py::SpooledStringIO.seek",
+   "boltons/ioutils.py::SpooledStringIO.write"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.2
+ },
+ {
+  "repo": "boltons",
+  "commit": "78ec69cac4465c57bb7debafcf3181d7d1ceaa76",
+  "parent": "4332b35a278d694f30c99881faa61cde695c7a96",
+  "subject": "bump version to 26.2.1dev",
+  "date": "2026-09-07 03:42:42 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.54
+ },
+ {
+  "repo": "boltons",
+  "commit": "4332b35a278d694f30c99881faa61cde695c7a96",
+  "parent": "1216b467c10b852d08aa6895c80b6b9ec8f990d8",
+  "subject": "boltons version 26.2.0",
+  "date": "2026-09-07 03:42:05 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.72
+ },
+ {
+  "repo": "boltons",
+  "commit": "1216b467c10b852d08aa6895c80b6b9ec8f990d8",
+  "parent": "8bb31ba90e574daddbf0d7a2dc658398dc141e38",
+  "subject": "Complete September PR sweep for 26.2.0 (#481)",
+  "date": "2026-09-07 03:37:10 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/cacheutils.py",
+    "qualname": "LRI.update",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "E"
+    ],
+    "params_patch": [
+     "self",
+     "E"
+    ]
+   },
+   {
+    "path": "boltons/cacheutils.py",
+    "qualname": "ThresholdCounter.most_common",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "n"
+    ],
+    "params_patch": [
+     "self",
+     "n"
+    ]
+   },
+   {
+    "path": "boltons/cacheutils.py",
+    "qualname": "ThresholdCounter.update",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "iterable"
+    ],
+    "params_patch": [
+     "self",
+     "iterable"
+    ]
+   },
+   {
+    "path": "boltons/jsonutils.py",
+    "qualname": "reverse_iter_lines",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "file_obj",
+     "blocksize",
+     "preseek",
+     "encoding"
+    ],
+    "params_patch": [
+     "file_obj",
+     "blocksize",
+     "preseek",
+     "encoding"
+    ]
+   },
+   {
+    "path": "boltons/strutils.py",
+    "qualname": "bytes2human",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "nbytes",
+     "ndigits"
+    ],
+    "params_patch": [
+     "nbytes",
+     "ndigits"
+    ]
+   },
+   {
+    "path": "boltons/urlutils.py",
+    "qualname": "URL.get_authority",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "full_quote",
+     "with_userinfo"
+    ],
+    "params_patch": [
+     "self",
+     "full_quote",
+     "with_userinfo"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/cacheutils.py::LRI.update",
+   "boltons/cacheutils.py::ThresholdCounter.most_common",
+   "boltons/cacheutils.py::ThresholdCounter.update",
+   "boltons/jsonutils.py::reverse_iter_lines",
+   "boltons/strutils.py::bytes2human",
+   "boltons/urlutils.py::URL.get_authority"
+  ],
+  "existing_key_changed": [
+   "boltons/cacheutils.py::LRI.update",
+   "boltons/cacheutils.py::ThresholdCounter.most_common",
+   "boltons/cacheutils.py::ThresholdCounter.update",
+   "boltons/jsonutils.py::reverse_iter_lines",
+   "boltons/strutils.py::bytes2human",
+   "boltons/urlutils.py::URL.get_authority"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.71
+ },
+ {
+  "repo": "boltons",
+  "commit": "73e22c90de25aaae3e6aed57f7438ffe57349339",
+  "parent": "3913220988e1e7c80620796fdcb4f74eb598d179",
+  "subject": "statsutils: finish Pearson zero-denominator review and regression coverage",
+  "date": "2026-09-07 03:32:51 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/statsutils.py",
+    "qualname": "Stats._calc_pearson_type",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/statsutils.py::Stats._calc_pearson_type"
+  ],
+  "existing_key_changed": [
+   "boltons/statsutils.py::Stats._calc_pearson_type",
+   "boltons/statsutils.py::describe"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.78
+ },
+ {
+  "repo": "boltons",
+  "commit": "1cdc0e9d36f3eb32608f3b34885717697643e9b8",
+  "parent": "805c803ca71da28f09cb7ec521f7ea14d1a4048b",
+  "subject": "statsutils: handle zero interquartile range in histograms (#467)",
+  "date": "2026-09-07 02:50:04 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/statsutils.py",
+    "qualname": "Stats._get_bin_bounds",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "count",
+     "with_max"
+    ],
+    "params_patch": [
+     "self",
+     "count",
+     "with_max"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/statsutils.py::Stats._get_bin_bounds"
+  ],
+  "existing_key_changed": [
+   "boltons/statsutils.py::Stats._get_bin_bounds",
+   "boltons/statsutils.py::describe"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.65
+ },
+ {
+  "repo": "boltons",
+  "commit": "5150802911edbf8ade1e7d1bfb346fed52c88d05",
+  "parent": "574393a4c349d5b81ee328a9e450c34dd0614635",
+  "subject": "jsonutils: accept explicit end-of-file relative seek (#465)",
+  "date": "2026-09-07 02:33:26 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/jsonutils.py",
+    "qualname": "JSONLIterator.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "file_obj",
+     "ignore_errors",
+     "reverse",
+     "rel_seek"
+    ],
+    "params_patch": [
+     "self",
+     "file_obj",
+     "ignore_errors",
+     "reverse",
+     "rel_seek"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/jsonutils.py::JSONLIterator.__init__"
+  ],
+  "existing_key_changed": [
+   "boltons/jsonutils.py::JSONLIterator.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.71
+ },
+ {
+  "repo": "boltons",
+  "commit": "a180020c760b532e8889f161d97d05647adfee8c",
+  "parent": "e00c10a809525027b8167fbb7ac233cfc25a01f5",
+  "subject": "setutils: flatten inputs to IndexedSet.update (#474)",
+  "date": "2026-09-07 02:01:25 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "IndexedSet.update",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/setutils.py::IndexedSet.update"
+  ],
+  "existing_key_changed": [
+   "boltons/setutils.py::IndexedSet.update"
+  ],
+  "missed_by_existing": [],
+  "secs": 4.89
+ },
+ {
+  "repo": "boltons",
+  "commit": "e00c10a809525027b8167fbb7ac233cfc25a01f5",
+  "parent": "efff866a3b66fdafc817894390742e1d8bc025e5",
+  "subject": "setutils, listutils: streamline bulk removal and fix list bounds (#440)",
+  "date": "2026-09-07 02:01:01 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/listutils.py",
+    "qualname": "BarrelList._translate_index",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "index"
+    ],
+    "params_patch": [
+     "self",
+     "index"
+    ]
+   },
+   {
+    "path": "boltons/listutils.py",
+    "qualname": "BarrelList.insert",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "index",
+     "item"
+    ],
+    "params_patch": [
+     "self",
+     "index",
+     "item"
+    ]
+   },
+   {
+    "path": "boltons/listutils.py",
+    "qualname": "BarrelList.pop",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "IndexedSet._cull",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "IndexedSet._bulk_discard",
+    "status": "added",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": null,
+    "params_patch": [
+     "self",
+     "to_remove"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "IndexedSet.intersection_update",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "IndexedSet.difference_update",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/listutils.py::BarrelList._translate_index",
+   "boltons/listutils.py::BarrelList.insert",
+   "boltons/listutils.py::BarrelList.pop",
+   "boltons/setutils.py::IndexedSet._bulk_discard",
+   "boltons/setutils.py::IndexedSet._cull",
+   "boltons/setutils.py::IndexedSet.difference_update",
+   "boltons/setutils.py::IndexedSet.intersection_update"
+  ],
+  "existing_key_changed": [
+   "boltons/listutils.py::BarrelList._translate_index",
+   "boltons/listutils.py::BarrelList.insert",
+   "boltons/listutils.py::BarrelList.pop",
+   "boltons/setutils.py::IndexedSet._cull",
+   "boltons/setutils.py::IndexedSet.difference_update",
+   "boltons/setutils.py::IndexedSet.intersection_update"
+  ],
+  "missed_by_existing": [],
+  "secs": 5.96
+ },
+ {
+  "repo": "boltons",
+  "commit": "efff866a3b66fdafc817894390742e1d8bc025e5",
+  "parent": "5eb6cc045560abf320712f262346ae95fb66d448",
+  "subject": "mathutils: preserve empty Bits through conversions (#468)",
+  "date": "2026-09-07 02:00:24 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/mathutils.py",
+    "qualname": "Bits.as_bin",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "boltons/mathutils.py",
+    "qualname": "Bits.as_hex",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "boltons/mathutils.py",
+    "qualname": "Bits.from_hex",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "classmethod",
+    "params_base": [
+     "cls",
+     "hex"
+    ],
+    "params_patch": [
+     "cls",
+     "hex"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/mathutils.py::Bits.as_bin",
+   "boltons/mathutils.py::Bits.as_hex",
+   "boltons/mathutils.py::Bits.from_hex"
+  ],
+  "existing_key_changed": [
+   "boltons/mathutils.py::Bits.as_bin",
+   "boltons/mathutils.py::Bits.as_hex",
+   "boltons/mathutils.py::Bits.from_hex"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.92
+ },
+ {
+  "repo": "boltons",
+  "commit": "5eb6cc045560abf320712f262346ae95fb66d448",
+  "parent": "19bd337cad0760945dfe0245434d8253156ee390",
+  "subject": "mathutils: resolve negative Bits indices (#450)",
+  "date": "2026-09-07 02:00:01 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/mathutils.py",
+    "qualname": "Bits.__getitem__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "k"
+    ],
+    "params_patch": [
+     "self",
+     "k"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/mathutils.py::Bits.__getitem__"
+  ],
+  "existing_key_changed": [
+   "boltons/mathutils.py::Bits.__getitem__"
+  ],
+  "missed_by_existing": [],
+  "secs": 3.66
+ },
+ {
+  "repo": "boltons",
+  "commit": "8789df2cc35a4d9ddfebfa59c14f3e80e34234e1",
+  "parent": "dfd632467c06089a19427e14010e83f57502c9bc",
+  "subject": "timeutils: match timezone for default relative time (#469)",
+  "date": "2026-09-07 01:43:42 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/timeutils.py",
+    "qualname": "decimal_relative_time",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "d",
+     "other",
+     "ndigits",
+     "cardinalize"
+    ],
+    "params_patch": [
+     "d",
+     "other",
+     "ndigits",
+     "cardinalize"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/timeutils.py::decimal_relative_time"
+  ],
+  "existing_key_changed": [
+   "boltons/timeutils.py::decimal_relative_time"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.15
+ },
+ {
+  "repo": "boltons",
+  "commit": "f5f5cd867ee98f15def2b6a19bfba203de29b961",
+  "parent": "970051b66474ac37383c5d990c169c794e20eb88",
+  "subject": "iterutils: correct inclusive GUIDerator size message (#451)",
+  "date": "2026-09-07 01:42:58 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/iterutils.py",
+    "qualname": "GUIDerator.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "size"
+    ],
+    "params_patch": [
+     "self",
+     "size"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/iterutils.py::GUIDerator.__init__"
+  ],
+  "existing_key_changed": [
+   "boltons/iterutils.py::GUIDerator.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.1
+ },
+ {
+  "repo": "boltons",
+  "commit": "970051b66474ac37383c5d990c169c794e20eb88",
+  "parent": "9decba3e5736f61180eec274420ced0e572e30e6",
+  "subject": "namedutils: reject empty type and field names (#462)",
+  "date": "2026-09-07 01:42:27 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/namedutils.py",
+    "qualname": "namedtuple",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "typename",
+     "field_names",
+     "verbose",
+     "rename"
+    ],
+    "params_patch": [
+     "typename",
+     "field_names",
+     "verbose",
+     "rename"
+    ]
+   },
+   {
+    "path": "boltons/namedutils.py",
+    "qualname": "namedlist",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "typename",
+     "field_names",
+     "verbose",
+     "rename"
+    ],
+    "params_patch": [
+     "typename",
+     "field_names",
+     "verbose",
+     "rename"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/namedutils.py::namedlist",
+   "boltons/namedutils.py::namedtuple"
+  ],
+  "existing_key_changed": [
+   "boltons/namedutils.py::namedlist",
+   "boltons/namedutils.py::namedtuple"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.05
+ },
+ {
+  "repo": "boltons",
+  "commit": "9decba3e5736f61180eec274420ced0e572e30e6",
+  "parent": "a1ea1030ed85137e999c0bd9b11d16368d3ab241",
+  "subject": "ecoutils: skip identifying lookups when scrubbing (#461)",
+  "date": "2026-09-07 01:42:03 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/ecoutils.py",
+    "qualname": "get_profile",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/ecoutils.py::get_profile"
+  ],
+  "existing_key_changed": [
+   "boltons/ecoutils.py::get_profile",
+   "boltons/ecoutils.py::get_profile_json",
+   "boltons/ecoutils.py::main"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.73
+ },
+ {
+  "repo": "boltons",
+  "commit": "a1ea1030ed85137e999c0bd9b11d16368d3ab241",
+  "parent": "d45cc414e33aa4e08a73e0993574df4397e2e9db",
+  "subject": "dictutils: preserve iterator values in addlist (#458)",
+  "date": "2026-09-07 01:41:34 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/dictutils.py",
+    "qualname": "OrderedMultiDict.addlist",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "k",
+     "v"
+    ],
+    "params_patch": [
+     "self",
+     "k",
+     "v"
+    ]
+   },
+   {
+    "path": "boltons/urlutils.py",
+    "qualname": "OrderedMultiDict.addlist",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "k",
+     "v"
+    ],
+    "params_patch": [
+     "self",
+     "k",
+     "v"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/dictutils.py::OrderedMultiDict.addlist",
+   "boltons/urlutils.py::OrderedMultiDict.addlist"
+  ],
+  "existing_key_changed": [
+   "boltons/dictutils.py::OrderedMultiDict.addlist",
+   "boltons/urlutils.py::OrderedMultiDict.addlist"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.55
+ },
+ {
+  "repo": "boltons",
+  "commit": "d45cc414e33aa4e08a73e0993574df4397e2e9db",
+  "parent": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "subject": "urlutils: honor parse_qsl encoding (#455)",
+  "date": "2026-09-07 01:40:44 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/urlutils.py",
+    "qualname": "parse_qsl",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "qs",
+     "keep_blank_values",
+     "encoding"
+    ],
+    "params_patch": [
+     "qs",
+     "keep_blank_values",
+     "encoding"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/urlutils.py::parse_qsl"
+  ],
+  "existing_key_changed": [
+   "boltons/urlutils.py::parse_qsl"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.64
+ },
+ {
+  "repo": "boltons",
+  "commit": "d12d86a4706aa4a367a91679b0ff9b6a572e5298",
+  "parent": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "subject": "Fix Unicode line separators in iter_splitlines",
+  "date": "2026-09-07 12:18:30 +0800",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.48
+ },
+ {
+  "repo": "boltons",
+  "commit": "91b2bb47ae9b22953f61c17c20860bcb7dd1d6b1",
+  "parent": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "subject": "Keep the stop barrel valid during cross-barrel deletion",
+  "date": "2026-09-05 22:26:23 +0500",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/listutils.py",
+    "qualname": "BarrelList.del_slice",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "start",
+     "stop",
+     "step"
+    ],
+    "params_patch": [
+     "self",
+     "start",
+     "stop",
+     "step"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/listutils.py::BarrelList.del_slice"
+  ],
+  "existing_key_changed": [
+   "boltons/listutils.py::BarrelList.del_slice"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.22
+ },
+ {
+  "repo": "boltons",
+  "commit": "448b1db11afdde8edaf7c2c280a5b38f0d8672a7",
+  "parent": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "subject": "Normalize BarrelList slice bounds and reverse steps",
+  "date": "2026-09-05 22:26:21 +0500",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/listutils.py",
+    "qualname": "BarrelList.iter_slice",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "start",
+     "stop",
+     "step"
+    ],
+    "params_patch": [
+     "self",
+     "start",
+     "stop",
+     "step"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/listutils.py::BarrelList.iter_slice"
+  ],
+  "existing_key_changed": [
+   "boltons/listutils.py::BarrelList.iter_slice"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.21
+ },
+ {
+  "repo": "boltons",
+  "commit": "1a04b637900cf7e3f01186cf9f5b669224438990",
+  "parent": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "subject": "Support relative seeking in binary JSONL streams",
+  "date": "2026-09-05 22:13:18 +0500",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/jsonutils.py",
+    "qualname": "JSONLIterator._align_to_newline",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/jsonutils.py::JSONLIterator._align_to_newline"
+  ],
+  "existing_key_changed": [
+   "boltons/jsonutils.py::JSONLIterator._align_to_newline"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.45
+ },
+ {
+  "repo": "boltons",
+  "commit": "967864f89791509f9eb36b22b4579d36b72a6df2",
+  "parent": "5df26592c29b9561d122640868ba0522cbc1e20d",
+  "subject": "statsutils: add mode() for most-common value, incl. categorical data (#453)",
+  "date": "2026-08-19 02:01:44 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/statsutils.py",
+    "qualname": "Stats._calc_mode",
+    "status": "added",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": null,
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/statsutils.py::Stats._calc_mode"
+  ],
+  "existing_key_changed": [
+   "boltons/statsutils.py::describe"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.03
+ },
+ {
+  "repo": "boltons",
+  "commit": "5df26592c29b9561d122640868ba0522cbc1e20d",
+  "parent": "673e010d0afabc2f530e8d1f67f0a47c37afa7f4",
+  "subject": "Use the sep argument in args2sh and args2cmd (#454)",
+  "date": "2026-08-19 01:12:12 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/strutils.py",
+    "qualname": "args2sh",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "args",
+     "sep"
+    ],
+    "params_patch": [
+     "args",
+     "sep"
+    ]
+   },
+   {
+    "path": "boltons/strutils.py",
+    "qualname": "args2cmd",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "args",
+     "sep"
+    ],
+    "params_patch": [
+     "args",
+     "sep"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/strutils.py::args2cmd",
+   "boltons/strutils.py::args2sh"
+  ],
+  "existing_key_changed": [
+   "boltons/strutils.py::args2cmd",
+   "boltons/strutils.py::args2sh",
+   "boltons/strutils.py::escape_shell_args"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.52
+ },
+ {
+  "repo": "boltons",
+  "commit": "673e010d0afabc2f530e8d1f67f0a47c37afa7f4",
+  "parent": "580a9c2d12755d472e534ca3e277e8f7e3ada49e",
+  "subject": "strutils: add ellipsize for word-boundary-aware truncation",
+  "date": "2026-08-17 08:58:16 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/strutils.py",
+    "qualname": "ellipsize",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "text",
+     "max_len",
+     "ellipsis"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/strutils.py::ellipsize"
+  ],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.77
+ },
+ {
+  "repo": "boltons",
+  "commit": "580a9c2d12755d472e534ca3e277e8f7e3ada49e",
+  "parent": "ec1ff9f6728f5f857402b294c218be731c62af5f",
+  "subject": "setutils: cover _ComplementSet __ge__'s double-complement branch, drop duplicated NotImplemented checks (#446)",
+  "date": "2026-08-07 15:06:31 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "_ComplementSet.__le__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "other"
+    ],
+    "params_patch": [
+     "self",
+     "other"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "_ComplementSet.__lt__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "other"
+    ],
+    "params_patch": [
+     "self",
+     "other"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/setutils.py::_ComplementSet.__le__",
+   "boltons/setutils.py::_ComplementSet.__lt__"
+  ],
+  "existing_key_changed": [
+   "boltons/setutils.py::_ComplementSet.__le__",
+   "boltons/setutils.py::_ComplementSet.__lt__",
+   "boltons/setutils.py::_norm_args_notimplemented",
+   "boltons/setutils.py::_norm_args_typeerror",
+   "boltons/setutils.py::complement"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.81
+ },
+ {
+  "repo": "boltons",
+  "commit": "ec1ff9f6728f5f857402b294c218be731c62af5f",
+  "parent": "b5c495bec206741ec25cd82ecc869e0b59bb0d10",
+  "subject": "Fix issupserset typo in _ComplementSet comparisons (#438)",
+  "date": "2026-08-07 14:20:20 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "_ComplementSet.__le__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "other"
+    ],
+    "params_patch": [
+     "self",
+     "other"
+    ]
+   },
+   {
+    "path": "boltons/setutils.py",
+    "qualname": "_ComplementSet.__ge__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "other"
+    ],
+    "params_patch": [
+     "self",
+     "other"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/setutils.py::_ComplementSet.__ge__",
+   "boltons/setutils.py::_ComplementSet.__le__"
+  ],
+  "existing_key_changed": [
+   "boltons/setutils.py::_ComplementSet.__ge__",
+   "boltons/setutils.py::_ComplementSet.__le__",
+   "boltons/setutils.py::_norm_args_notimplemented",
+   "boltons/setutils.py::_norm_args_typeerror",
+   "boltons/setutils.py::complement"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.4
+ },
+ {
+  "repo": "boltons",
+  "commit": "b5c495bec206741ec25cd82ecc869e0b59bb0d10",
+  "parent": "78e8638e695d78ccc2dc641ef87e38fa51185840",
+  "subject": "funcutils: forward target-keyword-only args as keywords in wraps invocations (#445)",
+  "date": "2026-08-07 14:10:06 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/funcutils.py",
+    "qualname": "update_wrapper",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "wrapper",
+     "func",
+     "injected",
+     "expected",
+     "build_from"
+    ],
+    "params_patch": [
+     "wrapper",
+     "func",
+     "injected",
+     "expected",
+     "build_from"
+    ]
+   },
+   {
+    "path": "boltons/funcutils.py",
+    "qualname": "FunctionBuilder.get_invocation_str",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self",
+     "target"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/funcutils.py::FunctionBuilder.get_invocation_str",
+   "boltons/funcutils.py::update_wrapper"
+  ],
+  "existing_key_changed": [
+   "boltons/funcutils.py::FunctionBuilder.get_invocation_str",
+   "boltons/funcutils.py::update_wrapper",
+   "boltons/funcutils.py::wraps"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.04
+ },
+ {
+  "repo": "boltons",
+  "commit": "c1c25da365cf14878cf5317147e7a09b5d124df5",
+  "parent": "e66cade323f5c11cebb4bd0f099e634b245adccd",
+  "subject": "Fix off-by-one in Bits length check",
+  "date": "2026-08-06 13:35:47 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/mathutils.py",
+    "qualname": "Bits.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "val",
+     "len_"
+    ],
+    "params_patch": [
+     "self",
+     "val",
+     "len_"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/mathutils.py::Bits.__init__"
+  ],
+  "existing_key_changed": [
+   "boltons/mathutils.py::Bits.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.3
+ },
+ {
+  "repo": "boltons",
+  "commit": "3e9983db7b59578add73c01cd31fa7ecd8da2e04",
+  "parent": "f1034b07ddf71f4d9285134a47a4ade16fe40789",
+  "subject": "iterutils: unify xfrange with frange's count-based semantics",
+  "date": "2026-08-06 12:12:09 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/iterutils.py",
+    "qualname": "xfrange",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "stop",
+     "start",
+     "step"
+    ],
+    "params_patch": [
+     "stop",
+     "start",
+     "step"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/iterutils.py::xfrange"
+  ],
+  "existing_key_changed": [
+   "boltons/iterutils.py::xfrange"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.27
+ },
+ {
+  "repo": "boltons",
+  "commit": "f1034b07ddf71f4d9285134a47a4ade16fe40789",
+  "parent": "435774ef8b10c1355bf77483a837945034011754",
+  "subject": "jsonutils: fix JSONLIterator nontermination at EOF and negative rel_seek",
+  "date": "2026-08-06 12:12:08 -0700",
+  "pkg": "boltons",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "boltons/jsonutils.py",
+    "qualname": "JSONLIterator.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "file_obj",
+     "ignore_errors",
+     "reverse",
+     "rel_seek"
+    ],
+    "params_patch": [
+     "self",
+     "file_obj",
+     "ignore_errors",
+     "reverse",
+     "rel_seek"
+    ]
+   },
+   {
+    "path": "boltons/jsonutils.py",
+    "qualname": "JSONLIterator._align_to_newline",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "boltons/jsonutils.py::JSONLIterator.__init__",
+   "boltons/jsonutils.py::JSONLIterator._align_to_newline"
+  ],
+  "existing_key_changed": [
+   "boltons/jsonutils.py::JSONLIterator.__init__",
+   "boltons/jsonutils.py::JSONLIterator._align_to_newline"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.65
+ },
+ {
+  "repo": "dateutil",
+  "commit": "f2293200747fb03d56c6c5997bfebeabe703576f",
+  "parent": "b04edc08aa3559063b3b097f437941d8c4b84aba",
+  "subject": "avoid deprecated utcfromtimestamp",
+  "date": "2023-06-02 14:06:41 +0100",
+  "pkg": "src/dateutil",
+  "pyroot": "src",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [
+   "src/dateutil/tz/tz.py::_datetime_to_timestamp"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.97
+ },
+ {
+  "repo": "dateutil",
+  "commit": "95e20ce2afaf9f744b0ccb990b32565d19eef349",
+  "parent": "8ecdd44c0f090fb5fd64c90e13044b047597b1ea",
+  "subject": "Remove trailing whitespace",
+  "date": "2022-12-03 14:16:15 -0500",
+  "pkg": "src/dateutil",
+  "pyroot": "src",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 0.92
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7c5c98959bd0e9eea3c55fdf78bef3ae5b8c995e",
+  "parent": "94e4cf3a837efd5585d8a7d590275e8b61212b51",
+  "subject": "docs: YYYYMM is not supported (#1179)",
+  "date": "2022-04-18 11:58:14 +0200",
+  "pkg": "src/dateutil",
+  "pyroot": "src",
+  "changes": [
+   {
+    "path": "src/dateutil/parser/isoparser.py",
+    "qualname": "isoparser.isoparse",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "dt_str"
+    ],
+    "params_patch": [
+     "self",
+     "dt_str"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "src/dateutil/parser/isoparser.py::isoparser.isoparse"
+  ],
+  "existing_key_changed": [
+   "src/dateutil/parser/isoparser.py::isoparser.isoparse"
+  ],
+  "missed_by_existing": [],
+  "secs": 0.82
+ },
+ {
+  "repo": "dateutil",
+  "commit": "da9ecd07a257cb5d1c7bfa08459b1ccfcabe6d23",
+  "parent": "b21555f3b6afd2a0c660293b21e19b32f1d4f50e",
+  "subject": "Move to src layout",
+  "date": "2021-07-16 17:08:09 +0200",
+  "pkg": "src/dateutil",
+  "pyroot": "src",
+  "changes": [],
+  "existing_modified_or_added": [
+   "src/dateutil/__init__.py::__dir__",
+   "src/dateutil/__init__.py::__getattr__",
+   "src/dateutil/_common.py::weekday.__call__",
+   "src/dateutil/_common.py::weekday.__eq__",
+   "src/dateutil/_common.py::weekday.__hash__",
+   "src/dateutil/_common.py::weekday.__init__",
+   "src/dateutil/_common.py::weekday.__ne__",
+   "src/dateutil/_common.py::weekday.__repr__",
+   "src/dateutil/easter.py::easter",
+   "src/dateutil/parser/__init__.py::__deprecate_private_class",
+   "src/dateutil/parser/__init__.py::__deprecate_private_class.<locals>.private_class.__init__",
+   "src/dateutil/parser/__init__.py::__deprecated_private_func",
+   "src/dateutil/parser/__init__.py::__deprecated_private_func.<locals>.deprecated_func",
+   "src/dateutil/parser/_parser.py::ParserError.__repr__",
+   "src/dateutil/parser/_parser.py::ParserError.__str__",
+   "src/dateutil/parser/_parser.py::_parsetz",
+   "src/dateutil/parser/_parser.py::_resultbase.__init__",
+   "src/dateutil/parser/_parser.py::_resultbase.__len__",
+   "src/dateutil/parser/_parser.py::_resultbase.__repr__",
+   "src/dateutil/parser/_parser.py::_resultbase._repr",
+   "src/dateutil/parser/_parser.py::_timelex.__init__",
+   "src/dateutil/parser/_parser.py::_timelex.__iter__",
+   "src/dateutil/parser/_parser.py::_timelex.__next__",
+   "src/dateutil/parser/_parser.py::_timelex.get_token",
+   "src/dateutil/parser/_parser.py::_timelex.isnum",
+   "src/dateutil/parser/_parser.py::_timelex.isspace",
+   "src/dateutil/parser/_parser.py::_timelex.isword",
+   "src/dateutil/parser/_parser.py::_timelex.next",
+   "src/dateutil/parser/_parser.py::_timelex.split",
+   "src/dateutil/parser/_parser.py::_tzparser._result.__init__",
+   "src/dateutil/parser/_parser.py::_tzparser._result.__repr__",
+   "src/dateutil/parser/_parser.py::_tzparser.parse",
+   "src/dateutil/parser/_parser.py::_ymd.__init__",
+   "src/dateutil/parser/_parser.py::_ymd._resolve_from_stridxs",
+   "src/dateutil/parser/_parser.py::_ymd.append",
+   "src/dateutil/parser/_parser.py::_ymd.could_be_day",
+   "src/dateutil/parser/_parser.py::_ymd.has_day",
+   "src/dateutil/parser/_parser.py::_ymd.has_month",
+   "src/dateutil/parser/_parser.py::_ymd.has_year",
+   "src/dateutil/parser/_parser.py::_ymd.resolve_ymd",
+   "src/dateutil/parser/_parser.py::parse",
+   "src/dateutil/parser/_parser.py::parser.__init__",
+   "src/dateutil/parser/_parser.py::parser._adjust_ampm",
+   "src/dateutil/parser/_parser.py::parser._ampm_valid",
+   "src/dateutil/parser/_parser.py::parser._assign_hms",
+   "src/dateutil/parser/_parser.py::parser._assign_tzname",
+   "src/dateutil/parser/_parser.py::parser._build_naive",
+   "src/dateutil/parser/_parser.py::parser._build_tzaware",
+   "src/dateutil/parser/_parser.py::parser._build_tzinfo",
+   "src/dateutil/parser/_parser.py::parser._could_be_tzname",
+   "src/dateutil/parser/_parser.py::parser._find_hms_idx",
+   "src/dateutil/parser/_parser.py::parser._parse",
+   "src/dateutil/parser/_parser.py::parser._parse_hms",
+   "src/dateutil/parser/_parser.py::parser._parse_min_sec",
+   "src/dateutil/parser/_parser.py::parser._parse_numeric_token",
+   "src/dateutil/parser/_parser.py::parser._parsems",
+   "src/dateutil/parser/_parser.py::parser._recombine_skipped",
+   "src/dateutil/parser/_parser.py::parser._to_decimal",
+   "src/dateutil/parser/_parser.py::parser.parse",
+   "src/dateutil/parser/_parser.py::parserinfo.__init__",
+   "src/dateutil/parser/_parser.py::parserinfo._convert",
+   "src/dateutil/parser/_parser.py::parserinfo.ampm",
+   "src/dateutil/parser/_parser.py::parserinfo.convertyear",
+   "src/dateutil/parser/_parser.py::parserinfo.hms",
+   "src/dateutil/parser/_parser.py::parserinfo.jump",
+   "src/dateutil/parser/_parser.py::parserinfo.month",
+   "src/dateutil/parser/_parser.py::parserinfo.pertain",
+   "src/dateutil/parser/_parser.py::parserinfo.tzoffset",
+   "src/dateutil/parser/_parser.py::parserinfo.utczone",
+   "src/dateutil/parser/_parser.py::parserinfo.validate",
+   "src/dateutil/parser/_parser.py::parserinfo.weekday",
+   "src/dateutil/parser/isoparser.py::_takes_ascii",
+   "src/dateutil/parser/isoparser.py::_takes_ascii.<locals>.func",
+   "src/dateutil/parser/isoparser.py::_takes_ascii.<locals>.func.<locals>.<lambda>#1",
+   "src/dateutil/parser/isoparser.py::isoparser.__init__",
+   "src/dateutil/parser/isoparser.py::isoparser._calculate_weekdate",
+   "src/dateutil/parser/isoparser.py::isoparser._parse_isodate",
+   "src/dateutil/parser/isoparser.py::isoparser._parse_isodate_common",
+   "src/dateutil/parser/isoparser.py::isoparser._parse_isodate_uncommon",
+   "src/dateutil/parser/isoparser.py::isoparser._parse_isotime",
+   "src/dateutil/parser/isoparser.py::isoparser._parse_tzstr",
+   "src/dateutil/parser/isoparser.py::isoparser.isoparse",
+   "src/dateutil/parser/isoparser.py::isoparser.parse_isodate",
+   "src/dateutil/parser/isoparser.py::isoparser.parse_isotime",
+   "src/dateutil/parser/isoparser.py::isoparser.parse_tzstr",
+   "src/dateutil/relativedelta.py::_sign",
+   "src/dateutil/relativedelta.py::relativedelta.__abs__",
+   "src/dateutil/relativedelta.py::relativedelta.__add__",
+   "src/dateutil/relativedelta.py::relativedelta.__bool__",
+   "src/dateutil/relativedelta.py::relativedelta.__div__",
+   "src/dateutil/relativedelta.py::relativedelta.__eq__",
+   "src/dateutil/relativedelta.py::relativedelta.__hash__",
+   "src/dateutil/relativedelta.py::relativedelta.__init__",
+   "src/dateutil/relativedelta.py::relativedelta.__mul__",
+   "src/dateutil/relativedelta.py::relativedelta.__ne__",
+   "src/dateutil/relativedelta.py::relativedelta.__neg__",
+   "src/dateutil/relativedelta.py::relativedelta.__radd__",
+   "src/dateutil/relativedelta.py::relativedelta.__repr__",
+   "src/dateutil/relativedelta.py::relativedelta.__rsub__",
+   "src/dateutil/relativedelta.py::relativedelta.__sub__",
+   "src/dateutil/relativedelta.py::relativedelta._fix",
+   "src/dateutil/relativedelta.py::relativedelta._set_months",
+   "src/dateutil/relativedelta.py::relativedelta.normalized",
+   "src/dateutil/relativedelta.py::relativedelta.weeks",
+   "src/dateutil/relativedelta.py::relativedelta.weeks#2",
+   "src/dateutil/rrule.py::_invalidates_cache",
+   "src/dateutil/rrule.py::_invalidates_cache.<locals>.inner_func",
+   "src/dateutil/rrule.py::_iterinfo.__init__",
+   "src/dateutil/rrule.py::_iterinfo.ddayset",
+   "src/dateutil/rrule.py::_iterinfo.htimeset",
+   "src/dateutil/rrule.py::_iterinfo.mdayset",
+   "src/dateutil/rrule.py::_iterinfo.mtimeset",
+   "src/dateutil/rrule.py::_iterinfo.rebuild",
+   "src/dateutil/rrule.py::_iterinfo.stimeset",
+   "src/dateutil/rrule.py::_iterinfo.wdayset",
+   "src/dateutil/rrule.py::_iterinfo.ydayset",
+   "src/dateutil/rrule.py::_rrulestr.__call__",
+   "src/dateutil/rrule.py::_rrulestr._handle_BYWEEKDAY",
+   "src/dateutil/rrule.py::_rrulestr._handle_FREQ",
+   "src/dateutil/rrule.py::_rrulestr._handle_UNTIL",
+   "src/dateutil/rrule.py::_rrulestr._handle_WKST",
+   "src/dateutil/rrule.py::_rrulestr._handle_int",
+   "src/dateutil/rrule.py::_rrulestr._handle_int_list",
+   "src/dateutil/rrule.py::_rrulestr._parse_date_value",
+   "src/dateutil/rrule.py::_rrulestr._parse_rfc",
+   "src/dateutil/rrule.py::_rrulestr._parse_rfc.<locals>.<lambda>#1",
+   "src/dateutil/rrule.py::_rrulestr._parse_rfc_rrule",
+   "src/dateutil/rrule.py::rrule.__construct_byset",
+   "src/dateutil/rrule.py::rrule.__init__",
+   "src/dateutil/rrule.py::rrule.__mod_distance",
+   "src/dateutil/rrule.py::rrule.__str__",
+   "src/dateutil/rrule.py::rrule._iter",
+   "src/dateutil/rrule.py::rrule.replace",
+   "src/dateutil/rrule.py::rrulebase.__contains__",
+   "src/dateutil/rrule.py::rrulebase.__getitem__",
+   "src/dateutil/rrule.py::rrulebase.__init__",
+   "src/dateutil/rrule.py::rrulebase.__iter__",
+   "src/dateutil/rrule.py::rrulebase._invalidate_cache",
+   "src/dateutil/rrule.py::rrulebase._iter_cached",
+   "src/dateutil/rrule.py::rrulebase.after",
+   "src/dateutil/rrule.py::rrulebase.before",
+   "src/dateutil/rrule.py::rrulebase.between",
+   "src/dateutil/rrule.py::rrulebase.count",
+   "src/dateutil/rrule.py::rrulebase.xafter",
+   "src/dateutil/rrule.py::rrulebase.xafter.<locals>.<lambda>#1",
+   "src/dateutil/rrule.py::rrulebase.xafter.<locals>.<lambda>#2",
+   "src/dateutil/rrule.py::rruleset.__init__",
+   "src/dateutil/rrule.py::rruleset._genitem.__eq__",
+   "src/dateutil/rrule.py::rruleset._genitem.__gt__",
+   "src/dateutil/rrule.py::rruleset._genitem.__init__",
+   "src/dateutil/rrule.py::rruleset._genitem.__lt__",
+   "src/dateutil/rrule.py::rruleset._genitem.__ne__",
+   "src/dateutil/rrule.py::rruleset._genitem.__next__",
+   "src/dateutil/rrule.py::rruleset._iter",
+   "src/dateutil/rrule.py::rruleset.exdate",
+   "src/dateutil/rrule.py::rruleset.exrule",
+   "src/dateutil/rrule.py::rruleset.rdate",
+   "src/dateutil/rrule.py::rruleset.rrule",
+   "src/dateutil/rrule.py::weekday.__init__",
+   "src/dateutil/tz/_common.py::_DatetimeWithFold.fold",
+   "src/dateutil/tz/_common.py::_DatetimeWithFold.replace",
+   "src/dateutil/tz/_common.py::_tzinfo._fold",
+   "src/dateutil/tz/_common.py::_tzinfo._fold_status",
+   "src/dateutil/tz/_common.py::_tzinfo._fromutc",
+   "src/dateutil/tz/_common.py::_tzinfo.fromutc",
+   "src/dateutil/tz/_common.py::_tzinfo.is_ambiguous",
+   "src/dateutil/tz/_common.py::_validate_fromutc_inputs",
+   "src/dateutil/tz/_common.py::_validate_fromutc_inputs.<locals>.fromutc",
+   "src/dateutil/tz/_common.py::enfold",
+   "src/dateutil/tz/_common.py::enfold#2",
+   "src/dateutil/tz/_common.py::tzname_in_python2",
+   "src/dateutil/tz/_common.py::tzname_in_python2.<locals>.adjust_encoding",
+   "src/dateutil/tz/_common.py::tzrangebase.__init__",
+   "src/dateutil/tz/_common.py::tzrangebase.__ne__",
+   "src/dateutil/tz/_common.py::tzrangebase.__repr__",
+   "src/dateutil/tz/_common.py::tzrangebase._dst_base_offset",
+   "src/dateutil/tz/_common.py::tzrangebase._isdst",
+   "src/dateutil/tz/_common.py::tzrangebase._naive_isdst",
+   "src/dateutil/tz/_common.py::tzrangebase.dst",
+   "src/dateutil/tz/_common.py::tzrangebase.fromutc",
+   "src/dateutil/tz/_common.py::tzrangebase.is_ambiguous",
+   "src/dateutil/tz/_common.py::tzrangebase.tzname",
+   "src/dateutil/tz/_common.py::tzrangebase.utcoffset",
+   "src/dateutil/tz/_factories.py::_TzFactory.instance",
+   "src/dateutil/tz/_factories.py::_TzOffsetFactory.__call__",
+   "src/dateutil/tz/_factories.py::_TzOffsetFactory.__init__",
+   "src/dateutil/tz/_factories.py::_TzSingleton.__call__",
+   "src/dateutil/tz/_factories.py::_TzSingleton.__init__",
+   "src/dateutil/tz/_factories.py::_TzStrFactory.__call__",
+   "src/dateutil/tz/_factories.py::_TzStrFactory.__init__",
+   "src/dateutil/tz/tz.py::__get_gettz",
+   "src/dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.__call__",
+   "src/dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.__init__",
+   "src/dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.cache_clear",
+   "src/dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache",
+   "src/dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.set_cache_size",
+   "src/dateutil/tz/tz.py::_datetime_to_timestamp",
+   "src/dateutil/tz/tz.py::_get_supported_offset",
+   "src/dateutil/tz/tz.py::_get_supported_offset#2",
+   "src/dateutil/tz/tz.py::_nullcontext.__enter__",
+   "src/dateutil/tz/tz.py::_nullcontext.__exit__",
+   "src/dateutil/tz/tz.py::_nullcontext.__init__",
+   "src/dateutil/tz/tz.py::_ttinfo.__eq__",
+   "src/dateutil/tz/tz.py::_ttinfo.__getstate__",
+   "src/dateutil/tz/tz.py::_ttinfo.__init__",
+   "src/dateutil/tz/tz.py::_ttinfo.__ne__",
+   "src/dateutil/tz/tz.py::_ttinfo.__repr__",
+   "src/dateutil/tz/tz.py::_ttinfo.__setstate__",
+   "src/dateutil/tz/tz.py::_tzfile.__init__",
+   "src/dateutil/tz/tz.py::_tzicalvtz.__init__",
+   "src/dateutil/tz/tz.py::_tzicalvtz.__repr__",
+   "src/dateutil/tz/tz.py::_tzicalvtz._find_comp",
+   "src/dateutil/tz/tz.py::_tzicalvtz._find_compdt",
+   "src/dateutil/tz/tz.py::_tzicalvtz.dst",
+   "src/dateutil/tz/tz.py::_tzicalvtz.tzname",
+   "src/dateutil/tz/tz.py::_tzicalvtz.utcoffset",
+   "src/dateutil/tz/tz.py::_tzicalvtzcomp.__init__",
+   "src/dateutil/tz/tz.py::datetime_ambiguous",
+   "src/dateutil/tz/tz.py::datetime_exists",
+   "src/dateutil/tz/tz.py::resolve_imaginary",
+   "src/dateutil/tz/tz.py::tzfile.__eq__",
+   "src/dateutil/tz/tz.py::tzfile.__init__",
+   "src/dateutil/tz/tz.py::tzfile.__ne__",
+   "src/dateutil/tz/tz.py::tzfile.__reduce__",
+   "src/dateutil/tz/tz.py::tzfile.__reduce_ex__",
+   "src/dateutil/tz/tz.py::tzfile.__repr__",
+   "src/dateutil/tz/tz.py::tzfile._find_last_transition",
+   "src/dateutil/tz/tz.py::tzfile._find_ttinfo",
+   "src/dateutil/tz/tz.py::tzfile._get_ttinfo",
+   "src/dateutil/tz/tz.py::tzfile._read_tzfile",
+   "src/dateutil/tz/tz.py::tzfile._resolve_ambiguous_time",
+   "src/dateutil/tz/tz.py::tzfile._set_tzdata",
+   "src/dateutil/tz/tz.py::tzfile.dst",
+   "src/dateutil/tz/tz.py::tzfile.fromutc",
+   "src/dateutil/tz/tz.py::tzfile.is_ambiguous",
+   "src/dateutil/tz/tz.py::tzfile.tzname",
+   "src/dateutil/tz/tz.py::tzfile.utcoffset",
+   "src/dateutil/tz/tz.py::tzical.__init__",
+   "src/dateutil/tz/tz.py::tzical.__repr__",
+   "src/dateutil/tz/tz.py::tzical._parse_offset",
+   "src/dateutil/tz/tz.py::tzical._parse_rfc",
+   "src/dateutil/tz/tz.py::tzical.get",
+   "src/dateutil/tz/tz.py::tzical.keys",
+   "src/dateutil/tz/tz.py::tzlocal.__eq__",
+   "src/dateutil/tz/tz.py::tzlocal.__init__",
+   "src/dateutil/tz/tz.py::tzlocal.__ne__",
+   "src/dateutil/tz/tz.py::tzlocal.__repr__",
+   "src/dateutil/tz/tz.py::tzlocal._isdst",
+   "src/dateutil/tz/tz.py::tzlocal._naive_is_dst",
+   "src/dateutil/tz/tz.py::tzlocal.dst",
+   "src/dateutil/tz/tz.py::tzlocal.is_ambiguous",
+   "src/dateutil/tz/tz.py::tzlocal.tzname",
+   "src/dateutil/tz/tz.py::tzlocal.utcoffset",
+   "src/dateutil/tz/tz.py::tzoffset.__eq__",
+   "src/dateutil/tz/tz.py::tzoffset.__init__",
+   "src/dateutil/tz/tz.py::tzoffset.__ne__",
+   "src/dateutil/tz/tz.py::tzoffset.__repr__",
+   "src/dateutil/tz/tz.py::tzoffset.dst",
+   "src/dateutil/tz/tz.py::tzoffset.fromutc",
+   "src/dateutil/tz/tz.py::tzoffset.is_ambiguous",
+   "src/dateutil/tz/tz.py::tzoffset.tzname",
+   "src/dateutil/tz/tz.py::tzoffset.utcoffset",
+   "src/dateutil/tz/tz.py::tzrange.__eq__",
+   "src/dateutil/tz/tz.py::tzrange.__init__",
+   "src/dateutil/tz/tz.py::tzrange._dst_base_offset",
+   "src/dateutil/tz/tz.py::tzrange.transitions",
+   "src/dateutil/tz/tz.py::tzstr.__init__",
+   "src/dateutil/tz/tz.py::tzstr.__repr__",
+   "src/dateutil/tz/tz.py::tzstr._delta",
+   "src/dateutil/tz/tz.py::tzutc.__eq__",
+   "src/dateutil/tz/tz.py::tzutc.__ne__",
+   "src/dateutil/tz/tz.py::tzutc.__repr__",
+   "src/dateutil/tz/tz.py::tzutc.dst",
+   "src/dateutil/tz/tz.py::tzutc.fromutc",
+   "src/dateutil/tz/tz.py::tzutc.is_ambiguous",
+   "src/dateutil/tz/tz.py::tzutc.tzname",
+   "src/dateutil/tz/tz.py::tzutc.utcoffset",
+   "src/dateutil/tz/win.py::_settzkeyname",
+   "src/dateutil/tz/win.py::picknthweekday",
+   "src/dateutil/tz/win.py::tzres.__init__",
+   "src/dateutil/tz/win.py::tzres.load_name",
+   "src/dateutil/tz/win.py::tzres.name_from_string",
+   "src/dateutil/tz/win.py::tzwin.__init__",
+   "src/dateutil/tz/win.py::tzwin.__reduce__",
+   "src/dateutil/tz/win.py::tzwin.__repr__",
+   "src/dateutil/tz/win.py::tzwinbase.__eq__",
+   "src/dateutil/tz/win.py::tzwinbase.__init__",
+   "src/dateutil/tz/win.py::tzwinbase._dst_base_offset",
+   "src/dateutil/tz/win.py::tzwinbase._get_hasdst",
+   "src/dateutil/tz/win.py::tzwinbase.display",
+   "src/dateutil/tz/win.py::tzwinbase.list",
+   "src/dateutil/tz/win.py::tzwinbase.transitions",
+   "src/dateutil/tz/win.py::tzwinlocal.__init__",
+   "src/dateutil/tz/win.py::tzwinlocal.__reduce__",
+   "src/dateutil/tz/win.py::tzwinlocal.__repr__",
+   "src/dateutil/tz/win.py::tzwinlocal.__str__",
+   "src/dateutil/tz/win.py::valuestodict",
+   "src/dateutil/utils.py::default_tzinfo",
+   "src/dateutil/utils.py::today",
+   "src/dateutil/utils.py::within_delta",
+   "src/dateutil/zoneinfo/__init__.py::ZoneInfoFile.__init__",
+   "src/dateutil/zoneinfo/__init__.py::ZoneInfoFile.get",
+   "src/dateutil/zoneinfo/__init__.py::get_zonefile_instance",
+   "src/dateutil/zoneinfo/__init__.py::gettz",
+   "src/dateutil/zoneinfo/__init__.py::gettz_db_metadata",
+   "src/dateutil/zoneinfo/__init__.py::getzoneinfofile_stream",
+   "src/dateutil/zoneinfo/__init__.py::tzfile.__reduce__",
+   "src/dateutil/zoneinfo/rebuild.py::_print_on_nosuchfile",
+   "src/dateutil/zoneinfo/rebuild.py::_run_zic",
+   "src/dateutil/zoneinfo/rebuild.py::rebuild"
+  ],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 0.56
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7d2e7f639dc6075b2db45981ceefb748e452d441",
+  "parent": "b3180d3aab2925e41c8cc5bfd84c640dcad6003c",
+  "subject": "Fix typo discovered by codespell",
+  "date": "2021-07-16 12:24:45 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/rrule.py",
+    "qualname": "rrulebase.count",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/rrule.py::rrulebase.count"
+  ],
+  "existing_key_changed": [
+   "dateutil/rrule.py::rrulebase.count"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.64
+ },
+ {
+  "repo": "dateutil",
+  "commit": "e78c3c76d2f0aaf6180c786605857a6ebc0cd3f3",
+  "parent": "6b035517571e63b6a63a493740c5506ec1e5da44",
+  "subject": "Lazy-load submodules in Python 3.7+",
+  "date": "2021-07-16 11:10:33 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/__init__.py",
+    "qualname": "__getattr__",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "name"
+    ]
+   },
+   {
+    "path": "dateutil/__init__.py",
+    "qualname": "__dir__",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/__init__.py::__dir__",
+   "dateutil/__init__.py::__getattr__"
+  ],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 0.98
+ },
+ {
+  "repo": "dateutil",
+  "commit": "5cf3e3cbfa1ba6a03830b4c26700dd0ad1e0399c",
+  "parent": "66db2fa96de509ffe23b4b4507c6473356c6d90e",
+  "subject": "Decode input str when reporting an error in `parse_isodate`",
+  "date": "2021-05-20 16:35:22 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/isoparser.py",
+    "qualname": "isoparser.parse_isodate",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "datestr"
+    ],
+    "params_patch": [
+     "self",
+     "datestr"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/isoparser.py::isoparser.parse_isodate"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/isoparser.py::isoparser.parse_isodate"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.68
+ },
+ {
+  "repo": "dateutil",
+  "commit": "1376b59952721fe22d5e3ab05f184b6fd14693ea",
+  "parent": "9ff03f2d89c2b2e825d6aacbad22d63da7b87cef",
+  "subject": "Use already existing `str_len` in isoparse",
+  "date": "2021-05-20 08:06:03 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/isoparser.py",
+    "qualname": "isoparser._parse_isotime",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "timestr"
+    ],
+    "params_patch": [
+     "self",
+     "timestr"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/isoparser.py::isoparser._parse_isotime"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/isoparser.py::isoparser._parse_isotime"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.1
+ },
+ {
+  "repo": "dateutil",
+  "commit": "1426acd8d3e81f02cd0f2db0a5b197d7f7239934",
+  "parent": "43b7838af5d801575e26516e34355eb1ca57beec",
+  "subject": "Simplify parser._timelex handling of bytes and bytearray",
+  "date": "2021-05-20 07:59:23 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "_timelex.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "instream"
+    ],
+    "params_patch": [
+     "self",
+     "instream"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/_parser.py::_timelex.__init__"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/_parser.py::_timelex.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 4.24
+ },
+ {
+  "repo": "dateutil",
+  "commit": "34906dcd4112197c8f6386f799c10b8a34cb248f",
+  "parent": "9edac50ef325156e06356304087feeb20e4b7d4a",
+  "subject": "isoparse: Fail with inconsistent time separators",
+  "date": "2021-05-19 21:00:32 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/isoparser.py",
+    "qualname": "isoparser._parse_isotime",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "timestr"
+    ],
+    "params_patch": [
+     "self",
+     "timestr"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/isoparser.py::isoparser._parse_isotime"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/isoparser.py::isoparser._parse_isotime"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.9
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7e1ffa23216704cf25520e736c19438c78442c00",
+  "parent": "a010ad776f356dff8845a3d6a333d70e5a1bd867",
+  "subject": "Use fat zic binaries in zoneinfo.rebuild",
+  "date": "2020-08-28 15:29:28 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/zoneinfo/rebuild.py",
+    "qualname": "rebuild",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "filename",
+     "tag",
+     "format",
+     "zonegroups",
+     "metadata"
+    ],
+    "params_patch": [
+     "filename",
+     "tag",
+     "format",
+     "zonegroups",
+     "metadata"
+    ]
+   },
+   {
+    "path": "dateutil/zoneinfo/rebuild.py",
+    "qualname": "_run_zic",
+    "status": "added",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": null,
+    "params_patch": [
+     "zonedir",
+     "filepaths"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/zoneinfo/rebuild.py::_run_zic",
+   "dateutil/zoneinfo/rebuild.py::rebuild"
+  ],
+  "existing_key_changed": [
+   "dateutil/zoneinfo/rebuild.py::rebuild"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.4
+ },
+ {
+  "repo": "dateutil",
+  "commit": "1fb2ea995e8db43f7f75ea9950099f15e20de6b3",
+  "parent": "bd69e8e964b6572184ab6bf49b651fba617eae4f",
+  "subject": "Added property test for tz.gettz()",
+  "date": "2020-04-24 13:32:16 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/tz.py",
+    "qualname": "__get_gettz",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.57
+ },
+ {
+  "repo": "dateutil",
+  "commit": "bd69e8e964b6572184ab6bf49b651fba617eae4f",
+  "parent": "4a50ff7c8ead9cb4c02080d9f8f302e2ea7b34bd",
+  "subject": "Fix tz.gettz() behavior with empty string",
+  "date": "2020-04-24 13:32:16 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/tz.py",
+    "qualname": "__get_gettz",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "missed_by_existing": [],
+  "secs": 14.98
+ },
+ {
+  "repo": "dateutil",
+  "commit": "ab9e61021d6d32cf422197e48e131d857083b1f0",
+  "parent": "a02e8c036fb3718b1d8f641ec2ed637d4c765bc5",
+  "subject": "Fix simple typo: negilible -> negligible",
+  "date": "2020-04-24 09:55:10 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/utils.py",
+    "qualname": "within_delta",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "dt1",
+     "dt2",
+     "delta"
+    ],
+    "params_patch": [
+     "dt1",
+     "dt2",
+     "delta"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/utils.py::within_delta"
+  ],
+  "existing_key_changed": [
+   "dateutil/utils.py::within_delta"
+  ],
+  "missed_by_existing": [],
+  "secs": 12.5
+ },
+ {
+  "repo": "dateutil",
+  "commit": "7a3f5c47d8037658edebeeadace13788562a815d",
+  "parent": "829a70301ca8d626e96a2df6e40050d4c5f1b2ea",
+  "subject": "Wrap _invalidates_cache decorator to preserve docstring",
+  "date": "2020-04-05 13:52:34 +0200",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/rrule.py",
+    "qualname": "_invalidates_cache",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "f"
+    ],
+    "params_patch": [
+     "f"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/rrule.py::_invalidates_cache",
+   "dateutil/rrule.py::_invalidates_cache.<locals>.inner_func"
+  ],
+  "existing_key_changed": [
+   "dateutil/rrule.py::_invalidates_cache",
+   "dateutil/rrule.py::_invalidates_cache.<locals>.inner_func"
+  ],
+  "missed_by_existing": [],
+  "secs": 30.18
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d6820442551834085a385729050e3c53143cef2a",
+  "parent": "40c41c0fb34b28dc271ad6110a381222a17ce1f2",
+  "subject": "Fix numbered list formatting",
+  "date": "2020-04-04 16:55:05 +0300",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/easter.py",
+    "qualname": "easter",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "year",
+     "method"
+    ],
+    "params_patch": [
+     "year",
+     "method"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/easter.py::easter"
+  ],
+  "existing_key_changed": [
+   "dateutil/easter.py::easter"
+  ],
+  "missed_by_existing": [],
+  "secs": 6.03
+ },
+ {
+  "repo": "dateutil",
+  "commit": "40c41c0fb34b28dc271ad6110a381222a17ce1f2",
+  "parent": "17456dd266958779eb10b3bfadd55f10868e4b24",
+  "subject": "Fix Easter typos",
+  "date": "2020-04-04 16:52:44 +0300",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/easter.py",
+    "qualname": "easter",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "year",
+     "method"
+    ],
+    "params_patch": [
+     "year",
+     "method"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/easter.py::easter"
+  ],
+  "existing_key_changed": [
+   "dateutil/easter.py::easter"
+  ],
+  "missed_by_existing": [],
+  "secs": 7.39
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6d89db3e530945362c1bc96e7530be3b359276f0",
+  "parent": "5197a8854b86945dd899cdbab86dd7e70f96aee9",
+  "subject": "Improve documentation for parser errors/warnings",
+  "date": "2020-01-02 14:49:54 -0500",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 11.9
+ },
+ {
+  "repo": "dateutil",
+  "commit": "579cd769f05a75855be37b32c13910cc04e3f86f",
+  "parent": "6edfecd6afb22fb2c7f0fd79259e40526fd20e2a",
+  "subject": "Document that parser.parse raises ParserError",
+  "date": "2020-01-02 14:49:54 -0500",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "parse",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "timestr",
+     "parserinfo"
+    ],
+    "params_patch": [
+     "timestr",
+     "parserinfo"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/_parser.py::parse"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/_parser.py::parse"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.06
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6edfecd6afb22fb2c7f0fd79259e40526fd20e2a",
+  "parent": "110a09b4ad46fb87ae858a14bfb5a6b92557b01d",
+  "subject": "Update documentation links",
+  "date": "2020-01-02 14:49:50 -0500",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.97
+ },
+ {
+  "repo": "dateutil",
+  "commit": "ea7f441b455cabbae2bf98f2d10fd11724001155",
+  "parent": "21fe6e9669191b413e59cd9abd22610191575c1f",
+  "subject": "Fix custom repr for ParserError",
+  "date": "2020-01-02 14:08:55 -0500",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "ParserError.__str__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self"
+    ],
+    "params_patch": [
+     "self"
+    ]
+   },
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "ParserError.__repr__",
+    "status": "added",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": null,
+    "params_patch": [
+     "self"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/_parser.py::ParserError.__repr__",
+   "dateutil/parser/_parser.py::ParserError.__str__"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/_parser.py::ParserError.__str__"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.97
+ },
+ {
+  "repo": "dateutil",
+  "commit": "79d2e486a34911ada6d81701f14dd3c4b9790afd",
+  "parent": "f6c6d5cb97ce460c9510846bf14e945b2b16ead0",
+  "subject": "Fix TypeError in parser wrapper logic",
+  "date": "2020-01-02 12:36:59 -0500",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "parser.parse",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "timestr",
+     "default",
+     "ignoretz",
+     "tzinfos"
+    ],
+    "params_patch": [
+     "self",
+     "timestr",
+     "default",
+     "ignoretz",
+     "tzinfos"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/_parser.py::parser.parse"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/_parser.py::parse",
+   "dateutil/parser/_parser.py::parser.parse"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.55
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6e92f2111589ab061b66bd332dcb4a33a58acb84",
+  "parent": "2e36ff7e48da1ee248881bbba361a5f2538cfa90",
+  "subject": "Lock around strong cache updates",
+  "date": "2019-11-02 21:33:04 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/_factories.py",
+    "qualname": "_TzOffsetFactory.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "cls"
+    ],
+    "params_patch": [
+     "cls"
+    ]
+   },
+   {
+    "path": "dateutil/tz/_factories.py",
+    "qualname": "_TzOffsetFactory.__call__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "cls",
+     "name",
+     "offset"
+    ],
+    "params_patch": [
+     "cls",
+     "name",
+     "offset"
+    ]
+   },
+   {
+    "path": "dateutil/tz/_factories.py",
+    "qualname": "_TzStrFactory.__init__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "cls"
+    ],
+    "params_patch": [
+     "cls"
+    ]
+   },
+   {
+    "path": "dateutil/tz/_factories.py",
+    "qualname": "_TzStrFactory.__call__",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "cls",
+     "s",
+     "posix_offset"
+    ],
+    "params_patch": [
+     "cls",
+     "s",
+     "posix_offset"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/_factories.py::_TzOffsetFactory.__call__",
+   "dateutil/tz/_factories.py::_TzOffsetFactory.__init__",
+   "dateutil/tz/_factories.py::_TzStrFactory.__call__",
+   "dateutil/tz/_factories.py::_TzStrFactory.__init__"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/_factories.py::_TzOffsetFactory.__call__",
+   "dateutil/tz/_factories.py::_TzOffsetFactory.__init__",
+   "dateutil/tz/_factories.py::_TzStrFactory.__call__",
+   "dateutil/tz/_factories.py::_TzStrFactory.__init__"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.98
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d8cc4ccc538f17806b96e3fb5e87b5428b52e1d5",
+  "parent": "27848c5e9605702fedf24cf3fcb0532980d18cba",
+  "subject": "Add helpful message when passed bytes to gettz",
+  "date": "2019-11-02 11:01:07 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/tz.py",
+    "qualname": "__get_gettz",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.69
+ },
+ {
+  "repo": "dateutil",
+  "commit": "980e5aa634b3192a1df9ccaee895a79544bdf16d",
+  "parent": "22b43cbb5a2422f6bc431bf4df2c58664ffd7e5a",
+  "subject": "Fix incorrect import in Python 3.7+",
+  "date": "2019-09-22 16:40:46 +0100",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 2.34
+ },
+ {
+  "repo": "dateutil",
+  "commit": "b7668eaf95bc1bddb02c6e377cfe21c65fccc4c6",
+  "parent": "c45497893ed4302287de809675fb68198d4f04ff",
+  "subject": "Fix typos in comments and documentation",
+  "date": "2019-08-27 10:56:09 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/_common.py",
+    "qualname": "_tzinfo._fromutc",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "dt"
+    ],
+    "params_patch": [
+     "self",
+     "dt"
+    ]
+   },
+   {
+    "path": "dateutil/tz/_common.py",
+    "qualname": "_tzinfo.fromutc",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "dt"
+    ],
+    "params_patch": [
+     "self",
+     "dt"
+    ]
+   },
+   {
+    "path": "dateutil/utils.py",
+    "qualname": "default_tzinfo",
+    "status": "modified",
+    "doc_only": true,
+    "kind": "function",
+    "params_base": [
+     "dt",
+     "tzinfo"
+    ],
+    "params_patch": [
+     "dt",
+     "tzinfo"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/_common.py::_tzinfo._fromutc",
+   "dateutil/tz/_common.py::_tzinfo.fromutc",
+   "dateutil/utils.py::default_tzinfo"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/_common.py::_tzinfo._fromutc",
+   "dateutil/tz/_common.py::_tzinfo.fromutc",
+   "dateutil/utils.py::default_tzinfo"
+  ],
+  "missed_by_existing": [],
+  "secs": 3.07
+ },
+ {
+  "repo": "dateutil",
+  "commit": "d77c0c74fd6e0e441b3e3d73b2408b980ffc4d4f",
+  "parent": "1570a9dc6b6b2658b01045ed8361eba1ee0b8987",
+  "subject": "Remove unnecessary tzutc() calls in tz",
+  "date": "2019-04-23 13:54:57 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/tz/tz.py",
+    "qualname": "__get_gettz",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [],
+    "params_patch": []
+   },
+   {
+    "path": "dateutil/tz/tz.py",
+    "qualname": "datetime_exists",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "function",
+    "params_base": [
+     "dt",
+     "tz"
+    ],
+    "params_patch": [
+     "dt",
+     "tz"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache",
+   "dateutil/tz/tz.py::datetime_exists"
+  ],
+  "existing_key_changed": [
+   "dateutil/tz/tz.py::__get_gettz",
+   "dateutil/tz/tz.py::__get_gettz.<locals>.GettzFunc.nocache",
+   "dateutil/tz/tz.py::datetime_exists",
+   "dateutil/tz/tz.py::resolve_imaginary"
+  ],
+  "missed_by_existing": [],
+  "secs": 1.58
+ },
+ {
+  "repo": "dateutil",
+  "commit": "a6ea0336780765fc054dfd7bfe31fe6497ee26e1",
+  "parent": "31fe64f3a6c9fa6916334363357dc40e97590ccb",
+  "subject": "Move UTC definition into dateutil.tz.tz",
+  "date": "2019-04-23 13:54:56 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [],
+  "existing_modified_or_added": [],
+  "existing_key_changed": [],
+  "missed_by_existing": [],
+  "secs": 1.64
+ },
+ {
+  "repo": "dateutil",
+  "commit": "6588716b69374dd1f516124c9f905ac1449b5eac",
+  "parent": "4d5ddce323e8dc763d2b7b5624859afc639ba9c6",
+  "subject": "Use tz.UTC in parser",
+  "date": "2019-04-23 13:54:56 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/_parser.py",
+    "qualname": "parser._build_tzaware",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "naive",
+     "res",
+     "tzinfos"
+    ],
+    "params_patch": [
+     "self",
+     "naive",
+     "res",
+     "tzinfos"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/_parser.py::parser._build_tzaware"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/_parser.py::parse",
+   "dateutil/parser/_parser.py::parser._build_tzaware"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.93
+ },
+ {
+  "repo": "dateutil",
+  "commit": "4d5ddce323e8dc763d2b7b5624859afc639ba9c6",
+  "parent": "c41187e7a8578ab8e866c9347446c682ed651dbe",
+  "subject": "Use tz.UTC in isoparser",
+  "date": "2019-04-23 13:54:56 -0400",
+  "pkg": "dateutil",
+  "pyroot": ".",
+  "changes": [
+   {
+    "path": "dateutil/parser/isoparser.py",
+    "qualname": "isoparser._parse_tzstr",
+    "status": "modified",
+    "doc_only": false,
+    "kind": "method",
+    "params_base": [
+     "self",
+     "tzstr",
+     "zero_as_utc"
+    ],
+    "params_patch": [
+     "self",
+     "tzstr",
+     "zero_as_utc"
+    ]
+   }
+  ],
+  "existing_modified_or_added": [
+   "dateutil/parser/isoparser.py::isoparser._parse_tzstr"
+  ],
+  "existing_key_changed": [
+   "dateutil/parser/isoparser.py::isoparser._parse_tzstr"
+  ],
+  "missed_by_existing": [],
+  "secs": 2.82
+ }
+]

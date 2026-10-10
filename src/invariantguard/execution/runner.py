@@ -14,7 +14,7 @@ Backends:
   same flags*; a failed or unprobed required capability makes the backend
   RUNNER_UNAVAILABLE (fail closed). There is never a fallback to unisolated execution.
 * ``unisolated``: only when the profile says so *and* ``execution.allow_unisolated =
-  true``. It runs the harness in a local subprocess (``python -I -S -B``) with a
+  true``. It runs the harness in a local subprocess (``python -P -s -S -B``) with a
   minimal environment, per-probe CPU and wall limits and a temporary working copy, and
   reports every isolation capability as NOT_ENFORCED. Its evidence is labelled
   unisolated; it is never called sandboxed.
@@ -38,6 +38,10 @@ from .process import ProcessResult, minimal_env, run_argv
 from .profiles import RunProfileConfig
 
 HARNESS_NAME = "probe_harness.py"
+# Not -I: it implies -E, which ignores PYTHONHASHSEED (string hashing would be randomized per
+# run). -P/-s give -I's path isolation; the environment is constructed explicitly instead, and
+# the interpreter_env capability fails closed on interpreter variables we did not set.
+HARNESS_FLAGS = ("-P", "-s", "-S", "-B")
 PROTOCOL = "ig-probe-1"
 CONTAINER_SRC = "/work/src"
 CONTAINER_HARNESS = "/work/harness"
@@ -289,7 +293,7 @@ class DockerBackend(Backend):
         for k, v in sorted(self.container_env().items()):
             argv += ["--env", f"{k}={v}"]
         assert self.image_id is not None
-        argv += ["--entrypoint", "python", self.image_id, "-I", "-S", "-B", f"{CONTAINER_HARNESS}/{HARNESS_NAME}"]
+        argv += ["--entrypoint", "python", self.image_id, *HARNESS_FLAGS, f"{CONTAINER_HARNESS}/{HARNESS_NAME}"]
         return argv
 
     def _remove(self, name: str) -> None:
@@ -365,6 +369,10 @@ class DockerBackend(Backend):
         st.capabilities.append(Capability("interpreter_minor_matches_host", True, "VERIFIED" if interp.get("verified") else "FAILED", interp))
         if not interp.get("verified"):
             failed.append("interpreter_minor_matches_host")
+        ienv = caps.get("interpreter_env") or {}
+        st.capabilities.append(Capability("deterministic_interpreter_env", True, "VERIFIED" if ienv.get("verified") else "FAILED", ienv))
+        if not ienv.get("verified"):
+            failed.append("deterministic_interpreter_env")
         st.environment_digest = digest_json({"backend": "docker", "image_id": info["image_id"], "interpreter": ident.get("version"),
                                              "harness": harness_digest()})
         if failed:
@@ -434,7 +442,7 @@ class UnisolatedBackend(Backend):
             if k in os.environ:
                 env[k] = os.environ[k]
         self.runs += 1
-        res = run_argv([sys.executable, "-I", "-S", "-B", str(ws.harness / HARNESS_NAME)], stdin=data, env=env, cwd=str(ws.scratch),
+        res = run_argv([sys.executable, *HARNESS_FLAGS, str(ws.harness / HARNESS_NAME)], stdin=data, env=env, cwd=str(ws.scratch),
                        timeout_s=self.profile.wall_seconds, max_stdout=self.profile.max_output_bytes)
         resp, err = _parse_response(res, request["mode"])
         return HarnessRun(resp, err, res)
