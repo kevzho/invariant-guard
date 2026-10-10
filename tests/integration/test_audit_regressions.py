@@ -338,7 +338,12 @@ FORBIDDEN_MODULES = {"subprocess", "runpy", "pickle", "marshal", "ctypes", "sock
 SUBPROCESS_ALLOWLIST = {"snapshots/git.py": {"subprocess"}, "execution/process.py": {"subprocess"},
                         "execution/probe_harness.py": {"socket"}, "semantic/endpoint.py": {"socket", "http", "urllib"},
                         "semantic/remote.py": {"socket", "http", "urllib"}}
-ATTR_ALLOWLIST = {"execution/process.py": {"Popen"}, "execution/probe_harness.py": {"import_module", "fork"}}
+ATTR_ALLOWLIST = {"execution/process.py": {"Popen"}, "execution/probe_harness.py": {"import_module", "fork"},
+                  "execution/replay_harness.py": {"import_module", "fork"}}
+# Phase 2 (I-117): the replay harness runs only inside the isolation boundary (never imported by
+# the engine) and evaluates repository-authored expressions whose text the host verified in
+# the snapshot. `test_replay_harness_evaluates_only_repository_inputs` pins where.
+BUILTIN_ALLOWLIST = {"execution/replay_harness.py": {"eval", "compile"}}
 
 
 def test_engine_source_has_no_execution_primitives():
@@ -359,13 +364,32 @@ def test_engine_source_has_no_execution_primitives():
                     offenders.append((path.name, node.lineno, names))
             if isinstance(node, ast.Call):
                 fn = node.func
-                if isinstance(fn, ast.Name) and fn.id in FORBIDDEN_BUILTINS:
+                if isinstance(fn, ast.Name) and fn.id in FORBIDDEN_BUILTINS - BUILTIN_ALLOWLIST.get(rel, set()):
                     offenders.append((path.name, node.lineno, fn.id))
                 if isinstance(fn, ast.Attribute) and fn.attr in FORBIDDEN_ATTRS - ATTR_ALLOWLIST.get(rel, set()):
                     z3_import = fn.attr == "import_module" and isinstance(node.args[0], ast.Constant) and node.args[0].value == "z3"
                     if not z3_import:
                         offenders.append((path.name, node.lineno, fn.attr))
     assert offenders == []
+
+
+def test_replay_harness_evaluates_only_repository_inputs():
+    """eval/compile occur once, in materialize_arg, and the engine never imports the harness."""
+    path = REPO / "src" / "invariantguard" / "execution" / "replay_harness.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    sites = []
+    for fn in ast.walk(tree):
+        if isinstance(fn, ast.FunctionDef):
+            for n in ast.walk(fn):
+                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in ("eval", "compile", "exec"):
+                    sites.append((fn.name, n.func.id))
+    assert sorted(sites) == [("materialize_arg", "compile"), ("materialize_arg", "eval")]
+    for p in (REPO / "src" / "invariantguard").rglob("*.py"):
+        for n in ast.walk(ast.parse(p.read_text(encoding="utf-8"))):
+            if isinstance(n, ast.ImportFrom) and n.module:
+                assert "replay_harness" not in n.module and not any(a.name == "replay_harness" for a in n.names), p
+            elif isinstance(n, ast.Import):
+                assert not any("replay_harness" in a.name for a in n.names), p
 
 
 def test_git_reader_uses_argument_arrays_only():

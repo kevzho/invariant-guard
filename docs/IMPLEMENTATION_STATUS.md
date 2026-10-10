@@ -1090,6 +1090,28 @@ Commands and outcomes (2026-10-09, run with `nice -n 19`, single process):
 - `pytest tests`: 761 passed, 2 skipped, 16 failed, 27 errors. The failures and errors were `OSError: [Errno 28] No space left on device` (the data volume had about 4.5 GB free and briefly reached zero), plus one real failure: the fake Docker in `test_execution_failclosed.py` did not report the new capability. The fake was updated, and a fail-closed test for randomized hashing was added. All 9 affected files were then rerun: 61 + 10 passed.
 - `spikes/diffreplay/survey_changes_phase1.py` (90 commits of more-itertools, boltons and dateutil; spike detector vs. `match_symbols`): before, 53/134 changed functions found and 81 missed; after, **134/134 found, 0 missed**. Output: `spikes/diffreplay/results/changes_survey_phase1.json`. Per-commit time was 226 s total (median 1.6 s) vs. 813 s (8.5 s) in the spike run. The spike run was on a heavily loaded host, so this is not a speed claim, only no evident slowdown.
 
+## Phase 2 (pivot): replay harness v2
+
+Branch `phase1-change-detection` (continued). Decisions I-116 to I-119. Spike gaps closed: 1 (methods and constructors), 2 (encoding), 3 (non-JSON inputs), 4 (dependency environment), 6 (pluggable harness), 7 (batch output).
+
+- `execution/replay_harness.py` (protocol `ig-replay-1`) runs beside the unchanged contract harness and is selected per call through `runner.HARNESSES`. It supports:
+  - targets: module functions, `*args` and keyword arguments, constructors, static and class methods, and instance methods and properties on a receiver built inside the probe;
+  - encoding: iterators to a bounded prefix, including a lazily raised exception; datetimes, sets, frozensets, bytes, complex numbers, ranges, dicts with non-string keys; objects through their state and iteration;
+  - observations: mutated arguments and the receiver's state after the call.
+- `replay/run.py`:
+  - typed inputs (`Value`, `Expr`, `Construct`); expressions are checked against the snapshot text before anything runs;
+  - targets outside `allowed_targets` are reported `not_allowed` and never sent;
+  - observations are shape-checked as untrusted;
+  - an oversized batch is split and retried;
+  - with the profile's `site_packages`, the installed distributions are folded into the environment digest.
+- Process structure: the zygote imports the targets once; probes run in forked chunks with a per-probe timer; a crashed or hung chunk is re-run one probe per child under a hard kill; each child keeps only its own result pipe; RLIMIT_CPU is clamped to the boundary's hard limit.
+- Not yet done: comparing observations across base and patch, equivalence policy, generation, call sequences and CLI wiring (phases 3 and 4).
+
+Commands and outcomes (2026-10-09, `nice -n 19`, single process):
+- `pytest tests/integration/test_replay_harness.py`: 40 passed. Two of the tests use the real Docker backend: the `python:3.13-slim` image, and the spike image with `six` for `site_packages`.
+- The default-profile Docker test found a defect, now fixed. The harness requested RLIMIT_CPU (10 s soft, 11 s hard) above the container's 10 s hard limit, so `setrlimit` failed and every probe reported `crashed`.
+- `pytest tests`: 841 passed, 2 skipped (opt-in real-model tests), 1 failed. The failure was `test_engine_source_has_no_execution_primitives`, which flagged the replay harness's `eval`/`compile`/`fork`/`import_module`. It was resolved with a per-file allowlist plus `test_replay_harness_evaluates_only_repository_inputs`, which pins the only `eval`/`compile` site to `materialize_arg` and checks that no engine module imports the harness. `tests/integration/test_audit_regressions.py` was rerun: 57 passed.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

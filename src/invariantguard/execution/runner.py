@@ -43,18 +43,21 @@ HARNESS_NAME = "probe_harness.py"
 # the interpreter_env capability fails closed on interpreter variables we did not set.
 HARNESS_FLAGS = ("-P", "-s", "-S", "-B")
 PROTOCOL = "ig-probe-1"
+# Harness kind -> (file, protocol). Contract probes and capability checks use ``probe``;
+# differential replay uses ``replay`` (richer encoding, methods, repository inputs).
+HARNESSES = {"probe": (HARNESS_NAME, PROTOCOL), "replay": ("replay_harness.py", "ig-replay-1")}
 CONTAINER_SRC = "/work/src"
 CONTAINER_HARNESS = "/work/harness"
 OBSERVATION_STATUSES = ("ok", "import_error", "target_error", "timeout", "crashed", "output_limit", "harness_error")
 _DOCKER_CANDIDATES = ("/usr/local/bin/docker", "/opt/homebrew/bin/docker", "/usr/bin/docker", "/Applications/Docker.app/Contents/Resources/bin/docker")
 
 
-def harness_bytes() -> bytes:
-    return resources.files("invariantguard.execution").joinpath(HARNESS_NAME).read_bytes()
+def harness_bytes(kind: str = "probe") -> bytes:
+    return resources.files("invariantguard.execution").joinpath(HARNESSES[kind][0]).read_bytes()
 
 
-def harness_digest() -> str:
-    return sha256_bytes(harness_bytes())
+def harness_digest(kind: str = "probe") -> str:
+    return sha256_bytes(harness_bytes(kind))
 
 
 class RunnerError(Exception):
@@ -120,9 +123,10 @@ class Workspace:
             with open(p, "xb") as fh:
                 fh.write(raw)
             os.chmod(p, 0o644)
-        hp = self.harness / HARNESS_NAME
-        hp.write_bytes(harness_bytes())
-        os.chmod(hp, 0o644)
+        for kind, (fname, _) in HARNESSES.items():
+            hp = self.harness / fname
+            hp.write_bytes(harness_bytes(kind))
+            os.chmod(hp, 0o644)
         for d in (self.dir, self.src, self.harness):
             os.chmod(d, 0o755)
         for dirpath, dirnames, _ in os.walk(self.src):
@@ -141,7 +145,7 @@ class HarnessRun:
     container: str | None = None
 
 
-def _parse_response(res: ProcessResult, mode: str) -> tuple[dict[str, Any] | None, str | None]:
+def _parse_response(res: ProcessResult, mode: str, protocol: str = PROTOCOL) -> tuple[dict[str, Any] | None, str | None]:
     if res.start_error:
         return None, f"runner could not start: {res.start_error}"
     if res.timed_out:
@@ -158,8 +162,8 @@ def _parse_response(res: ProcessResult, mode: str) -> tuple[dict[str, Any] | Non
         return None, "runner output is nested too deeply to parse (rejected)"
     except (UnicodeDecodeError, ValueError):
         return None, "runner produced output that is not one JSON document"
-    if type(resp) is not dict or resp.get("protocol") != PROTOCOL:
-        return None, "runner response does not follow protocol ig-probe-1"
+    if type(resp) is not dict or resp.get("protocol") != protocol:
+        return None, f"runner response does not follow protocol {protocol}"
     if resp.get("mode") == "error":
         return None, f"harness error: {str(resp.get('error'))[:300]}"
     if resp.get("mode") != mode:
@@ -192,7 +196,7 @@ class Backend:
     def src_root(self, ws: Workspace) -> str:  # pragma: no cover - interface
         raise NotImplementedError
 
-    def run(self, ws: Workspace, request: dict[str, Any]) -> HarnessRun:  # pragma: no cover - interface
+    def run(self, ws: Workspace, request: dict[str, Any], harness: str = "probe") -> HarnessRun:  # pragma: no cover - interface
         raise NotImplementedError
 
     def probe_request(self, ws: Workspace, base: dict[str, Any]) -> dict[str, Any]:
@@ -276,7 +280,7 @@ class DockerBackend(Backend):
                 env[k] = os.environ[k]
         return env
 
-    def run_argv(self, ws: Workspace, name: str) -> list[str]:
+    def run_argv(self, ws: Workspace, name: str, harness: str = "probe") -> list[str]:
         p = self.profile
         for path in (ws.src, ws.harness):
             if "," in str(path) or "=" in str(path):
@@ -293,7 +297,7 @@ class DockerBackend(Backend):
         for k, v in sorted(self.container_env().items()):
             argv += ["--env", f"{k}={v}"]
         assert self.image_id is not None
-        argv += ["--entrypoint", "python", self.image_id, *HARNESS_FLAGS, f"{CONTAINER_HARNESS}/{HARNESS_NAME}"]
+        argv += ["--entrypoint", "python", self.image_id, *HARNESS_FLAGS, f"{CONTAINER_HARNESS}/{HARNESSES[harness][0]}"]
         return argv
 
     def _remove(self, name: str) -> None:
@@ -303,7 +307,7 @@ class DockerBackend(Backend):
         r = self.cli(["ps", "-a", "--filter", f"name=^{name}$", "--format", "{{.ID}}"], timeout_s=30)
         return r.returncode == 0 and not r.stdout.strip()
 
-    def run(self, ws: Workspace, request: dict[str, Any]) -> HarnessRun:
+    def run(self, ws: Workspace, request: dict[str, Any], harness: str = "probe") -> HarnessRun:
         if self.exe is None or self.image_id is None:
             return HarnessRun(None, "docker backend not initialized", None)
         name = f"ig-probe-{uuid.uuid4().hex[:16]}"
@@ -311,9 +315,9 @@ class DockerBackend(Backend):
         if len(data) > self.profile.max_input_bytes:
             return HarnessRun(None, f"probe request of {len(data)} bytes exceeds max_input_bytes", None, name)
         self.runs += 1
-        res = run_argv([self.exe, *self.run_argv(ws, name)], stdin=data, env=self._env(), timeout_s=self.profile.wall_seconds,
+        res = run_argv([self.exe, *self.run_argv(ws, name, harness)], stdin=data, env=self._env(), timeout_s=self.profile.wall_seconds,
                        max_stdout=self.profile.max_output_bytes, on_timeout=lambda: self._remove(name))
-        resp, err = _parse_response(res, request["mode"])
+        resp, err = _parse_response(res, request["mode"], HARNESSES[harness][1])
         if res.timed_out or res.stdout_truncated:
             self._remove(name)
             if not self.container_gone(name):
@@ -433,7 +437,7 @@ class UnisolatedBackend(Backend):
                                      digest_json({"backend": "unisolated", "interpreter": ident, "harness": harness_digest()}), ident["version"])
         return self._status
 
-    def run(self, ws: Workspace, request: dict[str, Any]) -> HarnessRun:
+    def run(self, ws: Workspace, request: dict[str, Any], harness: str = "probe") -> HarnessRun:
         data = json.dumps(request, separators=(",", ":"), allow_nan=False).encode()
         if len(data) > self.profile.max_input_bytes:
             return HarnessRun(None, f"probe request of {len(data)} bytes exceeds max_input_bytes", None)
@@ -442,9 +446,9 @@ class UnisolatedBackend(Backend):
             if k in os.environ:
                 env[k] = os.environ[k]
         self.runs += 1
-        res = run_argv([sys.executable, *HARNESS_FLAGS, str(ws.harness / HARNESS_NAME)], stdin=data, env=env, cwd=str(ws.scratch),
+        res = run_argv([sys.executable, *HARNESS_FLAGS, str(ws.harness / HARNESSES[harness][0])], stdin=data, env=env, cwd=str(ws.scratch),
                        timeout_s=self.profile.wall_seconds, max_stdout=self.profile.max_output_bytes)
-        resp, err = _parse_response(res, request["mode"])
+        resp, err = _parse_response(res, request["mode"], HARNESSES[harness][1])
         return HarnessRun(resp, err, res)
 
 
@@ -453,4 +457,4 @@ def make_backend(profile: RunProfileConfig) -> Backend:
 
 
 __all__ = ["Backend", "DockerBackend", "UnisolatedBackend", "BackendStatus", "Capability", "Workspace", "HarnessRun", "RunnerError", "make_backend",
-           "harness_digest", "validate_observations", "find_docker"]
+           "harness_digest", "validate_observations", "find_docker", "HARNESSES"]

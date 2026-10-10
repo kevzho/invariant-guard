@@ -65,6 +65,10 @@ class RunProfileConfig:
     max_shrink_rounds: int = 12
     seed: int = 0
     witness_storage: bool = True
+    # Differential replay only: put the image's site-packages on sys.path (declared target
+    # dependencies installed in the image). The installed distributions are recorded in the
+    # replay environment digest. Contract probes keep -S and never see site-packages.
+    site_packages: bool = False
     required_capabilities: list[str] = field(default_factory=lambda: list(DOCKER_CAPABILITIES))
 
     def allows(self, symbol_id: str) -> bool:
@@ -80,7 +84,7 @@ _INT_KEYS = {"cpu_seconds": (1, 3600), "memory_mb": (32, 65536), "wall_seconds":
 _FLOAT_KEYS = {"cpus": (0.1, 64.0), "probe_wall_seconds": (0.1, 600.0)}
 _LIST_KEYS = ("allowed_targets", "input_profiles", "python_path", "env_allowlist", "required_capabilities")
 _STR_KEYS = ("backend", "image", "image_digest", "docker")
-_KNOWN = set(_INT_KEYS) | set(_FLOAT_KEYS) | set(_LIST_KEYS) | set(_STR_KEYS) | {"witness_storage"}
+_KNOWN = set(_INT_KEYS) | set(_FLOAT_KEYS) | set(_LIST_KEYS) | set(_STR_KEYS) | {"witness_storage", "site_packages"}
 
 
 def parse_profile(name: str, table: Any) -> RunProfileConfig:
@@ -117,10 +121,11 @@ def parse_profile(name: str, table: Any) -> RunProfileConfig:
             if not isinstance(v, list) or not all(isinstance(x, str) for x in v):
                 raise ProfileError(f"{where}.{k} must be a list of strings")
             setattr(p, k, list(v))
-    if "witness_storage" in table:
-        if type(table["witness_storage"]) is not bool:
-            raise ProfileError(f"{where}.witness_storage must be a boolean")
-        p.witness_storage = table["witness_storage"]
+    for key in ("witness_storage", "site_packages"):
+        if key in table:
+            if type(table[key]) is not bool:
+                raise ProfileError(f"{where}.{key} must be a boolean")
+            setattr(p, key, table[key])
     for k in ("image", "image_digest", "docker"):
         if k in table:
             if not isinstance(table[k], str) or not table[k]:
