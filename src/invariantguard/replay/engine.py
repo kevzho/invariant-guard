@@ -123,6 +123,22 @@ def test_paths(files: dict[str, bytes]) -> list[str]:
                                                              or p.startswith("test")))
 
 
+def changed_for_replay(modified: list[str], reasons: dict[str, str], symbols: set[str]) -> list[tuple[str, str]]:
+    """Replay targets from static change detection: modified symbols, plus direct readers of a changed
+    module binding that is data (a binding naming a function or class is a code change: that symbol is
+    itself a target, and its callers are reached through it)."""
+    mods = [c for c in modified if c in symbols]
+    data: list[str] = []
+    for c, why in sorted(reasons.items()):
+        if c in mods or c not in symbols or not (why.startswith("reads ") and why.endswith("(binding changed)")):
+            continue
+        name = why[len("reads "):-len(" (binding changed)")]  # "<module path>::<name>"
+        if name in symbols or any(s.startswith(name + ".") for s in symbols):
+            continue
+        data.append(c)
+    return [(c, "modified") for c in mods] + [(c, "data") for c in data]
+
+
 def plan_targets(changed: list[tuple[str, str]], cand_files: dict[str, bytes], python_path: list[str], max_callers: int) -> tuple[list[TargetPlan], list[dict[str, Any]]]:
     """``changed``: (symbol id, how) with how in modified | data. Returns plans and non-addressable gaps."""
     plans: list[TargetPlan] = []
@@ -203,8 +219,13 @@ def replay_patch(backend: Backend, base_files: dict[str, bytes], cand_files: dic
             for root in sorted({tp.target.python_path_root for tp in plans}):
                 group = [tp for tp in plans if tp.target.python_path_root == root]
                 jobs = []
+                planned: set[str] = set()  # a target can serve several changed symbols: generate for it once
                 for tp in group:
-                    js, st = plan(tp.target, tp.kind, cand_files, tp.inputs, n=examples)
+                    if tp.target.symbol_id in planned:
+                        continue
+                    planned.add(tp.target.symbol_id)
+                    pool = [h for other in group if other.target == tp.target for h in other.inputs]
+                    js, st = plan(tp.target, tp.kind, cand_files, pool, n=examples)
                     tp.gen_stats = dict(st)
                     jobs += js
                 g = run_generation(backend, cand_files, jobs)

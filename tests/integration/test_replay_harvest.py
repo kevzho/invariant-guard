@@ -197,9 +197,11 @@ def test_inheriting_subclass_receivers_only():
 def test_default_variants_perturb_omitted_defaults():
     res = harvest(T("scale"), FILES, ["tests/test_mod.py"])
     base = [h for h in res.inputs if h.text == "scale([1, 2], 3)"]
-    var = default_variants(FILES, T("scale"), base)
-    assert {k for h in var for k, _ in h.kwargs} == {"clamp"}  # k was given positionally
-    assert all(h.origin == "defaults" for h in var)
+    assert default_variants(FILES, T("scale"), base) == []  # k given positionally; clamp=None: domain unknown, not perturbed
+    short = [h for h in res.inputs if h.text == "scale(ys, k=10)"]
+    assert default_variants(FILES, T("scale"), short) == []
+    var = default_variants(FILES, T("scale"), [h for h in res.inputs if h.text == "mod.scale(range(3))"])
+    assert {k for h in var for k, _ in h.kwargs} == {"k"} and all(h.origin == "defaults" for h in var)
 
 
 def test_harvested_inputs_replay_end_to_end():

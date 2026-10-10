@@ -265,9 +265,9 @@ def _run_replay(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | No
         return replay_evidence.unavailable(dyn.unavailable_reason or "the runner was not started"), None
     if base.kind != "git" or base.commit is None or repo is None:
         return replay_evidence.unavailable("the base is not a Git commit; replay needs the base's code and tests (use --base git:REV)"), None
-    modified = [c for c in match.modified if c in syms_c]
-    data = sorted(c for c, why in sl.reasons.items() if why.startswith("reads ") and why.endswith("(binding changed)") and c not in modified and c in syms_c)
-    changed = [(c, "modified") for c in modified] + [(c, "data") for c in data]
+    changed = replay_engine.changed_for_replay(list(match.modified), sl.reasons, set(syms_c))
+    modified = [c for c, how in changed if how == "modified"]
+    data = [c for c, how in changed if how == "data"]
     bsrc = capture_git_revision(repo, base.commit, root, ["."], REPLAY_EXCLUDE, SEMANTICS_PROFILE, suffixes=(".py", ".pyi"))
     listing, _ = _listing(repo, root)
     csrc = capture(root, [root], REPLAY_EXCLUDE, cfg.digest, SEMANTICS_PROFILE, listing=listing,

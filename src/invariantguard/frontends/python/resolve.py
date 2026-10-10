@@ -160,7 +160,17 @@ class Binding:
     node: ast.stmt
     top_level: bool
 
-    def descriptor(self) -> dict[str, Any]:
+    def descriptor(self, name: str | None = None) -> dict[str, Any]:
+        """What the binding of ``name`` depends on. A top-level import binds each name
+        independently: adding ``b`` to ``from m import a`` does not change how ``a`` resolves,
+        so the descriptor names only the import of ``name`` (module, level, imported name)."""
+        if name is not None and self.kind in ("import_from", "import") and isinstance(self.node, (ast.Import, ast.ImportFrom)):
+            for a in self.node.names:
+                bound = a.asname or (a.name if isinstance(self.node, ast.ImportFrom) else a.name.split(".")[0])
+                if bound == name:
+                    mod = self.node.module if isinstance(self.node, ast.ImportFrom) else None
+                    level = self.node.level if isinstance(self.node, ast.ImportFrom) else 0
+                    return {"kind": self.kind, "top_level": self.top_level, "import": [mod, level, a.name, a.asname]}
         return {"kind": self.kind, "top_level": self.top_level, "ast": ast_fingerprint(self.node)}
 
 
@@ -268,13 +278,14 @@ class ModuleContext:
         out = {name: digest_json({**self.name_descriptor(name), "module": None}) for name in self.bindings}
         for sym in self.symbols:
             if sym.kind == "class_body":
-                out[class_body_name(sym.qualname)] = initializer_fingerprint(sym.node)
+                # Docstring-blind: a class docstring edit does not change what its methods read.
+                out[class_body_name(sym.qualname)] = initializer_fingerprint(sym.node, code_only=True)
         return out
 
     def name_descriptor(self, name: str) -> dict[str, Any]:
         return {
             "module": self.path,
-            "bindings": [b.descriptor() for b in self.bindings.get(name, [])],
+            "bindings": [b.descriptor(name) for b in self.bindings.get(name, [])],
             "declared_global": name in self.global_decls,
             "star_import": self.star_import,
             "dynamic": self.dynamic_reason,

@@ -54,9 +54,18 @@ def changed_symbols(r, parent: str, commit: str, pkg: str, exclude: list[str]) -
     files = diff_files(bs, cs)
     m = match_symbols(sb, sc, files)
     sl = affected_slice(lb, lc, sb, sc, m, files, None)
-    modified = [c for c in m.modified if c in sc]
-    data = sorted(c for c, why in sl.reasons.items() if why.startswith("reads ") and why.endswith("(binding changed)") and c not in modified and c in sc)
-    return [(c, "modified") for c in modified] + [(c, "data") for c in data]
+    return engine.changed_for_replay(list(m.modified), sl.reasons, set(sc))
+
+
+def _def_source(src: str, qualname: str) -> str:
+    import ast
+
+    scope = ast.parse(src).body
+    node = None
+    for p in qualname.split("."):
+        node = next(s for s in scope if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and s.name == p)
+        scope = node.body
+    return ast.get_source_segment(src, node)
 
 
 def run_case(backend, bfiles, cfiles, changed, pyroot, cand_id, base_id) -> dict:
@@ -85,22 +94,33 @@ def main() -> None:
     ap.add_argument("--repos", default="more-itertools,boltons,dateutil")
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--mutants", action="store_true")
+    ap.add_argument("--only", default="", help="comma-separated commit prefixes to (re)run")
+    ap.add_argument("--resume", action="store_true", help="skip commits / mutants already recorded in --out")
     ap.add_argument("--out", default=str(REPO_ROOT / "benchmarks" / "results" / "replay_phase4.jsonl"))
     a = ap.parse_args()
     backend = DockerBackend(parse_profile("eval", dict(PROFILE)))
     st = backend.status()
     if not st.available:
         sys.exit(f"runner unavailable: {st.reason}")
+    done: set[str] = set()
+    if a.resume and Path(a.out).exists():
+        for line in open(a.out, encoding="utf-8"):
+            rec = json.loads(line)
+            if rec.get("status") != "EVAL_ERROR":
+                done.add(rec.get("id") or rec["commit"])
     out = open(a.out, "a", encoding="utf-8")
     if a.mutants:
         for mu in json.load(open(SPIKE / "mutants.json")):
+            if mu["id"] in done:
+                continue
             r = repo(mu["repo"])
             full = r.resolve_commit(mu["commit"])
             bsnap, _ = snapshots(r, full, full)
             bfiles = {f.path: f.raw for f in bsnap.files}
             src = bfiles[mu["path"]].decode()
-            assert src.count(mu["old"]) == 1, mu["id"]
-            cfiles = dict(bfiles, **{mu["path"]: src.replace(mu["old"], mu["new"]).encode()})
+            seg = _def_source(src, mu["qualname"])  # mutate inside the target's own definition (as spikes/diffreplay/seeded.py)
+            assert seg.count(mu["old"]) == 1, mu["id"]
+            cfiles = dict(bfiles, **{mu["path"]: src.replace(seg, seg.replace(mu["old"], mu["new"]), 1).encode()})
             _, pyroot = pkg_info(mu["repo"], bfiles)
             rec = run_case(backend, bfiles, cfiles, [(f"{mu['path']}::{mu['qualname']}", "modified")], pyroot, bsnap.snapshot_id, bsnap.snapshot_id)
             rec.update(kind="mutant", id=mu["id"], repo=mu["repo"], commit=mu["commit"], symbol=f"{mu['path']}::{mu['qualname']}", category=mu["category"])
@@ -111,6 +131,10 @@ def main() -> None:
     for name in a.repos.split(","):
         r = repo(name)
         for c in recent_commits(name, a.n):
+            if a.only and not any(c["commit"].startswith(x) for x in a.only.split(",")):
+                continue
+            if c["commit"] in done:
+                continue
             t0 = time.perf_counter()
             try:
                 bsnap, csnap = snapshots(r, c["parent"], c["commit"])

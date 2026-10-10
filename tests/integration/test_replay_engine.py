@@ -178,3 +178,26 @@ def test_classification_rules():
 def test_same_module_callers_prefer_public():
     assert same_module_callers(CAND, "_norm") == ["greet"]
     assert same_module_callers(CAND, "Box.__init__") == []
+
+
+def test_only_readers_of_changed_data_bindings_become_data_targets():
+    from invariantguard.replay.engine import changed_for_replay
+
+    syms = {"m.py::C.eq", "m.py::C.get", "m.py::h", "m.py::g", "m.py::f"}
+    reasons = {"m.py::C.eq": "reads m.py::C (binding changed)",  # the class itself changed (code): not data
+               "m.py::h": "reads m.py::TABLE (binding changed)",  # module data: a target
+               "m.py::g": "reads m.py::TABLE (transitively)",  # transitive readers are reached through h
+               "m.py::f": "reads m.py::f (binding changed)"}  # a changed function is its own target
+    assert changed_for_replay(["m.py::f"], reasons, syms) == [("m.py::f", "modified"), ("m.py::h", "data")]
+
+
+def test_a_target_shared_by_two_changed_symbols_is_generated_once():
+    from invariantguard.replay.engine import plan_targets
+
+    src = b"def _a(x):\n    return x\n\ndef _b(x):\n    return x\n\ndef top(x: int) -> int:\n    return _a(x) + _b(x)\n"
+    plans, _ = plan_targets([("m.py::_a", "modified"), ("m.py::_b", "modified")], {"m.py": src}, [], 3)
+    assert [p.target.qualname for p in plans].count("top") == 2  # one caller plan per changed helper
+    b = UnisolatedBackend(parse_profile("u", {"backend": "unisolated", "allowed_targets": ["*::*"], "site_packages": True}))
+    res = replay_patch(b, {"m.py": src}, {"m.py": src.replace(b"return x\n\ndef _b", b"return x + 1\n\ndef _b")},
+                       [("m.py::_a", "modified"), ("m.py::_b", "modified")])
+    assert not any("unique" in e for e in res.errors)  # used to raise: generation job ids must be unique

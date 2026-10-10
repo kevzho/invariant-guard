@@ -88,3 +88,18 @@ def test_editing_one_method_does_not_modify_its_siblings(tmp_path):
     p = _patch(tmp_path, {"m.py": base}, {"m.py": base.replace("return 2", "return 3")})
     assert p["symbols"]["modified"] == ["m.py::C.b"]
     assert "m.py::C.a" not in _invalidated(p)
+
+
+def test_class_docstring_edit_does_not_reach_methods(tmp_path):
+    base = 'class Fmt:\n    """Formats."""\n    SEP = ","\n\n    def join(self, xs):\n        return self.SEP.join(xs)\n'
+    p = _patch(tmp_path, {"m.py": base}, {"m.py": base.replace("Formats.", "Formats things.")})
+    assert "m.py::Fmt.join" not in _invalidated(p)
+
+
+def test_adding_a_name_to_an_import_does_not_reach_readers_of_other_names(tmp_path):
+    base = "from itertools import chain\n\ndef flat(xs):\n    for x in chain.from_iterable(xs):\n        yield x\n"
+    p = _patch(tmp_path, {"m.py": base}, {"m.py": base.replace("import chain", "import chain, islice")})
+    assert "m.py::flat" not in _invalidated(p)
+    (tmp_path / "b").mkdir()
+    p = _patch(tmp_path / "b", {"m.py": base}, {"m.py": base.replace("from itertools import chain", "from more_itertools import chain")})
+    assert "m.py::flat" in _invalidated(p)  # the name now comes from elsewhere: a real change

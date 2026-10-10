@@ -458,10 +458,19 @@ def _parametrize(fn: ast.FunctionDef | ast.AsyncFunctionDef, src: Source, limit:
     return rows
 
 
-def _scopes(tree: ast.Module, src: Source):
+def _scopes(tree: ast.Module, src: Source, needles: tuple[str, ...] = ()):
+    """Module body, then each function body (once per parametrize row). With ``needles``, a
+    function whose source (decorators included) mentions none of them is skipped: it cannot
+    call the target, construct its receiver or bind a parametrized value naming it."""
     yield tree.body, None
+    lines = src.text.splitlines() if needles else []
     for n in ast.walk(tree):
         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if needles:
+                first = min([n.lineno] + [d.lineno for d in n.decorator_list])
+                chunk = "\n".join(lines[first - 1: n.end_lineno or n.lineno])
+                if not any(x in chunk for x in needles):
+                    continue
             for row in _parametrize(n, src):
                 yield n.body, row
 
@@ -579,6 +588,25 @@ def target_kind(tree: ast.Module, qualname: str) -> str | None:
     return "method"
 
 
+_PARSED: dict[bytes, tuple[str, ast.Module] | None] = {}
+
+
+def _parse(raw: bytes) -> tuple[str, ast.Module] | None:
+    """Parse once per distinct file content (harvest runs per target over the same test files; trees are never mutated)."""
+    import hashlib
+
+    key = hashlib.sha256(raw).digest()
+    if key not in _PARSED:
+        if len(_PARSED) > 512:
+            _PARSED.clear()
+        try:
+            text = raw.decode("utf-8")
+            _PARSED[key] = (text, ast.parse(text))
+        except (UnicodeDecodeError, SyntaxError, ValueError):
+            _PARSED[key] = None
+    return _PARSED[key]
+
+
 def harvest(target: Target, files: dict[str, bytes], test_paths: list[str], *, package: str | None = None) -> HarvestResult:
     """Inputs for ``target`` from ``test_paths`` and the doctests of its own module.
 
@@ -614,17 +642,21 @@ def harvest(target: Target, files: dict[str, bytes], test_paths: list[str], *, p
         for sub in inheriting_subclasses(mtree, owner, target.qualname.split(".")[-1]):
             aliases += [sub] + class_aliases(mtree, sub)
     m = Matcher(target.qualname, kind, aliases)
+    # Cheap pre-filter: a call site, receiver or alias must spell one of these names.
+    needles = tuple(dict.fromkeys([m.member, *m.owner_names, *m.callee_names]))
     for tp in test_paths:
-        try:
-            text = files[tp].decode("utf-8")
-            tree = ast.parse(text)
-        except (KeyError, UnicodeDecodeError, SyntaxError):
+        parsed = _parse(files[tp]) if tp in files else None
+        if parsed is None:
             res.bump("test_file_unparsable")
+            continue
+        text, tree = parsed
+        if not any(x in text for x in needles):
+            res.bump("test_files_not_mentioning_target")
             continue
         imps, stars = import_map(tree.body)
         ctx = Ctx(imps, stars, pkg, modules, module)
         src = Source(tp, text)
-        for body, params in _scopes(tree, src):
+        for body, params in _scopes(tree, src, needles):
             scan_block(body, ctx, src, m, "test", res, params)
     mtext = files[target.path].decode("utf-8", "replace")
     globs = module_global_names(mtree)
@@ -689,9 +721,7 @@ def default_variants(files: dict[str, bytes], target: Target, inputs: list[Harve
                 vs = [0.0, -1.0, d * 2 + 1]
             elif type(d) is str:
                 vs = ["", d + "x", " "]
-            elif d is None:
-                vs = [0, ""]
-            else:
+            else:  # None and other defaults: the valid domain is unknown (``0`` for ``too_short=None`` is a type error, not a test)
                 continue
             for v in dict.fromkeys(vs):
                 if v == d and type(v) is type(d):
