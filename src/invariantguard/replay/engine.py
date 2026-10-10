@@ -31,7 +31,7 @@ from ..execution.runner import Backend
 from . import compare
 from .generate import plan, run_generation
 from .harvest import Harvested, default_variants, harvest, target_kind
-from .run import Probe, ReplayRun, Target, run_replay
+from .run import Probe, ReplayRun, Target, probe_record, run_replay
 
 MAX_CALLERS = 3
 EXECUTED = ("same", "internal_state_only", "nondeterministic", "unconfirmed", "timeout_both", "timeout") + compare.DIFF_CLASSES
@@ -288,7 +288,8 @@ def replay_patch(backend: Backend, base_files: dict[str, bytes], cand_files: dic
         tp.classes[c] = tp.classes.get(c, 0) + 1
         if c in compare.DIFF_CLASSES:
             examples_out.append(compare.Example(tp.symbol, tp.target.symbol_id, tp.relation, c, h.origin, compare.render_call(h, tp.target.qualname),
-                                                compare.render_outcome(b1[p.id]), compare.render_outcome(pc[p.id]), h.key() in tp.acknowledged))
+                                                compare.render_outcome(b1[p.id]), compare.render_outcome(pc[p.id]), h.key() in tp.acknowledged,
+                                                probe_record(p), {"base": b1[p.id], "patch": pc[p.id]}))
     res.clusters = compare.cluster(examples_out)
     res.targets = plans
     executed_by_symbol: dict[str, bool] = {}

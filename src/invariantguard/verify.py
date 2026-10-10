@@ -256,8 +256,12 @@ REPLAY_EXCLUDE = [".git", ".guard", "__pycache__", ".venv", "venv", ".tox", ".no
 
 
 def _run_replay(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | None, base: BaseSpec, cand_snap: Snapshot, match: Any, sl: Slice,
-                syms_c: dict[str, Any], dyn: DynamicSetup, run_id: str, created_at: str, log: list[str]) -> tuple[dict[str, Any], Snapshot | None]:
-    """Differential replay of the changed symbols on base and candidate (``--replay``)."""
+                syms_c: dict[str, Any], dyn: DynamicSetup, run_id: str, created_at: str, log: list[str],
+                store: Store | None = None) -> tuple[dict[str, Any], Snapshot | None]:
+    """Differential replay of the changed symbols on base and candidate (``--replay``), plus the
+    declared (doctests of changed modules) and approved (pinned) behaviors."""
+    from .replay import declared as replay_declared
+    from .replay import decisions as replay_decisions
     from .replay import engine as replay_engine
     from .replay import evidence as replay_evidence
 
@@ -277,8 +281,15 @@ def _run_replay(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | No
     log.append(f"replay: {len(modified)} modified and {len(data)} data-dependent symbol(s); sources base {len(bfiles)} / candidate {len(cfiles)} file(s)")
     res = replay_engine.replay_patch(dyn.backend, bfiles, cfiles, changed, python_path=list(dyn.profile.python_path), generate=opts.replay_generate,
                                      progress=log.append)
+    ds = replay_decisions.load(store) if store is not None else replay_decisions.Decisions([])
+    pyp = list(dyn.profile.python_path)
+    doct = replay_declared.check_doctests(dyn.backend, bfiles, cfiles, sorted({c.split("::", 1)[0] for c, _ in changed}), pyp)
+    pins = replay_declared.check_pins(dyn.backend, bfiles, cfiles, ds.pins(), pyp)
+    log.append(f"replay: doctests {doct.stats.get('unchanged', 0)} unchanged example(s), {doct.stats.get('regressions', 0)} regression(s); "
+               f"pins {pins.stats.get('checked', 0)} checked, {len(pins.regressions)} violated")
     out = replay_evidence.build(res, cand_files=cfiles, cand_snapshot_id=csrc.snapshot_id, base_snapshot_id=bsrc.snapshot_id, run_id=run_id,
-                                created_at=created_at, backend_status=dyn.status, run_profile_digest=dyn.run_profile_digest, engine_version=ENGINE_VERSION)
+                                created_at=created_at, backend_status=dyn.status, run_profile_digest=dyn.run_profile_digest, engine_version=ENGINE_VERSION,
+                                accepted=ds.accepted(), declared=[doct, pins])
     return out, csrc
 
 
@@ -509,7 +520,7 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
     t_replay = 0.0
     if opts.replay:
         t5 = time.perf_counter()
-        replay_out, replay_src = _run_replay(opts, root, cfg, repo, base, cand_snap, match, sl, syms_c, dyn, run_id, created_at, log)
+        replay_out, replay_src = _run_replay(opts, root, cfg, repo, base, cand_snap, match, sl, syms_c, dyn, run_id, created_at, log, store)
         t_replay = (time.perf_counter() - t5) * 1000
 
     # -- consistency ----------------------------------------------------------------------------------

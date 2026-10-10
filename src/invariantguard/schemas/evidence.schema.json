@@ -301,6 +301,25 @@
               },
               "patch": {
                 "type": "string"
+              },
+              "probe": {
+                "type": "object"
+              },
+              "observations": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "base": {
+                    "type": "object"
+                  },
+                  "patch": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "base",
+                  "patch"
+                ]
               }
             },
             "required": [
@@ -326,6 +345,9 @@
             "base",
             "patch"
           ]
+        },
+        "declared": {
+          "type": "object"
         }
       },
       "required": [
@@ -390,6 +412,27 @@
         "properties": {
           "kind": {
             "not": {
+              "enum": [
+                "EXECUTION",
+                "REPLAY"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "contract"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
               "const": "EXECUTION"
             }
           }
@@ -397,17 +440,8 @@
       },
       "then": {
         "not": {
-          "anyOf": [
-            {
-              "required": [
-                "contract"
-              ]
-            },
-            {
-              "required": [
-                "execution"
-              ]
-            }
+          "required": [
+            "execution"
           ]
         }
       }

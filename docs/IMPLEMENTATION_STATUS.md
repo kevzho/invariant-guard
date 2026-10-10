@@ -1135,6 +1135,20 @@ Commands and outcomes (2026-10-09, `nice -n 19`):
 - `spikes/diffreplay/harvest_compare_phase3.py` (harvesting only, no execution; 90 commits): 106 directly changed functions. 66 have harvested inputs, the same count as the spike, with 666 inputs vs. the spike's 514. One function has inputs only from the spike: `urlutils.OrderedMultiDict.addlist`, where the spike matched `dictutils.OMD` by name, which is a different class. One function has inputs only from the new harvester. Output: `spikes/diffreplay/results/harvest_compare_phase3.json`.
 - `pytest tests`: 855 passed, 2 skipped (opt-in real-model tests).
 
+## Phases 4-5 (pivot): differential replay in verify, maintainer decisions
+
+Decisions I-124 to I-129. Phase 4 was committed as `a5517ec` and `8d4519b`; this section records it together with phase 5.
+
+- Phase 4: `guard verify --replay` (requires `--execute` and a run profile) and the MCP `verify_patch` parameter `replay`. Differences are `OBSERVED_DIFFERENCE` findings (INFERRED, WARNING at most, never blocking). Coverage counts only changed public symbols (I-125).
+- Phase 5: `guard behavior accept|pin|retire|list` (`replay/commands.py`, `replay/decisions.py`). Decisions live in the append-only `behavior_decisions` state table (schema v4). An acceptance covers only the identical witness and outcomes. A pin turns a literal witness into APPROVED behavior that blocks when the candidate diverges and the base matches (I-128). Decisions are CLI-only; no MCP tool exists.
+- Phase 5: unchanged doctests of changed modules are DECLARED behavior (`replay/declared.py`, harness `doctest` mode). A doctest that passes twice on the base and fails twice the same way on the candidate is OBSERVED_REGRESSION (I-129).
+- `benchmarks/results/replay_phase4.jsonl`: per-commit replay results on the spike corpus (more-itertools, boltons, dateutil).
+
+Commands and outcomes (2026-10-10, Docker daemon not running):
+- `pytest tests/integration/test_replay_decisions.py`: 7 passed.
+- `pytest -q`: 870 passed, 17 skipped (Docker-backed tests: no daemon; opt-in real-model tests).
+- Not run in this session: the Docker-backed replay tests (`test_replay_in_docker`, `test_mcp_verify_patch_replay`, the Docker cases of `test_replay_harness.py` and `test_replay_generate.py`).
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

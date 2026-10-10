@@ -223,6 +223,10 @@
         "if_not_intended": {
           "type": "string",
           "minLength": 1
+        },
+        "accepted_by": {
+          "type": "string",
+          "pattern": "^bd-accept-[0-9a-f]{16}$"
         }
       },
       "required": [
@@ -237,6 +241,39 @@
         "question",
         "if_intended",
         "if_not_intended"
+      ]
+    },
+    "declared": {
+      "description": "Declared (doctest) or approved (pinned) behavior that regressed under differential replay (pivot phase 5).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "doctest",
+            "pin"
+          ]
+        },
+        "call": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string"
+        },
+        "base": {
+          "type": "string"
+        },
+        "patch": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "call",
+        "expected",
+        "base",
+        "patch"
       ]
     }
   },
@@ -391,6 +428,29 @@
         "properties": {
           "property_result": {
             "const": "OBSERVED_DIFFERENCE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "declared"
+        ]
+      },
+      "then": {
+        "required": [
+          "contract"
+        ],
+        "properties": {
+          "property_result": {
+            "const": "OBSERVED_REGRESSION"
+          },
+          "authority": {
+            "enum": [
+              "DECLARED",
+              "APPROVED"
+            ]
           }
         }
       }

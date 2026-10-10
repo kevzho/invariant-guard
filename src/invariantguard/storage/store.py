@@ -28,10 +28,12 @@ from typing import Any
 
 from ..models.spans import canonical_json, sha256_bytes
 
-STATE_SCHEMA_VERSION = 3
+STATE_SCHEMA_VERSION = 4
 # v2 (M3): append-only contract revisions, authority events and contract evidence.
 # v3 (M5): append-only index of finished verify reports and their finding IDs, so evidence
 #          can be fetched by ID (``guard explain``, MCP ``get_finding``/``explain_finding``).
+# v4 (pivot phase 5): append-only log of maintainer decisions on replayed behavior changes
+#          (``guard behavior accept|pin|retire``).
 
 _SCHEMA = [
     "CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
@@ -92,6 +94,18 @@ _SCHEMA_V3 = [
     f"""CREATE TRIGGER IF NOT EXISTS {t}_immutable_{op.lower()} BEFORE {op} ON {t}
         BEGIN SELECT RAISE(ABORT, '{t} rows are append-only'); END"""
     for t in ("run_reports", "report_findings") for op in ("UPDATE", "DELETE")
+]
+
+
+# Schema v4 (pivot phase 5). A decision is superseded only by a later ``retire`` row.
+_SCHEMA_V4 = [
+    """CREATE TABLE IF NOT EXISTS behavior_decisions (
+        decision_id TEXT PRIMARY KEY, kind TEXT NOT NULL CHECK (kind IN ('accept', 'pin', 'retire')), symbol_id TEXT NOT NULL,
+        key TEXT NOT NULL, record TEXT NOT NULL, reason TEXT NOT NULL, created_at TEXT NOT NULL, seq INTEGER NOT NULL UNIQUE)""",
+] + [
+    f"""CREATE TRIGGER IF NOT EXISTS behavior_decisions_immutable_{op.lower()} BEFORE {op} ON behavior_decisions
+        BEGIN SELECT RAISE(ABORT, 'behavior_decisions rows are append-only'); END"""
+    for op in ("UPDATE", "DELETE")
 ]
 
 
@@ -167,8 +181,8 @@ class Store:
                 raise StoreError(f"state.sqlite schema version {version} is newer than this engine supports ({STATE_SCHEMA_VERSION}); no downgrade exists")
             if version is not None and version < 1:
                 raise StoreError(f"state.sqlite schema version {version} is not supported")
-            # Migrations 1 -> 2 -> 3 are purely additive (new append-only tables).
-            for stmt in _SCHEMA_V2 + _SCHEMA_V3:
+            # Migrations 1 -> 2 -> 3 -> 4 are purely additive (new append-only tables).
+            for stmt in _SCHEMA_V2 + _SCHEMA_V3 + _SCHEMA_V4:
                 self.db.execute(stmt)
             if version is None:
                 self.db.execute("INSERT INTO meta (key, value) VALUES ('schema_version', ?)", (str(STATE_SCHEMA_VERSION),))
@@ -367,6 +381,25 @@ class Store:
             (row["evidence_id"], row["contract_id"], row["revision"], row["semantic_digest"], row["run_id"], row["side"], row["snapshot_id"],
              row["result_label"], row["artifact_digest"], row.get("environment_digest"), row.get("run_profile_digest"), row["created_at"]))
         return cur.rowcount == 1
+
+    # -- behavior decisions (pivot phase 5) ---------------------------------------------------
+    def add_behavior_decision(self, decision_id: str, kind: str, symbol_id: str, key: str, record: str, reason: str, created_at: str) -> int:
+        self.db.execute("BEGIN IMMEDIATE")
+        try:
+            seq = (self.db.execute("SELECT COALESCE(MAX(seq), 0) FROM behavior_decisions").fetchone()[0]) + 1
+            self.db.execute("INSERT INTO behavior_decisions (decision_id, kind, symbol_id, key, record, reason, created_at, seq) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (decision_id, kind, symbol_id, key, record, reason, created_at, seq))
+            self.db.execute("COMMIT")
+        except sqlite3.IntegrityError:
+            self.db.execute("ROLLBACK")
+            raise StoreError(f"behavior decision {decision_id} already exists; decisions are append-only") from None
+        except BaseException:
+            self.db.execute("ROLLBACK")
+            raise
+        return seq
+
+    def behavior_decision_rows(self) -> list[tuple]:
+        return self.db.execute("SELECT decision_id, kind, symbol_id, key, record, reason, created_at, seq FROM behavior_decisions ORDER BY seq").fetchall()
 
     def contract_evidence(self, contract_id: str | None = None) -> list[dict[str, Any]]:
         q = ("SELECT evidence_id, contract_id, revision, semantic_digest, run_id, side, snapshot_id, result_label, artifact_digest, environment_digest, "

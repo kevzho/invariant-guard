@@ -536,6 +536,14 @@ def zygote(req, wfd):
         _generate_all(req, import_errors, results, cpu)
         _write_frame(wfd, {"results": results, "import_errors": import_errors})
         return
+    if req["mode"] == "doctest":
+        for tid, t in req["targets"].items():
+            if t["module"] in import_errors:
+                results[tid] = {"status": "import_error", "detail": import_errors[t["module"]]}
+                continue
+            results[tid] = _forked(lambda t=t: run_doctests(t["module"]), wall * 20, cpu * 20)
+        _write_frame(wfd, {"results": results, "import_errors": import_errors})
+        return
     chunk_size = max(1, int(req.get("chunk", 10)))
     pending = []
     for p in req["probes"]:
@@ -581,6 +589,45 @@ def zygote(req, wfd):
                 results[p["id"]] = _forked(lambda p=p: run_probe(req, p), wall, cpu)
             ch = []
     _write_frame(wfd, {"results": results, "import_errors": import_errors})
+
+
+# -- doctests (declared behavior; repository text executed inside the boundary only) --------------------------
+def run_doctests(module_name, max_examples=2000):
+    """Run every doctest example of one module; return per-example outcomes (pass | fail | error)."""
+    import doctest
+    import importlib
+
+    mod = importlib.import_module(module_name)
+    tests = doctest.DocTestFinder(recurse=True, exclude_empty=True).find(mod, module_name, module=mod)
+    out = []
+    n = [0]
+
+    class Recorder(doctest.DocTestRunner):
+        def __init__(self):
+            doctest.DocTestRunner.__init__(self, verbose=False, optionflags=doctest.ELLIPSIS)
+            self.examples = []
+
+        def report_start(self, out_, test, example):
+            pass
+
+        def report_success(self, out_, test, example, got):
+            self.examples.append({"source": example.source, "want": example.want, "outcome": "pass", "got": got[:2000]})
+
+        def report_failure(self, out_, test, example, got):
+            self.examples.append({"source": example.source, "want": example.want, "outcome": "fail", "got": ADDR_RE.sub("0x?", got[:2000])})
+
+        def report_unexpected_exception(self, out_, test, example, exc_info):
+            e = exc_summary(exc_info[1])
+            self.examples.append({"source": example.source, "want": example.want, "outcome": "error", "got": "%s: %s" % (e["type"], e["message"])})
+
+    for t in sorted(tests, key=lambda t: t.name):
+        if n[0] >= max_examples:
+            break
+        r = Recorder()
+        r.run(t, out=lambda s: None, clear_globs=True)
+        n[0] += len(r.examples)
+        out.append({"name": t.name, "examples": r.examples})
+    return {"status": "ok", "tests": out}
 
 
 # -- generation (Hypothesis, inside the boundary) ---------------------------------------------------
@@ -727,7 +774,7 @@ def main():
         mode = req.get("mode")
         if mode == "identity":
             resp = {"protocol": PROTOCOL, "mode": mode, "identity": _identity(req)}
-        elif mode in ("replay", "generate"):
+        elif mode in ("replay", "generate", "doctest"):
             rfd, wfd = os.pipe()
             pid = os.fork()
             if pid == 0:

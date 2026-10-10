@@ -209,6 +209,8 @@ class Example:
     base: str
     patch: str
     acknowledged: bool  # the input comes from a test or doctest that only the patch contains
+    probe: dict[str, Any] | None = None  # run.probe_record of the input
+    observations: dict[str, Any] | None = None  # {"base": observation, "patch": observation}
 
 
 @dataclass

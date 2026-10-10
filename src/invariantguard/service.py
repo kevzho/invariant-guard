@@ -60,6 +60,8 @@ ERROR_STATUSES = frozenset({"TIMEOUT", "CANCELLED", "INVALID_REQUEST", "NOT_AUTH
 NOT_EXPOSED = {
     "contracts declare/approve/revise/reject/retire/import": "authority changes are maintainer actions (guard contracts ... --reason TEXT); an agent cannot approve or revise a contract",
     "baseline create": "baselines are recorded only by a maintainer (guard baseline create); verify never writes or replaces one",
+    "behavior accept/pin/retire": ("deciding that a behavior change was intended, or pinning behavior as approved, is a maintainer action "
+                                   "(guard behavior ... --reason TEXT); an agent answers a replay finding's question in its patch rationale"),
     "runner setup": "preparing an execution environment may use the network; it is an explicit maintainer command",
     "contracts discover": ("model/template discovery is slow, opt-in and never approves; it stays a CLI command (guard contracts discover). The calling "
                            "agent can propose candidates itself with get_context_packet + propose_contracts (recorded INFERRED only)"),

@@ -204,6 +204,24 @@ def _probe_spec(p: Probe, tid: str, ns_ids: dict[Namespace, str]) -> dict[str, A
     return out
 
 
+def probe_record(p: Probe) -> dict[str, Any]:
+    """A self-contained JSON record of a probe's inputs (evidence; ``guard behavior pin`` replays literal ones)."""
+    def inp(a: Any) -> dict[str, Any]:
+        if isinstance(a, Value):
+            return {"v": a.node}
+        return {"x": a.text, "path": a.path, "line": a.line, "bindings": [[b.name, b.text, b.line] for b in a.bindings],
+                "namespace": a.namespace.to_json()}
+
+    out: dict[str, Any] = {"target": p.target.symbol_id, "seed": p.seed, "args": [inp(a) for a in p.args], "kwargs": {k: inp(v) for k, v in p.kwargs}}
+    if isinstance(p.receiver, Construct):
+        out["receiver"] = {"construct": {"args": [inp(a) for a in p.receiver.args], "kwargs": {k: inp(v) for k, v in p.receiver.kwargs}}}
+    elif p.receiver is not None:
+        out["receiver"] = inp(p.receiver)
+    if p.steps:
+        out["steps"] = [{"method": s.method, "args": [inp(a) for a in s.args], "kwargs": {k: inp(v) for k, v in s.kwargs}} for s in p.steps]
+    return out
+
+
 def validate_observation(o: Any) -> dict[str, Any]:
     """Shape-check one untrusted observation; malformed ones become ``invalid_observation``."""
     def bad(why: str) -> dict[str, Any]:

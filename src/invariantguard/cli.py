@@ -193,6 +193,10 @@ def build_parser() -> argparse.ArgumentParser:
                                                            "(reads .guard/config.toml; contacts nothing)")
     k.add_argument("--config", type=Path, default=None)
 
+    from .replay.commands import add_parser as _add_behavior_parser
+
+    _add_behavior_parser(sub, _Parser)
+
     i = sub.add_parser("init", help="write a minimal .guard/config.toml (runs nothing)")
     i.add_argument("path", type=Path, nargs="?", default=Path("."))
     return p
@@ -700,6 +704,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _cmd_model(args)
     if args.command == "explain":
         return _cmd_explain(args)
+    if args.command == "behavior":
+        from .replay.commands import run as _behavior
+
+        if args.behavior_command is None:
+            sys.stderr.write("guard: behavior needs an action: accept, pin, retire or list\n")
+            return EXIT_USAGE
+        return _behavior(args)
     if args.command == "mcp":
         return _cmd_mcp(args)
     if args.command == "capabilities":
