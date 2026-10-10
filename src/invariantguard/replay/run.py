@@ -164,7 +164,9 @@ class InputRejected(ValueError):
     """An input that may not be sent (wrong type, or expression text not found in the repository)."""
 
 
-def check_inputs(probe: Probe, provenance: dict[str, bytes]) -> None:
+def check_inputs(probe: Probe, provenance: dict[str, Any]) -> None:
+    """Every expression (and binding) must occur in the named file; a path may map to one
+    version or a tuple of versions (base and candidate)."""
     for inp in probe.inputs():
         if isinstance(inp, Value):
             continue
@@ -173,14 +175,20 @@ def check_inputs(probe: Probe, provenance: dict[str, bytes]) -> None:
         src = provenance.get(inp.path)
         if src is None:
             raise InputRejected(f"probe {probe.id}: expression source {inp.path} is not in the snapshot")
-        lines = src.decode("utf-8", "replace").splitlines()
-        for text, line in [(b.text, b.line) for b in inp.bindings] + [(inp.text, inp.line)]:
-            window = "\n".join(lines[max(0, line - 1): line + 40])
-            if text not in window and " ".join(text.split()) not in " ".join(window.split()):
-                raise InputRejected(f"probe {probe.id}: expression text does not occur at {inp.path}:{line}")
+        versions = src if isinstance(src, tuple) else (src,)  # base and candidate versions of the file
+        if not any(_occurs(inp, v.decode("utf-8", "replace").splitlines()) for v in versions):
+            raise InputRejected(f"probe {probe.id}: expression text does not occur at {inp.path}:{inp.line}")
     for s in probe.steps:
         if not s.method.isidentifier():
             raise InputRejected(f"probe {probe.id}: step method {s.method!r} is not an identifier")
+
+
+def _occurs(inp: Expr, lines: list[str]) -> bool:
+    for text, line in [(b.text, b.line) for b in inp.bindings] + [(inp.text, inp.line)]:
+        window = "\n".join(lines[max(0, line - 1): line + 40])
+        if text not in window and " ".join(text.split()) not in " ".join(window.split()):
+            return False
+    return True
 
 
 def _probe_spec(p: Probe, tid: str, ns_ids: dict[Namespace, str]) -> dict[str, Any]:
@@ -233,7 +241,7 @@ def validate_observation(o: Any) -> dict[str, Any]:
     return {k: o[k] for k in ("status", "result", "mutated", "receiver_after", "steps", "elapsed_ms") if k in o}
 
 
-def run_replay(backend: Backend, files: dict[str, bytes], probes: list[Probe], *, provenance: dict[str, bytes],
+def run_replay(backend: Backend, files: dict[str, bytes], probes: list[Probe], *, provenance: dict[str, Any],
                iter_prefix: int = 100, max_observation_bytes: int = 64 * 1024, chunk: int = 10) -> ReplayRun:
     """Run ``probes`` against the snapshot ``files``; returns one observation per probe id.
 

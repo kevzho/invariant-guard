@@ -66,6 +66,9 @@ def build_parser() -> argparse.ArgumentParser:
     v.add_argument("--state-dir", type=Path, default=None, help="state directory (default: <root>/.guard)")
     v.add_argument("--execute", action="store_true", help="also run dynamic contract checks in the configured runner (needs an enabled run profile)")
     v.add_argument("--run-profile", default=None, help="run profile from [execution.profiles] (default: [execution] profile)")
+    v.add_argument("--replay", action="store_true", help="differential replay: run base and candidate on identical inputs (harvested from tests and doctests, "
+                   "or generated in the runner) and report confirmed behavior changes of the changed symbols (needs --execute)")
+    v.add_argument("--no-generate", action="store_true", help="with --replay: use harvested inputs only (no in-runner Hypothesis generation)")
     v.add_argument("--debug", action="store_true")
 
     ct = sub.add_parser("contracts", help="behavioral contracts: list, declare, approve, revise, reject, retire, import, discover")
@@ -371,7 +374,7 @@ def _cmd_verify(args: argparse.Namespace) -> int:
 
     opts = VerifyOptions(base=args.base, mode=args.mode, path=args.path, root=args.root, config_path=args.config, no_solver=args.no_solver,
                          timeout_ms=args.timeout_ms, no_cache=args.no_cache, state_dir=args.state_dir, execute=args.execute,
-                         run_profile=args.run_profile)
+                         run_profile=args.run_profile, replay=args.replay, replay_generate=not args.no_generate)
     try:
         result = run_verify(opts)
     except UsageError as exc:

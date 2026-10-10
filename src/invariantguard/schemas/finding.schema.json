@@ -114,6 +114,130 @@
     },
     "contract": {
       "$ref": "urn:invariantguard:schema:common:1.0#/$defs/contract_ref"
+    },
+    "behavior": {
+      "description": "Differential replay (behavior.base_equivalence): one confirmed cluster of base/patch differences with its shortest replayable witness and the question for the agent.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "difference_class": {
+          "enum": [
+            "different_return",
+            "different_mutation",
+            "new_exception",
+            "removed_exception",
+            "different_exception",
+            "exception_message",
+            "timeout"
+          ]
+        },
+        "changed_symbol": {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+        },
+        "observed_through": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target": {
+              "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+            },
+            "relation": {
+              "enum": [
+                "direct",
+                "constructor",
+                "caller",
+                "data_reader"
+              ]
+            }
+          },
+          "required": [
+            "target",
+            "relation"
+          ]
+        },
+        "witness": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "call": {
+              "type": "string",
+              "minLength": 1
+            },
+            "input_origin": {
+              "type": "string",
+              "minLength": 1
+            },
+            "base": {
+              "type": "string"
+            },
+            "patch": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "call",
+            "input_origin",
+            "base",
+            "patch"
+          ]
+        },
+        "examples_in_cluster": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input_origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acknowledged_by_patch_tests": {
+          "type": "boolean"
+        },
+        "confirmed_runs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "base": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "patch": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "base",
+            "patch"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "if_intended": {
+          "type": "string",
+          "minLength": 1
+        },
+        "if_not_intended": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "difference_class",
+        "changed_symbol",
+        "observed_through",
+        "witness",
+        "examples_in_cluster",
+        "input_origins",
+        "acknowledged_by_patch_tests",
+        "confirmed_runs",
+        "question",
+        "if_intended",
+        "if_not_intended"
+      ]
     }
   },
   "required": [
@@ -216,6 +340,57 @@
           },
           "scope_validity": {
             "const": "EXECUTED"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "property_result": {
+            "const": "OBSERVED_DIFFERENCE"
+          }
+        },
+        "required": [
+          "property_result"
+        ]
+      },
+      "then": {
+        "required": [
+          "behavior"
+        ],
+        "properties": {
+          "scope_validity": {
+            "const": "EXECUTED"
+          },
+          "authority": {
+            "const": "INFERRED"
+          },
+          "patch_relation": {
+            "const": "CHANGED"
+          },
+          "severity": {
+            "enum": [
+              "WARNING",
+              "INFO"
+            ]
+          },
+          "witness": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "behavior"
+        ]
+      },
+      "then": {
+        "properties": {
+          "property_result": {
+            "const": "OBSERVED_DIFFERENCE"
           }
         }
       }

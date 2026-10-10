@@ -161,11 +161,13 @@ def capture(
     *,
     listing: Callable[[], set[str]] | None = None,
     git_note: dict[str, Any] | None = None,
+    suffixes: tuple[str, ...] = (".py",),
 ) -> Snapshot:
     """Capture the working tree under ``targets``.
 
     ``listing`` (Git mode) returns the root-relative candidate paths (index entries plus
-    untracked, non-ignored files); without it the directory tree is walked.
+    untracked, non-ignored files); without it the directory tree is walked. ``suffixes``
+    selects the captured files (``.py`` for analysis; replay also captures ``.pyi`` stubs).
     """
     root = root.resolve()
     files: list[CapturedFile] = []
@@ -211,11 +213,11 @@ def capture(
         except ValueError:
             raise ValueError(f"target {target} is outside the repository root {root}") from None
         scope.append(rel)
-        if t.is_symlink() and t.suffix == ".py":
+        if t.is_symlink() and t.suffix in suffixes:
             add_file(t)  # records the symlink as an uncaptured required source
             continue
         if t.is_file():
-            if t.suffix == ".py":
+            if t.suffix in suffixes:
                 add_file(t)
             else:
                 # The user asked for this file explicitly; nothing was analyzed for it.
@@ -223,7 +225,7 @@ def capture(
             continue
         if listing is not None:
             for relp in sorted(listing()):
-                if not relp.endswith(".py") or not in_scope(relp, [rel]):
+                if not relp.endswith(suffixes) or not in_scope(relp, [rel]):
                     continue
                 d = excluded_dir(relp, exclude_set)
                 if d is not None:
@@ -246,7 +248,7 @@ def capture(
                 keep.append(name)
             dirnames[:] = keep
             for name in sorted(filenames):
-                if name.endswith(".py"):
+                if name.endswith(suffixes):
                     add_file(d / name)
     snap = Snapshot(root, files, excluded, config_digest, semantics_profile, sorted(_label(x) for x in scope))
     snap.uncaptured = uncaptured
@@ -257,25 +259,26 @@ def capture(
 
     def relist() -> set[str]:
         if listing is not None:
-            return {p for p in listing() if p.endswith(".py") and in_scope(p, scope_copy) and excluded_dir(p, exclude_set) is None
+            return {p for p in listing() if p.endswith(suffixes) and in_scope(p, scope_copy) and excluded_dir(p, exclude_set) is None
                     and (root / p).exists()}
         out: set[str] = set()
         for s in scope_copy:
             t = root if s == "." else root / s
             if t.is_file():
-                if t.suffix == ".py":
+                if t.suffix in suffixes:
                     out.add(_rel(root, t))
                 continue
             for dirpath, dirnames, filenames in os.walk(t, followlinks=False):
                 dirnames[:] = [n for n in sorted(dirnames) if n not in exclude_set and not (Path(dirpath) / n).is_symlink()]
-                out.update(_rel(root, Path(dirpath) / n) for n in filenames if n.endswith(".py"))
+                out.update(_rel(root, Path(dirpath) / n) for n in filenames if n.endswith(suffixes))
         return out
 
     snap.relist = relist
     return finalize(snap)
 
 
-def capture_git_revision(repo: Any, commit: str, root: Path, scope: list[str], exclude: list[str], semantics_profile: str) -> Snapshot:
+def capture_git_revision(repo: Any, commit: str, root: Path, scope: list[str], exclude: list[str], semantics_profile: str,
+                         suffixes: tuple[str, ...] = (".py",)) -> Snapshot:
     """Snapshot of ``commit`` restricted to ``root``/``scope`` from Git objects only."""
     root = root.resolve()
     try:
@@ -299,7 +302,7 @@ def capture_git_revision(repo: Any, commit: str, root: Path, scope: list[str], e
             config_oid = e.oid
         if "/" not in rel and e.kind == "blob" and any(fnmatch.fnmatch(rel, pat) for pat in LOCK_PATTERNS):
             lock_oids[rel] = e.oid
-        if not rel.endswith(".py") or not in_scope(rel, scope):
+        if not rel.endswith(suffixes) or not in_scope(rel, scope):
             if e.kind == "commit" and in_scope(rel, scope):
                 excluded.append({"path": _label(rel), "reason": "Git submodule (gitlink) is not analyzed"})
             continue

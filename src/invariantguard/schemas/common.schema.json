@@ -55,6 +55,7 @@
         "TESTED",
         "OBSERVED_FAILURE",
         "OBSERVED_REGRESSION",
+        "OBSERVED_DIFFERENCE",
         "UNVERIFIED",
         "UNKNOWN"
       ]
@@ -766,6 +767,27 @@
             "properties": {
               "scope_validity": {
                 "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "property_result": {
+                "const": "OBSERVED_DIFFERENCE"
+              }
+            },
+            "required": [
+              "property_result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scope_validity": {
+                "enum": [
+                  "EXECUTED"
+                ]
               }
             }
           }

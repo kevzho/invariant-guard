@@ -93,6 +93,9 @@ class VerifyOptions:
     # MCP: the profile definition digest preauthorized when the server started. It is checked
     # against the configuration object this run actually uses (audit A5-02).
     authorized_profile_digest: str | None = None
+    # Pivot phase 4: differential replay of the changed symbols (needs --execute and a run profile).
+    replay: bool = False
+    replay_generate: bool = True
 
 
 def _open_repo(root: Path) -> GitRepo | None:
@@ -249,6 +252,36 @@ def run_verify(opts: VerifyOptions) -> CheckResult:
             store.close()
 
 
+REPLAY_EXCLUDE = [".git", ".guard", "__pycache__", ".venv", "venv", ".tox", ".nox", "node_modules", "build", "dist", ".eggs", ".mypy_cache"]
+
+
+def _run_replay(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | None, base: BaseSpec, cand_snap: Snapshot, match: Any, sl: Slice,
+                syms_c: dict[str, Any], dyn: DynamicSetup, run_id: str, created_at: str, log: list[str]) -> tuple[dict[str, Any], Snapshot | None]:
+    """Differential replay of the changed symbols on base and candidate (``--replay``)."""
+    from .replay import engine as replay_engine
+    from .replay import evidence as replay_evidence
+
+    if not dyn.requested or dyn.status is None or dyn.unavailable_reason is not None:
+        return replay_evidence.unavailable(dyn.unavailable_reason or "the runner was not started"), None
+    if base.kind != "git" or base.commit is None or repo is None:
+        return replay_evidence.unavailable("the base is not a Git commit; replay needs the base's code and tests (use --base git:REV)"), None
+    modified = [c for c in match.modified if c in syms_c]
+    data = sorted(c for c, why in sl.reasons.items() if why.startswith("reads ") and why.endswith("(binding changed)") and c not in modified and c in syms_c)
+    changed = [(c, "modified") for c in modified] + [(c, "data") for c in data]
+    bsrc = capture_git_revision(repo, base.commit, root, ["."], REPLAY_EXCLUDE, SEMANTICS_PROFILE, suffixes=(".py", ".pyi"))
+    listing, _ = _listing(repo, root)
+    csrc = capture(root, [root], REPLAY_EXCLUDE, cfg.digest, SEMANTICS_PROFILE, listing=listing,
+                   git_note={"kind": "working_tree", "head": repo.head(), "object_format": repo.object_format, "git_listing": True}, suffixes=(".py", ".pyi"))
+    bfiles = {f.path: f.raw for f in bsrc.files}
+    cfiles = {f.path: f.raw for f in csrc.files}
+    log.append(f"replay: {len(modified)} modified and {len(data)} data-dependent symbol(s); sources base {len(bfiles)} / candidate {len(cfiles)} file(s)")
+    res = replay_engine.replay_patch(dyn.backend, bfiles, cfiles, changed, python_path=list(dyn.profile.python_path), generate=opts.replay_generate,
+                                     progress=log.append)
+    out = replay_evidence.build(res, cand_files=cfiles, cand_snapshot_id=csrc.snapshot_id, base_snapshot_id=bsrc.snapshot_id, run_id=run_id,
+                                created_at=created_at, backend_status=dyn.status, run_profile_digest=dyn.run_profile_digest, engine_version=ENGINE_VERSION)
+    return out, csrc
+
+
 @dataclass
 class DynamicSetup:
     """``--execute`` state resolved once per command (before any target import)."""
@@ -287,6 +320,8 @@ def _prepare_execution(opts: Any, cfg: Config, view: RegistryView | None, log: l
     if not opts.execute:
         if opts.run_profile:
             raise UsageError("--run-profile is only meaningful with --execute")
+        if getattr(opts, "replay", False):
+            raise UsageError("--replay executes repository code and needs --execute with an enabled run profile")
         return DynamicSetup(False)
     try:
         prof = cfg.run_profile(opts.run_profile)
@@ -303,7 +338,7 @@ def _prepare_execution(opts: Any, cfg: Config, view: RegistryView | None, log: l
     from .execution.runner import make_backend
 
     setup = DynamicSetup(True, prof)
-    if not (needed if needed is not None else bool(view is not None and view.active())):
+    if not (needed if needed is not None else bool(view is not None and view.active()) or bool(getattr(opts, "replay", False))):
         log.append("execution requested, but there is nothing to execute; the runner was not started")
         return setup
     backend = make_backend(prof)
@@ -468,9 +503,20 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
             execute=dyn.requested, ctx=ctx, unavailable_reason=dyn.unavailable_reason or (None if ctx is not None else "runner not started"),
             execution_section=dyn.section(), require_coverage=cfg.analysis.require_coverage)
 
+    # -- differential replay (pivot phase 4; only with --replay --execute) ------------------------------
+    replay_out: dict[str, Any] | None = None
+    replay_src: Snapshot | None = None
+    t_replay = 0.0
+    if opts.replay:
+        t5 = time.perf_counter()
+        replay_out, replay_src = _run_replay(opts, root, cfg, repo, base, cand_snap, match, sl, syms_c, dyn, run_id, created_at, log)
+        t_replay = (time.perf_counter() - t5) * 1000
+
     # -- consistency ----------------------------------------------------------------------------------
     cancellation.check()  # last safe point: after this the run may be finalized as consistent
     changed = verify_unchanged(cand_snap)
+    if replay_src is not None:
+        changed += [p for p in verify_unchanged(replay_src) if p not in changed]
     if changed and not final:
         if store is not None:
             store.finalize_run(run_id, ok=False, note="working tree changed during the run (restarting)")
@@ -622,6 +668,13 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
         extra_sections["_warn_reasons"] = contracts_out.warn_reasons
         coverage_extra["contracts"] = contracts_out.coverage
         diagnostics.extend(view.diagnostics)
+    if replay_out is not None:
+        extra_findings.extend(replay_out["findings"])
+        incomplete_reasons.extend(replay_out["incomplete_reasons"])
+        extra_reasons.extend(replay_out["extra_reasons"])
+        extra_sections["replay"] = replay_out["section"]
+        extra_sections["_warn_reasons"] = list(extra_sections.get("_warn_reasons", [])) + replay_out["warn_reasons"]
+        coverage_extra["replay"] = replay_out["coverage"]
     if sl.widened_by_key_check:
         diagnostics.append({"kind": "slice_widened_by_key_check", "symbol_id": None,
                             "message": f"{len(sl.widened_by_key_check)} symbol(s) had changed validity keys but were not reached by the graph walk; they were added to the slice"})
@@ -637,6 +690,11 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
         extra_sections=extra_sections,
         coverage_extra=coverage_extra,
     )
+    if replay_out is not None:
+        extra_evidence.extend(replay_out["evidence"])
+        report["timing_ms"]["replay"] = round(t_replay, 3)
+        if dyn.status is not None and report["capabilities"]["execution"] == "disabled":
+            report["capabilities"]["execution"] = f"{dyn.status.backend} ({'isolated' if dyn.status.isolated else 'UNISOLATED'})"
     if contracts_out is not None:
         report["capabilities"]["execution"] = contracts_out.execution_label
         report["timing_ms"]["dynamic"] = contracts_out.dynamic_ms

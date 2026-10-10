@@ -79,8 +79,10 @@ def test_tool_set_has_no_approval_baseline_or_execution_tools():
         assert TOOL_SPECS[name]["input_schema"]["additionalProperties"] is False
     # Not even through argument smuggling: no tool accepts a flag that would execute or approve.
     all_args = {k for spec in TOOL_SPECS.values() for k in spec["input_schema"]["properties"]}
+    # `replay` (phase 4, I-126) executes repository code only together with a preauthorized isolated run_profile, the same gate
+    # as contract replay; without one verify_patch refuses it (test_verify_replay.py::test_mcp_verify_patch_replay).
     assert all_args == {"repository", "base", "mode", "path", "run_profile", "detail", "timeout_s", "no_cache", "finding_id", "run_id", "symbol",
-                        "context_packet_digest", "candidates", "dry_run"}
+                        "context_packet_digest", "candidates", "dry_run", "replay"}
     # propose_contracts takes candidates only: no authority, approval, provenance or client-identity argument
     assert set(TOOL_SPECS["propose_contracts"]["input_schema"]["properties"]) == {"repository", "symbol", "context_packet_digest", "candidates",
                                                                                    "run_profile", "dry_run", "timeout_s"}

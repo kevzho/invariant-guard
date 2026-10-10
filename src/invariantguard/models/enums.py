@@ -21,6 +21,10 @@ class PropertyResult(_StrEnum):
     TESTED = "TESTED"
     OBSERVED_FAILURE = "OBSERVED_FAILURE"
     OBSERVED_REGRESSION = "OBSERVED_REGRESSION"
+    # Differential replay (pivot phase 4): the same input, executed on base and patch, gave a
+    # different observable outcome, reproduced in fresh runs. A change, not a failure: only a
+    # DECLARED/APPROVED property can turn a difference into OBSERVED_REGRESSION.
+    OBSERVED_DIFFERENCE = "OBSERVED_DIFFERENCE"
     UNVERIFIED = "UNVERIFIED"
     UNKNOWN = "UNKNOWN"
 

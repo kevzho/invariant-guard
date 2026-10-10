@@ -106,6 +106,9 @@ TOOL_SPECS: dict[str, dict[str, Any]] = {
                            "description": "full also returns the complete schema-valid report"},
                 "timeout_s": {"type": "number", "exclusiveMinimum": 0, "description": "wall-clock limit for this call (capped by the server's limit)"},
                 "no_cache": {"type": "boolean", "default": False},
+                "replay": {"type": "boolean", "default": False,
+                           "description": "with run_profile: differential replay of the changed symbols on base and candidate; returns confirmed "
+                                          "behavior changes with a replayable witness and the question whether each was intended"},
             },
         },
     },
@@ -458,8 +461,10 @@ class AgentService:
         profile = a.get("run_profile")
         if profile is not None:
             self._authorize_profile(root, profile)
+        if a.get("replay") and profile is None:
+            raise ServiceError("INVALID_REQUEST", "replay executes repository code: it needs a preauthorized isolated run_profile")
         opts = VerifyOptions(base=base, mode=a["mode"], path=target, root=root.path, config_path=root.config_arg(), no_cache=a["no_cache"],
-                             execute=profile is not None, run_profile=profile, no_config_search=True,
+                             execute=profile is not None, run_profile=profile, no_config_search=True, replay=bool(a.get("replay")),
                              authorized_profile_digest=root.profiles[profile] if profile is not None else None)
         self._lock(root)
         try:
@@ -635,6 +640,11 @@ class AgentService:
                               "a single consistent snapshot; call verify_patch again once edits have stopped")
         if r.get("contracts") is not None:
             out["contracts"] = compact_contracts(r["contracts"])
+        if r.get("replay") is not None:
+            rp = r["replay"]
+            out["replay"] = {k: rp.get(k) for k in ("status", "reason", "clusters", "findings", "probes", "unconfirmed", "errors") if k in rp}
+            out["replay"]["targets"] = [{k: t.get(k) for k in ("symbol_id", "target", "relation", "required", "inputs", "executed", "classes")}
+                                        for t in rp.get("targets", [])][:MAX_LIST]
         if r.get("patch") is not None:
             p = r["patch"]
             out["patch"] = {"base": {k: p["base"].get(k) for k in ("spec", "kind", "commit", "label", "snapshot_id")}, "files": {k: p["files"].get(k) for k in ("added", "deleted", "modified", "renamed")},
@@ -673,7 +683,8 @@ def compact_finding(f: dict[str, Any]) -> dict[str, Any]:
     return {"finding_id": f["finding_id"], "symbol_id": f["symbol_id"], "property_id": f["property_id"], "property_result": f["property_result"],
             "scope_validity": f["scope_validity"], "authority": f["authority"], "patch_relation": f["patch_relation"], "severity": f["severity"],
             "location": _loc(f.get("source_span")), "message": f["message"], "witness": f["witness"], "witness_validated": f["witness_validated"],
-            "replay_available": f["replay_available"], "evidence_ids": f["evidence_ids"]}
+            "replay_available": f["replay_available"], "evidence_ids": f["evidence_ids"],
+            **({"behavior": f["behavior"]} if "behavior" in f else {})}
 
 
 def compact_coverage(c: dict[str, Any]) -> dict[str, Any]:
@@ -682,7 +693,7 @@ def compact_coverage(c: dict[str, Any]) -> dict[str, Any]:
             "unknown_obligations": c["unknown_obligations"][:MAX_LIST], "unknown_obligations_total": len(c["unknown_obligations"]),
             "skipped_checks": [{k: s.get(k) for k in ("kind", "path", "symbol_id", "reason", "required")} for s in c["skipped_checks"][:MAX_LIST]],
             "skipped_checks_total": len(c["skipped_checks"]),
-            **({"contracts": c["contracts"]} if "contracts" in c else {})}
+            **({"contracts": c["contracts"]} if "contracts" in c else {}), **({"replay": c["replay"]} if "replay" in c else {})}
 
 
 def compact_contracts(section: dict[str, Any]) -> dict[str, Any]:

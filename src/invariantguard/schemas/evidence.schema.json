@@ -18,7 +18,8 @@
         "WITNESS_SEARCH",
         "UNSUPPORTED",
         "ENGINE_ERROR",
-        "EXECUTION"
+        "EXECUTION",
+        "REPLAY"
       ]
     },
     "engine": {
@@ -213,6 +214,132 @@
         "probes",
         "witness_storage"
       ]
+    },
+    "replay": {
+      "description": "Differential replay evidence (pivot phase 4): both executions of one confirmed difference cluster, environment identities and the run counts.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "type": "string"
+        },
+        "isolated": {
+          "type": "boolean"
+        },
+        "base_snapshot_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidate_snapshot_id": {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/digest"
+        },
+        "environment_digests": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "harness": {
+          "type": "string"
+        },
+        "harness_digest": {
+          "type": "string"
+        },
+        "run_profile_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "interpreter": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target": {
+          "$ref": "urn:invariantguard:schema:common:1.0#/$defs/symbol_id"
+        },
+        "difference_class": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "call": {
+                "type": "string"
+              },
+              "input_origin": {
+                "type": "string"
+              },
+              "base": {
+                "type": "string"
+              },
+              "patch": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "call",
+              "input_origin",
+              "base",
+              "patch"
+            ]
+          }
+        },
+        "runs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "base": {
+              "type": "integer"
+            },
+            "patch": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "base",
+            "patch"
+          ]
+        }
+      },
+      "required": [
+        "backend",
+        "isolated",
+        "candidate_snapshot_id",
+        "environment_digests",
+        "harness",
+        "harness_digest",
+        "target",
+        "difference_class",
+        "examples",
+        "runs"
+      ]
     }
   },
   "required": [
@@ -281,6 +408,43 @@
                 "execution"
               ]
             }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "REPLAY"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "replay"
+        ],
+        "properties": {
+          "method": {
+            "const": "PROBE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "const": "REPLAY"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "replay"
           ]
         }
       }

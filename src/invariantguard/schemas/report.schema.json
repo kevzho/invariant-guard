@@ -227,6 +227,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "replay": {
+          "type": "object"
         }
       },
       "required": [
@@ -293,6 +296,10 @@
         },
         "runner_probe": {
           "description": "M3: capability probe of the execution backend (before any target import)",
+          "type": "number",
+          "minimum": 0
+        },
+        "replay": {
           "type": "number",
           "minimum": 0
         }
@@ -982,6 +989,27 @@
         "registry",
         "policy",
         "results"
+      ]
+    },
+    "replay": {
+      "description": "guard verify --replay: differential replay targets, coverage, runs and environment (pivot phase 4).",
+      "type": "object",
+      "properties": {
+        "requested": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "INCOMPLETE",
+            "UNAVAILABLE",
+            "NOTHING_TO_REPLAY"
+          ]
+        }
+      },
+      "required": [
+        "requested",
+        "status"
       ]
     }
   },
