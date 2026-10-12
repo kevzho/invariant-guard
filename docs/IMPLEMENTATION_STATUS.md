@@ -1178,6 +1178,13 @@ Commands and outcomes:
 - Full suite (`pytest -q`, CPython 3.13): 885 passed, 17 skipped (Docker and real-model tests skip locally).
 - One result became weaker on purpose. In `def f(a): s = 'ok %s' % (a,); return 10 // 0`, the division was PROVED_UNSAFE with witness `{}`; it is now POSSIBLY_UNSAFE, the same as after `a + 1`, because a raising `__str__` on `a` can stop execution first. With `a: int`, it is PROVED_UNSAFE with witness `{'a': 0}`.
 
+## Human report: grouped unresolved obligations (2026-10-12)
+
+- `guard check` and `guard verify` (`--format human`, the default) still list every result that is not UNKNOWN. PROVED_SAFE results take one line plus their assumptions. UNKNOWN obligations are summarized as counts by cause (`cli.unresolved_cause`, a display label derived from the first reason), with two example locations for each of the top 10 causes. `-v/--verbose` restores the full per-obligation listing and full snapshot ids. The JSON report, exit codes and verdict reasons are unchanged. `guard --help` no longer describes milestones.
+- `guard check src`: 145 lines (30.6 KB), against 559 lines (94.7 KB) before; `--verbose` gives the previous 559 lines.
+- `pytest tests/integration/test_cli.py tests/integration/test_runner_boundaries.py`: 37 passed (new: compact versus verbose listing, with every non-UNKNOWN location present and identical verdict reasons; cause labels).
+- Full suite (`pytest -q`, CPython 3.13): 891 passed, 17 skipped.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

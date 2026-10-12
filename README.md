@@ -33,7 +33,7 @@ candidate/ratio.py:3:12  PROVED_UNSAFE [EXACT_MODEL]  `100 / d`  (ratio, divisio
     why: SMT: SAT; witness {'a': 0, 'b': 0} re-validated by the IR evaluator: ZeroDivisionError at this operation
 ```
 
-Add `if d == 0: return 0.0` and the same obligation becomes `PROVED_SAFE [EXACT_MODEL]`. Use `--format json` for the stable, schema-validated report.
+Add `if d == 0: return 0.0` and the same obligation becomes `PROVED_SAFE [EXACT_MODEL]`. On a larger tree, the text report lists every proved or possible failure and groups unresolved (`UNKNOWN`) obligations by cause with examples; `--verbose` lists each one with its full reason. Use `--format json` for the stable, schema-validated report.
 
 ## Install
 

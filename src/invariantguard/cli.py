@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import traceback
 from pathlib import Path
@@ -40,13 +41,14 @@ class _Parser(argparse.ArgumentParser):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = _Parser(prog="guard", description="InvariantGuard: local verification for coding-agent patches (M5: Python static slice, change-aware verification, behavioral contracts with an isolated probe runner, local open-weight contract proposals, opt-in remote and agent contract proposers, stdio MCP server).")
+    p = _Parser(prog="guard", description="InvariantGuard (alpha): local verification for coding-agent patches. Static runtime-failure analysis of Python, change-aware verification, behavioral contracts and differential replay in an isolated runner, and an MCP server for coding agents.")
     p.add_argument("--version", action="version", version=f"invariantguard {ENGINE_VERSION}")
     sub = p.add_subparsers(dest="command", metavar="COMMAND", parser_class=_Parser)
 
     c = sub.add_parser("check", help="static single-snapshot analysis of PATH (never imports or executes it)")
     c.add_argument("path", type=Path, help="file or directory to analyze")
     c.add_argument("--format", choices=("json", "human"), default="human")
+    c.add_argument("-v", "--verbose", action="store_true", help="human format: list every obligation in full (default: unresolved ones are grouped by cause)")
     c.add_argument("--root", type=Path, default=None, help="repository root (default: directory holding .guard/, else PATH)")
     c.add_argument("--config", type=Path, default=None, help="explicit .guard/config.toml")
     c.add_argument("--no-solver", action="store_true", help="disable the optional SMT solver for this run")
@@ -58,6 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     v.add_argument("--base", required=True, help="REF or git:REF (a commit; nothing is checked out) or baseline:LABEL (saved baseline)")
     v.add_argument("--mode", choices=("quick", "full"), default="quick", help="quick: affected slice within quick_budget_ms; full: whole scope within full_budget_ms")
     v.add_argument("--format", choices=("json", "human"), default="human")
+    v.add_argument("-v", "--verbose", action="store_true", help="human format: list every obligation in full (default: unresolved ones are grouped by cause)")
     v.add_argument("--root", type=Path, default=None)
     v.add_argument("--config", type=Path, default=None)
     v.add_argument("--no-solver", action="store_true")
@@ -277,21 +280,66 @@ def _human_capabilities(c: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def human_report(r: dict[str, Any]) -> str:
+_UNSUPPORTED_TAIL = re.compile(r"\s+(is|are) outside\b.*$|\s*\(loops are outside.*$|:.*$")
+_DYNAMIC = re.compile(r"^(dividend|divisor|operand) has type object")
+_ORIGINS = ((re.compile(r"attribute access \.\w+ not modeled"), "attribute access"),
+            (re.compile(r"^parameter '"), "a parameter without a declared exact domain"),
+            (re.compile(r"^call to "), "a call result"),
+            (re.compile(r"global or builtin name"), "a global or builtin name"))
+
+
+def unresolved_cause(reason: str) -> str:
+    """A short display label for an UNKNOWN reason (grouping only; the full reason stays in the report)."""
+    if reason.startswith("unsupported: "):
+        return "unsupported " + _UNSUPPORTED_TAIL.sub("", reason[len("unsupported: "):]).strip()
+    if _DYNAMIC.match(reason):
+        tail = reason.split("; ", 1)[1] if "; " in reason else ""
+        tail = tail.split("it comes from: ", 1)[-1]
+        for pat, label in _ORIGINS:
+            if pat.search(tail):
+                return f"operand of unmodeled type (from {label}): the operator may be user code"
+        if tail.startswith("it is computed by"):
+            return "operand of unmodeled type (computed from unmodeled values): the operator may be user code"
+        return "operand of unmodeled type: the operator may be user code"
+    return re.split(r"[:;(]", reason, maxsplit=1)[0].strip()[:100]
+
+
+def _unresolved_summary(unresolved: list[dict[str, Any]], top: int = 10, examples: int = 2) -> list[str]:
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for o in unresolved:
+        groups.setdefault(unresolved_cause(o["reasons"][0] if o["reasons"] else "no reason recorded"), []).append(o)
+    ranked = sorted(groups.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+    symbols = len({o["symbol_id"] for o in unresolved})
+    lines = ["", f"UNKNOWN: {len(unresolved)} obligation(s) in {symbols} symbol(s) not resolved, by cause:"]
+    for cause, os_ in ranked[:top]:
+        eg = ", ".join(f"{o['source_span']['path']}:{o['source_span']['start_line']} `{o['operation_text']}`" for o in os_[:examples])
+        lines.append(f"  {len(os_):5}  {cause}")
+        lines.append(f"         e.g. {eg}")
+    if len(ranked) > top:
+        lines.append(f"  {sum(len(v) for _, v in ranked[top:]):5}  ({len(ranked) - top} more cause(s))")
+    lines.append("  (--verbose lists every obligation with its full reason; --format json has them all)")
+    return lines
+
+
+def _snap(snapshot_id: Any, verbose: bool) -> str:
+    return str(snapshot_id) if verbose or not isinstance(snapshot_id, str) else snapshot_id[:19] + "…"
+
+
+def human_report(r: dict[str, Any], verbose: bool = False) -> str:
     cov = r["coverage"]
     if r["command"] == "verify":
         patch = r["patch"]
         head = [
             f"InvariantGuard verify ({patch['mode']})  verdict={r['verdict']}  run_outcome={r['run_outcome']}  policy={r['policy_id']}",
-            f"base {patch['base']['spec']} -> {r['base_snapshot']}",
-            f"candidate {r['candidate_snapshot']}",
+            f"base {patch['base']['spec']} -> {_snap(r['base_snapshot'], verbose)}",
+            f"candidate {_snap(r['candidate_snapshot'], verbose)}",
             f"files: +{len(patch['files']['added'])} -{len(patch['files']['deleted'])} ~{len(patch['files']['modified'])} renamed {len(patch['files']['renamed'])}; "
             f"slice: {patch['slice']['affected_symbols']} symbol(s) affected, {patch['slice']['outside_slice_symbols']} outside",
         ]
     else:
         head = [
             f"InvariantGuard check  verdict={r['verdict']}  run_outcome={r['run_outcome']}  policy={r['policy_id']}",
-            f"snapshot {r['candidate_snapshot']}  (patch relation: UNDETERMINED for single-snapshot checks)",
+            f"snapshot {_snap(r['candidate_snapshot'], verbose)}  (patch relation: UNDETERMINED for single-snapshot checks)",
         ]
     out = head + [
         f"coverage: {cov['analyzed_symbols']}/{cov['requested_symbols']} symbols analyzed, "
@@ -299,12 +347,19 @@ def human_report(r: dict[str, Any]) -> str:
         f"solver: {r['capabilities']['solver']} ({r['capabilities']['solver_detail']})",
         "",
     ]
+    unresolved: list[dict[str, Any]] = []
     for o in r["obligation_results"]:
+        if not verbose and o["property_result"] == "UNKNOWN":
+            unresolved.append(o)
+            continue
         sp = o["source_span"]
         loc = f"{sp['path']}:{sp['start_line']}:{sp['start_column'] + 1}"
         scope = f" [{o['scope_validity']}]" if o["scope_validity"] else ""
         rel = f" {o['patch_relation']}" if o.get("patch_relation") else ""
         out.append(f"{loc}  {o['property_result']}{scope}{rel}  `{o['operation_text']}`  ({o['symbol_id'].split('::', 1)[1]}, {o['property_id']}, {o['method']})")
+        if not verbose and o["property_result"] == "PROVED_SAFE":
+            out.extend(f"    assumes: {a}" for a in o["assumptions"])  # the qualifications stay; --verbose adds the proof
+            continue
         if o["witness"] is not None:
             out.append(f"    witness: {o['witness']}{'' if o['witness_validated'] else ' (NOT validated)'}")
         if o["path_constraints"]:
@@ -314,6 +369,8 @@ def human_report(r: dict[str, Any]) -> str:
             out.append(f"    assumes: {a}")
         for why in o["reasons"]:
             out.append(f"    why: {why}")
+    if unresolved:
+        out.extend(_unresolved_summary(unresolved))
     for f in r["findings"]:
         if f["patch_relation"] in ("RESOLVED",) or f["message"].startswith("base finding"):
             out.append(f"BASE {f['patch_relation']}: {f['message']}")
@@ -350,10 +407,10 @@ def _cmd_check(args: argparse.Namespace) -> int:
         if args.debug:
             traceback.print_exc(file=sys.stderr)
         return EXIT_ERROR
-    return _emit_report(result, args.format)
+    return _emit_report(result, args.format, args.verbose)
 
 
-def _emit_report(result, fmt: str) -> int:
+def _emit_report(result, fmt: str, verbose: bool = False) -> int:
     for line in result.log:
         sys.stderr.write(f"guard: {line}\n")
     try:
@@ -368,7 +425,7 @@ def _emit_report(result, fmt: str) -> int:
     if fmt == "json":
         sys.stdout.write(json.dumps(result.report, indent=2, ensure_ascii=False) + "\n")
     else:
-        sys.stdout.write(human_report(result.report) + "\n")
+        sys.stdout.write(human_report(result.report, verbose=verbose) + "\n")
     sys.stderr.write(f"guard: verdict {result.report['verdict']} (exit {result.exit_code})\n")
     return result.exit_code
 
@@ -392,7 +449,7 @@ def _cmd_verify(args: argparse.Namespace) -> int:
         if args.debug:
             traceback.print_exc(file=sys.stderr)
         return EXIT_ERROR
-    return _emit_report(result, args.format)
+    return _emit_report(result, args.format, args.verbose)
 
 
 def _cmd_baseline(args: argparse.Namespace) -> int:

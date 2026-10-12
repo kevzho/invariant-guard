@@ -71,6 +71,38 @@ def test_human_format_on_stdout_and_logs_on_stderr():
     assert "captured" in err and "captured" not in out
 
 
+
+def test_human_format_groups_unknown_by_cause_and_verbose_lists_each():
+    code, out, _ = run_cli(["check", str(DEMO), "--format", "human"])
+    code_v, out_v, _ = run_cli(["check", str(DEMO), "--format", "human", "--verbose"])
+    _, report, _ = check_json(DEMO)
+    unknown = [o for o in report["obligation_results"] if o["property_result"] == "UNKNOWN"]
+    assert unknown and code == code_v == 1
+    # Compact: every non-UNKNOWN result is still listed, and UNKNOWNs are counted, never dropped.
+    assert f"UNKNOWN: {len(unknown)} obligation(s) in {len({o['symbol_id'] for o in unknown})} symbol(s)" in out
+    assert out.count("  UNKNOWN  `") == 0 and out_v.count("  UNKNOWN  `") == len(unknown)
+    for o in report["obligation_results"]:
+        if o["property_result"] != "UNKNOWN":
+            assert f"{o['source_span']['path']}:{o['source_span']['start_line']}:" in out
+    assert out.split("verdict reasons:")[1] == out_v.split("verdict reasons:")[1]
+    assert report["candidate_snapshot"] not in out and report["candidate_snapshot"] in out_v
+
+
+@pytest.mark.parametrize("reason,cause", [
+    ("unsupported: for loop (loops are outside the supported subset)", "unsupported for loop"),
+    ("unsupported: exception handling (try/except) is outside the supported subset", "unsupported exception handling (try/except)"),
+    ("dividend has type object: the operator may dispatch to a user-defined method, so built-in zero-divisor semantics are not established; "
+     "it comes from: attribute access .path not modeled", "operand of unmodeled type (from attribute access): the operator may be user code"),
+    ("dividend has type object: the operator may dispatch to a user-defined method, so built-in zero-divisor semantics are not established; "
+     "parameter 'x' annotated Any and no declared domain",
+     "operand of unmodeled type (from a parameter without a declared exact domain): the operator may be user code"),
+    ("list xs may be mutated (through an alias) by unknown effects", "list xs may be mutated"),
+])
+def test_unresolved_cause_labels(reason, cause):
+    from invariantguard.cli import unresolved_cause
+
+    assert unresolved_cause(reason) == cause
+
 @pytest.mark.parametrize(
     "argv",
     [
