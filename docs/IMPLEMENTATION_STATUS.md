@@ -1184,6 +1184,7 @@ Commands and outcomes:
 - `guard check src`: 145 lines (30.6 KB), against 559 lines (94.7 KB) before; `--verbose` gives the previous 559 lines.
 - `pytest tests/integration/test_cli.py tests/integration/test_runner_boundaries.py`: 37 passed (new: compact versus verbose listing, with every non-UNKNOWN location present and identical verdict reasons; cause labels).
 - Full suite (`pytest -q`, CPython 3.13): 891 passed, 17 skipped.
+- CI run 38317854539 (the methods commit): every job passed except macOS 3.13, where `test_baseline.py::test_git_baseline_records_a_commit_and_reads_it_without_checkout` failed. The unchanged-tree check saw a new `.git/objects/maintenance.lock`, created by background git maintenance that the test's own `git commit` started, not by guard. Test repositories now set `maintenance.auto=false` and `gc.auto=0`. `pytest tests/integration/test_baseline.py tests/integration/test_verify.py`: 23 passed.
 
 ## Known gaps (disclosed)
 

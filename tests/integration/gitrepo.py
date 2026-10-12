@@ -53,6 +53,10 @@ def make_repo(tmp_path: Path, files: dict[str, str], cfg: str | None = None, nam
     root = tmp_path / name
     root.mkdir()
     git(root, "init", "-q")
+    # No background auto-maintenance: a detached `git maintenance` started by a test's own commit can
+    # create .git/objects/maintenance.lock while tree_state() compares the tree (seen on macOS CI).
+    git(root, "config", "maintenance.auto", "false")
+    git(root, "config", "gc.auto", "0")
     write(root, {".gitignore": IGNORE, **files})
     if cfg is not None:
         write(root, {".guard/config.toml": cfg})
