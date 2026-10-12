@@ -207,7 +207,7 @@ class IntervalAnalysis:
             # numeric operation. With an operand of unmodeled type the operator may dispatch
             # to user code (e.g. ``obj.__truediv__``) that accepts a zero divisor without
             # raising, so nothing is learned about the divisor (audit A-07).
-            if b is not None and ins.flavor != "python.dynamic_dispatch":
+            if b is not None and ins.flavor not in ("python.dynamic_dispatch", "python.str_format"):
                 refined = b.meet(AbsInt.mk(Interval.top(), True))
                 state[ins.operands[1]] = refined
         elif op is Op.COMPARE and k is Kind.BOOL:

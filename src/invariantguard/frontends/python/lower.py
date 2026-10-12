@@ -131,6 +131,20 @@ def find_table(module_table: symtable.SymbolTable, node: ast.FunctionDef) -> sym
     return candidates[0] if len(candidates) == 1 else None
 
 
+def find_method_table(table: symtable.SymbolTable, node: ast.FunctionDef) -> symtable.SymbolTable | None:
+    """A method's table: a FUNCTION child of a class table (classes may nest, functions may not)."""
+    found = []
+    stack = [c for c in table.get_children() if c.get_type() == "class"]
+    while stack:
+        cls = stack.pop()
+        for c in cls.get_children():
+            if c.get_type() == "class":
+                stack.append(c)
+            elif c.get_type() == "function" and c.get_name() == node.name and c.get_lineno() == node.lineno:
+                found.append(c)
+    return found[0] if len(found) == 1 else None
+
+
 def _body_fingerprint(node: ast.FunctionDef) -> str:
     return body_fingerprint(node)
 
@@ -1039,6 +1053,11 @@ class FunctionLowerer:
         return marker
 
     # -- operators ------------------------------------------------------------------------
+    def _literal_of(self, value_id: str, kind: Kind) -> bool:
+        """True when ``value_id`` is an exact built-in ``kind`` from a literal or display (never an annotation)."""
+        t = self.types.get(value_id)
+        return t is not None and t.kind is kind and t.origin is Origin.LITERAL
+
     def binop(self, op: Op, left: str, right: str, node: ast.AST, augmented: bool = False) -> str:
         lk, rk = self.kind(left), self.kind(right)
         span = self.span(node)
@@ -1063,6 +1082,12 @@ class FunctionLowerer:
             if augmented and seq_kind is Kind.LIST:
                 # ``xs += ys`` / ``xs *= n`` mutate the list in place, i.e. every alias of it.
                 effect = Effect.UNKNOWN
+        elif op is Op.MOD and self._literal_of(left, Kind.STR) and self._literal_of(right, Kind.TUPLE):
+            # printf-style formatting (I-131): an exact str on the left and an exact tuple on
+            # the right (tuple is never a str subclass, so no reflected __rmod__ runs first)
+            # select str.__mod__, which performs no numeric division. Formatting may still call
+            # user __str__/__repr__/__format__/__index__ hooks of the elements: effect UNKNOWN.
+            typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.str_format"
         else:
             typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.dynamic_dispatch"
         attrs: dict[str, Any] = {}
@@ -1070,6 +1095,8 @@ class FunctionLowerer:
             attrs["augmented"] = True
         if flavor in ("python.sequence_concat", "python.sequence_repeat") and effect is Effect.UNKNOWN:
             attrs["reason"] = f"in-place list {'+=' if op is Op.ADD else '*='} mutates the list shared by every alias; alias/effect tracking for lists is not modeled"
+        if flavor == "python.str_format":
+            attrs["reason"] = "str % tuple formatting may call user __str__/__repr__/__format__ hooks of the elements"
         if flavor == "python.dynamic_dispatch":
             attrs["reason"] = f"{op.value} on {lk.value}/{rk.value} operands may dispatch to user-defined operator methods"
         site: ObligationSite | None = None

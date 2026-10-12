@@ -371,8 +371,8 @@ class FunctionEncoder:
     def division_guard(self, ins: Instruction) -> Any:
         """Fact that holds after ``ins`` executes without ZeroDivisionError."""
         divisor = ins.operands[1]
-        if ins.flavor == "python.dynamic_dispatch":
-            return None  # user-defined operator may accept a zero divisor (audit A-07)
+        if ins.flavor in ("python.dynamic_dispatch", "python.str_format"):
+            return None  # user-defined operator may accept a zero divisor (audit A-07); formatting divides nothing
         if self.kind(divisor) in NUMERIC_EXACT:
             return self.int_term(divisor) != 0
         return None

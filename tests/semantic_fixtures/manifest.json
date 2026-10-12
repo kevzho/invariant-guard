@@ -672,7 +672,7 @@
       "scope": "function input domain (not a repository reachability claim)",
       "ground_truth": {
         "method": "specification",
-        "detail": "methods are unsupported symbols"
+        "detail": "methods are analyzed (I-130), but the divisor is an attribute of the receiver; attribute access is not modeled"
       },
       "environment_lock": "requirements.lock",
       "seed": 0,

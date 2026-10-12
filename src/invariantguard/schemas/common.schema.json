@@ -129,6 +129,7 @@
         "UNSUPPORTED",
         "BUDGET",
         "PATH_FACT",
+        "TYPE_FACT",
         "PROBE"
       ]
     },

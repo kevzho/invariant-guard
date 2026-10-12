@@ -266,7 +266,7 @@ These extend the M1 subset below. Where the two differ, this section wins: M1 sa
 
 ## Supported Python subset (M1 base, precise)
 
-This is the M1 text, kept as written. Where it says calls, globals or subscripts are unknown, the M2 section above takes precedence.
+This is the M1 text, kept as written. Where it says calls, globals or subscripts are unknown, the M2 section above takes precedence. Plain methods (I-130) and `str literal % tuple literal` formatting (I-131) are now supported; see "Subset widening: methods and printf formatting".
 
 **Analyzed symbols:** module-level `def` functions only, without decorators, type parameters, `yield`/`await`, `global`/`nonlocal`, assignment expressions (`:=`), or nested functions that use `nonlocal`. Every other function-like scope (methods, nested functions, lambdas, async functions, functions defined under `if`/`try` at module level), class bodies and module-level code is an **unsupported symbol**. Its `/`, `//` and `%` sites are reported as UNKNOWN obligations.
 
@@ -1166,6 +1166,17 @@ Commands and outcomes:
 - CI run 38094400346: every job passed except `test (py3.11)`, where 1 test failed: `test_dsl.py::test_invalid_vacuous_and_malicious_contracts_are_rejected[pathological depth and size]`. A contract nested 5000 deep made CPython 3.11's json encoder raise `RecursionError` (an engine crash on hostile input) before the size check could run. `check_document_shape` now rejects such a document as `OVERSIZED`.
 - Checked locally on 3.13 by forcing `canonical_json` to raise `RecursionError` (result: `Rejection OVERSIZED`) and with `pytest -q`: 870 passed, 17 skipped. No 3.11 interpreter is available locally; the next CI run is the 3.11 check.
 - Commit messages were rewritten to drop co-author trailers (trees unchanged, backups under `refs/backup/pre-rewrite/`), and `main` was force-pushed.
+
+## Subset widening: methods and printf formatting (2026-10-12)
+
+- **Methods (I-130).** A plain `def` directly in a module-level class body is analyzed. The receiver is an unmodeled input, free names skip class scope, and methods are call-graph nodes for impact. Still unsupported: async, decorated (including `staticmethod`/`classmethod`/`property`), methods of local classes, and methods using a name subject to private-name mangling. Calls to methods (`obj.m()`) remain unmodeled attribute access.
+- **`str % tuple` (I-131).** An exact str literal `%` an exact tuple literal is formatting, PROVED_SAFE for `division.zero_denominator` by `TYPE_FACT` (a new `AnalysisMethod`, added to `common.schema.json`). Any other `str % x` stays UNKNOWN, because a str-subclass right operand dispatches to its own `__rmod__`.
+- Corpus (symbols analyzed, before → after methods): boltons 161 → 759 of 951, dateutil 30 → 249 of 310, more-itertools 117 → 185 of 291, own `src` 455 → 864 of 1028. Resolved required obligations barely move: unmodeled attribute access, `for` loops, exceptions and generators are now the dominant UNKNOWN reasons.
+- `pytest tests/differential/test_methods_and_formatting.py`: 14 passed. Thirteen cases compare every PROVED_SAFE against an exhaustive CPython run (receivers `None`, `0`, `object()`, an uninitialized instance; ints -3..3 plus a `str` subclass with a raising `__rmod__` and an object with a raising `__str__`). Every PROVED_UNSAFE witness is replayed. The remaining test is a CPython probe of `__rmod__` dispatch.
+- `pytest tests/integration/test_verify.py -k method_caller`: 1 passed (a changed module function invalidates an unchanged method caller: BLOCK, INTRODUCED, base PROVED_SAFE).
+- Changed expectations: `test_lowering.py::test_every_division_site_is_accounted_for` (`C.m` is now lowered); the `method-unsupported` semantic fixture still expects UNKNOWN, with the reason now attribute access on the receiver.
+- Full suite (`pytest -q`, CPython 3.13): 885 passed, 17 skipped (Docker and real-model tests skip locally).
+- One result became weaker on purpose. In `def f(a): s = 'ok %s' % (a,); return 10 // 0`, the division was PROVED_UNSAFE with witness `{}`; it is now POSSIBLY_UNSAFE, the same as after `a + 1`, because a raising `__str__` on `a` can stop execution first. With `a: int`, it is PROVED_UNSAFE with witness `{'a': 0}`.
 
 ## Known gaps (disclosed)
 

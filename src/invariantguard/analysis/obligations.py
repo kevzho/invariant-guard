@@ -500,6 +500,9 @@ class FunctionChecker:
         divisor_fact: AbsInt | None = None
         if prop == DIVISION_PROPERTY:
             divisor_v = self.defs[site.result_id].operands[1]
+            if self.defs[site.result_id].flavor == "python.str_format":
+                return safe(AnalysisMethod.TYPE_FACT, "an exact str literal % an exact tuple selects str.__mod__ (printf-style formatting), which performs no numeric division; "
+                            "exceptions raised by element __str__/__repr__/__format__ hooks are obligations of those hooks, not of this operation")
             if fact.dividend_kind not in (Kind.INT, Kind.BOOL, Kind.FLOAT):
                 return unknown(AnalysisMethod.UNSUPPORTED, [
                     f"dividend has type {fact.dividend_kind.value}: the operator may dispatch to a user-defined method, so built-in zero-divisor semantics are not established"

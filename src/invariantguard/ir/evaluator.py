@@ -158,6 +158,20 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                     out.kind, out.detail = "STUCK", f"unmodeled operand at {ins.result}"
                     out.values = env
                     return out
+                if ins.flavor == "python.str_format":
+                    # Evaluator values are built-in objects only (user objects are UNMODELED),
+                    # so formatting them runs no user code and matches CPython exactly.
+                    if not isinstance(b, tuple) or any(e is UNMODELED or e is UNBOUND for e in b):
+                        out.kind, out.detail = "STUCK", f"unmodeled formatting argument at {ins.result}"
+                        out.values = env
+                        return out
+                    try:
+                        env[ins.result] = a % b
+                    except (TypeError, ValueError, OverflowError) as exc:
+                        out.kind, out.detail = "RAISED_OTHER", f"{type(exc).__name__} at {ins.result}"
+                        out.values = env
+                        return out
+                    continue
                 if op is Op.MUL and ins.flavor == "python.sequence_repeat":
                     seq, cnt = (a, b) if isinstance(a, (list, tuple)) else (b, a)
                     if not isinstance(seq, (list, tuple)) or not isinstance(cnt, int) or len(seq) * max(cnt, 0) > MAX_SEQ_LEN:

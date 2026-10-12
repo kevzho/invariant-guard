@@ -82,6 +82,23 @@ def test_fixture_d_cross_module_callee_is_conditional_and_invalidates_importer(t
     assert code == 0 and r["verdict"] == "WARN"
 
 
+
+def test_fixture_d_changed_callee_invalidates_unchanged_method_caller(tmp_path):
+    """I-130: a method is an ordinary call-graph node, so an unchanged method that calls a changed
+    module function is re-analyzed, and its free name resolves to the module global (not class scope)."""
+    src = "def denominator(x):\n    return x + 1\n\n\nclass Report:\n    denominator = None\n\n    def scaled(self):\n        return 100 / denominator(0)\n"
+    root, base = make_repo(tmp_path, {"calc.py": src}, config())
+    code0, r0, _ = verify(root, base)
+    assert code0 == 0 and r0["verdict"] == "PASS"
+    write(root, {"calc.py": src.replace("return x + 1", "return x")})
+    code, r, _ = verify(root, base)
+    inv = {i["symbol_id"]: i["reason"] for i in r["patch"]["slice"]["invalidated"]}
+    assert inv["calc.py::Report.scaled"].startswith("calls calc.py::denominator")
+    f = finding(r, "calc.py::Report.scaled::division.zero_denominator#0")
+    assert (f["property_result"], f["patch_relation"]) == ("PROVED_UNSAFE", "INTRODUCED")
+    assert f["comparison"]["base_result"] == "PROVED_SAFE"
+    assert code == 1 and r["verdict"] == "BLOCK"
+
 # -- staged / unstaged / untracked / deleted / renamed --------------------------------------------------
 def test_staged_unstaged_untracked_deleted_and_renamed_files_participate(tmp_path):
     files = {

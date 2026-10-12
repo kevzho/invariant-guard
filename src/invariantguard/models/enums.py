@@ -92,6 +92,7 @@ class AnalysisMethod(_StrEnum):
     UNSUPPORTED = "UNSUPPORTED"
     BUDGET = "BUDGET"
     PATH_FACT = "PATH_FACT"  # M2: branch-refinement fact (e.g. receiver narrowed to non-None)
+    TYPE_FACT = "TYPE_FACT"  # operand types fix the operator implementation, which performs no division (I-131)
     PROBE = "PROBE"  # M3: executed contract probes (dynamic evidence, never a proof)
 
 

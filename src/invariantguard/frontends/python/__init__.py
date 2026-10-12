@@ -13,7 +13,7 @@ from typing import Any
 
 from ...ir.model import DIVISION_PROPERTY, Function, ModuleIR, ObligationSite, Op, UnsupportedSymbol
 from ...models.spans import digest_json, sha256_bytes, short_hex
-from .lower import PROFILE_TYPES, FunctionLowerer, find_table
+from .lower import PROFILE_TYPES, FunctionLowerer, find_method_table, find_table
 from .parse import PYTHON_GRAMMAR, ParsedFile, ParseFailure, parse_source
 from .resolve import ModuleContext, ProgramIndex, ast_fingerprint, class_body_name, code_fingerprint, initializer_fingerprint
 from .subset import function_unsupported_reason
@@ -161,7 +161,7 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
             continue
         node = sym.node
         assert isinstance(node, ast.FunctionDef)
-        table = find_table(parsed.symtable, node)
+        table = find_method_table(parsed.symtable, node) if sym.kind == "method" else find_table(parsed.symtable, node)
         if table is None:
             errors.append({"symbol_id": symbol_id, "stage": "symbol_resolution", "error_type": "SymbolTableMismatch", "message": "could not match function to its symbol table", "_sites": sorted(sites.values(), key=lambda s: s.ordinal)})
             continue

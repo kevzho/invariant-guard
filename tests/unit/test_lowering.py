@@ -117,7 +117,8 @@ def test_every_division_site_is_accounted_for():
     assert lowered + unsupported == syntactic == 9
     kinds = {u.symbol_id.split("::")[1]: u.kind for u in res.module.unsupported_symbols}
     assert kinds["<module>"] == "module_initializer"  # X = 1/3 and default 4 % 3
-    assert kinds["C"] == "class_body" and kinds["C.m"] == "method"
+    assert kinds["C"] == "class_body" and "C.m" not in kinds  # plain methods are lowered (I-130)
+    assert next(f for f in res.module.functions if f.symbol_id.endswith("::C.m")).division_sites[0].text == "x / self.k"
     assert kinds["top.<locals>.<lambda>#1"] == "lambda"
     assert "generator" in next(u.reason for u in res.module.unsupported_symbols if u.symbol_id.endswith("::gen"))
     top = fn_named(res, "top")
