@@ -1161,6 +1161,12 @@ Commands and outcomes:
 - `pytest -q` (CPython 3.12, Homebrew, `pip install -r requirements.lock`): before the fix 359 failed; after it 868 passed, 19 skipped (the two agent_eval packet tests). Python 3.11 was not available locally; CI covers it.
 - `pip wheel . --no-deps`: metadata `License-Expression: MIT OR Apache-2.0`, both license files included.
 
+## CI follow-up (2026-10-11)
+
+- CI run 38094400346: every job passed except `test (py3.11)`, where 1 test failed: `test_dsl.py::test_invalid_vacuous_and_malicious_contracts_are_rejected[pathological depth and size]`. A contract nested 5000 deep made CPython 3.11's json encoder raise `RecursionError` (an engine crash on hostile input) before the size check could run. `check_document_shape` now rejects such a document as `OVERSIZED`.
+- Checked locally on 3.13 by forcing `canonical_json` to raise `RecursionError` (result: `Rejection OVERSIZED`) and with `pytest -q`: 870 passed, 17 skipped. No 3.11 interpreter is available locally; the next CI run is the 3.11 check.
+- Commit messages were rewritten to drop co-author trailers (trees unchanged, backups under `refs/backup/pre-rewrite/`), and `main` was force-pushed.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

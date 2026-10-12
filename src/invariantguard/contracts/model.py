@@ -88,7 +88,11 @@ def check_document_shape(doc: Any) -> None:
     """Field-level checks equivalent to the JSON Schema (the core has no jsonschema dependency)."""
     if type(doc) is not dict:
         raise _reject("MALFORMED_CONTRACT", "", "a contract revision must be a JSON object")
-    if len(canonical_json(doc)) > MAX_CONTRACT_BYTES:
+    try:
+        size = len(canonical_json(doc))
+    except RecursionError:  # CPython 3.11's json encoder recurses on the Python stack; hostile nesting must not crash
+        raise _reject("OVERSIZED", "", "contract revision is nested too deeply to serialize") from None
+    if size > MAX_CONTRACT_BYTES:
         raise _reject("OVERSIZED", "", f"contract revision exceeds {MAX_CONTRACT_BYTES} bytes")
     extra, missing = set(doc) - _FIELDS, _REQUIRED - set(doc)
     if extra:
