@@ -1199,6 +1199,17 @@ Commands and outcomes:
 - Corpus (resolved required obligations, before → after loops): boltons 2 → 19 of 157-159, dateutil 1 → 12 of 82, more-itertools 0 → 0 of 42. Own `src` went 9 → 5 resolved of 115-118: six `none.attribute_access` obligations in `impact/attribution.py` disappeared, because `evaluate()` (a `while True` loop) can no longer fall off its end and return None. That removed one POSSIBLY_UNSAFE false alarm and its five companions.
 - Full suite (`pytest -q`, CPython 3.13): 892 passed, 17 skipped.
 
+## Subset widening: exception handling (2026-10-12)
+
+- **try/except/else/finally (I-133).** Handlers are entered as if the body raised anywhere. Locals take fresh values of a type covering every value the body bound, and the body's unknown effects are included. `finally` is lowered once, with a re-raise on the exceptional path. A failure that an enclosing handler definitely catches without re-raising is advisory: INFO, not required, with a `handled:` reason.
+- Still unsupported: `except*`, `finally` with `return`/`break`/`continue` inside the statement, and `with`.
+- `pytest tests/differential/test_try.py`: 1 passed. The test covers 21 functions: handled by name, parent class, tuple and nested try; re-raise; wrong or unknown handler type; else; finally on both paths; handler reading body variables; raise in body; try inside loops with continue/break; a handled index error. Ground truth comes from `sys.settrace` raise events over an exhaustive CPython run. Every witness is replayed. A handled failure must not escape the call.
+- Changed expectations:
+  - `test_audit_regressions.py` `try-handled` (PROVED_UNSAFE, handled; the CPython replay returns normally);
+  - `test_cli.py` (required obligations exclude handled sites).
+- Corpus (resolved required obligations; before loops → loops → loops and try): boltons 2 → 19 → 25 of 157-160; dateutil 1 → 12 → 16 of 82-85; more-itertools 0 of 42 throughout; own `src` 4 of 119. Exception handling no longer appears among the UNKNOWN causes. The largest causes now are `str % x` with an operand of unmodeled type (84), operands of unmodeled type (about 120, from attribute access, unannotated parameters and computed values) and generators (38).
+- Full suite (`pytest -q`, CPython 3.13): 893 passed, 17 skipped.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

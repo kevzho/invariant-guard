@@ -83,7 +83,6 @@ def _sequence_result(op: Op, lk: Kind, rk: Kind) -> Kind | None:
 
 _STMT_REASONS = {
     ast.AsyncFor: "async for loop (outside the supported subset)",
-    ast.Try: "exception handling (try/except) is outside the supported subset",
     ast.With: "with statement (context managers may run user code and suppress exceptions)",
     ast.AsyncWith: "async with statement (outside the supported subset)",
     ast.Match: "match statement (outside the supported subset)",
@@ -98,6 +97,13 @@ if hasattr(ast, "TryStar"):
     _STMT_REASONS[ast.TryStar] = "exception groups (try/except*) are outside the supported subset"
 if hasattr(ast, "TypeAlias"):
     _STMT_REASONS[ast.TypeAlias] = "type alias statement (outside the supported subset)"
+
+# Builtin exception classes that catch each obligation's failure (I-133).
+CATCHES = {
+    DIVISION_PROPERTY: frozenset({"ZeroDivisionError", "ArithmeticError", "Exception", "BaseException"}),
+    INDEX_PROPERTY: frozenset({"IndexError", "LookupError", "Exception", "BaseException"}),
+    NONE_PROPERTY: frozenset({"AttributeError", "Exception", "BaseException"}),
+}
 
 # Attributes that exist on None (CPython 3.13): loading them never raises AttributeError.
 NONE_ATTRS = frozenset(dir(None))
@@ -197,6 +203,16 @@ def loop_exits(stmt: ast.AST) -> set[str]:
         else:
             stack.extend(ast.iter_child_nodes(n))
     return out
+
+
+def _own_scope(stmt: ast.AST):
+    """Nodes of ``stmt`` in the enclosing function's own scope (not nested defs/lambdas)."""
+    stack = [stmt]
+    while stack:
+        n = stack.pop()
+        yield n
+        if not isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)) or n is stmt:
+            stack.extend(ast.iter_child_nodes(n))
 
 
 def annotation_type(ann: ast.AST | None, lookup=None) -> tuple[SemType, str | None]:
@@ -335,6 +351,10 @@ class FunctionLowerer:
         self.inlined: list[str] = []
         self.unresolved_calls: list[str] = []
         self.loops: list[LoopCtx] = []
+        self.try_stack: list[list[ast.ExceptHandler]] = []  # handlers protecting the code being lowered
+        # (frame id, local name, value) for every direct binding of a local: the types a local can
+        # hold when an exception interrupts protected code (I-133).
+        self.bindings: list[tuple[int, str, str]] = []
 
     # -- helpers -------------------------------------------------------------------
     @property
@@ -418,6 +438,10 @@ class FunctionLowerer:
     def typ(self, v: str) -> SemType:
         return self.types.get(v, UNKNOWN_TYPE)
 
+    def bind(self, env: dict[str, str], name: str, v: str) -> None:
+        env[name] = v
+        self.bindings.append((id(self.frame), name, v))
+
     def name_var(self, v: str, name: str) -> None:
         self.var_names.setdefault(v, self.frame.var_prefix + name)
 
@@ -463,7 +487,7 @@ class FunctionLowerer:
         return self.debug_value
 
     # -- re-lowering (loops) ---------------------------------------------------------------
-    _LISTS = ("regions", "extra_sites", "inlined", "unresolved_calls")
+    _LISTS = ("regions", "extra_sites", "inlined", "unresolved_calls", "bindings")
     _DICTS = ("ordinals", "deps")
 
     def checkpoint(self) -> Checkpoint:
@@ -542,8 +566,41 @@ class FunctionLowerer:
             divisor_text=f.lines.text(self.span(operand)), property_id=prop_id, anchor=anchor,
             required=required, via=via, subject_text=f.lines.text(self.span(subject)) if subject is not None else None,
         )
+        if f.depth == 0:
+            self.mark_handled(site)
         self.extra_sites.append(site)
         return site
+
+    def mark_handled(self, site: ObligationSite) -> None:
+        """Advisory when an enclosing handler definitely catches the failure and never re-raises."""
+        site.handled_by = self.handled_by(site.base_property)
+        site.required = site.handled_by is None
+
+    def handled_by(self, prop: str) -> str | None:
+        for handlers in reversed(self.try_stack):
+            for h in handlers:
+                m = self._catches(h, prop)
+                if m == "maybe":
+                    return None  # an unknown handler type may intercept (and re-raise) first
+                if m == "yes":
+                    if any(isinstance(n, ast.Raise) for n in ast.walk(h)):
+                        return None
+                    shown = f"except {ast.unparse(h.type)}" if h.type is not None else "except"
+                    return f"`{shown}` at line {h.lineno}"
+        return None
+
+    def _catches(self, h: ast.ExceptHandler, prop: str) -> str:
+        if h.type is None:
+            return "yes"
+        out = "no"
+        for t in (h.type.elts if isinstance(h.type, ast.Tuple) else [h.type]):
+            if (isinstance(t, ast.Name) and t.id not in self.frame.local_names
+                    and self.resolve_global(t.id).kind == "builtin"):
+                if t.id in CATCHES[prop]:
+                    return "yes"
+            else:
+                out = "maybe"
+        return out
 
     # -- function --------------------------------------------------------------------
     def lower(self) -> Function:
@@ -640,7 +697,7 @@ class FunctionLowerer:
             if all(isinstance(t, ast.Name) for t in stmt.targets):
                 v = self.expr(stmt.value, env)
                 for t in stmt.targets:
-                    env[t.id] = v
+                    self.bind(env, t.id, v)
                     self.name_var(v, t.id)
                 return self.cur, env
             return self.unsupported_stmt(stmt, env, "assignment to a non-name target (tuple/attribute/subscript) is outside the supported subset")
@@ -649,7 +706,7 @@ class FunctionLowerer:
                 if stmt.value is None:
                     return self.cur, env  # annotation only; binds nothing
                 v = self.expr(stmt.value, env)
-                env[stmt.target.id] = v
+                self.bind(env, stmt.target.id, v)
                 self.name_var(v, stmt.target.id)
                 return self.cur, env
             return self.unsupported_stmt(stmt, env, "annotated assignment to a non-name target is outside the supported subset")
@@ -658,7 +715,7 @@ class FunctionLowerer:
                 cur = self.load(stmt.target.id, stmt.target, env)
                 rhs = self.expr(stmt.value, env)
                 v = self.binop(_BINOPS[type(stmt.op)], cur, rhs, stmt, augmented=True)
-                env[stmt.target.id] = v
+                self.bind(env, stmt.target.id, v)
                 self.name_var(v, stmt.target.id)
                 return self.cur, env
             return self.unsupported_stmt(stmt, env, "augmented assignment with this target/operator is outside the supported subset")
@@ -693,6 +750,8 @@ class FunctionLowerer:
             return self.lower_assert(stmt, env)
         if isinstance(stmt, (ast.For, ast.While)):
             return self.lower_loop(stmt, env)
+        if isinstance(stmt, ast.Try):
+            return self.lower_try(stmt, env)
         if isinstance(stmt, (ast.Break, ast.Continue)) and self.loops:
             ctx = self.loops[-1]
             assert self.cur is not None
@@ -707,7 +766,7 @@ class FunctionLowerer:
         self.emit(Op.UNKNOWN_EFFECT, (), None, span, Effect.UNKNOWN, None, reason=reason)
         for name in sorted(stored_names(stmt) & self.frame.local_names):
             v = self.unknown(span, f"'{name}' may be rebound inside unsupported construct: {reason}")
-            env[name] = v
+            self.bind(env, name, v)
             self.var_names[v] = self.frame.var_prefix + name
         if self.loops:
             # A break/continue inside the unsupported construct leaves it with the state above:
@@ -905,6 +964,181 @@ class FunctionLowerer:
         out, out_env = self.join([(dend, denv)] + ctx.breaks, span)
         return out, out_env, latch
 
+    # -- exceptions (I-133) ------------------------------------------------------------------
+    def _exception_entry(self, span: SourceSpan, block: Block, env: dict[str, str], names: list[str], first_block: int,
+                         context: str, first_binding: int) -> dict[str, str]:
+        """State where an exception from the protected code is caught: every local that code may
+        bind is a fresh value of a type covering each value it held there (its value before the
+        statement and every binding since ``first_binding``), and its unknown effects may have happened."""
+        out = dict(env)
+        held: dict[str, list[str]] = {}
+        for fid, n, v in self.bindings[first_binding:]:
+            if fid == id(self.frame):
+                held.setdefault(n, []).append(v)
+        for n in names:
+            init = env.get(n)
+            mu = init is None or init in self.maybe_unbound_values
+            typ = UNKNOWN_TYPE
+            if not mu:
+                typ = self.typ(init)
+                for v in held.get(n, []):
+                    t = self.typ(v)
+                    if v in self.maybe_unbound_values:
+                        typ = UNKNOWN_TYPE
+                    elif not covers(typ, t):
+                        typ = join_types([typ, t])
+            v = self.emit(Op.LOOP_PHI, (init,) if init is not None else (), typ, span, block=block,
+                          incoming=[(None, init)], variable=self.frame.var_prefix + n, maybe_unbound=mu, handler=True,
+                          reason=f"value of '{n}' when an exception interrupted the {context}")
+            if mu:
+                self.maybe_unbound_values.add(v)
+            out[n] = v
+            self.var_names[v] = self.frame.var_prefix + n
+        self.emit(Op.LOOP_HEAD, (), None, span, block=block, context=context)
+        marker = block.instructions[-1]
+        ids = {f"b{i}" for i in range(first_block, self._b)}
+        effects = [i for bid in ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
+        if effects:
+            marker.effect = Effect.UNKNOWN
+            marker.attrs["reason"] = f"the interrupted {context} may have run unknown code (" + (effects[0].attrs.get("callee") or effects[0].attrs.get("reason", "unknown effect")) + ")"
+        return out
+
+    def _exception_branch(self, span: SourceSpan, reason: str, exceptional: Block, normal: Block) -> Instruction:
+        c = self.emit(Op.UNKNOWN_EFFECT, (), SemType(Kind.BOOL, Origin.UNKNOWN), span, Effect.NONE, None, exception_edge=True, control=True, reason=reason)
+        assert self.cur is not None
+        self.terminate(self.cur, Op.BRANCH, (c,), span, true_target=exceptional.block_id, false_target=normal.block_id, kind="exception")
+        return self.cur.instructions[-1]
+
+    def _raise_inputs(self, edge: Instruction, first_block: int) -> None:
+        """Whether an exception happens depends on every value the protected code uses (an
+        operation that cannot raise on an exact int may raise on a value that breaks a type
+        assumption): make them the edge's operands, for the dependency cone only."""
+        ops: dict[str, None] = {}
+        for i in range(first_block, self._b):
+            b = self.blocks.get(f"b{i}")
+            if b is None:
+                continue
+            for ins in b.instructions:
+                if ins is not edge:
+                    ops.update(dict.fromkeys(o for o in ins.operands if o is not None))
+            if b.terminator is not None:
+                ops.update(dict.fromkeys(b.terminator.operands))
+        edge.operands = tuple(ops)
+
+    def lower_try(self, stmt: ast.Try, env: dict[str, str]) -> tuple[Block | None, dict[str, str]]:
+        """try/except/else/finally (I-133). Handlers are entered as if the body raised at any
+        point; the finally body is lowered once, on the join of the normal path and an
+        exceptional path, and re-raises on the latter."""
+        parts = stmt.body + [s for h in stmt.handlers for s in h.body] + stmt.orelse
+        if stmt.finalbody and any(isinstance(n, ast.Return) for s in parts for n in _own_scope(s)) or (
+                stmt.finalbody and any(loop_exits(s) for s in parts)):
+            return self.unsupported_stmt(stmt, env, "try/finally with return, break or continue inside is outside the supported subset")
+        span = self.span(stmt)
+        locals_ = self.frame.local_names
+
+        def stored(stmts: list[ast.stmt]) -> set[str]:
+            out: set[str] = set()
+            for s_ in stmts:
+                out |= stored_names(s_)
+            return out & locals_
+
+        body_names = sorted(stored(stmt.body))
+        first_binding = len(self.bindings)
+        all_names = sorted(stored(parts) | {h.name for h in stmt.handlers if h.name and h.name in locals_})
+        first = self._b
+        body_b = self.new_block("try_body")
+        dispatch_b = self.new_block("except_dispatch") if stmt.handlers else None
+        fin_exc_b = self.new_block("finally_exception") if stmt.finalbody else None
+        edge_handlers = edge_finally = None
+        if dispatch_b is not None:
+            mid = self.new_block("try_enter") if fin_exc_b is not None else body_b
+            edge_handlers = self._exception_branch(span, "an exception raised in the try body is handled here", dispatch_b, mid)
+            self.cur = mid
+        if fin_exc_b is not None:
+            edge_finally = self._exception_branch(span, "an exception escapes the try statement through finally", fin_exc_b, body_b)
+        self.try_stack.append(list(stmt.handlers))
+        try:
+            body_end, body_env = self.lower_stmts(stmt.body, body_b, dict(env))
+        finally:
+            self.try_stack.pop()
+        ends: list[tuple[Block | None, dict[str, str]]] = []
+        if edge_handlers is not None:
+            self._raise_inputs(edge_handlers, first)
+        if dispatch_b is not None:
+            denv = self._exception_entry(span, dispatch_b, env, body_names, first, "try body", first_binding)
+            self.cur = dispatch_b
+            for h in stmt.handlers:
+                hspan = self.span(h)
+                if h.type is not None and not self._builtin_exception_types(h.type):
+                    self.expr(h.type, denv)  # may run user code (e.g. a computed exception class)
+                hb = self.new_block("except")
+                assert self.cur is not None
+                if h.type is None:
+                    self.terminate(self.cur, Op.JUMP, (), hspan, target=hb.block_id)
+                    nxt = None
+                else:
+                    nxt = self.new_block("except_next")
+                    m = self.emit(Op.UNKNOWN_EFFECT, (), SemType(Kind.BOOL, Origin.UNKNOWN), hspan, Effect.NONE, None, control=True,
+                                  reason=f"the exception may or may not match `except {ast.unparse(h.type)}`")
+                    self.terminate(self.cur, Op.BRANCH, (m,), hspan, true_target=hb.block_id, false_target=nxt.block_id, kind="except_match")
+                henv = dict(denv)
+                if h.name:
+                    ev = self.emit(Op.UNKNOWN_EFFECT, (), UNKNOWN_TYPE, hspan, Effect.NONE, None, block=hb,
+                                   reason=f"exception object bound by `as {h.name}`")
+                    self.bind(henv, h.name, ev)
+                    self.var_names[ev] = self.frame.var_prefix + h.name
+                hend, henv = self.lower_stmts(h.body, hb, henv)
+                if h.name:
+                    henv.pop(h.name, None)  # CPython deletes the name when the handler ends
+                ends.append((hend, henv))
+                self.cur = nxt
+                if nxt is None:
+                    break
+            if self.cur is not None:  # no handler matched: the exception propagates
+                self.terminate(self.cur, Op.RAISE, (), span, exception="re-raise (no handler matched)")
+        if body_end is not None and stmt.orelse:
+            else_end, else_env = self.lower_stmts(stmt.orelse, body_end, body_env)
+        else:
+            else_end, else_env = body_end, body_env
+        ends.insert(0, (else_end, else_env))
+        if fin_exc_b is None:
+            return self.join(ends, span)
+        # finally: one copy, entered normally (flag False) or with an exception (flag True, re-raised after it).
+        flag = "<finally:exception>"
+        nb, nenv = self.join(ends, span)
+        live = []
+        if nb is not None:
+            nenv = dict(nenv)
+            nenv[flag] = self.const(False, span, block=nb)
+            live.append((nb, nenv))
+        assert edge_finally is not None
+        self._raise_inputs(edge_finally, first)
+        fenv = self._exception_entry(span, fin_exc_b, env, all_names, first, "try statement", first_binding)
+        fenv[flag] = self.const(True, span, block=fin_exc_b)
+        live.append((fin_exc_b, fenv))
+        jb, jenv = self.join(live, span)
+        assert jb is not None
+        fend, fenv2 = self.lower_stmts(stmt.finalbody, jb, jenv)
+        if fend is None:
+            return None, {}
+        raise_b, cont_b = self.new_block("finally_reraise"), self.new_block("finally_done")
+        self.terminate(fend, Op.BRANCH, (fenv2[flag],), span, true_target=raise_b.block_id, false_target=cont_b.block_id, kind="finally")
+        self.terminate(raise_b, Op.RAISE, (), span, exception="re-raise after finally")
+        self.cur = cont_b
+        if nb is None:
+            return None, {}  # only the exceptional entry reaches finally: it always re-raises
+        # Execution continues only after a normal entry (the flag is False only there), so a
+        # name the finally body does not bind keeps its value from the normal path.
+        rebound = stored(stmt.finalbody)
+        out = {n: v for n, v in fenv2.items() if n in rebound}
+        out.update({n: v for n, v in nenv.items() if n not in rebound})
+        out.pop(flag, None)
+        return cont_b, out
+
+    def _builtin_exception_types(self, t: ast.expr) -> bool:
+        elts = t.elts if isinstance(t, ast.Tuple) else [t]
+        return all(isinstance(e, ast.Name) and e.id not in self.frame.local_names and self.resolve_global(e.id).kind == "builtin" for e in elts)
+
     def _iter(self, node: ast.expr, env: dict[str, str]) -> tuple[str, SemType, dict[str, Any], Effect]:
         """Lower ``iter(node)``: (iterator value, element type, ELEMENT attrs, NEXT effect)."""
         span = self.span(node)
@@ -939,7 +1173,7 @@ class FunctionLowerer:
 
     def _bind_target(self, target: ast.expr, elem: str, env: dict[str, str]) -> None:
         if isinstance(target, ast.Name):
-            env[target.id] = elem
+            self.bind(env, target.id, elem)
             self.name_var(elem, target.id)
             return
         span = self.span(target)
@@ -948,7 +1182,7 @@ class FunctionLowerer:
         for e in target.elts:
             assert isinstance(e, ast.Name)
             v = self.unknown(span, f"'{e.id}' bound by unpacking a loop element (not modeled)")
-            env[e.id] = v
+            self.bind(env, e.id, v)
             self.var_names[v] = self.frame.var_prefix + e.id
 
     def join(self, ends: list[tuple[Block | None, dict[str, str]]], span: SourceSpan) -> tuple[Block | None, dict[str, str]]:
@@ -1392,6 +1626,7 @@ class FunctionLowerer:
                 site = self.sites.get(id(node))
                 if site is None:
                     raise LoweringError(f"division at {span.start_line}:{span.start_column} has no registered site")
+                self.mark_handled(site)
             else:
                 divisor = node.right if isinstance(node, ast.BinOp) else node.value  # type: ignore[attr-defined]
                 site = self.new_site(DIVISION_PROPERTY, op, node, divisor)

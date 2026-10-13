@@ -171,6 +171,14 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                     env[ins.result] = False
             elif op is Op.ELEMENT:
                 env[ins.result] = env[ins.operands[0] + "#element"]
+            elif op is Op.UNKNOWN_EFFECT and ins.attrs.get("exception_edge"):
+                # Execution enters the try body; an exception happens only where an instruction
+                # raises, and evaluation stops there (exceptional paths are never validated).
+                env[ins.result] = False
+            elif op is Op.LOOP_PHI and ins.attrs.get("handler"):
+                out.kind, out.detail = "STUCK", "exceptional control flow is not evaluated"
+                out.values = env
+                return out
             elif op in (Op.PHI, Op.LOOP_PHI):
                 chosen = None
                 matched = False

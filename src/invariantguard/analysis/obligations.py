@@ -617,6 +617,8 @@ class FunctionChecker:
                 p = next((p for p in self.fn.params if p.value_id == v), None)
                 ann = f"annotated {p.annotation}" if p is not None and p.annotation else "unannotated"
                 out.append(f"parameter '{ins.attrs['name']}' ({ann}, no declared exact domain)")
+            elif ins.attrs.get("control"):
+                pass  # a nondeterministic control choice (exception edges): every outcome is explored
             elif ins.op in (Op.CALL, Op.UNKNOWN_EFFECT, Op.ATTRIBUTE, Op.INDEX) and ins.result is not None and ins.type is not None:
                 out.append(str(ins.attrs.get("reason", ins.op.value)))
             elif ins.op in (Op.ELEMENT, Op.LOOP_PHI, Op.ITER) and ins.attrs.get("reason") and (ins.type is None or ins.type.kind is Kind.OBJECT):
@@ -756,7 +758,14 @@ def _jsonable(w: dict[str, Any]) -> dict[str, Any]:
 
 def check_function(fn: Function, solver: Any | None, solver_status: SolverStatus, budget: Budget, declared_reason: str | None) -> list[ObligationOutcome]:
     checker = FunctionChecker(fn, solver, solver_status, budget, declared_reason)
-    return [checker.check_site(site) for site in fn.sites]
+    out = []
+    for site in fn.sites:
+        o = checker.check_site(site)
+        if site.handled_by and o.result is not PropertyResult.PROVED_SAFE:
+            o.reasons.append(f"handled: the {failure_name(site)} is caught by {site.handled_by}, which does not re-raise; "
+                             "this failure is advisory (INFO) and the obligation is not required")
+        out.append(o)
+    return out
 
 
 __all__ = ["DivisionSite", "ObligationSite", "check_function", "obligation_id", "site_obligation_id", "unsupported_outcome", "Budget", "ObligationOutcome"]

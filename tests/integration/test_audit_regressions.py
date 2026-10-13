@@ -256,7 +256,8 @@ EDGE_CASES = [
     # Loops (I-132): a=0 runs no iteration, so a stays 0; `while True` without break never exits.
     ("loop-carried-parameter", "def f(a):\n    for i in range(a):\n        a = a - 1\n    return 1 / a\n", True, 0, "PROVED_UNSAFE", "EXACT_MODEL"),
     ("infinite-loop-before-literal-zero", "def f():\n    while True:\n        pass\n    return 1 / 0\n", False, 0, "PROVED_SAFE", "EXACT_MODEL"),
-    ("try-unsupported", "def f(a):\n    try:\n        return 1 / a\n    except ZeroDivisionError:\n        return 0\n", True, 0, "UNKNOWN", None),
+    # I-133: the division still raises for a=0; the handler catches it (advisory, INFO; see test_try.py).
+    ("try-handled", "def f(a):\n    try:\n        return 1 / a\n    except ZeroDivisionError:\n        return 0\n", True, 0, "PROVED_UNSAFE", "EXACT_MODEL"),
     ("unknown-call-dividend", "def f(d):\n    return g() / d\n", True, 0, "UNKNOWN", None),
     ("negative-zero-float-literal", "def f(a):\n    return a / -0.0\n", True, 0, "UNKNOWN", None),
     ("zero-float-literal", "def f(a):\n    return a / 0.0\n", True, 0, "PROVED_UNSAFE", "EXACT_MODEL"),
@@ -273,7 +274,9 @@ def test_adversarial_edge_case(tmp_path, case_id, src, declared, ordinal, result
     assert (r["property_result"], r["scope_validity"]) == (result, scope), r["reasons"]
     if result == "PROVED_UNSAFE":
         optimize = r["runtime_mode"] == "python -O (assertions disabled)"
-        assert _replay(root / "m.py", "f", r["witness"], optimize) == "ZeroDivisionError"
+        # A handled failure (I-133) raises inside the function, and its handler returns normally.
+        expected = "OK" if not r["required"] and "handled" in r["reasons"][-1] else "ZeroDivisionError"
+        assert _replay(root / "m.py", "f", r["witness"], optimize) == expected
 
 
 def test_unicode_span_columns_are_utf8_bytes(tmp_path):

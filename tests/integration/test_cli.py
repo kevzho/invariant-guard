@@ -19,7 +19,10 @@ def test_demo_json_is_schema_valid_and_stdout_is_pure_json():
     assert "guard:" not in out and "guard: verdict" in err
     assert code == 1 and report["verdict"] == "BLOCK" and report["run_outcome"] == "INCOMPLETE"  # BLOCK and incomplete together
     cov = report["coverage"]
-    assert cov["required_obligations"] == len(report["obligation_results"]) == len(report["analysis_plan"]["required_obligations"])
+    required = [r for r in report["obligation_results"] if r["required"]]
+    assert cov["required_obligations"] == len(required) == len(report["analysis_plan"]["required_obligations"])
+    # Only handled failures (I-133) are advisory in the demo.
+    assert all("handled" in r["reasons"][-1] for r in report["obligation_results"] if not r["required"])
     assert cov["resolved_required_obligations"] + len(cov["unknown_obligations"]) == cov["required_obligations"]
     assert report["base_snapshot"] is None and all(f["patch_relation"] == "UNDETERMINED" for f in report["findings"])
     ev_ids = {e["evidence_id"] for e in report["evidence"]}

@@ -78,7 +78,7 @@ Static commands never import the repository, install dependencies or run its hoo
 
 ## What it does not do (yet)
 
-- **Most real-world Python is outside the modeled subset.** Closures, most attribute access, calls to methods, decorated methods, `try`, comprehensions, generators and unmodeled library types give `UNKNOWN`, so a whole-repository `guard check` usually ends `INCOMPLETE`. `guard verify` limits required work to what a patch touches, and `--replay` limits it to changed public symbols. Both reduce this but do not remove it. The exact subset is in [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) ("Supported Python subset", "Known gaps").
+- **Most real-world Python is outside the modeled subset.** Closures, most attribute access, calls to methods, decorated methods, `with`, comprehensions, generators and unmodeled library types give `UNKNOWN`, so a whole-repository `guard check` usually ends `INCOMPLETE`. `guard verify` limits required work to what a patch touches, and `--replay` limits it to changed public symbols. Both reduce this but do not remove it. The exact subset is in [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) ("Supported Python subset", "Known gaps").
 - **No enforcement.** MCP is advisory. There is no shipped pre-commit hook or CI gate yet.
 - **No effectiveness claims.** The benchmarks are author-written and seeded, not a held-out set of real agent patches.
 - **Python only.** The Kotlin adapter (M6) is deferred.

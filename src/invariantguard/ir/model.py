@@ -11,6 +11,14 @@ never a function of their incoming values. The latch block ends in a ``JUMP`` ma
 edge, while the concrete evaluator follows it and selects the ``LOOP_PHI`` incoming value
 by predecessor, so it executes the real iterations when it re-validates a witness.
 
+Exceptions (I-133) reuse the same idea. A ``try`` statement branches, before its body, on an
+``UNKNOWN_EFFECT`` marked ``exception_edge`` into its handlers (and into the exceptional
+entry of its ``finally``), where every local the protected code may bind is a fresh
+``LOOP_PHI`` (attr ``handler``). That over-approximates "an exception at any point". The
+evaluator takes the normal branch (exceptions happen only where an instruction raises) and
+stops at the first exception, so a failure that needs an exceptional path to be reached is
+never validated: it stays POSSIBLY_UNSAFE.
+
 M2 additions (each needed by a shipped analysis, docs/04 "extend only when needed"):
 ``BUILD_SEQ`` (built-in list/tuple displays, for bounds checks), the ``LIST``/``TUPLE``/
 ``OPTIONAL`` kinds (sequence bounds and narrow None-flow), and obligation sites for the
@@ -242,6 +250,9 @@ class ObligationSite:
     result_id: str | None = None
     # Set when the site lies in an unsupported region / symbol.
     unsupported_reason: str | None = None
+    # Set when an enclosing handler of this function definitely catches the site's exception
+    # and does not re-raise (I-133): the failure is handled, so the site is advisory.
+    handled_by: str | None = None
 
     @property
     def base_property(self) -> str:

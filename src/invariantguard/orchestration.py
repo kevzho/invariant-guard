@@ -487,6 +487,8 @@ def build_report(*, command: str, run_id: str, created_at: str, cfg: Config, sna
         sev = severity_fn(o, rel) if severity_fn is not None else severity_for(o.result, o.scope)
         if o.result is PropertyResult.UNKNOWN and not o.site.required:
             sev = None  # advisory reachable-call evidence: unknowns are not findings
+        if sev in (Severity.ERROR, Severity.WARNING) and o.site.handled_by:
+            sev = Severity.INFO  # the failure is caught by a handler that does not re-raise (I-133)
         finding_id = None
         if sev is not None:
             severities.append(sev)
