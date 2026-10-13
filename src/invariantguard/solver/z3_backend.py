@@ -332,6 +332,8 @@ class FunctionEncoder:
         if op is Op.LEN:
             bid, idx = self.position[ins.result]
             return self.seq_len(ins.operands[0], bid, idx)
+        if op is Op.NEXT or (op is Op.ELEMENT and k is Kind.INT):
+            return self.loop_term(ins)
         if op is Op.ASSIGN and not ins.attrs.get("checked_read"):
             src = ins.operands[0]
             if k is Kind.INT:
@@ -367,6 +369,37 @@ class FunctionEncoder:
             return expr
         return None
 
+    def loop_term(self, ins: Instruction) -> Any:
+        """A loop's NEXT (another element?) or range ELEMENT: a fresh value, constrained by
+        the range bounds when the step is a literal (I-132). Fresh values make the query
+        inexact, so a SAT model is only a candidate until the evaluator replays the loop."""
+        z3 = self.z3
+        r = ins.result
+        assert r is not None
+        nxt = ins if ins.op is Op.NEXT else self.defs.get(ins.operands[0])
+        it = self.defs.get(nxt.operands[0]) if nxt is not None else None
+        rng = it is not None and it.attrs.get("iter_kind") == "range" and it.attrs.get("step") is not None
+        if r not in self.havoc:
+            self.havoc.append(r)
+        if ins.op is Op.NEXT:
+            var = z3.Bool(f"loop_next_{r}")
+            if rng:
+                assert it is not None
+                start, stop = self.int_term(it.operands[0]), self.int_term(it.operands[1])
+                # Another element exists only if the range is not empty.
+                self.side.append(z3.Implies(var, start < stop if it.attrs["step"] > 0 else start > stop))
+            return var
+        var = z3.Int(f"loop_element_{r}")
+        if rng:
+            assert it is not None and nxt is not None and nxt.result is not None
+            start, stop, step = self.int_term(it.operands[0]), self.int_term(it.operands[1]), it.attrs["step"]
+            if step > 0:
+                bounds = [start <= var, var < stop] + ([(var - start) % step == 0] if step != 1 else [])
+            else:
+                bounds = [stop < var, var <= start] + ([(start - var) % (-step) == 0] if step != -1 else [])
+            self.side.append(z3.Implies(self.bool_term(nxt.result), z3.And(*bounds)))
+        return var
+
     # -- control flow ------------------------------------------------------------------
     def division_guard(self, ins: Instruction) -> Any:
         """Fact that holds after ``ins`` executes without ZeroDivisionError."""
@@ -398,6 +431,8 @@ class FunctionEncoder:
         """Condition under which value ``v`` (possibly a maybe-unbound PHI) is bound."""
         z3 = self.z3
         ins = self.defs.get(v)
+        if ins is not None and ins.op is Op.LOOP_PHI and ins.attrs.get("maybe_unbound"):
+            return self._havoc(v, "bound")  # bound or not at the start of an arbitrary iteration
         if ins is None or ins.op is not Op.PHI or not ins.attrs.get("maybe_unbound"):
             return z3.BoolVal(True)
         key = ("bound", v)

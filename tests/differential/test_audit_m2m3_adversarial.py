@@ -110,13 +110,14 @@ CASES = [
             assert a != 0
             return 10 / a
         """, {4: "PROVED_UNSAFE"}, "WARN"),
-    ("loop_is_unknown", INTS, """
+    # Loops (I-132): the witness a=1 runs one real iteration (d = 0) before the division.
+    ("loop_carried_value_reaches_zero", INTS, """
         def f(a):
             d = 1
             for i in range(a):
                 d = i
             return 10 / d
-        """, {6: "UNKNOWN"}, "INCOMPLETE"),
+        """, {6: "PROVED_UNSAFE"}, "BLOCK"),
     ("unicode_columns", INTS, """
         def f(ä, b):
             é = ä - b

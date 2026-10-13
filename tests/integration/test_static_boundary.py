@@ -70,7 +70,7 @@ def test_engine_error_in_lowering_is_error(monkeypatch):
 
 
 def test_unsupported_construct_is_incomplete_not_error():
-    code, report, _ = check_json(DEMO / "adversarial" / "loop_total.py")
+    code, report, _ = check_json(DEMO / "adversarial" / "decorated.py")
     assert code == 2 and report["verdict"] == "INCOMPLETE" and report["errors"] == []
 
 

@@ -619,6 +619,8 @@ class FunctionChecker:
                 out.append(f"parameter '{ins.attrs['name']}' ({ann}, no declared exact domain)")
             elif ins.op in (Op.CALL, Op.UNKNOWN_EFFECT, Op.ATTRIBUTE, Op.INDEX) and ins.result is not None and ins.type is not None:
                 out.append(str(ins.attrs.get("reason", ins.op.value)))
+            elif ins.op in (Op.ELEMENT, Op.LOOP_PHI, Op.ITER) and ins.attrs.get("reason") and (ins.type is None or ins.type.kind is Kind.OBJECT):
+                out.append(str(ins.attrs["reason"]))
             elif ins.op is Op.PHI and ins.attrs.get("maybe_unbound"):
                 out.append(f"variable '{ins.attrs.get('variable')}' that may be unbound on some path")
             stack.extend(ins.operands)
@@ -634,7 +636,7 @@ class FunctionChecker:
                     "user-defined methods (e.g. bool or int subclasses)" + (": " + "; ".join(leaves[:3]) if leaves else ""))
         if ins.op is Op.CALL:
             return f"; it comes from {ins.attrs.get('reason')}"
-        if ins.op in (Op.UNKNOWN_EFFECT, Op.ATTRIBUTE, Op.INDEX):
+        if ins.op in (Op.UNKNOWN_EFFECT, Op.ATTRIBUTE, Op.INDEX) or (ins.op in (Op.ELEMENT, Op.LOOP_PHI) and ins.attrs.get("reason")):
             return f"; it comes from: {ins.attrs.get('reason')}"
         if ins.op is Op.PARAM:
             p = next((p for p in self.fn.params if p.name == ins.attrs.get("name")), None)

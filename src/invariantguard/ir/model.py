@@ -2,8 +2,14 @@
 
 Values are SSA-like: every instruction result has an immutable value ID within a
 function. Local variables are renamed to versioned values during lowering, and joins
-introduce PHI instructions. The CFG of every supported function is acyclic (loops are
-outside the supported subset and lower to UNKNOWN_EFFECT).
+introduce PHI instructions. For every static analysis the CFG is acyclic.
+
+Loops (I-132) keep it acyclic. A loop header's ``LOOP_PHI`` values stand for the state at
+the start of an arbitrary iteration: statically they are fresh values of their type,
+never a function of their incoming values. The latch block ends in a ``JUMP`` marked
+``back_edge``. ``Block.successors`` (and therefore every static analysis) ignores that
+edge, while the concrete evaluator follows it and selects the ``LOOP_PHI`` incoming value
+by predecessor, so it executes the real iterations when it re-validates a witness.
 
 M2 additions (each needed by a shipped analysis, docs/04 "extend only when needed"):
 ``BUILD_SEQ`` (built-in list/tuple displays, for bounds checks), the ``LIST``/``TUPLE``/
@@ -21,7 +27,7 @@ from typing import Any
 
 from ..models.spans import SourceSpan
 
-IR_SCHEMA_VERSION = "ir-0.2"
+IR_SCHEMA_VERSION = "ir-0.3"
 SUPPORTED_IR_VERSIONS = frozenset({IR_SCHEMA_VERSION})
 
 
@@ -48,6 +54,12 @@ class Op(str, Enum):
     PHI = "PHI"
     UNKNOWN_EFFECT = "UNKNOWN_EFFECT"
     BUILD_SEQ = "BUILD_SEQ"  # M2: built-in list/tuple display with a known length
+    # Loops (I-132)
+    LOOP_PHI = "LOOP_PHI"  # loop-carried variable at the header: any value of its type (statically)
+    LOOP_HEAD = "LOOP_HEAD"  # header marker; effect UNKNOWN when any iteration may run unknown code
+    ITER = "ITER"  # iter() of the iterable (range arguments, or the iterable value)
+    NEXT = "NEXT"  # True if the iterator produced another element (statically unknown)
+    ELEMENT = "ELEMENT"  # the element produced by the preceding NEXT
 
 
 DIVISION_OPS = frozenset({Op.DIV, Op.FLOORDIV, Op.MOD})
@@ -171,7 +183,7 @@ class Block:
         if t is None:
             return []
         if t.op is Op.JUMP:
-            return [t.attrs["target"]]
+            return [] if t.attrs.get("back_edge") else [t.attrs["target"]]
         if t.op is Op.BRANCH:
             return [t.attrs["true_target"], t.attrs["false_target"]]
         return []
@@ -293,7 +305,7 @@ class Function:
         return sorted(eff)
 
     def topo_order(self) -> list[str]:
-        """Topological order of blocks (CFG is acyclic by construction)."""
+        """Topological order of blocks (acyclic by construction: loop back edges are not successors)."""
         indeg = {bid: 0 for bid in self.blocks}
         for b in self.blocks.values():
             for s in b.successors():

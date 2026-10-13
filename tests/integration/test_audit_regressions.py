@@ -253,8 +253,9 @@ EDGE_CASES = [
     ("assert-guard-disabled-by-O", "def f(a):\n    assert a != 0\n    return 1 / a\n", True, 0, "PROVED_UNSAFE", "CONDITIONAL"),
     ("unreachable-after-raise", "def f(a):\n    raise ValueError\n    return 1 / 0\n", True, 0, "PROVED_SAFE", "EXACT_MODEL"),
     ("is-none-on-declared-int", "def f(a):\n    if a is None:\n        return 1 / 0\n    return 1\n", True, 0, "PROVED_SAFE", "EXACT_MODEL"),
-    ("loop-unsupported", "def f(a):\n    for i in range(a):\n        a = a - 1\n    return 1 / a\n", True, 0, "UNKNOWN", None),
-    ("loop-before-literal-zero", "def f():\n    while True:\n        pass\n    return 1 / 0\n", False, 0, "POSSIBLY_UNSAFE", "OVERAPPROXIMATE"),
+    # Loops (I-132): a=0 runs no iteration, so a stays 0; `while True` without break never exits.
+    ("loop-carried-parameter", "def f(a):\n    for i in range(a):\n        a = a - 1\n    return 1 / a\n", True, 0, "PROVED_UNSAFE", "EXACT_MODEL"),
+    ("infinite-loop-before-literal-zero", "def f():\n    while True:\n        pass\n    return 1 / 0\n", False, 0, "PROVED_SAFE", "EXACT_MODEL"),
     ("try-unsupported", "def f(a):\n    try:\n        return 1 / a\n    except ZeroDivisionError:\n        return 0\n", True, 0, "UNKNOWN", None),
     ("unknown-call-dividend", "def f(d):\n    return g() / d\n", True, 0, "UNKNOWN", None),
     ("negative-zero-float-literal", "def f(a):\n    return a / -0.0\n", True, 0, "UNKNOWN", None),

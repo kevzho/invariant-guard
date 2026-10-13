@@ -82,9 +82,7 @@ def _sequence_result(op: Op, lk: Kind, rk: Kind) -> Kind | None:
 
 
 _STMT_REASONS = {
-    ast.For: "for loop (loops are outside the supported subset)",
     ast.AsyncFor: "async for loop (outside the supported subset)",
-    ast.While: "while loop (loops are outside the supported subset)",
     ast.Try: "exception handling (try/except) is outside the supported subset",
     ast.With: "with statement (context managers may run user code and suppress exceptions)",
     ast.AsyncWith: "async with statement (outside the supported subset)",
@@ -105,6 +103,7 @@ if hasattr(ast, "TypeAlias"):
 NONE_ATTRS = frozenset(dir(None))
 
 MAX_INLINE_DEPTH = 6  # nested call-site instantiations per analyzed function
+MAX_LOOP_ROUNDS = 3  # lowerings of one loop while its carried variable types stabilize (I-132)
 MAX_FUNCTION_VALUES = 6000  # stop instantiating callees once a function's IR is this large
 
 # Declared domain profiles (config [[domains]] profile) -> parameter type.
@@ -169,6 +168,35 @@ def join_types(types: list[SemType]) -> SemType:
         if k in EXACT_NON_NONE:
             return SemType(Kind.OPTIONAL, Origin.DERIVED, k)
     return UNKNOWN_TYPE
+
+
+def covers(header: SemType, t: SemType) -> bool:
+    """True when every value of type ``t`` is a value of the loop-header type ``header``."""
+    if header.kind is Kind.OBJECT:
+        return True
+    if header.kind is Kind.OPTIONAL:
+        return t.kind is Kind.NONE or t.kind is header.inner or (t.kind is Kind.OPTIONAL and t.inner is header.inner)
+    return t.kind is header.kind
+
+
+def loop_exits(stmt: ast.AST) -> set[str]:
+    """``break``/``continue`` statements in ``stmt`` that leave the *enclosing* loop."""
+    out: set[str] = set()
+    stack: list[ast.AST] = [stmt]
+    while stack:
+        n = stack.pop()
+        if isinstance(n, ast.Break):
+            out.add("break")
+        elif isinstance(n, ast.Continue):
+            out.add("continue")
+        elif isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            continue
+        elif isinstance(n, (ast.For, ast.AsyncFor, ast.While)) and n is not stmt:
+            stack.extend(n.orelse)  # a nested loop's body binds its own break/continue; its else clause does not
+            continue
+        else:
+            stack.extend(ast.iter_child_nodes(n))
+    return out
 
 
 def annotation_type(ann: ast.AST | None, lookup=None) -> tuple[SemType, str | None]:
@@ -239,6 +267,29 @@ class Frame:
     anchor_counts: dict[str, int] = field(default_factory=dict)
 
 
+@dataclass
+class LoopCtx:
+    breaks: list[tuple[Block, dict[str, str]]] = field(default_factory=list)
+    continues: list[tuple[Block, dict[str, str]]] = field(default_factory=list)
+
+
+@dataclass
+class Checkpoint:
+    """Lowering state to restore when a loop body must be lowered again (I-132)."""
+
+    v: int
+    b: int
+    cur: Block | None
+    blocks: dict[str, tuple[int, Instruction | None, int]]
+    lists: dict[str, int]
+    dicts: dict[str, dict[str, Any]]
+    sites: dict[int, tuple[str | None, str | None]]
+    debug_value: str | None
+    has_asserts: bool
+    returns: int
+    loops: list[tuple[int, int]]
+
+
 class FunctionLowerer:
     def __init__(
         self,
@@ -283,6 +334,7 @@ class FunctionLowerer:
         self.deps: dict[str, dict[str, Any]] = {}
         self.inlined: list[str] = []
         self.unresolved_calls: list[str] = []
+        self.loops: list[LoopCtx] = []
 
     # -- helpers -------------------------------------------------------------------
     @property
@@ -409,6 +461,58 @@ class FunctionLowerer:
             self.debug_value = rid
             self.has_asserts = True
         return self.debug_value
+
+    # -- re-lowering (loops) ---------------------------------------------------------------
+    _LISTS = ("regions", "extra_sites", "inlined", "unresolved_calls")
+    _DICTS = ("ordinals", "deps")
+
+    def checkpoint(self) -> Checkpoint:
+        return Checkpoint(
+            v=self._v, b=self._b, cur=self.cur,
+            blocks={bid: (len(b.instructions), b.terminator, len(b.preds)) for bid, b in self.blocks.items()},
+            lists={n: len(getattr(self, n)) for n in self._LISTS},
+            dicts={**{n: dict(getattr(self, n)) for n in self._DICTS}, "anchor_counts": dict(self.frame.anchor_counts)},
+            sites={k: (s.block_id, s.result_id) for k, s in self.sites.items()},
+            debug_value=self.debug_value, has_asserts=self.has_asserts, returns=len(self.frame.returns),
+            loops=[(len(c.breaks), len(c.continues)) for c in self.loops],
+        )
+
+    def rollback(self, cp: Checkpoint) -> None:
+        if cp.debug_value is None and self.debug_value is not None:
+            assert self.entry is not None
+            self.entry.instructions = [i for i in self.entry.instructions if i.result != self.debug_value]
+            self.debug_value = None
+        self.has_asserts = cp.has_asserts
+        for bid in list(self.blocks):
+            if bid not in cp.blocks:
+                del self.blocks[bid]
+        for bid, (n_ins, term, n_preds) in cp.blocks.items():
+            b = self.blocks[bid]
+            del b.instructions[n_ins:]
+            b.terminator = term
+            del b.preds[n_preds:]
+
+        def old(v: str) -> bool:
+            return v[1:].isdigit() and int(v[1:]) < cp.v
+
+        for d in (self.types, self.consts, self.var_names):
+            for k in [k for k in d if not old(k)]:
+                del d[k]
+        self.maybe_unbound_values = {v for v in self.maybe_unbound_values if old(v)}
+        self.narrowed = {v for v in self.narrowed if old(v)}
+        for n, length in cp.lists.items():
+            del getattr(self, n)[length:]
+        for n in self._DICTS:
+            setattr(self, n, dict(cp.dicts[n]))
+        self.frame.anchor_counts = dict(cp.dicts["anchor_counts"])
+        for k, (bid, rid) in cp.sites.items():
+            self.sites[k].block_id, self.sites[k].result_id = bid, rid
+        del self.frame.returns[cp.returns:]
+        del self.loops[len(cp.loops):]
+        for c, (nb, nc) in zip(self.loops, cp.loops):
+            del c.breaks[nb:]
+            del c.continues[nc:]
+        self._v, self._b, self.cur = cp.v, cp.b, cp.cur
 
     # -- obligation sites ---------------------------------------------------------------
     def next_anchor(self, prop: str, node: ast.AST) -> str:
@@ -587,6 +691,13 @@ class FunctionLowerer:
             return self.lower_if(stmt, env)
         if isinstance(stmt, ast.Assert):
             return self.lower_assert(stmt, env)
+        if isinstance(stmt, (ast.For, ast.While)):
+            return self.lower_loop(stmt, env)
+        if isinstance(stmt, (ast.Break, ast.Continue)) and self.loops:
+            ctx = self.loops[-1]
+            assert self.cur is not None
+            (ctx.breaks if isinstance(stmt, ast.Break) else ctx.continues).append((self.cur, dict(env)))
+            return None, env
         reason = _STMT_REASONS.get(type(stmt), f"{type(stmt).__name__} statement is outside the supported subset")
         return self.unsupported_stmt(stmt, env, reason)
 
@@ -598,6 +709,18 @@ class FunctionLowerer:
             v = self.unknown(span, f"'{name}' may be rebound inside unsupported construct: {reason}")
             env[name] = v
             self.var_names[v] = self.frame.var_prefix + name
+        if self.loops:
+            # A break/continue inside the unsupported construct leaves it with the state above:
+            # model that exit as an unknown branch, so the loop exit and the next iteration see it.
+            for kind in sorted(loop_exits(stmt)):
+                c = self.emit(Op.UNKNOWN_EFFECT, (), SemType(Kind.BOOL, Origin.UNKNOWN), span, Effect.UNKNOWN, None,
+                              reason=f"control may leave the unsupported construct by `{kind}`")
+                esc, nxt = self.new_block(f"escape_{kind}"), self.new_block("after_escape")
+                assert self.cur is not None
+                self.terminate(self.cur, Op.BRANCH, (c,), span, true_target=esc.block_id, false_target=nxt.block_id, kind="escape")
+                ctx = self.loops[-1]
+                (ctx.breaks if kind == "break" else ctx.continues).append((esc, dict(env)))
+                self.cur = nxt
         return self.cur, env
 
     @staticmethod
@@ -663,6 +786,170 @@ class FunctionLowerer:
         self.terminate(fail_end, Op.RAISE, ops, span, exception="AssertionError")
         self.cur = cont_b
         return cont_b, env
+
+    # -- loops (I-132) ---------------------------------------------------------------------
+    @staticmethod
+    def _plain_target(t: ast.expr) -> bool:
+        return isinstance(t, ast.Name) or (isinstance(t, (ast.Tuple, ast.List)) and all(isinstance(e, ast.Name) for e in t.elts))
+
+    def lower_loop(self, stmt: ast.For | ast.While, env: dict[str, str]) -> tuple[Block | None, dict[str, str]]:
+        """Lower a loop as one arbitrary iteration (see ``ir.model``).
+
+        Variables the loop may rebind become ``LOOP_PHI`` values at the header. Their type
+        must cover every value they carry around the back edge, so the body is lowered again
+        with widened types until it does (at most ``MAX_LOOP_ROUNDS`` times; the last round
+        gives every changing variable an unknown type, which covers anything).
+        """
+        if isinstance(stmt, ast.For) and not self._plain_target(stmt.target):
+            return self.unsupported_stmt(stmt, env, "for loop with an attribute, subscript or starred target is outside the supported subset")
+        names: set[str] = set()
+        for s in stmt.body:
+            names |= stored_names(s)
+        if isinstance(stmt, ast.For):
+            names |= stored_names(stmt.target)
+        carried = sorted(names & self.frame.local_names)
+        guess: dict[str, tuple[SemType, bool]] = {}
+        for n in carried:
+            v = env.get(n)
+            guess[n] = (UNKNOWN_TYPE, True) if v is None or v in self.maybe_unbound_values else (self.typ(v), False)
+        for attempt in range(MAX_LOOP_ROUNDS):
+            cp = self.checkpoint()
+            end, out_env, latch = self._lower_loop_once(stmt, env, carried, guess)
+            widened = dict(guess)
+            for n, (t, mu) in latch.items():
+                ht, hmu = guess[n]
+                if hmu:
+                    continue
+                if mu:
+                    widened[n] = (UNKNOWN_TYPE, True)
+                elif not covers(ht, t):
+                    widened[n] = (UNKNOWN_TYPE, False) if attempt == MAX_LOOP_ROUNDS - 2 else (join_types([ht, t]), False)
+            if widened == guess:
+                return end, out_env
+            if attempt == MAX_LOOP_ROUNDS - 1:
+                raise LoweringError(f"loop at line {stmt.lineno}: carried variable types did not stabilize")
+            self.rollback(cp)
+            guess = widened
+        raise LoweringError("unreachable")
+
+    def _lower_loop_once(self, stmt: ast.For | ast.While, env: dict[str, str], carried: list[str],
+                         guess: dict[str, tuple[SemType, bool]]) -> tuple[Block | None, dict[str, str], dict[str, tuple[SemType, bool]]]:
+        span = self.span(stmt)
+        it: tuple[str, SemType, dict[str, Any], Effect] | None = None
+        if isinstance(stmt, ast.For):
+            it = self._iter(stmt.iter, env)
+        pre = self.cur
+        assert pre is not None
+        header = self.new_block("loop_header")
+        first_block = self._b - 1
+        self.terminate(pre, Op.JUMP, (), span, target=header.block_id)
+        henv = dict(env)
+        phis: dict[str, Instruction] = {}
+        for n in carried:
+            typ, mu = guess[n]
+            init = env.get(n)
+            attrs: dict[str, Any] = {"incoming": [(pre.block_id, init)], "variable": self.frame.var_prefix + n, "maybe_unbound": mu}
+            if typ.kind is Kind.OBJECT:
+                attrs["reason"] = f"variable '{n}' carried around the loop has no stable modeled type"
+            v = self.emit(Op.LOOP_PHI, (init,) if init is not None else (), UNKNOWN_TYPE if mu else typ, span, block=header, **attrs)
+            phis[n] = header.instructions[-1]
+            if mu:
+                self.maybe_unbound_values.add(v)
+            henv[n] = v
+            self.var_names[v] = self.frame.var_prefix + n
+        self.emit(Op.LOOP_HEAD, (), None, span, block=header)
+        marker = header.instructions[-1]
+        body_b, done_b = self.new_block("loop_body"), self.new_block("loop_done")
+        benv = dict(henv)
+        if it is not None:
+            assert isinstance(stmt, ast.For)
+            it_val, elem_type, elem_attrs, next_effect = it
+            has = self.emit(Op.NEXT, (it_val,), SemType(Kind.BOOL, Origin.DERIVED), self.span(stmt.iter), next_effect, None, block=header,
+                            **({"reason": "iterating a value of unmodeled type may run user __iter__/__next__"} if next_effect is Effect.UNKNOWN else {}))
+            self.terminate(header, Op.BRANCH, (has,), span, true_target=body_b.block_id, false_target=done_b.block_id, kind="loop_next")
+            self.cur = body_b
+            elem = self.emit(Op.ELEMENT, (has,), elem_type, self.span(stmt.target), Effect.NONE, None, **elem_attrs)
+            self._bind_target(stmt.target, elem, benv)
+        else:
+            assert isinstance(stmt, ast.While)
+            self.lower_test(stmt.test, header, henv, body_b, done_b, kind="loop")
+        ctx = LoopCtx()
+        self.loops.append(ctx)
+        try:
+            end, benv = self.lower_stmts(stmt.body, body_b, benv)
+        finally:
+            self.loops.pop()
+        latch: dict[str, tuple[SemType, bool]] = {}
+        back = ctx.continues + ([(end, benv)] if end is not None else [])
+        if back:
+            latch_b, lenv = self.join(back, span)
+            assert latch_b is not None
+            latch_b.terminator = Instruction(Op.JUMP, (), None, None, span, Effect.NONE, None, {"target": header.block_id, "back_edge": True})
+            for n, ins in phis.items():
+                lv = lenv.get(n)
+                ins.attrs["incoming"].append((latch_b.block_id, lv))
+                if lv is not None:
+                    ins.operands = ins.operands + (lv,)
+                latch[n] = (UNKNOWN_TYPE, True) if lv is None or lv in self.maybe_unbound_values else (self.typ(lv), False)
+        # Code that runs later in one iteration runs before the header of the next one.
+        body_ids = {f"b{i}" for i in range(first_block, self._b)}
+        effects = [i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
+        if effects:
+            marker.effect = Effect.UNKNOWN
+            marker.attrs["reason"] = "an earlier iteration of this loop may run unknown code (" + (effects[0].attrs.get("callee") or effects[0].attrs.get("reason", "unknown effect")) + ")"
+        self.cur = done_b
+        if stmt.orelse:
+            dend, denv = self.lower_stmts(stmt.orelse, done_b, dict(henv))
+        else:
+            dend, denv = done_b, dict(henv)
+        out, out_env = self.join([(dend, denv)] + ctx.breaks, span)
+        return out, out_env, latch
+
+    def _iter(self, node: ast.expr, env: dict[str, str]) -> tuple[str, SemType, dict[str, Any], Effect]:
+        """Lower ``iter(node)``: (iterator value, element type, ELEMENT attrs, NEXT effect)."""
+        span = self.span(node)
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "range" and not node.keywords
+                and 1 <= len(node.args) <= 3 and not any(isinstance(a, ast.Starred) for a in node.args)
+                and node.func.id not in env and node.func.id not in self.frame.local_names
+                and self.resolve_global("range").kind == "builtin"):
+            args = [self.expr(a, env) for a in node.args]
+            exact = all(self.kind(a) in NUMERIC_EXACT for a in args)
+            if len(args) == 1:
+                args = [self.const(0, span)] + args
+            step: int | None = 1
+            if len(args) == 3:
+                ok, c = constant_value(node.args[2])  # a literal, including a negative one (-1 lowers to 0 - 1)
+                step = c if ok and isinstance(c, int) and not isinstance(c, bool) and c != 0 else None
+            effect = Effect.NONE if exact and step is not None else Effect.MAY_RAISE if exact else Effect.UNKNOWN
+            it = self.emit(Op.ITER, tuple(args), UNKNOWN_TYPE, span, effect, None, iter_kind="range", step=step if exact else None,
+                           callee="range", builtin=True,
+                           **({} if exact else {"reason": "range() of a value of unmodeled type may call its __index__"}))
+            # range() yields exact ints whatever its arguments' types (it calls __index__).
+            return it, SemType(Kind.INT, Origin.DERIVED), {"iter_kind": "range"}, Effect.NONE
+        v = self.expr(node, env)
+        k = self.kind(v)
+        if k in SEQUENCE_KINDS or k is Kind.STR:
+            it = self.emit(Op.ITER, (v,), UNKNOWN_TYPE, span, Effect.NONE, None, iter_kind=k.value)
+            if k is Kind.STR:
+                return it, SemType(Kind.STR, Origin.DERIVED), {"iter_kind": "str"}, Effect.NONE
+            return it, UNKNOWN_TYPE, {"iter_kind": k.value, "reason": f"element of a built-in {k.value} (elements are not modeled)"}, Effect.NONE
+        it = self.emit(Op.ITER, (v,), UNKNOWN_TYPE, span, Effect.UNKNOWN, None, iter_kind="object",
+                       reason=f"iterating a value of type {k.value} may run user __iter__")
+        return it, UNKNOWN_TYPE, {"iter_kind": "object", "reason": f"element of iterating a value of type {k.value} (not modeled)"}, Effect.UNKNOWN
+
+    def _bind_target(self, target: ast.expr, elem: str, env: dict[str, str]) -> None:
+        if isinstance(target, ast.Name):
+            env[target.id] = elem
+            self.name_var(elem, target.id)
+            return
+        span = self.span(target)
+        assert isinstance(target, (ast.Tuple, ast.List))
+        self.emit(Op.UNKNOWN_EFFECT, (elem,), None, span, Effect.UNKNOWN, None, reason="unpacking a loop element is not modeled")
+        for e in target.elts:
+            assert isinstance(e, ast.Name)
+            v = self.unknown(span, f"'{e.id}' bound by unpacking a loop element (not modeled)")
+            env[e.id] = v
+            self.var_names[v] = self.frame.var_prefix + e.id
 
     def join(self, ends: list[tuple[Block | None, dict[str, str]]], span: SourceSpan) -> tuple[Block | None, dict[str, str]]:
         live = [(b, e) for b, e in ends if b is not None]

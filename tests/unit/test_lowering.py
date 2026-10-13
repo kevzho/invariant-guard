@@ -80,16 +80,16 @@ def test_short_circuit_and_chain_lower_to_branches():
 
 def test_unsupported_statement_taints_names_and_sites():
     src = (
-        "def f(n: int):\n"
+        "def f(n: int, cm):\n"
         "    total = 0\n"
-        "    for i in range(n):\n"
-        "        total += 100 // i\n"
+        "    with cm:\n"
+        "        total += 100 // n\n"
         "    return 100 / total\n"
     )
     _, res = lower(src)
     fn = fn_named(res, "f")
     s0, s1 = fn.division_sites
-    assert s0.block_id is None and "loop" in s0.unsupported_reason
+    assert s0.block_id is None and "with statement" in s0.unsupported_reason
     assert s1.block_id is not None
     div = next(i for b in fn.blocks.values() for i in b.instructions if i.result == s1.result_id)
     divisor_def = fn.instr_by_result()[div.operands[1]]
@@ -170,7 +170,7 @@ def test_global_and_call_are_unknown_effects():
 def test_ir_serialization_and_version_check():
     _, res = lower("def f(a: int):\n    return 1 // a\n")
     data = res.module.to_json()
-    assert data["schema_version"] == IR_SCHEMA_VERSION == "ir-0.2" and data["language"] == "python"
+    assert data["schema_version"] == IR_SCHEMA_VERSION == "ir-0.3" and data["language"] == "python"
     assert data["symbols"][0]["blocks"][0]["instructions"][0]["op"] == "PARAM"
     bad = ModuleIR(path="m.py", source_digest=SNAP, functions=[], unsupported_symbols=[], imports=[], requested_symbols=[], schema_version="ir-9.9")
     with pytest.raises(IncompatibleIRVersion):

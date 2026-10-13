@@ -5,6 +5,11 @@ witness against the typed IR evaluator"). It evaluates supported built-in operat
 with the host interpreter's own int/float/bool semantics, which are the semantics the
 IR claims to model. It never imports or executes repository code; unknown effects
 (calls, attributes, indexes, unsupported constructs) stop evaluation as STUCK.
+
+Loops (I-132) run for real: a latch's ``back_edge`` jump returns to the header, whose
+``LOOP_PHI`` values are chosen by predecessor like any PHI, and ``ITER``/``NEXT``/``ELEMENT``
+iterate the concrete built-in iterable (``range``, list, tuple, str). Iterating anything
+else is STUCK. The step limit bounds long loops (STUCK, never a verdict).
 """
 
 from __future__ import annotations
@@ -137,7 +142,36 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                 if val is UNBOUND and ins.attrs.get("checked_read"):
                     return _unbound(out, env, ins)
                 env[ins.result] = val
-            elif op is Op.PHI:
+            elif op is Op.LOOP_HEAD:
+                pass  # marker for static analyses; effects happen at their own instructions
+            elif op is Op.ITER:
+                vals = [env[o] for o in ins.operands]
+                if any(x is UNBOUND for x in vals):
+                    return _unbound(out, env, ins)
+                kind = ins.attrs.get("iter_kind")
+                if kind == "range" and all(isinstance(x, int) for x in vals):
+                    try:
+                        env[ins.result] = iter(range(*vals))
+                    except ValueError as exc:  # range() arg 3 must not be zero
+                        out.kind, out.detail = "RAISED_OTHER", f"ValueError at {ins.result}: {exc}"
+                        out.values = env
+                        return out
+                elif kind in ("list", "tuple", "str") and isinstance(vals[0], {"list": list, "tuple": tuple, "str": str}[kind]):
+                    env[ins.result] = iter(vals[0])  # a live iterator, as in CPython (a list may grow while iterated)
+                else:
+                    out.kind, out.detail = "STUCK", f"iterating an unmodeled value at {ins.result}"
+                    out.values = env
+                    return out
+            elif op is Op.NEXT:
+                it = env[ins.operands[0]]
+                try:
+                    env[ins.result + "#element"] = next(it)
+                    env[ins.result] = True
+                except StopIteration:
+                    env[ins.result] = False
+            elif op is Op.ELEMENT:
+                env[ins.result] = env[ins.operands[0] + "#element"]
+            elif op in (Op.PHI, Op.LOOP_PHI):
                 chosen = None
                 matched = False
                 for pred, val in ins.attrs["incoming"]:

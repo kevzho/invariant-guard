@@ -593,7 +593,7 @@
       "license": "same as repository"
     },
     {
-      "case_id": "loop-unsupported",
+      "case_id": "loop-carried-total",
       "language": "python",
       "language_version": "CPython 3.13 grammar (host 3.13.9)",
       "path": "examples/python_demo/adversarial/loop_total.py",
@@ -604,17 +604,17 @@
       "property": "division.zero_denominator",
       "domain": "exact Python built-in ints, declared in examples/python_demo/.guard/config.toml",
       "expected": {
-        "property_result": "UNKNOWN",
-        "scope_validity": null
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
       },
       "expected_without_solver": {
-        "property_result": "UNKNOWN",
-        "scope_validity": null
+        "property_result": "PROVED_UNSAFE",
+        "scope_validity": "EXACT_MODEL"
       },
       "scope": "function input domain (not a repository reachability claim)",
       "ground_truth": {
-        "method": "specification",
-        "detail": "loops are outside the M1 subset (n <= 1 actually fails)"
+        "method": "hand proof",
+        "detail": "loops are modeled (I-132): for n <= 1 the loop leaves total == 0, so 100 / total raises ZeroDivisionError; the witness runs the real iterations in the IR evaluator"
       },
       "environment_lock": "requirements.lock",
       "seed": 0,

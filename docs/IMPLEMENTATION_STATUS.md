@@ -1186,6 +1186,19 @@ Commands and outcomes:
 - Full suite (`pytest -q`, CPython 3.13): 891 passed, 17 skipped.
 - CI run 38317854539 (the methods commit): every job passed except macOS 3.13, where `test_baseline.py::test_git_baseline_records_a_commit_and_reads_it_without_checkout` failed. The unchanged-tree check saw a new `.git/objects/maintenance.lock`, created by background git maintenance that the test's own `git commit` started, not by guard. Test repositories now set `maintenance.auto=false` and `gc.auto=0`. `pytest tests/integration/test_baseline.py tests/integration/test_verify.py`: 23 passed.
 
+## Subset widening: loops (2026-10-12)
+
+- **Loops (I-132).** `for` over `range` (1-3 arguments), exact lists, tuples and strs, or any other iterable (an unknown effect); `while`; `break`, `continue`, `else`. Each loop is lowered as one arbitrary iteration. Loop-carried locals are fresh values of a type that covers every iteration, and the CFG stays acyclic for static analyses. The IR evaluator runs the real iterations to validate witnesses. New IR ops `LOOP_PHI`, `LOOP_HEAD`, `ITER`, `NEXT`, `ELEMENT`; IR version `ir-0.3`, which also invalidates cached summaries.
+- Still unsupported: `async for`, `for` targets that are attributes, subscripts or starred, comprehensions and generator expressions, and generators.
+- `pytest tests/differential/test_loops.py`: 1 passed. The test covers 30 loop functions (range with literal, negative and computed steps; while with guards and `while True`/`break`; `for`/`else`; `continue`; nested loops; list index by `range(len(xs))`; a list mutated during iteration; early `return`; maybe-unbound and type-changing carried variables; tuple targets; unknown iterables; break/continue inside an unsupported `with`; a 10^6-iteration loop). Each result is compared with an exhaustive CPython run, every witness is replayed, and 28 expected results pin the precision.
+- Changed expectations, each now correct and checked against CPython or by hand:
+  - `test_audit_m2m3_adversarial.py` `loop_carried_value_reaches_zero` (PROVED_UNSAFE, witness `a=1`);
+  - `test_audit_regressions.py` `loop-carried-parameter` (PROVED_UNSAFE, `a=0`) and `infinite-loop-before-literal-zero` (PROVED_SAFE: unreachable after `while True` without break);
+  - semantic fixture `loop-carried-total` (PROVED_UNSAFE, `n=0`);
+  - `test_static_boundary.py` and `test_lowering.py` now use `decorated.py` and a `with` statement as their unsupported constructs.
+- Corpus (resolved required obligations, before → after loops): boltons 2 → 19 of 157-159, dateutil 1 → 12 of 82, more-itertools 0 → 0 of 42. Own `src` went 9 → 5 resolved of 115-118: six `none.attribute_access` obligations in `impact/attribution.py` disappeared, because `evaluate()` (a `while True` loop) can no longer fall off its end and return None. That removed one POSSIBLY_UNSAFE false alarm and its five companions.
+- Full suite (`pytest -q`, CPython 3.13): 892 passed, 17 skipped.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**

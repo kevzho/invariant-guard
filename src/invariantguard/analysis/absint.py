@@ -8,6 +8,10 @@ Sequence lengths (M2) live under ``len:<value>`` keys. A list's length fact is r
 ``[0, +inf]`` at every instruction with an unknown effect (it may mutate any list that
 escaped); tuple lengths never change. A ``LEN`` result refines its sequence's length
 only while no unknown effect happened in between (tracked by an ``epoch`` key).
+
+Loops (I-132): a ``LOOP_PHI`` is any value of its type (like a parameter), and the loop
+header's ``LOOP_HEAD`` carries an unknown effect when a later part of the body may run
+unknown code. A ``range`` element lies between the range bounds.
 """
 
 from __future__ import annotations
@@ -130,7 +134,9 @@ class IntervalAnalysis:
         if ins.effect is Effect.UNKNOWN:
             # Unknown code may mutate any list that escaped (aliases are not tracked).
             self._havoc_lists(state)
-        if op is Op.PARAM:
+        if op is Op.PARAM or op is Op.LOOP_PHI:
+            if ins.attrs.get("maybe_unbound"):
+                return
             if k is Kind.INT:
                 state[r] = AbsInt.top()
             elif k is Kind.BOOL:
@@ -139,6 +145,8 @@ class IntervalAnalysis:
                 state[len_key(r)] = AbsInt.mk(Interval(0, Interval.top().hi))
         elif op is Op.BUILD_SEQ:
             state[len_key(r)] = AbsInt.const(len(ins.operands))
+        elif op is Op.ELEMENT and k is Kind.INT:
+            state[r] = self._range_element(ins, state)
         elif op is Op.ASSIGN and not ins.attrs.get("checked_read"):
             src = ins.operands[0]
             if src in state and k in NUMERIC_EXACT:
@@ -268,6 +276,21 @@ class IntervalAnalysis:
             state[r] = BOOL_TOP
         elif r is not None and k is Kind.INT:
             state[r] = AbsInt.top()
+
+    def _range_element(self, ins: Instruction, state: State) -> AbsInt:
+        """An element of ``range(start, stop, step)`` with a literal step lies in [start, stop)."""
+        nxt = self.defs.get(ins.operands[0])
+        it = self.defs.get(nxt.operands[0]) if nxt is not None else None
+        if it is None or it.attrs.get("iter_kind") != "range" or it.attrs.get("step") is None:
+            return AbsInt.top()
+        start, stop = state.get(it.operands[0]), state.get(it.operands[1])
+        if start is None or stop is None or start.bottom or stop.bottom:
+            return AbsInt.top()
+        if it.attrs["step"] > 0:
+            itv = Interval.make(start.itv.lo, stop.itv.hi - 1)
+        else:
+            itv = Interval.make(stop.itv.lo + 1, start.itv.hi)
+        return AbsInt.top() if itv.bottom else AbsInt.mk(itv)
 
     @staticmethod
     def _decide(cmp: str, a: AbsInt | None, b: AbsInt | None) -> AbsInt:
