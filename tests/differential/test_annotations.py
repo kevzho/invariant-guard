@@ -11,7 +11,10 @@ Every function runs exhaustively in an isolated child interpreter over three inp
 * ``unrestricted``: every value for every parameter.
 
 A failure is attributed to the operation when the exception's last frame in the analyzed file is the
-operation's line, or when that line called ``__rmod__`` and the exception left from there. A
+operation's line, or when that line called ``__rmod__``/``__mod__`` and the exception left from there.
+The ``annotations_violated`` set also holds a ``str`` subclass with its own ``__mod__`` and one whose
+comparisons and ``upper`` attribute clear every list argument of the call (an effect on *other*
+obligations), and every parameter with a default is also omitted (its default is used). A
 PROVED_SAFE operation must never fail on ``admitted`` inputs. If it fails on the second set, the
 result must list the ``__rmod__`` assumption; on the third, the annotation assumption; on the last,
 one of them. With ``assume_no_str_rmod_override = false`` the operations that need
@@ -104,6 +107,98 @@ def loop_over_str(s: str, d: int):
     return 10 // d
 
 
+def eq_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    s == 'a'
+    return xs[0]
+
+
+def ne_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    'a' != s
+    return xs[0]
+
+
+def lt_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    s < 'b'
+    return xs[0]
+
+
+def attr_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    s.upper
+    return xs[0]
+
+
+def int_eq_effect(n: int, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    n == 0
+    return xs[0]
+
+
+def div_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    s == 'a'
+    return 1 / len(xs)
+
+
+def _compare(s):
+    return s == 'a'
+
+
+def inlined_effect(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    _compare(s)
+    return xs[0]
+
+
+def default_none_str(s: str = None):
+    n = 0
+    if s is None:
+        return 1 / n
+    return 0
+
+
+def default_none_int(k: int = None):
+    n = 0
+    if k is None:
+        return 1 // n
+    return 0
+
+
+def default_mismatch(k: int = 'x'):
+    if k == 'x':
+        return 10 // 0
+    return 1
+
+
+def default_literal_ok(k: int = 0):
+    return 10 // (k * k + 1)
+
+
+class _Num:
+    def __init__(self, v):
+        self.v = v
+
+    def __mod__(self, o):
+        return self.v % o
+
+
+class C:
+    str = _Num
+
+    def meth(self, s: str):
+        return s % 0
+
+
 class _RModZero(str):
     def __rmod__(self, other):
         return 1 // 0
@@ -118,6 +213,51 @@ class _StrZero:
 
 class _StrSub(str):
     pass
+
+
+class _ModZero(str):
+    def __mod__(self, other):
+        return 1 // 0
+
+
+class _Mutator(str):
+    """Clears every list argument of the call (``targets``, set by the ground truth) from an
+    overriding comparison or attribute: the annotation, not the cone, keeps such code out."""
+    targets = ()
+
+    def _clear(self):
+        for t in self.targets:
+            t.clear()
+
+    def __eq__(self, other):
+        self._clear()
+        return False
+
+    __hash__ = str.__hash__
+
+    def __ne__(self, other):
+        self._clear()
+        return True
+
+    def __lt__(self, other):
+        self._clear()
+        return False
+
+    @property
+    def upper(self):
+        self._clear()
+        return str.upper.__get__(self)
+
+
+class _IntMutator(int):
+    targets = ()
+
+    def __eq__(self, other):
+        for t in self.targets:
+            t.clear()
+        return False
+
+    __hash__ = int.__hash__
 '''
 
 # A module that rebinds the name ``str``: its annotations are not trusted (dynamic dispatch).
@@ -136,9 +276,13 @@ ints = list(range(-3, 4))
 strs = ["", "a", "0", "%s", "ab"]
 others = [None, (1, 2), [1], 1.5, ns.get("_StrZero", lambda: None)()]
 rmod = [ns["_RModZero"]("s")] if "_RModZero" in ns else []
-extra = [ns["_StrSub"]("a")] if "_StrSub" in ns else []
+extra = [ns[k]("a") for k in ("_StrSub", "_ModZero", "_Mutator") if k in ns] + ([ns["_IntMutator"](1)] if "_IntMutator" in ns else [])
+DEFAULT = object()  # call without this argument: the function's own default is used
 
 def domain(p, mode):
+    return ([DEFAULT] if p.default is not inspect.Parameter.empty else []) + _domain(p, mode)
+
+def _domain(p, mode):
     base = ints + strs + others
     if mode == "unrestricted":
         return base + rmod + extra
@@ -153,9 +297,17 @@ def domain(p, mode):
         return strs + [None]
     if set(typing.get_args(a)) == {int, type(None)}:
         return ints + [None]
+    if typing.get_origin(a) is list:
+        return [[], [1], [1, 2]]
     return base + (rmod if mode == "no_rmod_assumption" else [])
 
+def admitted(p, x):
+    if x is DEFAULT or p.annotation is inspect.Parameter.empty:
+        return True
+    return any(type(x) is type(y) and x == y for y in _domain(p, "admitted"))  # type first: no user __eq__
+
 out = {}
+single = set()  # (function, line, exception, parameter): fails with only that annotation violated
 for mode in ("admitted", "no_rmod_assumption", "annotations_violated", "unrestricted"):
     fails = set()
     for name, fn in ns.items():
@@ -163,17 +315,26 @@ for mode in ("admitted", "no_rmod_assumption", "annotations_violated", "unrestri
             continue
         params = list(inspect.signature(fn).parameters.values())
         for args in itertools.product(*[domain(p, mode) for p in params]):
+            violated = [p.name for p, x in zip(params, args) if not admitted(p, x)]
+            call = {p.name: list(x) if isinstance(x, list) else x for p, x in zip(params, args) if x is not DEFAULT}
+            for x in call.values():
+                if isinstance(x, (ns.get("_Mutator", ()), ns.get("_IntMutator", ()))):
+                    x.targets = [y for y in call.values() if isinstance(y, list)]
             try:
-                fn(*[list(x) if isinstance(x, list) else x for x in args])
+                fn(**call)
             except Exception as e:
                 fr = [(t.name, t.lineno) for t in traceback.extract_tb(e.__traceback__) if t.filename == path]
                 if not fr:
                     continue
-                if fr[-1][0] == "__rmod__" and len(fr) >= 2:
-                    fails.add((fr[-2][0], fr[-2][1], type(e).__name__))
+                if fr[-1][0] in ("__rmod__", "__mod__") and len(fr) >= 2:  # the operator itself was replaced
+                    key = (fr[-2][0], fr[-2][1], type(e).__name__)
                 else:
-                    fails.add((fr[-1][0], fr[-1][1], type(e).__name__))
+                    key = (fr[-1][0], fr[-1][1], type(e).__name__)
+                fails.add(key)
+                if mode == "annotations_violated" and len(violated) == 1:
+                    single.add(key + (violated[0],))
     out[mode] = sorted(fails)
+out["single_violation"] = sorted(single)
 print(json.dumps(out))
 """
 
@@ -216,6 +377,22 @@ EXPECTED = {
     ("iterate_str", "10 // 0"): ("PROVED_UNSAFE", "PROVED_UNSAFE"),
     ("loop_over_str", "10 // d"): ("PROVED_UNSAFE", "PROVED_UNSAFE"),
     ("rebound", "s % v"): ("UNKNOWN", "UNKNOWN"),
+    # Review round 1: the annotation that keeps `s == 'a'` free of user code is listed.
+    ("eq_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("ne_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("lt_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("attr_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("int_eq_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("div_effect", "1 / len(xs)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("inlined_effect", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    # `x: str = None` is Optional[str]: the default call reaches the division.
+    ("default_none_str", "1 / n"): ("PROVED_UNSAFE", "PROVED_UNSAFE"),
+    ("default_none_int", "1 // n"): ("PROVED_UNSAFE", "PROVED_UNSAFE"),
+    # A literal default of another type: the annotation is not trusted.
+    ("default_mismatch", "10 // 0"): ("POSSIBLY_UNSAFE", "POSSIBLY_UNSAFE"),
+    ("default_literal_ok", "10 // (k * k + 1)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    # `str` in the annotation is the class attribute `_Num` (class scope), not builtins.str.
+    ("C.meth", "s % 0"): ("UNKNOWN", "UNKNOWN"),
 }
 
 
@@ -228,12 +405,21 @@ def _child(script: str, *argv: str) -> object:
 def _check(root: Path) -> dict[tuple[str, str], str]:
     code, rep, _ = check_json(root)
     assert rep["errors"] == [], rep["errors"]
-    truth = {}
+    truth: dict[str, set] = {}
     for mod in ("m.py", "rebound.py"):
         for mode, fails in _child(GROUND_TRUTH, str(root / mod)).items():
-            truth.setdefault(mode, set()).update((mod, fn, line, exc) for fn, line, exc in fails)
+            truth.setdefault(mode, set()).update((mod, *f) for f in fails)
     assert ("m.py", "fmt_unannotated", 5, "ZeroDivisionError") in truth["no_rmod_assumption"]  # the adversary is real
     assert ("m.py", "fmt_unannotated", 5, "ZeroDivisionError") not in truth["admitted"]
+    # The other adversaries are real too: a str subclass's own __mod__, comparisons and an
+    # attribute that clear an aliased list argument, and the functions' own defaults.
+    assert ("m.py", "fmt_annotated_left_tuple", 29, "ZeroDivisionError") in truth["annotations_violated"]
+    for fn in ("eq_effect", "ne_effect", "lt_effect", "attr_effect", "inlined_effect"):
+        assert any(k[1] == fn and k[3] == "IndexError" and k[4] == "s" for k in truth["single_violation"]), fn
+    assert any(k[1] == "int_eq_effect" and k[3] == "IndexError" and k[4] == "n" for k in truth["single_violation"])
+    assert any(k[1] == "div_effect" and k[3] == "ZeroDivisionError" and k[4] == "s" for k in truth["single_violation"])
+    assert any(k[1] == "default_none_str" and k[3] == "ZeroDivisionError" for k in truth["admitted"])
+    assert any(k[1] == "default_mismatch" for k in truth["admitted"])
     got: dict[tuple[str, str], str] = {}
     for o in rep["obligation_results"]:
         mod, fn = o["symbol_id"].split("::")
@@ -251,6 +437,10 @@ def _check(root: Path) -> dict[tuple[str, str], str]:
             if key in truth["annotations_violated"]:
                 assert o["scope_validity"] == "CONDITIONAL" and any(a.startswith(ANNOTATION) for a in o["assumptions"]), \
                     f"{fn}:{line} fails when an annotation is violated but the claim does not list the annotation assumption"
+            for name in sorted(p for (m, f, ln, ex, p) in truth["single_violation"] if (m, f, ln, ex) == key):
+                # Violating only `name`'s annotation breaks the claim: that annotation must be listed.
+                assert any(a.startswith(ANNOTATION) and (f"({name}: " in a or f", {name}: " in a) for a in o["assumptions"]), \
+                    f"{fn}:{line} fails when only {name}'s annotation is violated, but the assumptions do not name it: {o['assumptions']}"
             if key in truth["unrestricted"]:
                 assert o["scope_validity"] == "CONDITIONAL" and (rmod_listed or any(a.startswith(ANNOTATION) for a in o["assumptions"])), \
                     f"{fn}:{line} fails outside the annotations but the claim lists no assumption: {o['assumptions']}"
@@ -273,6 +463,19 @@ def test_annotations_against_cpython(tmp_path: Path):
     (off / ".git").mkdir()
     got_off = _check(off)
     assert {k: got_off.get(k) for k in EXPECTED} == {k: v[1] for k, v in EXPECTED.items()}
+
+
+def test_class_scope_annotation_name_is_not_the_builtin(tmp_path: Path):
+    """`str` bound in the class body is what a method's annotation names (CPython evaluates
+    it there): honoring that annotation reaches a user `__mod__` that divides by zero."""
+    root = write_project(tmp_path / "proj", {"m.py": CORPUS})
+    probe = "import runpy, sys\nns = runpy.run_path(sys.argv[1])\ntry:\n    ns['C']().meth(ns['_Num'](5))\n    print('null')\nexcept ZeroDivisionError:\n    print('\"ZeroDivisionError\"')\n"
+    assert _child(probe, str(root / "m.py")) == "ZeroDivisionError"
+    (root / ".git").mkdir()
+    _, rep, _ = check_json(root)
+    (o,) = [o for o in rep["obligation_results"] if o["symbol_id"].endswith("::C.meth")]
+    assert o["property_result"] == "UNKNOWN"
+    assert not any(a.startswith(ANNOTATION) for a in o["assumptions"])
 
 
 def test_rmod_assumption_is_listed_and_configurable(tmp_path: Path):

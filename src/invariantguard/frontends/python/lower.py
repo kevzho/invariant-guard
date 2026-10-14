@@ -150,6 +150,58 @@ def find_method_table(table: symtable.SymbolTable, node: ast.FunctionDef) -> sym
     return found[0] if len(found) == 1 else None
 
 
+def method_class_table(table: symtable.SymbolTable, node: ast.FunctionDef) -> symtable.SymbolTable | None:
+    """The class table whose body directly defines the method ``node`` (see ``find_method_table``)."""
+    found = []
+    stack = [c for c in table.get_children() if c.get_type() == "class"]
+    while stack:
+        cls = stack.pop()
+        for c in cls.get_children():
+            if c.get_type() == "class":
+                stack.append(c)
+            elif c.get_type() == "function" and c.get_name() == node.name and c.get_lineno() == node.lineno:
+                found.append(cls)
+    return found[0] if len(found) == 1 else None
+
+
+def class_scope_names(cls: symtable.SymbolTable) -> set[str]:
+    """Names the class body binds (assignment, def, class, import, loop/with target):
+    a method's annotations are evaluated in the class scope, so such a name shadows the builtin."""
+    return {s.get_name() for s in cls.get_symbols() if s.is_local() or s.is_imported() or s.is_assigned()}
+
+
+_DEFAULT_PY_TYPES = {Kind.INT: int, Kind.BOOL: bool, Kind.FLOAT: float, Kind.STR: str, Kind.TUPLE: tuple}
+
+
+def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | None) -> tuple[SemType, str | None]:
+    """Reconcile an annotation-derived parameter type with the parameter's own default.
+
+    A call that omits the argument binds the default, which no caller assumption covers.
+    ``x: str = None`` (implicit Optional) is ``Optional[str]``. A literal default of another
+    type makes the annotation untrusted (``Kind.OBJECT``). A default that is not a literal
+    keeps the annotation; the annotation assumption then names defaults explicitly.
+    """
+    if default is None or typ.origin is not Origin.ANNOTATION or typ.kind is Kind.OBJECT:
+        return typ, shown
+    k = typ.inner if typ.kind is Kind.OPTIONAL else typ.kind
+    if isinstance(default, ast.Constant) and default.value is None:
+        if typ.kind is Kind.OPTIONAL:
+            return typ, shown
+        return SemType(Kind.OPTIONAL, Origin.ANNOTATION, k), f"{shown} = None (implicit Optional)"
+    ok, value = constant_value(default)
+    if ok:
+        match = type(value) is _DEFAULT_PY_TYPES.get(k)  # type: ignore[arg-type]
+    elif isinstance(default, ast.List):
+        match = k is Kind.LIST
+    elif isinstance(default, ast.Tuple):
+        match = k is Kind.TUPLE
+    else:
+        return typ, shown
+    if match:
+        return typ, shown
+    return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {ast.unparse(default)} contradicts it; not trusted)"
+
+
 def _body_fingerprint(node: ast.FunctionDef) -> str:
     return body_fingerprint(node)
 
@@ -320,8 +372,12 @@ class FunctionLowerer:
         declared_params: dict[str, str] | None,
         sites: dict[int, ObligationSite],
         ctx: ModuleContext | None = None,
+        class_names: set[str] | None = None,  # names bound by the enclosing class body (methods)
+        class_qualname: str | None = None,
     ) -> None:
         self.node = node
+        self.class_names = class_names or set()
+        self.class_qualname = class_qualname
         self.symbol_id = symbol_id
         self.snapshot_id = snapshot_id
         self.declared_params = declared_params  # name -> profile, or None
@@ -469,6 +525,13 @@ class FunctionLowerer:
                    "descriptor": short_hex(ctx.name_descriptor("Optional")), "typing_optional": ok}
             self.add_dep(rec)
             return Resolution("const" if ok else "unresolved", "Optional", rec)
+        if self.class_qualname is not None:
+            # A method's annotations are evaluated in its class body first (I-134 review).
+            shadowed = name in self.class_names
+            rec = {"kind": "class_scope", "module": ctx.path, "class": self.class_qualname, "name": name, "bound": shadowed}
+            self.add_dep(rec)
+            if shadowed:
+                return Resolution("unresolved", name, rec, reason=f"'{name}' is bound in the body of class {self.class_qualname}")
         return self.resolve_global(name)
 
     def ensure_debug(self) -> str:
@@ -612,8 +675,11 @@ class FunctionLowerer:
         params: list[Param] = []
         args = node.args
         declared = self.declared_params or {}
+        positional = args.posonlyargs + args.args
+        defaults: dict[str, ast.AST] = dict(zip([p.arg for p in positional][len(positional) - len(args.defaults):], args.defaults))
+        defaults.update({p.arg: d for p, d in zip(args.kwonlyargs, args.kw_defaults) if d is not None})
         for a in args.posonlyargs + args.args + args.kwonlyargs:
-            ann_type, shown = annotation_type(a.annotation, self.ann_lookup)
+            ann_type, shown = default_checked_type(*annotation_type(a.annotation, self.ann_lookup), defaults.get(a.arg))
             if a.arg in declared:
                 typ = PROFILE_TYPES.get(declared[a.arg])
                 if typ is None:
@@ -951,7 +1017,7 @@ class FunctionLowerer:
                     ins.operands = ins.operands + (lv,)
                 latch[n] = (UNKNOWN_TYPE, True) if lv is None or lv in self.maybe_unbound_values else (self.typ(lv), False)
         # Code that runs later in one iteration runs before the header of the next one.
-        body_ids = {f"b{i}" for i in range(first_block, self._b)}
+        body_ids = [f"b{i}" for i in range(first_block, self._b)]  # program order: the example shown is deterministic
         effects = [i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN
@@ -996,7 +1062,7 @@ class FunctionLowerer:
             self.var_names[v] = self.frame.var_prefix + n
         self.emit(Op.LOOP_HEAD, (), None, span, block=block, context=context)
         marker = block.instructions[-1]
-        ids = {f"b{i}" for i in range(first_block, self._b)}
+        ids = [f"b{i}" for i in range(first_block, self._b)]  # program order: deterministic example
         effects = [i for bid in ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN

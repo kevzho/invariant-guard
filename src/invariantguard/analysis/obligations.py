@@ -59,6 +59,8 @@ WITNESS_SEARCH_MAX = 4096
 MODELED_PARAM_KINDS = NUMERIC_EXACT | SEQUENCE_KINDS | {Kind.OPTIONAL}
 STR_RMOD_ASSUMPTION = ("the right operand of str % x is not an instance of a str subclass that overrides __rmod__ "
                        "(CPython would call that __rmod__, user code, before str.__mod__)")
+# Operations that only copy or merge values: no method of their operands runs.
+_PURE_OPS = frozenset({Op.CONST, Op.PARAM, Op.ASSIGN, Op.PHI, Op.LOOP_PHI, Op.LOOP_HEAD, Op.UNKNOWN_EFFECT})
 SEARCH_TRUNCATED = object()  # the bounded search stopped at the budget deadline (not a completed search)
 _FAILURE = {DIVISION_PROPERTY: "ZeroDivisionError", INDEX_PROPERTY: "IndexError", NONE_PROPERTY: "AttributeError"}
 
@@ -157,6 +159,10 @@ def _describe_kind(t) -> str:
     return k.value
 
 
+def _block_order(bid: str) -> tuple[int, str]:
+    return (int(bid[1:]), bid) if bid[1:].isdigit() else (-1, bid)
+
+
 class FunctionChecker:
     def __init__(self, fn: Function, solver: Any | None, solver_status: SolverStatus, budget: Budget, declared_reason: str | None) -> None:
         self.fn = fn
@@ -199,7 +205,9 @@ class FunctionChecker:
         assert bid is not None and site.result_id is not None
         idx = self.instr_index(bid, site.result_id)
         out: list[Instruction] = []
-        for b in self.backward_region(bid):
+        # Block creation order, not set order: examples drawn from this list must not depend
+        # on str hashing (PYTHONHASHSEED).
+        for b in sorted(self.backward_region(bid), key=_block_order):
             instrs = self.fn.blocks[b].instructions
             out.extend(instrs[:idx] if b == bid else instrs)
         return out
@@ -262,6 +270,18 @@ class FunctionChecker:
                         stack.append(t.operands[0])
         return seen
 
+    def type_dependencies(self, site: ObligationSite) -> set[str]:
+        """Values whose *types* the effect classification of earlier instructions relies on.
+
+        An instruction before the site with effect NONE/MAY_RAISE (a comparison, attribute
+        load, ``len``, iteration, arithmetic) runs no user code only because its operands are
+        exact built-ins. When such a type comes from an annotation, a subclass with an
+        overriding method (``__eq__`` clearing an aliased list) would break the claim, so
+        the result must list that annotation even if the value is outside the cone.
+        """
+        roots = [o for i in self.prefix_instructions(site) if i.effect is not Effect.UNKNOWN and i.op not in _PURE_OPS for o in i.operands]
+        return self.closure(roots) if roots else set()
+
     def upstream_unknown(self, site: ObligationSite) -> list[Instruction]:
         return [i for i in self.prefix_instructions(site) if i.effect is Effect.UNKNOWN]
 
@@ -281,12 +301,13 @@ class FunctionChecker:
             conditional = conditional or c.get("conditional") == "yes"
         return sorted(dict.fromkeys(notes)), conditional
 
-    def domain_info(self, cone: set[str]) -> tuple[DomainSource, Authority, ScopeValidity, str, list[str]]:
+    def domain_info(self, cone: set[str], type_deps: set[str] | frozenset[str] = frozenset()) -> tuple[DomainSource, Authority, ScopeValidity, str, list[str]]:
         in_cone = [p for p in self.fn.params if p.value_id in cone]
         params = [p for p in in_cone if p.type.kind in MODELED_PARAM_KINDS]
         # Any annotation-derived type in the cone is an unenforced assumption, so the
-        # result is conditional on it (audit A-08).
-        annotated = [p for p in in_cone if p.type.origin is Origin.ANNOTATION and p.type.kind in (MODELED_PARAM_KINDS | {Kind.FLOAT, Kind.STR})]
+        # result is conditional on it (audit A-08). So is one that only keeps an earlier
+        # instruction free of user code (``type_dependencies``).
+        annotated = [p for p in self.fn.params if (p.value_id in cone or p.value_id in type_deps) and p.type.origin is Origin.ANNOTATION and p.type.kind in (MODELED_PARAM_KINDS | {Kind.FLOAT, Kind.STR})]
         declared = [p for p in params if p.type.origin is Origin.DECLARED]
         unmodeled = self.unmodeled_leaves(cone)
         if not params and not annotated:
@@ -311,7 +332,7 @@ class FunctionChecker:
             ann = ", ".join(f"{p.name}: {p.annotation}" for p in annotated)
             kinds = sorted({(p.type.inner.value + " or None") if p.type.kind is Kind.OPTIONAL and p.type.inner else p.type.kind.value for p in annotated})
             assumptions = [
-                f"annotation-only domain ({ann}): assumes callers pass exact built-in {'/'.join(kinds)} values (type(x) is {kinds[0].split(' ')[0]}); annotations are not enforced at runtime",
+                f"annotation-only domain ({ann}): assumes callers pass (and non-literal parameter defaults evaluate to) exact built-in {'/'.join(kinds)} values (type(x) is {kinds[0].split(' ')[0]}); annotations are not enforced at runtime",
                 "bool and int subclasses (which may override arithmetic/comparison operators) and list/tuple/str subclasses are outside this assumption",
             ]
             if declared:
@@ -480,7 +501,7 @@ class FunctionChecker:
         if fact is None:
             raise EngineInconsistency(f"no analysis fact for obligation {site.result_id}")
         cone = self.cone(site)
-        source, authority, scope, domain, assumptions = self.domain_info(self.domain_cone(site, cone))
+        source, authority, scope, domain, assumptions = self.domain_info(self.domain_cone(site, cone), self.type_dependencies(site))
         notes, notes_conditional = self.resolution_notes(site, cone)
         assumptions = assumptions + notes
         upstream = self.upstream_unknown(site)

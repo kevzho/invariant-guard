@@ -231,8 +231,9 @@ def test_methods_and_formatting_against_cpython(tmp_path: Path, name, src, expec
 def test_non_tuple_right_operand_dispatches_to_user_rmod(tmp_path: Path):
     """Why a non-tuple right operand needs an assumption: with a ``str`` subclass on the right, CPython
     runs the subclass's ``__rmod__`` (user code) instead of ``str.__mod__``. Inside a tuple the same
-    object is only formatted. Since I-134 such an operation is PROVED_SAFE only with the assumption
-    listed, and UNKNOWN with ``assume_no_str_rmod_override = false``."""
+    object is only formatted. This test only probes CPython; that guard then lists the assumption
+    (and reports UNKNOWN with ``assume_no_str_rmod_override = false``) is checked by
+    ``test_annotations.py::test_rmod_assumption_is_listed_and_configurable``."""
     path = tmp_path / "m.py"
     path.write_text(ADVERSARIAL, encoding="utf-8")
     probe = (
@@ -243,3 +244,20 @@ def test_non_tuple_right_operand_dispatches_to_user_rmod(tmp_path: Path):
     p = subprocess.run([sys.executable, "-I", "-c", probe, str(path)], capture_output=True, text=True, timeout=60)
     assert p.returncode == 0, p.stderr
     assert p.stdout.split("\n")[:2] == ["__rmod__", "got 's'"]
+
+
+def test_formatting_width_is_bounded_in_the_evaluator(tmp_path: Path):
+    """A solver witness may pick a huge ``*`` width (or the format string may hold a huge literal
+    width): the IR evaluator must not build that string. It stops (STUCK), so the division is not
+    PROVED_UNSAFE from that evaluation; nothing near the width is ever allocated."""
+    from invariantguard.ir.evaluator import MAX_SEQ_LEN, _format_too_wide
+
+    assert _format_too_wide("%*d", (MAX_SEQ_LEN + 1, 1)) and _format_too_wide("%.*f", (-(MAX_SEQ_LEN + 1), 1.0))
+    assert _format_too_wide("%99999999999999999999s", "a") and _format_too_wide("%(k)100000s", "a")
+    assert not _format_too_wide("%*d|%5.2f", (10, 1, 2.5)) and not _format_too_wide("100%% %s", "a")
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "m.py").write_text(
+        "def wide(n: int):\n    if n > 1000000:\n        t = '%*d' % (n, 1)\n        return 1 / 0\n    return 0\n", encoding="utf-8")
+    _, rep, _ = check_json(tmp_path)
+    o = next(o for o in rep["obligation_results"] if o["operation_text"] == "1 / 0")
+    assert o["property_result"] != "PROVED_UNSAFE" and o["witness_validated"] is False
