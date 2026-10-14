@@ -120,7 +120,9 @@ def test_every_division_site_is_accounted_for():
     assert kinds["C"] == "class_body" and "C.m" not in kinds  # plain methods are lowered (I-130)
     assert next(f for f in res.module.functions if f.symbol_id.endswith("::C.m")).division_sites[0].text == "x / self.k"
     assert kinds["top.<locals>.<lambda>#1"] == "lambda"
-    assert "generator" in next(u.reason for u in res.module.unsupported_symbols if u.symbol_id.endswith("::gen"))
+    assert "gen" not in kinds  # generator functions are lowered (I-135)
+    gen = fn_named(res, "gen")
+    assert gen.generator and gen.division_sites[0].unsupported_reason is None
     top = fn_named(res, "top")
     reasons = {s.text: s.unsupported_reason for s in top.division_sites}
     assert reasons["a % b"] is None
@@ -133,6 +135,7 @@ def test_every_division_site_is_accounted_for():
     [
         ("import functools\n@functools.cache\ndef f(a):\n    return 1 / a\n", "decorated"),
         ("async def f(a):\n    return 1 / a\n", "async"),
+        ("async def f(a):\n    yield 1 / a\n", "async"),  # async generators stay unsupported (I-135)
         ("def f(a):\n    global G\n    return 1 / a\n", "global"),
         ("def f(a):\n    if (b := a):\n        return 1 / b\n", "assignment expression"),
         ("def f(a):\n    def g():\n        nonlocal a\n        a = 0\n    g()\n    return 1 / a\n", "nonlocal"),
@@ -181,3 +184,33 @@ def test_imports_recorded_not_executed():
     _, res = lower("import os, json\nfrom vendor_math import external_transform\n")
     assert [i["module"] for i in res.module.imports] == ["os,json", "vendor_math"]
     assert all(i["executed"] is False and i["resolved"] is False for i in res.module.imports)
+
+
+def test_generator_yield_points_and_generator_calls():
+    from invariantguard.ir.evaluator import evaluate
+
+    _, res = lower(
+        "def gen(n, xs: list):\n"
+        "    x = yield n\n"
+        "    yield from xs\n"
+        "    yield from n\n"
+        "def use(n):\n"
+        "    g = gen(n, [])\n"
+        "    h = gen(*n)\n"
+        "    return 1\n"
+    )
+    gen = fn_named(res, "gen")
+    assert gen.generator and not fn_named(res, "use").generator
+    ys = [i for b in gen.blocks.values() for i in b.instructions if i.attrs.get("yield_point")]
+    assert [(i.op, i.effect, i.type.kind, i.attrs["yield_point"], i.attrs.get("iter_kind")) for i in ys] == [
+        (Op.UNKNOWN_EFFECT, Effect.UNKNOWN, Kind.OBJECT, "yield", None),
+        (Op.UNKNOWN_EFFECT, Effect.UNKNOWN, Kind.OBJECT, "yield_from", "list"),
+        (Op.UNKNOWN_EFFECT, Effect.UNKNOWN, Kind.OBJECT, "yield_from", "object"),
+    ]
+    # next() until exhaustion: yield gives None, yield from a list runs; from anything else is STUCK.
+    out = evaluate(gen, {"n": 5, "xs": [1, 2]})
+    assert out.kind == "STUCK" and "yield from" in out.detail and out.values[ys[0].result] is None
+    calls = [i for b in fn_named(res, "use").blocks.values() for i in b.instructions if i.op is Op.CALL]
+    # Creating a generator runs none of its body: no effect when the arguments bind cleanly.
+    assert [(i.effect, i.attrs.get("generator_call")) for i in calls] == [(Effect.NONE, True), (Effect.UNKNOWN, True)]
+    assert evaluate(fn_named(res, "use"), {"n": 1}).kind == "STUCK"  # gen(*n): argument unpacking is not evaluated

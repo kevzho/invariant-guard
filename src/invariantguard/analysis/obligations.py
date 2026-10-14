@@ -49,6 +49,9 @@ from .intervals import AbsInt
 PROPERTY_ID = DIVISION_PROPERTY
 QUANTIFIER_SAFE = "for all admitted function inputs"
 QUANTIFIER_UNSAFE = "exists admitted function input"
+# Generator functions (I-135): calling one runs nothing, so a claim quantifies over consumers too.
+QUANTIFIER_SAFE_GENERATOR = "for all admitted function inputs and every consumer of the generator (next/send/throw/close, any sent values)"
+QUANTIFIER_UNSAFE_GENERATOR = "exists admitted function input such that consuming the generator with next() until exhaustion reaches the failure"
 
 _CMP_TEXT = {"EQ": "==", "NE": "!=", "LT": "<", "LE": "<=", "GT": ">", "GE": ">="}
 _NEG_TEXT = {"EQ": "!=", "NE": "==", "LT": ">=", "LE": ">", "GT": "<=", "GE": "<"}
@@ -488,7 +491,8 @@ class FunctionChecker:
             if self.fn.has_asserts:
                 a.append("holds both with assertions enabled and under python -O")
             return ObligationOutcome(**base, result=PropertyResult.PROVED_SAFE, method=method, scope=s, assumptions=a,
-                                     reasons=[reason], quantifier=QUANTIFIER_SAFE, divisor_fact=divisor_fact)
+                                     reasons=[reason], quantifier=QUANTIFIER_SAFE_GENERATOR if self.fn.generator else QUANTIFIER_SAFE,
+                                     divisor_fact=divisor_fact)
 
         def unknown(method: AnalysisMethod, reasons: list[str], **kw: Any) -> ObligationOutcome:
             return ObligationOutcome(**base, result=PropertyResult.UNKNOWN, method=method, scope=None, assumptions=list(assumptions),
@@ -735,6 +739,7 @@ class FunctionChecker:
         reasons.append(
             ("SMT: SAT; " if method is AnalysisMethod.SMT else "bounded concrete search; ")
             + f"witness {witness} re-validated by the IR evaluator: {ev.failure or failure_name(site)} at this operation"
+            + (" when the generator is consumed with next() (None resumes every yield)" if self.fn.generator else "")
         )
         return ObligationOutcome(
             **base,
@@ -747,7 +752,7 @@ class FunctionChecker:
             witness_validated=True,
             path_constraints=self.path_constraints(site, ev.trace, cone),
             solver_runs=solver_runs,
-            quantifier=QUANTIFIER_UNSAFE,
+            quantifier=QUANTIFIER_UNSAFE_GENERATOR if self.fn.generator else QUANTIFIER_UNSAFE,
             runtime_mode=runtime_mode,
         )
 

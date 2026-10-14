@@ -146,6 +146,11 @@ def own_scope_nodes(fn: ast.AST):
         stack.extend(ast.iter_child_nodes(node))
 
 
+def is_generator_function(fn: ast.AST) -> bool:
+    """True when ``yield``/``yield from`` occurs in the function's own scope (I-135)."""
+    return any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in own_scope_nodes(fn))
+
+
 def stored_names(node: ast.AST) -> set[str]:
     """Names a statement may bind or unbind in the enclosing function scope."""
     names: set[str] = set()

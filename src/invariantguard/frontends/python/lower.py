@@ -57,7 +57,7 @@ from ...ir.model import (
 from ...models.spans import LineIndex, SourceSpan, short_hex
 from .resolve import ModuleContext, Resolution, ast_fingerprint, body_fingerprint, code_fingerprint, constant_value
 from .subset import function_unsupported_reason
-from .symbols import stored_names
+from .symbols import is_generator_function, stored_names
 
 _BINOPS = {ast.Add: Op.ADD, ast.Sub: Op.SUB, ast.Mult: Op.MUL, ast.Div: Op.DIV, ast.FloorDiv: Op.FLOORDIV, ast.Mod: Op.MOD}
 _CMPOPS = {ast.Eq: "EQ", ast.NotEq: "NE", ast.Lt: "LT", ast.LtE: "LE", ast.Gt: "GT", ast.GtE: "GE"}
@@ -107,6 +107,9 @@ CATCHES = {
 
 # Attributes that exist on None (CPython 3.13): loading them never raises AttributeError.
 NONE_ATTRS = frozenset(dir(None))
+
+# Inline blocker for a call to a generator function: the call creates a generator object (I-135).
+GENERATOR_CALL = "callee is a generator function: calling it only creates a generator object, whose body runs when it is consumed (not modeled)"
 
 MAX_INLINE_DEPTH = 6  # nested call-site instantiations per analyzed function
 MAX_LOOP_ROUNDS = 3  # lowerings of one loop while its carried variable types stabilize (I-132)
@@ -648,6 +651,7 @@ class FunctionLowerer:
             span=self.root_frame.lines.node_span(self.root_frame.path, self.snapshot_id, node),
             sites=all_sites,
             has_asserts=self.has_asserts,
+            generator=is_generator_function(node),
             var_names=self.var_names,
             fingerprint=ast_fingerprint(node),
             body_fingerprint=_body_fingerprint(node),
@@ -1389,6 +1393,8 @@ class FunctionLowerer:
                 return rid
             return self.emit(Op.INDEX, (base, idx), UNKNOWN_TYPE, span, Effect.UNKNOWN, None,
                              reason=f"indexing a value of type {self.kind(base).value} is not modeled")
+        if isinstance(node, (ast.Yield, ast.YieldFrom)):
+            return self.yield_point(node, env)
         if isinstance(node, (ast.List, ast.Tuple)) and isinstance(node.ctx, ast.Load) and not any(isinstance(e, ast.Starred) for e in node.elts):
             elems = tuple(self.expr(e, env) for e in node.elts)
             kind = Kind.LIST if isinstance(node, ast.List) else Kind.TUPLE
@@ -1396,6 +1402,27 @@ class FunctionLowerer:
         reason = f"{type(node).__name__} expression is outside the supported subset"
         self.region(node, reason)
         return self.unknown(span, reason)
+
+    def yield_point(self, node: ast.Yield | ast.YieldFrom, env: dict[str, str]) -> str:
+        """``yield v`` / ``yield from it`` (I-135): the generator suspends and its consumer runs.
+
+        The consumer may run arbitrary code (mutating shared objects, so the effect is
+        unknown; it cannot rebind this frame's locals), resume with any sent value (the
+        result is an unknown value) or throw an exception in at this point (covered, inside
+        a ``try``, by the I-133 exception edge; outside one the generator just ends).
+        """
+        span = self.span(node)
+        operand = self.expr(node.value, env) if node.value is not None else self.const(None, span)
+        attrs: dict[str, Any] = {}
+        if isinstance(node, ast.YieldFrom):
+            k = self.kind(operand)
+            attrs["iter_kind"] = k.value if k in SEQUENCE_KINDS or k is Kind.STR else "object"
+            what = "`yield from` delegates to the iterable; the consumer"
+        else:
+            what = "`yield` suspends the generator; the consumer"
+        return self.emit(Op.UNKNOWN_EFFECT, (operand,), UNKNOWN_TYPE, span, Effect.UNKNOWN, None,
+                         yield_point="yield_from" if isinstance(node, ast.YieldFrom) else "yield", **attrs,
+                         reason=f"{what} may run any code, send any value or throw an exception in here")
 
     # -- calls ---------------------------------------------------------------------------
     def _bind_args(self, call: ast.Call, callee: ast.FunctionDef) -> tuple[list[tuple[str, ast.expr | None, Any]], str | None]:
@@ -1442,6 +1469,8 @@ class FunctionLowerer:
         why = function_unsupported_reason(sym)
         if why is not None:
             return f"callee is unsupported: {why}", [], None
+        if is_generator_function(callee):
+            return GENERATOR_CALL, [], None
         active = {self.symbol_id} | {c["callee"] for c in self.frame.chain}
         if res.symbol_id in active:
             return "recursive call (strongly connected component) is not summarized", [], None
@@ -1477,10 +1506,15 @@ class FunctionLowerer:
             if self.kind(arg) in SEQUENCE_KINDS:
                 return self.emit(Op.LEN, (arg,), SemType(Kind.INT, Origin.DERIVED), span, callee="len", builtin=True)
             return self._unknown_call(span, callee_text, (arg,), "builtin", f"len() of a value of type {self.kind(arg).value} is not modeled")
+        effect = Effect.UNKNOWN
         if res is not None and res.kind == "function":
             blocker, binding, table = self._inline_blocker(res, node)
             if blocker is None:
                 return self._inline(node, res, binding, table, env)
+            if blocker == GENERATOR_CALL and self._bind_args(node, res.node)[1] is None:
+                # Calling a generator function with arguments that bind cleanly only creates the
+                # generator object: no code of its body runs until it is consumed (I-135).
+                effect = Effect.NONE
         # Generic unknown call: evaluate the callee expression and arguments once.
         ops: list[str] = []
         if not isinstance(func, ast.Name):
@@ -1498,14 +1532,18 @@ class FunctionLowerer:
             why = "callee is a local variable"
         else:
             why = "callee is not a resolvable module-level function"
+        if blocker == GENERATOR_CALL:
+            return self._unknown_call(span, callee_text, tuple(ops), resolution, why, effect, generator_call=True,
+                                      **({} if effect is Effect.UNKNOWN else {"reason": f"call to '{callee_text}' creates a generator object (value not modeled); none of its body runs here"}))
         return self._unknown_call(span, callee_text, tuple(ops), resolution, why)
 
-    def _unknown_call(self, span: SourceSpan, callee: str, ops: tuple[str, ...], resolution: str, why: str) -> str:
+    def _unknown_call(self, span: SourceSpan, callee: str, ops: tuple[str, ...], resolution: str, why: str,
+                      effect: Effect = Effect.UNKNOWN, **attrs: Any) -> str:
         self.unresolved_calls.append(f"{callee} ({why})")
         return self.emit(
-            Op.CALL, ops, UNKNOWN_TYPE, span, Effect.UNKNOWN, None,
+            Op.CALL, ops, UNKNOWN_TYPE, span, effect, None,
             callee=callee, resolution=resolution,
-            reason=f"call to '{callee}' ({resolution}): result and effects unknown: {why}",
+            **{"reason": f"call to '{callee}' ({resolution}): result and effects unknown: {why}", **attrs},
         )
 
     def _inline(self, node: ast.Call, res: Resolution, binding, table, env: dict[str, str]) -> str:
