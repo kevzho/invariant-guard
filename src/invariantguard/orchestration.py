@@ -353,7 +353,8 @@ def _check_once(opts: CheckOptions, root: Path, cfg: Config, log: list[str], *, 
                      required_ids=required_ids, cfg=cfg, solver_state=solver.state, budget_ms=cfg.analysis.quick_budget_ms)
 
     backend = solver.backend(cfg)
-    budget = Budget(deadline=time.monotonic() + cfg.analysis.quick_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search)
+    budget = Budget(deadline=time.monotonic() + cfg.analysis.quick_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
     analysis = analyze_lowered(lowered, cfg, backend, solver.status, budget)
     errors = lowered.errors + analysis.errors
     produced = sorted(site_obligation_id(o.symbol_id, o.site) for o in analysis.outcomes)

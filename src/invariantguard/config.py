@@ -49,6 +49,9 @@ class AnalysisConfig:
     require_coverage: bool = True
     witness_search: bool = True
     full_budget_ms: int = 60000  # M2: static budget of `guard verify --mode full`
+    # I-134: `str % x` with x of unmodeled type is formatting, assuming x is not a str subclass
+    # overriding __rmod__ (listed on every result that relies on it); false keeps it UNKNOWN.
+    assume_no_str_rmod_override: bool = True
 
 
 @dataclass
@@ -96,6 +99,7 @@ class Config:
             "per_query_timeout_ms": a.per_query_timeout_ms,
             "per_query_rlimit": a.per_query_rlimit,
             "witness_search": a.witness_search,
+            "assume_no_str_rmod_override": a.assume_no_str_rmod_override,
             "exclude": sorted(self.exclude),
         }
 
@@ -110,6 +114,7 @@ _ANALYSIS_KEYS = {
     "require_coverage": bool,
     "witness_search": bool,
     "full_budget_ms": int,
+    "assume_no_str_rmod_override": bool,
 }
 _TOP_KEYS = {"schema_version", "analysis", "execution", "semantic", "privacy", "scope", "domains"}
 
@@ -374,6 +379,9 @@ solver_enabled = true
 per_query_timeout_ms = 100
 quick_budget_ms = 2000
 require_coverage = true
+# `str % x` is formatting unless x is a str subclass overriding __rmod__; results relying on
+# that assumption list it. Set to false to report such operations as UNKNOWN instead.
+assume_no_str_rmod_override = true
 
 [execution]
 # Dynamic contract checks run only with `guard verify --execute --run-profile NAME` and an

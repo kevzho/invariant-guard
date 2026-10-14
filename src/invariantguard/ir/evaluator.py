@@ -85,6 +85,13 @@ MAX_INT_BITS = 1 << 16
 MAX_SEQ_LEN = 1 << 16
 
 
+def _plain(x: Any) -> bool:
+    """True for a built-in value with no unmodeled or unbound part (formatting it runs no user code)."""
+    if x is None or isinstance(x, (bool, int, float, str)):
+        return True
+    return isinstance(x, (list, tuple)) and all(_plain(e) for e in x)
+
+
 def _bits(x: Any) -> int:
     return x.bit_length() if isinstance(x, int) else 0
 
@@ -203,7 +210,7 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                 if ins.flavor == "python.str_format":
                     # Evaluator values are built-in objects only (user objects are UNMODELED),
                     # so formatting them runs no user code and matches CPython exactly.
-                    if not isinstance(b, tuple) or any(e is UNMODELED or e is UNBOUND for e in b):
+                    if not isinstance(a, str) or not _plain(b):
                         out.kind, out.detail = "STUCK", f"unmodeled formatting argument at {ins.result}"
                         out.values = env
                         return out

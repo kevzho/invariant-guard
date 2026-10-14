@@ -120,7 +120,7 @@ PROFILE_TYPES = {
     "python_optional_exact_builtin_int": SemType(Kind.OPTIONAL, Origin.DECLARED, Kind.INT),
 }
 
-_ANN_SCALARS = {"int": Kind.INT, "bool": Kind.BOOL, "float": Kind.FLOAT}
+_ANN_SCALARS = {"int": Kind.INT, "bool": Kind.BOOL, "float": Kind.FLOAT, "str": Kind.STR}
 _ANN_SEQS = {"list": Kind.LIST, "tuple": Kind.TUPLE}
 
 
@@ -1574,11 +1574,6 @@ class FunctionLowerer:
         return marker
 
     # -- operators ------------------------------------------------------------------------
-    def _literal_of(self, value_id: str, kind: Kind) -> bool:
-        """True when ``value_id`` is an exact built-in ``kind`` from a literal or display (never an annotation)."""
-        t = self.types.get(value_id)
-        return t is not None and t.kind is kind and t.origin is Origin.LITERAL
-
     def binop(self, op: Op, left: str, right: str, node: ast.AST, augmented: bool = False) -> str:
         lk, rk = self.kind(left), self.kind(right)
         span = self.span(node)
@@ -1603,11 +1598,14 @@ class FunctionLowerer:
             if augmented and seq_kind is Kind.LIST:
                 # ``xs += ys`` / ``xs *= n`` mutate the list in place, i.e. every alias of it.
                 effect = Effect.UNKNOWN
-        elif op is Op.MOD and self._literal_of(left, Kind.STR) and self._literal_of(right, Kind.TUPLE):
-            # printf-style formatting (I-131): an exact str on the left and an exact tuple on
-            # the right (tuple is never a str subclass, so no reflected __rmod__ runs first)
-            # select str.__mod__, which performs no numeric division. Formatting may still call
-            # user __str__/__repr__/__format__/__index__ hooks of the elements: effect UNKNOWN.
+        elif op is Op.MOD and lk is Kind.STR:
+            # printf-style formatting (I-131, I-134): an exact str on the left selects
+            # str.__mod__, which performs no numeric division and never returns NotImplemented,
+            # unless the right operand's type is a str subclass overriding __rmod__ (CPython
+            # tries that first). An exact built-in right operand has no subclass; any other
+            # needs the recorded assumption that it is not such a subclass (``rmod_assumption``).
+            # Formatting may still call user __str__/__repr__/__format__/__index__ hooks of the
+            # arguments: effect UNKNOWN.
             typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.str_format"
         else:
             typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.dynamic_dispatch"
@@ -1617,7 +1615,9 @@ class FunctionLowerer:
         if flavor in ("python.sequence_concat", "python.sequence_repeat") and effect is Effect.UNKNOWN:
             attrs["reason"] = f"in-place list {'+=' if op is Op.ADD else '*='} mutates the list shared by every alias; alias/effect tracking for lists is not modeled"
         if flavor == "python.str_format":
-            attrs["reason"] = "str % tuple formatting may call user __str__/__repr__/__format__ hooks of the elements"
+            attrs["reason"] = "str % x formatting may call user __str__/__repr__/__format__ hooks of the arguments"
+            if rk not in EXACT_NON_NONE | {Kind.NONE, Kind.OPTIONAL}:
+                attrs["rmod_assumption"] = True
         if flavor == "python.dynamic_dispatch":
             attrs["reason"] = f"{op.value} on {lk.value}/{rk.value} operands may dispatch to user-defined operator methods"
         site: ObligationSite | None = None

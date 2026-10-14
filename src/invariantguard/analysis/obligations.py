@@ -57,6 +57,8 @@ _ARITH_TEXT = {Op.ADD: "+", Op.SUB: "-", Op.MUL: "*", Op.DIV: "/", Op.FLOORDIV: 
 WITNESS_SEARCH_VALUES = (0, 1, -1, 2, -2, 3, -3)
 WITNESS_SEARCH_MAX = 4096
 MODELED_PARAM_KINDS = NUMERIC_EXACT | SEQUENCE_KINDS | {Kind.OPTIONAL}
+STR_RMOD_ASSUMPTION = ("the right operand of str % x is not an instance of a str subclass that overrides __rmod__ "
+                       "(CPython would call that __rmod__, user code, before str.__mod__)")
 SEARCH_TRUNCATED = object()  # the bounded search stopped at the budget deadline (not a completed search)
 _FAILURE = {DIVISION_PROPERTY: "ZeroDivisionError", INDEX_PROPERTY: "IndexError", NONE_PROPERTY: "AttributeError"}
 
@@ -70,6 +72,9 @@ class Budget:
     deadline: float  # time.monotonic() deadline for the static phase
     per_query_timeout_ms: int
     witness_search: bool = True
+    # [analysis] assume_no_str_rmod_override (I-134): `str % x` with x of unmodeled type is
+    # formatting under a recorded assumption; False keeps it UNKNOWN (dynamic dispatch).
+    assume_no_str_rmod_override: bool = True
 
     def exhausted(self) -> bool:
         return time.monotonic() >= self.deadline
@@ -281,7 +286,7 @@ class FunctionChecker:
         params = [p for p in in_cone if p.type.kind in MODELED_PARAM_KINDS]
         # Any annotation-derived type in the cone is an unenforced assumption, so the
         # result is conditional on it (audit A-08).
-        annotated = [p for p in in_cone if p.type.origin is Origin.ANNOTATION and p.type.kind in (MODELED_PARAM_KINDS | {Kind.FLOAT})]
+        annotated = [p for p in in_cone if p.type.origin is Origin.ANNOTATION and p.type.kind in (MODELED_PARAM_KINDS | {Kind.FLOAT, Kind.STR})]
         declared = [p for p in params if p.type.origin is Origin.DECLARED]
         unmodeled = self.unmodeled_leaves(cone)
         if not params and not annotated:
@@ -307,7 +312,7 @@ class FunctionChecker:
             kinds = sorted({(p.type.inner.value + " or None") if p.type.kind is Kind.OPTIONAL and p.type.inner else p.type.kind.value for p in annotated})
             assumptions = [
                 f"annotation-only domain ({ann}): assumes callers pass exact built-in {'/'.join(kinds)} values (type(x) is {kinds[0].split(' ')[0]}); annotations are not enforced at runtime",
-                "bool and int subclasses (which may override arithmetic/comparison operators) and list/tuple subclasses are outside this assumption",
+                "bool and int subclasses (which may override arithmetic/comparison operators) and list/tuple/str subclasses are outside this assumption",
             ]
             if declared:
                 assumptions.append("declared domain for: " + ", ".join(p.name for p in declared) + (f" ({self.declared_reason})" if self.declared_reason else ""))
@@ -413,6 +418,9 @@ class FunctionChecker:
             elif k is Kind.OPTIONAL and p.type.inner in NUMERIC_EXACT:
                 v = model.get(p.name, 0 if p.type.inner is Kind.INT else False)
                 args[p.name] = None if v is None else (bool(v) if p.type.inner is Kind.BOOL else int(v))
+            elif k is Kind.STR or (k is Kind.OPTIONAL and p.type.inner is Kind.STR):
+                # The solver does not model str values; the evaluator re-validates whatever is chosen.
+                args[p.name] = None if k is Kind.OPTIONAL and p.name in model and model[p.name] is None else ""
             else:
                 args[p.name] = UNMODELED
         return args
@@ -430,11 +438,15 @@ class FunctionChecker:
             return ([], [0], [0, 0], [0, 0, 0])
         if k is Kind.TUPLE:
             return ((), (0,), (0, 0), (0, 0, 0))
+        if k is Kind.STR:
+            return ("", "a")
         if k is Kind.OPTIONAL:
             if t.inner is Kind.INT:
                 return (None, 0, 1, -1, 2, -2)
             if t.inner is Kind.BOOL:
                 return (None, False, True)
+            if t.inner is Kind.STR:
+                return (None, "", "a")
         return None
 
     def search(self, site: ObligationSite) -> tuple[dict[str, Any], bool, Any] | None:
@@ -474,8 +486,11 @@ class FunctionChecker:
         upstream = self.upstream_unknown(site)
         base = dict(symbol_id=sid, site=site, authority=authority, domain_source=source, domain=domain)
 
-        def safe(method: AnalysisMethod, reason: str, divisor_fact: str | None = None) -> ObligationOutcome:
+        def safe(method: AnalysisMethod, reason: str, divisor_fact: str | None = None, extra: list[str] | None = None) -> ObligationOutcome:
             s, a = scope, list(assumptions)
+            if extra:
+                s = ScopeValidity.CONDITIONAL
+                a.extend(extra)
             if upstream:
                 s = ScopeValidity.CONDITIONAL
                 a.append(
@@ -500,9 +515,21 @@ class FunctionChecker:
         divisor_fact: AbsInt | None = None
         if prop == DIVISION_PROPERTY:
             divisor_v = self.defs[site.result_id].operands[1]
-            if self.defs[site.result_id].flavor == "python.str_format":
-                return safe(AnalysisMethod.TYPE_FACT, "an exact str literal % an exact tuple selects str.__mod__ (printf-style formatting), which performs no numeric division; "
-                            "exceptions raised by element __str__/__repr__/__format__ hooks are obligations of those hooks, not of this operation")
+            fmt = self.defs[site.result_id]
+            if fmt.flavor == "python.str_format":
+                rmod = bool(fmt.attrs.get("rmod_assumption"))
+                if rmod and not self.budget.assume_no_str_rmod_override:
+                    return unknown(AnalysisMethod.UNSUPPORTED, [
+                        f"str % x with a right operand of type {fact.divisor_kind.value}: if it is an instance of a str subclass overriding __rmod__, "
+                        "CPython calls that method (user code) before str.__mod__, so formatting semantics are not established "
+                        "(analysis.assume_no_str_rmod_override = false)" + self._unknown_source(divisor_v)
+                    ])
+                return safe(AnalysisMethod.TYPE_FACT,
+                            "an exact str % "
+                            + ("a right operand that is not a str subclass overriding __rmod__" if rmod else f"an exact built-in right operand (type {fact.divisor_kind.value})")
+                            + " selects str.__mod__ (printf-style formatting), which performs no numeric division; "
+                            "exceptions raised by argument __str__/__repr__/__format__ hooks are obligations of those hooks, not of this operation",
+                            extra=[STR_RMOD_ASSUMPTION] if rmod else None)
             if fact.dividend_kind not in (Kind.INT, Kind.BOOL, Kind.FLOAT):
                 return unknown(AnalysisMethod.UNSUPPORTED, [
                     f"dividend has type {fact.dividend_kind.value}: the operator may dispatch to a user-defined method, so built-in zero-divisor semantics are not established"
@@ -685,6 +712,8 @@ class FunctionChecker:
                 elif k is Kind.OPTIONAL and p.type.inner in NUMERIC_EXACT:
                     enc.term(p.value_id)
                     enc.none_term(p.value_id)
+                elif k is Kind.OPTIONAL and p.type.inner is Kind.STR:
+                    enc.none_term(p.value_id)  # its None-state is modeled, its str value is not
             for ins in self.fn.blocks[self.fn.entry_id].instructions:
                 if ins.op is Op.PARAM and ins.attrs.get("runtime_mode"):
                     var = enc.term(ins.result)

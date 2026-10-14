@@ -114,6 +114,7 @@ solver_enabled = true
 per_query_timeout_ms = 100
 quick_budget_ms = 2000
 require_coverage = true
+assume_no_str_rmod_override = true  # I-134: `str % x` is formatting unless x overrides __rmod__ (listed assumption)
 
 [execution]
 enabled = false

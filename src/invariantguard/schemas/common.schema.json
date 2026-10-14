@@ -150,7 +150,7 @@
         "pattern": "^(?!\\d)\\w+$"
       },
       "additionalProperties": {
-        "description": "Concrete input value: exact int/bool, None (optional parameters), a finite float (contract probes), or a list of numbers/bools (a built-in list/tuple witness).",
+        "description": "Concrete input value: exact int/bool, None (optional parameters), a finite float (contract probes), a short exact str (str-annotated parameters), or a list of numbers/bools (a built-in list/tuple witness).",
         "anyOf": [
           {
             "type": [
@@ -158,6 +158,10 @@
               "boolean",
               "null"
             ]
+          },
+          {
+            "type": "string",
+            "maxLength": 64
           },
           {
             "type": "array",

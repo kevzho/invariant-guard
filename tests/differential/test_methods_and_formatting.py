@@ -175,14 +175,17 @@ CASES = [
             m = 'a=%d'
             return m % (a,)
         """, {("f", 3): "PROVED_SAFE", ("g", 8): "PROVED_SAFE"}),
-    ("format_non_tuple_may_dispatch_to_rmod", """
+    # I-134: a non-tuple right operand is formatting under the recorded __rmod__ assumption
+    # (tests/differential/test_annotations.py checks that the assumption is listed and needed).
+    ("format_non_tuple_is_formatting_under_rmod_assumption", """
         def f(v):
             return 'got %r' % v
-        """, {("f", 3): "UNKNOWN"}),
-    ("format_annotated_str_is_not_exact", """
+        """, {("f", 3): "PROVED_SAFE"}),
+    # I-134: `s: str` is an exact str under the (listed) annotation assumption.
+    ("format_annotated_str_is_conditional", """
         def f(s: str, v):
             return s % (v,)
-        """, {("f", 3): "UNKNOWN"}),
+        """, {("f", 3): "PROVED_SAFE"}),
     # With an exact int, formatting cannot raise, so the later division is reached: PROVED_UNSAFE.
     # With an arbitrary `a`, a raising __str__ would stop execution first: the later division is only
     # POSSIBLY_UNSAFE, exactly as for `a + 1` before it (the formatting itself is still PROVED_SAFE).
@@ -226,10 +229,10 @@ def test_methods_and_formatting_against_cpython(tmp_path: Path, name, src, expec
 
 
 def test_non_tuple_right_operand_dispatches_to_user_rmod(tmp_path: Path):
-    """Why only a tuple right operand is accepted: with a ``str`` subclass on the right, CPython runs
-    the subclass's ``__rmod__`` (user code) instead of ``str.__mod__``. Inside a tuple the same
-    object is only formatted. The obligation stays UNKNOWN whenever the operator implementation itself
-    may be user code, as for any dynamically dispatched division (I-029)."""
+    """Why a non-tuple right operand needs an assumption: with a ``str`` subclass on the right, CPython
+    runs the subclass's ``__rmod__`` (user code) instead of ``str.__mod__``. Inside a tuple the same
+    object is only formatted. Since I-134 such an operation is PROVED_SAFE only with the assumption
+    listed, and UNKNOWN with ``assume_no_str_rmod_override = false``."""
     path = tmp_path / "m.py"
     path.write_text(ADVERSARIAL, encoding="utf-8")
     probe = (

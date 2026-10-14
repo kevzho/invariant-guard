@@ -473,7 +473,8 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
 
     # -- analysis (base first: attribution needs it) ----------------------------------------------
     backend = solver.backend(cfg)
-    budget = Budget(deadline=time.monotonic() + budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search)
+    budget = Budget(deadline=time.monotonic() + budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
     use_cache = store is not None and not opts.no_cache
     if store is not None:
         store.begin_run(run_id, "verify", base.snapshot.snapshot_id if base.snapshot else None, cand_snap.snapshot_id)
@@ -803,7 +804,8 @@ def run_baseline_create(opts: BaselineOptions) -> tuple[dict[str, Any], list[str
         created_at = now_utc()
         store.begin_run(run_id, "baseline_create", None, snap.snapshot_id)
         cache = SymbolCache(store, keys, run_id=run_id, snapshot_id=snap.snapshot_id, created_at=created_at)
-        budget = Budget(deadline=time.monotonic() + cfg.analysis.full_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search)
+        budget = Budget(deadline=time.monotonic() + cfg.analysis.full_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
         analysis = analyze_lowered(lowered, cfg, solver.backend(cfg), solver.status, budget, cache=cache)
         store.finalize_run(run_id, ok=True)
         obligations = {
