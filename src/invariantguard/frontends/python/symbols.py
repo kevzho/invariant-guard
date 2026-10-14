@@ -130,8 +130,34 @@ class SymbolCollector:
                 self._visit(a.annotation, owner, prefix, in_class, False)
 
 
+def outer_scope_parts(node: ast.AST) -> list[ast.AST]:
+    """The parts of a def/lambda/class that CPython evaluates in the enclosing scope.
+
+    Decorators, parameter defaults, parameter and return annotations (without
+    ``from __future__ import annotations``), class bases and keywords. A ``yield`` there
+    makes the enclosing function a generator (CPython 3.13: ``def f(): lambda a=(yield): a``
+    is a generator function). Type parameters are their own annotation scope (a ``yield``
+    there is a SyntaxError), so they are not included.
+    """
+    parts: list[ast.AST | None] = []
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+        a = node.args
+        parts += a.defaults + a.kw_defaults
+        if not isinstance(node, ast.Lambda):
+            parts += node.decorator_list
+            parts += [x.annotation for x in a.posonlyargs + a.args + a.kwonlyargs + [v for v in (a.vararg, a.kwarg) if v]]
+            parts.append(node.returns)
+    elif isinstance(node, ast.ClassDef):
+        parts += node.decorator_list + node.bases + [k.value for k in node.keywords]
+    return [p for p in parts if p is not None]
+
+
 def own_scope_nodes(fn: ast.AST):
-    """Yield nodes in a function's own scope (not inside nested defs/lambdas/classes)."""
+    """Yield nodes in a function's own scope (not inside nested def/lambda/class bodies).
+
+    A nested def/lambda/class node is yielded, and so are its outer-scope parts
+    (``outer_scope_parts``), but not its body, which is a scope of its own.
+    """
     stack = list(ast.iter_child_nodes(fn))
     # Exclude the function's own decorators/defaults/annotations (outer scope).
     if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -142,6 +168,7 @@ def own_scope_nodes(fn: ast.AST):
         node = stack.pop()
         yield node
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+            stack.extend(outer_scope_parts(node))
             continue
         stack.extend(ast.iter_child_nodes(node))
 

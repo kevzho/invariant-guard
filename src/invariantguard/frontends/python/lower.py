@@ -1407,9 +1407,11 @@ class FunctionLowerer:
         """``yield v`` / ``yield from it`` (I-135): the generator suspends and its consumer runs.
 
         The consumer may run arbitrary code (mutating shared objects, so the effect is
-        unknown; it cannot rebind this frame's locals), resume with any sent value (the
-        result is an unknown value) or throw an exception in at this point (covered, inside
-        a ``try``, by the I-133 exception edge; outside one the generator just ends).
+        unknown; it is assumed not to rebind this frame's locals, the frame-introspection
+        assumption, although CPython 3.13 allows it via ``gi_frame.f_locals``, PEP 667),
+        resume with any sent value (the result is an unknown value) or throw an exception
+        in at this point (covered, inside a ``try``, by the I-133 exception edge; outside
+        one the generator just ends).
         """
         span = self.span(node)
         operand = self.expr(node.value, env) if node.value is not None else self.const(None, span)
@@ -1533,8 +1535,14 @@ class FunctionLowerer:
         else:
             why = "callee is not a resolvable module-level function"
         if blocker == GENERATOR_CALL:
-            return self._unknown_call(span, callee_text, tuple(ops), resolution, why, effect, generator_call=True,
-                                      **({} if effect is Effect.UNKNOWN else {"reason": f"call to '{callee_text}' creates a generator object (value not modeled); none of its body runs here"}))
+            assert res is not None
+            extra: dict[str, Any] = {}
+            if effect is Effect.NONE:
+                # "No effect" holds only while the name still denotes this generator function, so
+                # a result that steps over the call relies on the resolution like an inlined call.
+                extra = {"reason": f"call to '{callee_text}' creates a generator object (value not modeled); none of its body runs here",
+                         "resolution_assumption": res.assumption, "resolution_conditional": res.conditional}
+            return self._unknown_call(span, callee_text, tuple(ops), resolution, why, effect, generator_call=True, **extra)
         return self._unknown_call(span, callee_text, tuple(ops), resolution, why)
 
     def _unknown_call(self, span: SourceSpan, callee: str, ops: tuple[str, ...], resolution: str, why: str,

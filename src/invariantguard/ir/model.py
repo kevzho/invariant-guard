@@ -21,11 +21,13 @@ never validated: it stays POSSIBLY_UNSAFE.
 
 Generators (I-135): a generator function is lowered like a function (``Function.generator``).
 Each ``yield``/``yield from`` is an ``UNKNOWN_EFFECT`` with attr ``yield_point`` and an
-unknown effect: the consumer runs arbitrary code there (but cannot rebind the frame's
-locals), may send any value (the result is an unknown value) or throw an exception in (an
-exception "at any point" is already covered by the I-133 edge). The evaluator models one
-consumer, ``next()`` until exhaustion: a yield produces None, and ``yield from`` over a
-concrete built-in list, tuple or str runs it to the end; anything else is STUCK.
+unknown effect: the consumer runs arbitrary code there (assumed not to rebind the frame's
+locals: the frame-introspection assumption, which the result lists; CPython 3.13 allows it
+via ``gi_frame.f_locals``, PEP 667), may send any value (the result is an unknown value)
+or throw an exception in (an exception "at any point" is already covered by the I-133 edge).
+The evaluator models one consumer, ``next()`` until exhaustion: a yield produces None, and
+``yield from`` over a concrete built-in list, tuple or str runs it to the end; anything
+else is STUCK.
 
 M2 additions (each needed by a shipped analysis, docs/04 "extend only when needed"):
 ``BUILD_SEQ`` (built-in list/tuple displays, for bounds checks), the ``LIST``/``TUPLE``/

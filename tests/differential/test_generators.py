@@ -145,6 +145,71 @@ def iterating_runs_body(xs: list):
         for v in clears(xs):
             pass
         return xs[0]
+
+
+def none_narrowed(x: int | None):
+    if x is not None:
+        yield 1
+        yield x.real
+
+
+def none_unsafe(x: int | None):
+    yield 1
+    yield x.real
+
+
+def check_lambda_default(n: int):
+    if n == 0:
+        raise ValueError("zero")
+    lambda a=(yield): a
+
+
+def check_def_default(n: int):
+    if n == 0:
+        raise ValueError("zero")
+    def inner(a=(yield)):
+        return a
+
+
+def check_class_base(n: int):
+    if n == 0:
+        raise ValueError("zero")
+    class K((yield)):
+        pass
+
+
+def check_decorator(n: int):
+    if n == 0:
+        raise ValueError("zero")
+    @(yield)
+    def inner():
+        return 1
+
+
+def use_check_lambda_default(n: int):
+    check_lambda_default(n)
+    return 10 // n
+
+
+def use_check_def_default(n: int):
+    check_def_default(n)
+    return 10 // n
+
+
+def use_check_class_base(n: int):
+    check_class_base(n)
+    return 10 // n
+
+
+def use_check_decorator(n: int):
+    check_decorator(n)
+    return 10 // n
+
+
+def div_before_lambda_default(n: int):
+    k = 10 // n
+    f = lambda a=(yield): a
+    return k
 '''
 
 TRACER = r"""
@@ -163,7 +228,8 @@ def tracer(frame, event, arg):
 GROUND_TRUTH = TRACER + r"""
 import inspect, itertools, json, runpy
 ns = runpy.run_path(path)
-domains = {int: list(range(-3, 4)), list: [[], [0], [1, 2]], tuple: [(), (0,), (1, 2)], None: [None, [], [0, 1]]}
+domains = {int: list(range(-3, 4)), list: [[], [0], [1, 2]], tuple: [(), (0,), (1, 2)], int | None: [None, -1, 0, 2],
+           None: [None, [], [0, 1]]}
 SENT = [None, 0, -1, "x", []]
 MAX_STEPS = 60
 
@@ -202,7 +268,7 @@ for name, fn in ns.items():
     if not inspect.isfunction(fn) or fn.__module__ != "<run_path>":
         continue
     params = list(inspect.signature(fn).parameters.values())
-    for args in itertools.product(*[domains[p.annotation if p.annotation in (int, list, tuple) else None] for p in params]):
+    for args in itertools.product(*[domains.get(p.annotation, domains[None]) for p in params]):
         plans = consumers() if inspect.isgeneratorfunction(fn) else [("call", None, None, False)]
         for kind, plan, _, mutate in plans:
             call = [list(a) if isinstance(a, list) else a for a in args]
@@ -244,7 +310,13 @@ finally:
 print(json.dumps({"raised": sorted(raised), "escaped": escaped}))
 """
 
-EXC = {"division.zero_denominator": "ZeroDivisionError", "index.out_of_range": "IndexError"}
+GENERATOR_FUNCTIONS = r"""
+import inspect, json, runpy, sys
+ns = runpy.run_path(sys.argv[1])
+print(json.dumps(sorted(n for n, f in ns.items() if inspect.isgeneratorfunction(f) and f.__module__ == "<run_path>")))
+"""
+
+EXC = {"division.zero_denominator": "ZeroDivisionError", "index.out_of_range": "IndexError", "none.attribute_access": "AttributeError"}
 
 # (function, operation text) -> (property_result, handled)
 EXPECTED = {
@@ -270,7 +342,22 @@ EXPECTED = {
     ("creates_generator", "10 // (n + 1)"): ("PROVED_UNSAFE", False),
     ("creation_keeps_list_facts", "xs[0]"): ("PROVED_SAFE", False),
     ("iterating_runs_body", "xs[0]"): ("UNKNOWN", False),
+    ("none_narrowed", "x.real"): ("PROVED_SAFE", False),
+    ("none_unsafe", "x.real"): ("PROVED_UNSAFE", False),
+    # A yield in a nested def's/lambda's/class's outer-scope parts (defaults, decorators,
+    # bases) makes the enclosing function a generator: calling it runs none of its body, so
+    # the n == 0 raise does not guard the division (CPython raises ZeroDivisionError).
+    ("use_check_lambda_default", "10 // n"): ("PROVED_UNSAFE", False),
+    ("use_check_def_default", "10 // n"): ("PROVED_UNSAFE", False),
+    ("use_check_class_base", "10 // n"): ("PROVED_UNSAFE", False),
+    ("use_check_decorator", "10 // n"): ("PROVED_UNSAFE", False),
+    ("div_before_lambda_default", "10 // n"): ("PROVED_UNSAFE", False),
 }
+
+# PROVED_SAFE results whose path crosses a yield rely on the consumer not rebinding the
+# generator's locals (possible on CPython 3.13 via gi_frame.f_locals, PEP 667).
+CROSSES_YIELD = {"guard_before_yield", "len_before_yield_tuple", "loop_safe", "none_narrowed"}
+INTROSPECTION = "do not rebind this function's locals via frame introspection"
 
 GENERATOR_UNSAFE = "exists admitted function input such that consuming the generator with next() until exhaustion reaches the failure"
 
@@ -291,7 +378,9 @@ def test_generators_against_cpython(tmp_path: Path):
     assert rep["errors"] == [], rep["errors"]
     assert not [u for u in rep["coverage"]["unsupported_symbols"] if "generator" in u["reason"]]
     raised = {tuple(r) for r in _child(GROUND_TRUTH, str(path))}
-    generators = {"clears"} | {fn for fn, _ in EXPECTED if fn not in ("creates_generator", "creation_keeps_list_facts", "iterating_runs_body")}
+    generators = set(_child(GENERATOR_FUNCTIONS, str(path)))
+    assert {"check_lambda_default", "check_def_default", "check_class_base", "check_decorator", "div_before_lambda_default"} <= generators
+    finding = {f["obligation_id"]: f["severity"] for f in rep["findings"]}
     got: dict[tuple[str, str], tuple[str, bool]] = {}
     for o in rep["obligation_results"]:
         fn = o["symbol_id"].split("::")[1]
@@ -302,6 +391,8 @@ def test_generators_against_cpython(tmp_path: Path):
             assert (fn, line, exc) not in raised, f"unsound PROVED_SAFE: CPython raises {exc} in {fn} at line {line}"
             if fn in generators:
                 assert "every consumer" in o["quantifier"]
+            if fn in CROSSES_YIELD:
+                assert any(INTROSPECTION in a for a in o["assumptions"]) and o["scope_validity"] == "CONDITIONAL", (fn, o["assumptions"])
         if result == "PROVED_UNSAFE":
             assert o["witness_validated"] is True
             assert (o["quantifier"] == GENERATOR_UNSAFE) == (fn in generators), (fn, o["quantifier"])
@@ -309,7 +400,60 @@ def test_generators_against_cpython(tmp_path: Path):
             assert [fn, line, exc] in out["raised"], f"{fn}: witness {o['witness']} does not raise {exc} at line {line}: {out}"
             if handled:
                 assert out["escaped"] != [exc, line], f"{fn}: marked handled, but the {exc} from line {line} escapes"
+        if handled:
+            assert finding[o["obligation_id"]] == "INFO"
     assert {k: got.get(k) for k in EXPECTED} == EXPECTED
     # Non-vacuity: the consumers really reach the failures the expectations rely on.
     assert ("thrown_into_try", CORPUS.splitlines().index("        yield 10 // d") + 1, "ZeroDivisionError") in raised
     assert ("iterating_runs_body", CORPUS.splitlines().index("        return xs[0]", CORPUS.splitlines().index("def iterating_runs_body(xs: list):")) + 1, "IndexError") in raised
+
+
+REBIND = r"""
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import pkg.gens, pkg.a
+pkg.gens.consume = lambda lst: lst.clear()  # the call no longer just creates a generator
+pkg.a.local_gen = lambda lst: lst.clear()
+import pkg.use
+out = []
+for name, call in (("local_only", lambda: pkg.use.local_only()), ("local_div", lambda: pkg.use.local_div()),
+                   ("f_local", lambda: pkg.a.f_local([1, 2, 3]))):
+    try:
+        call()
+        out.append([name, None])
+    except Exception as e:
+        out.append([name, type(e).__name__])
+print(json.dumps(out))
+"""
+
+
+def test_generator_call_records_the_callee_resolution(tmp_path: Path):
+    """Stepping over a generator call as "no effect" relies on the name denoting that generator
+    function, so the result lists the resolution (CONDITIONAL for an import), like an inlined call."""
+    root = tmp_path / "proj"
+    (root / "pkg").mkdir(parents=True)
+    (root / ".git").mkdir()
+    (root / "pkg" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "pkg" / "gens.py").write_text("def consume(lst):\n    yield lst\n", encoding="utf-8")
+    (root / "pkg" / "use.py").write_text(
+        "from pkg.gens import consume\n\n\ndef local_only() -> int:\n    lst = [1, 2, 3]\n    consume(lst)\n    return lst[2]\n\n\n"
+        "def local_div() -> int:\n    lst = [1, 2, 3]\n    consume(lst)\n    return 10 // len(lst)\n", encoding="utf-8")
+    (root / "pkg" / "a.py").write_text(
+        "def local_gen(lst):\n    yield lst\n\n\ndef f_local(lst: list[int]):\n    if len(lst) > 2:\n        local_gen(lst)\n        return lst[2]\n\n\n"
+        "def creates_then_div(n: int):\n    it = local_gen(n)\n    return 10 // (n - n)\n", encoding="utf-8")
+    _, rep, _ = check_json(root)
+    assert rep["errors"] == [], rep["errors"]
+    res = {o["symbol_id"]: o for o in rep["obligation_results"]}
+    imported = "import 'consume' in pkg/use.py resolves to pkg/gens.py"
+    imported_global = "module global 'consume' is the function defined in pkg/gens.py"
+    same_module = "module global 'local_gen' is the function defined in pkg/a.py"
+    for sid in ("pkg/use.py::local_only", "pkg/use.py::local_div"):
+        o = res[sid]
+        assert o["property_result"] == "PROVED_SAFE" and o["scope_validity"] == "CONDITIONAL", o
+        assert any(imported in a and imported_global in a for a in o["assumptions"]), o["assumptions"]
+    assert res["pkg/a.py::f_local"]["property_result"] == "PROVED_SAFE"
+    assert any(same_module in a for a in res["pkg/a.py::f_local"]["assumptions"])
+    unsafe = res["pkg/a.py::creates_then_div"]
+    assert unsafe["property_result"] == "PROVED_UNSAFE" and any(same_module in a for a in unsafe["assumptions"])
+    # The assumption is load-bearing: rebinding the names refutes every one of these claims.
+    assert _child(REBIND, str(root)) == [["local_only", "IndexError"], ["local_div", "ZeroDivisionError"], ["f_local", "IndexError"]]

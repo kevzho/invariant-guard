@@ -150,3 +150,30 @@ def test_engine_or_solver_change_invalidates(tmp_path):
     assert r["patch"]["cache"]["candidate"]["hits"] == 0  # solver identity is part of the key
     _, r2, _ = verify(root, base, "--mode", "full", "--timeout-ms", "250")
     assert r2["patch"]["cache"]["candidate"]["hits"] == 0  # analysis bounds are part of the key
+
+
+GEN = {
+    "m.py": ("def gen(n: int):\n    if n != 0:\n        yield 1\n        yield 10 // n\n\n\n"
+             "def caller(xs: list):\n    if len(xs) > 0:\n        g = gen(1)\n        return xs[0]\n\n\n"
+             "def other(a: int):\n    return a\n"),
+}
+
+
+def test_cache_from_an_earlier_model_revision_is_not_reused(tmp_path, monkeypatch):
+    """Entries computed under earlier modeled semantics (before generators, I-135/I-136) carry
+    another model revision in their key, so a warm run recomputes instead of reusing them."""
+    import invariantguard.impact.keys as keys
+
+    assert keys.MODEL_REVISION == 2
+    root, base = make_repo(tmp_path, GEN)
+    write(root, {"m.py": GEN["m.py"].replace("return a", "return a + 1")})
+    monkeypatch.setattr(keys, "MODEL_REVISION", 1)
+    _, old, _ = verify(root, base, "--mode", "full")
+    assert old["patch"]["cache"]["published_entries"] > 0
+    monkeypatch.undo()
+    _, warm, _ = verify(root, base, "--mode", "full")
+    _, nocache, _ = verify(root, base, "--mode", "full", "--no-cache")
+    assert warm["patch"]["cache"]["candidate"]["hits"] == 0 and warm["patch"]["cache"]["base"]["hits"] == 0
+    assert _strip(warm) == _strip(nocache)
+    caller = [o for o in nocache["obligation_results"] if o["symbol_id"] == "m.py::caller"]
+    assert [o["property_result"] for o in caller] == ["PROVED_SAFE"]
