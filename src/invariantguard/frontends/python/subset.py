@@ -5,7 +5,7 @@ expression-level unsupported constructs inside a lowerable function are handled 
 lowering pass (they become UNKNOWN_EFFECT and taint dependent obligations).
 
 Generator functions (``yield``/``yield from`` in the body) are lowered like any function
-(I-135); async functions, and so async generators, stay unsupported.
+(I-138); async functions, and so async generators, stay unsupported.
 """
 
 from __future__ import annotations

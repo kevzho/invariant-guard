@@ -160,7 +160,7 @@ GEN = {
 
 
 def test_cache_from_an_earlier_model_revision_is_not_reused(tmp_path, monkeypatch):
-    """Entries computed under earlier modeled semantics (before generators, I-135/I-136) carry
+    """Entries computed under earlier modeled semantics (before generators, I-138/I-139) carry
     another model revision in their key, so a warm run recomputes instead of reusing them."""
     import invariantguard.impact.keys as keys
 

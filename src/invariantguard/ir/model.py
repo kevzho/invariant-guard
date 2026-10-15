@@ -19,7 +19,7 @@ evaluator takes the normal branch (exceptions happen only where an instruction r
 stops at the first exception, so a failure that needs an exceptional path to be reached is
 never validated: it stays POSSIBLY_UNSAFE.
 
-Generators (I-135): a generator function is lowered like a function (``Function.generator``).
+Generators (I-138): a generator function is lowered like a function (``Function.generator``).
 Each ``yield``/``yield from`` is an ``UNKNOWN_EFFECT`` with attr ``yield_point`` and an
 unknown effect: the consumer runs arbitrary code there (assumed not to rebind the frame's
 locals: the frame-introspection assumption, which the result lists; CPython 3.13 allows it
@@ -284,7 +284,7 @@ class Function:
     sites: list[ObligationSite]
     domain_note: str | None = None
     has_asserts: bool = False
-    generator: bool = False  # a generator function: the body runs as the generator is consumed (I-135)
+    generator: bool = False  # a generator function: the body runs as the generator is consumed (I-138)
     var_names: dict[str, str] = field(default_factory=dict)  # value id -> source variable name
     # M2 impact/summary data recorded during lowering (docs/07 graph model).
     fingerprint: str = ""  # digest of the position-free AST of this def

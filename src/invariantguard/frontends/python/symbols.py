@@ -174,7 +174,7 @@ def own_scope_nodes(fn: ast.AST):
 
 
 def is_generator_function(fn: ast.AST) -> bool:
-    """True when ``yield``/``yield from`` occurs in the function's own scope (I-135)."""
+    """True when ``yield``/``yield from`` occurs in the function's own scope (I-138)."""
     return any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in own_scope_nodes(fn))
 
 

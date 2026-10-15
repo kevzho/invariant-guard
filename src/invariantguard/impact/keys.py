@@ -34,12 +34,12 @@ from ..models.spans import digest_json
 # so declaring, approving, revising or retiring a contract invalidates exactly the
 # summaries of its target symbol (T23 contract dependencies, T38).
 # Revision of the modeled static semantics (lowering, evaluator, analyses). Bump it whenever a
-# change alters what a symbol's lowering means without changing its AST (I-136): validity keys
+# change alters what a symbol's lowering means without changing its AST (I-139): validity keys
 # hold AST fingerprints, not IR digests. It is kept out of the semantics profile, which is part
 # of snapshot identity (shipped benchmark packets pin it). Revisions: 1 = through I-133 (try);
-# 2 = generator functions and generator calls (I-135/I-136); 3 = generator pre-start
-# frame-introspection assumption (I-137); 4 = handler-marker order and the shared-list
-# asynchronous-mutation assumption (I-138).
+# 2 = generator functions and generator calls (I-138/I-139); 3 = generator pre-start
+# frame-introspection assumption (I-140); 4 = handler-marker order and the shared-list
+# asynchronous-mutation assumption (I-141).
 MODEL_REVISION = 4
 
 CONTRACT_SLOT = "per-symbol: digest of active contract revisions scoped to the symbol (contracts-v1)"

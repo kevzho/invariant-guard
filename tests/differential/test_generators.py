@@ -1,4 +1,4 @@
-"""Generator functions (I-135), checked against CPython.
+"""Generator functions (I-138), checked against CPython.
 
 The ground truth traces CPython (``sys.settrace`` exception events, as in test_try.py) while
 it consumes every generator in many ways: ``list(...)``; partial consumption that stops,
@@ -604,7 +604,7 @@ print(json.dumps(out))
 
 
 def test_asynchronous_list_mutation_is_a_listed_assumption(tmp_path: Path):
-    """I-138: garbage collection runs at loop back edges, so a finalizer (here a __del__ in an
+    """I-141: garbage collection runs at loop back edges, so a finalizer (here a __del__ in an
     unreachable cycle, and a started generator's finally) can clear a caller's list between the
     length check and the index with no call in the analyzed function. Such a PROVED_SAFE is
     CONDITIONAL on a listed assumption; a list the function created itself is not affected."""

@@ -108,7 +108,7 @@ CATCHES = {
 # Attributes that exist on None (CPython 3.13): loading them never raises AttributeError.
 NONE_ATTRS = frozenset(dir(None))
 
-# Inline blocker for a call to a generator function: the call creates a generator object (I-135).
+# Inline blocker for a call to a generator function: the call creates a generator object (I-138).
 GENERATOR_CALL = "callee is a generator function: calling it only creates a generator object, whose body runs when it is consumed (not modeled)"
 
 MAX_INLINE_DEPTH = 6  # nested call-site instantiations per analyzed function
@@ -1405,7 +1405,7 @@ class FunctionLowerer:
         return self.unknown(span, reason)
 
     def yield_point(self, node: ast.Yield | ast.YieldFrom, env: dict[str, str]) -> str:
-        """``yield v`` / ``yield from it`` (I-135): the generator suspends and its consumer runs.
+        """``yield v`` / ``yield from it`` (I-138): the generator suspends and its consumer runs.
 
         The consumer may run arbitrary code (mutating shared objects, so the effect is
         unknown; it is assumed not to rebind this frame's locals, the frame-introspection
@@ -1516,7 +1516,7 @@ class FunctionLowerer:
                 return self._inline(node, res, binding, table, env)
             if blocker == GENERATOR_CALL and self._bind_args(node, res.node)[1] is None:
                 # Calling a generator function with arguments that bind cleanly only creates the
-                # generator object: no code of its body runs until it is consumed (I-135).
+                # generator object: no code of its body runs until it is consumed (I-138).
                 effect = Effect.NONE
         # Generic unknown call: evaluate the callee expression and arguments once.
         ops: list[str] = []

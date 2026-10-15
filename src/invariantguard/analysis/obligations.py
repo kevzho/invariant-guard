@@ -49,7 +49,7 @@ from .intervals import AbsInt
 PROPERTY_ID = DIVISION_PROPERTY
 QUANTIFIER_SAFE = "for all admitted function inputs"
 QUANTIFIER_UNSAFE = "exists admitted function input"
-# Generator functions (I-135): calling one runs nothing, so a claim quantifies over consumers too.
+# Generator functions (I-138): calling one runs nothing, so a claim quantifies over consumers too.
 QUANTIFIER_SAFE_GENERATOR = "for all admitted function inputs and every consumer of the generator (next/send/throw/close, any sent values)"
 QUANTIFIER_UNSAFE_GENERATOR = "exists admitted function input such that consuming the generator with next() until exhaustion reaches the failure"
 
@@ -235,7 +235,7 @@ class FunctionChecker:
         """Whether list value ``v`` is certainly a list this call created (a display, or a
         non-augmented concatenation/repetition, possibly merged by a PHI): code outside the
         function can then reach it only after it escapes, which takes an unknown effect.
-        Parameters, loop headers and every other source may be shared (I-138)."""
+        Parameters, loop headers and every other source may be shared (I-141)."""
         seen = set() if seen is None else seen
         if v in seen:
             return True
@@ -504,7 +504,7 @@ class FunctionChecker:
         # A list another reference can reach may be mutated between two reads of it by code
         # that runs outside this function's control flow: another thread, a finalizer
         # (__del__, a weakref callback, a started generator's finally) run by garbage
-        # collection at any bytecode, a signal handler or a trace hook (I-138).
+        # collection at any bytecode, a signal handler or a trace hook (I-141).
         shared_lists = sorted({self.render(v, 1) for v in dcone if self.kind(v) is Kind.LIST and not self.fresh_list(v)})
         base = dict(symbol_id=sid, site=site, authority=authority, domain_source=source, domain=domain)
 

@@ -11,7 +11,7 @@ Loops (I-132) run for real: a latch's ``back_edge`` jump returns to the header, 
 iterate the concrete built-in iterable (``range``, list, tuple, str). Iterating anything
 else is STUCK. The step limit bounds long loops (STUCK, never a verdict).
 
-A generator function's body (I-135) runs as consumed by ``next()`` until exhaustion: each
+A generator function's body (I-138) runs as consumed by ``next()`` until exhaustion: each
 yield point evaluates to None, and evaluation ends at the body's return or first exception.
 """
 
@@ -179,7 +179,7 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                 # raises, and evaluation stops there (exceptional paths are never validated).
                 env[ins.result] = False
             elif op is Op.UNKNOWN_EFFECT and ins.attrs.get("yield_point"):
-                # The modeled consumer calls next() until exhaustion (I-135): it runs no code
+                # The modeled consumer calls next() until exhaustion (I-138): it runs no code
                 # between resumptions and sends None, so ``yield v`` evaluates to None. ``yield
                 # from`` a concrete list/tuple/str hands out its items (no code runs) and
                 # evaluates to None; delegating to anything else may run user code.

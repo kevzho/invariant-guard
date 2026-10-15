@@ -120,7 +120,7 @@ def test_every_division_site_is_accounted_for():
     assert kinds["C"] == "class_body" and "C.m" not in kinds  # plain methods are lowered (I-130)
     assert next(f for f in res.module.functions if f.symbol_id.endswith("::C.m")).division_sites[0].text == "x / self.k"
     assert kinds["top.<locals>.<lambda>#1"] == "lambda"
-    assert "gen" not in kinds  # generator functions are lowered (I-135)
+    assert "gen" not in kinds  # generator functions are lowered (I-138)
     gen = fn_named(res, "gen")
     assert gen.generator and gen.division_sites[0].unsupported_reason is None
     top = fn_named(res, "top")
@@ -135,7 +135,7 @@ def test_every_division_site_is_accounted_for():
     [
         ("import functools\n@functools.cache\ndef f(a):\n    return 1 / a\n", "decorated"),
         ("async def f(a):\n    return 1 / a\n", "async"),
-        ("async def f(a):\n    yield 1 / a\n", "async"),  # async generators stay unsupported (I-135)
+        ("async def f(a):\n    yield 1 / a\n", "async"),  # async generators stay unsupported (I-138)
         ("def f(a):\n    global G\n    return 1 / a\n", "global"),
         ("def f(a):\n    if (b := a):\n        return 1 / b\n", "assignment expression"),
         ("def f(a):\n    def g():\n        nonlocal a\n        a = 0\n    g()\n    return 1 / a\n", "nonlocal"),
