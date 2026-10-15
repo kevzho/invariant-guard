@@ -175,14 +175,17 @@ CASES = [
             m = 'a=%d'
             return m % (a,)
         """, {("f", 3): "PROVED_SAFE", ("g", 8): "PROVED_SAFE"}),
-    ("format_non_tuple_may_dispatch_to_rmod", """
+    # I-134: a non-tuple right operand is formatting under the recorded __rmod__ assumption
+    # (tests/differential/test_annotations.py checks that the assumption is listed and needed).
+    ("format_non_tuple_is_formatting_under_rmod_assumption", """
         def f(v):
             return 'got %r' % v
-        """, {("f", 3): "UNKNOWN"}),
-    ("format_annotated_str_is_not_exact", """
+        """, {("f", 3): "PROVED_SAFE"}),
+    # I-134: `s: str` is an exact str under the (listed) annotation assumption.
+    ("format_annotated_str_is_conditional", """
         def f(s: str, v):
             return s % (v,)
-        """, {("f", 3): "UNKNOWN"}),
+        """, {("f", 3): "PROVED_SAFE"}),
     # With an exact int, formatting cannot raise, so the later division is reached: PROVED_UNSAFE.
     # With an arbitrary `a`, a raising __str__ would stop execution first: the later division is only
     # POSSIBLY_UNSAFE, exactly as for `a + 1` before it (the formatting itself is still PROVED_SAFE).
@@ -226,10 +229,11 @@ def test_methods_and_formatting_against_cpython(tmp_path: Path, name, src, expec
 
 
 def test_non_tuple_right_operand_dispatches_to_user_rmod(tmp_path: Path):
-    """Why only a tuple right operand is accepted: with a ``str`` subclass on the right, CPython runs
-    the subclass's ``__rmod__`` (user code) instead of ``str.__mod__``. Inside a tuple the same
-    object is only formatted. The obligation stays UNKNOWN whenever the operator implementation itself
-    may be user code, as for any dynamically dispatched division (I-029)."""
+    """Why a non-tuple right operand needs an assumption: with a ``str`` subclass on the right, CPython
+    runs the subclass's ``__rmod__`` (user code) instead of ``str.__mod__``. Inside a tuple the same
+    object is only formatted. This test only probes CPython; that guard then lists the assumption
+    (and reports UNKNOWN with ``assume_no_str_rmod_override = false``) is checked by
+    ``test_annotations.py::test_rmod_assumption_is_listed_and_configurable``."""
     path = tmp_path / "m.py"
     path.write_text(ADVERSARIAL, encoding="utf-8")
     probe = (
@@ -240,3 +244,20 @@ def test_non_tuple_right_operand_dispatches_to_user_rmod(tmp_path: Path):
     p = subprocess.run([sys.executable, "-I", "-c", probe, str(path)], capture_output=True, text=True, timeout=60)
     assert p.returncode == 0, p.stderr
     assert p.stdout.split("\n")[:2] == ["__rmod__", "got 's'"]
+
+
+def test_formatting_width_is_bounded_in_the_evaluator(tmp_path: Path):
+    """A solver witness may pick a huge ``*`` width (or the format string may hold a huge literal
+    width): the IR evaluator must not build that string. It stops (STUCK), so the division is not
+    PROVED_UNSAFE from that evaluation; nothing near the width is ever allocated."""
+    from invariantguard.ir.evaluator import MAX_SEQ_LEN, _format_too_wide
+
+    assert _format_too_wide("%*d", (MAX_SEQ_LEN + 1, 1)) and _format_too_wide("%.*f", (-(MAX_SEQ_LEN + 1), 1.0))
+    assert _format_too_wide("%99999999999999999999s", "a") and _format_too_wide("%(k)100000s", "a")
+    assert not _format_too_wide("%*d|%5.2f", (10, 1, 2.5)) and not _format_too_wide("100%% %s", "a")
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "m.py").write_text(
+        "def wide(n: int):\n    if n > 1000000:\n        t = '%*d' % (n, 1)\n        return 1 / 0\n    return 0\n", encoding="utf-8")
+    _, rep, _ = check_json(tmp_path)
+    o = next(o for o in rep["obligation_results"] if o["operation_text"] == "1 / 0")
+    assert o["property_result"] != "PROVED_UNSAFE" and o["witness_validated"] is False

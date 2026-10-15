@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import copy
 import operator
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -83,6 +84,33 @@ _NONE_ATTRS = frozenset(dir(None))
 MAX_INT_BITS = 1 << 16
 # Largest sequence a repetition may build in the evaluator; larger ones are STUCK.
 MAX_SEQ_LEN = 1 << 16
+
+
+def _plain(x: Any) -> bool:
+    """True for a built-in value with no unmodeled or unbound part (formatting it runs no user code)."""
+    if x is None or isinstance(x, (bool, int, float, str)):
+        return True
+    return isinstance(x, (list, tuple)) and all(_plain(e) for e in x)
+
+
+# Width and precision fields of a printf-style conversion (``%-*.3d``, ``%(k)10s``).
+_FMT_FIELDS = re.compile(r"%(?:\([^)]*\))?[#0\- +]*(\*|\d+)?(?:\.(\*|\d+))?")
+
+
+def _format_too_wide(fmt: str, args: Any) -> bool:
+    """True when ``fmt % args`` may build a string longer than MAX_SEQ_LEN through a width or
+    precision (a literal field, or a ``*`` taken from an argument); conservative."""
+    star = False
+    for m in _FMT_FIELDS.finditer(fmt):
+        for g in m.groups():
+            if g == "*":
+                star = True
+            elif g is not None and (len(g) > 6 or int(g) > MAX_SEQ_LEN):
+                return True
+    if star:
+        vals = args if isinstance(args, tuple) else (args,)
+        return any(isinstance(v, int) and abs(v) > MAX_SEQ_LEN for v in vals)
+    return False
 
 
 def _bits(x: Any) -> int:
@@ -203,8 +231,13 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                 if ins.flavor == "python.str_format":
                     # Evaluator values are built-in objects only (user objects are UNMODELED),
                     # so formatting them runs no user code and matches CPython exactly.
-                    if not isinstance(b, tuple) or any(e is UNMODELED or e is UNBOUND for e in b):
+                    if not isinstance(a, str) or not _plain(b):
                         out.kind, out.detail = "STUCK", f"unmodeled formatting argument at {ins.result}"
+                        out.values = env
+                        return out
+                    if _format_too_wide(a, b):
+                        # Like sequence repetition: never allocate an unbounded string.
+                        out.kind, out.detail = "STUCK", f"formatting width or precision too large to evaluate at {ins.result}"
                         out.values = env
                         return out
                     try:

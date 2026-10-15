@@ -13,7 +13,7 @@ from typing import Any
 
 from ...ir.model import DIVISION_PROPERTY, Function, ModuleIR, ObligationSite, Op, UnsupportedSymbol
 from ...models.spans import digest_json, sha256_bytes, short_hex
-from .lower import PROFILE_TYPES, FunctionLowerer, find_method_table, find_table
+from .lower import PROFILE_TYPES, FunctionLowerer, class_scope_names, find_method_table, find_table, method_class_table
 from .parse import PYTHON_GRAMMAR, ParsedFile, ParseFailure, parse_source
 from .resolve import ModuleContext, ProgramIndex, ast_fingerprint, class_body_name, code_fingerprint, initializer_fingerprint
 from .subset import function_unsupported_reason
@@ -166,6 +166,13 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
             errors.append({"symbol_id": symbol_id, "stage": "symbol_resolution", "error_type": "SymbolTableMismatch", "message": "could not match function to its symbol table", "_sites": sorted(sites.values(), key=lambda s: s.ordinal)})
             continue
         local_names = {s.get_name() for s in table.get_symbols() if s.is_local() or s.is_parameter()}
+        class_names: set[str] | None = None
+        if sym.kind == "method":
+            cls = method_class_table(parsed.symtable, node)
+            if cls is None:
+                errors.append({"symbol_id": symbol_id, "stage": "symbol_resolution", "error_type": "SymbolTableMismatch", "message": "could not match method to its class table", "_sites": sorted(sites.values(), key=lambda s: s.ordinal)})
+                continue
+            class_names = class_scope_names(cls)
         decls = domain_decls(declared_domains.get(symbol_id))
         declared_params: dict[str, str] | None = None
         if decls:
@@ -193,6 +200,8 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
                 declared_params=declared_params,
                 sites=sites,
                 ctx=ctx,
+                class_names=class_names,
+                class_qualname=sym.qualname.rsplit(".", 1)[0] if sym.kind == "method" else None,
             ).lower()
         except Exception as exc:  # noqa: BLE001 - classified as an engine error, never as unsupported
             errors.append({"symbol_id": symbol_id, "stage": "lowering", "error_type": type(exc).__name__, "message": str(exc), "_sites": sorted(sites.values(), key=lambda s: s.ordinal)})

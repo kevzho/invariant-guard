@@ -29,7 +29,9 @@ that summaries are invalidated when anything they read changes (docs/07).
 from __future__ import annotations
 
 import ast
+import operator
 import symtable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -120,7 +122,7 @@ PROFILE_TYPES = {
     "python_optional_exact_builtin_int": SemType(Kind.OPTIONAL, Origin.DECLARED, Kind.INT),
 }
 
-_ANN_SCALARS = {"int": Kind.INT, "bool": Kind.BOOL, "float": Kind.FLOAT}
+_ANN_SCALARS = {"int": Kind.INT, "bool": Kind.BOOL, "float": Kind.FLOAT, "str": Kind.STR}
 _ANN_SEQS = {"list": Kind.LIST, "tuple": Kind.TUPLE}
 
 
@@ -148,6 +150,101 @@ def find_method_table(table: symtable.SymbolTable, node: ast.FunctionDef) -> sym
             elif c.get_type() == "function" and c.get_name() == node.name and c.get_lineno() == node.lineno:
                 found.append(c)
     return found[0] if len(found) == 1 else None
+
+
+def method_class_table(table: symtable.SymbolTable, node: ast.FunctionDef) -> symtable.SymbolTable | None:
+    """The class table whose body directly defines the method ``node`` (see ``find_method_table``)."""
+    found = []
+    stack = [c for c in table.get_children() if c.get_type() == "class"]
+    while stack:
+        cls = stack.pop()
+        for c in cls.get_children():
+            if c.get_type() == "class":
+                stack.append(c)
+            elif c.get_type() == "function" and c.get_name() == node.name and c.get_lineno() == node.lineno:
+                found.append(cls)
+    return found[0] if len(found) == 1 else None
+
+
+def class_scope_names(cls: symtable.SymbolTable) -> set[str]:
+    """Names the class body binds (assignment, def, class, import, loop/with target):
+    a method's annotations are evaluated in the class scope, so such a name shadows the builtin."""
+    return {s.get_name() for s in cls.get_symbols() if s.is_local() or s.is_imported() or s.is_assigned()}
+
+
+_DEFAULT_PY_TYPES = {Kind.INT: int, Kind.BOOL: bool, Kind.FLOAT: float, Kind.STR: str, Kind.TUPLE: tuple}
+
+
+_FOLD_OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+             ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod, ast.Pow: operator.pow,
+             ast.LShift: operator.lshift, ast.RShift: operator.rshift, ast.BitOr: operator.or_,
+             ast.BitAnd: operator.and_, ast.BitXor: operator.xor}
+_FOLD_MAX_BITS = 4096  # folding stops (no value) beyond this, so a default cannot make folding slow
+
+
+def fold_constant(node: ast.AST, lookup: Callable[[str], tuple[bool, Any]]) -> tuple[bool, Any]:
+    """(True, value) for a literal, a resolved module constant (``lookup``) or the arithmetic and
+    bitwise operators (+ - * / // % ** << >> | & ^, bounded sizes) and unary +/- over int/float
+    values of those; (False, None) otherwise (I-136, I-137)."""
+    ok, value = constant_value(node)
+    if ok:
+        return ok, value
+    if isinstance(node, ast.Name):
+        return lookup(node.id)
+    num = (int, float, bool)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        ok, v = fold_constant(node.operand, lookup)
+        if ok and type(v) in num:
+            return True, (+v if isinstance(node.op, ast.UAdd) else -v)
+    if isinstance(node, ast.BinOp) and type(node.op) in _FOLD_OPS:
+        ok_l, left = fold_constant(node.left, lookup)
+        ok_r, right = fold_constant(node.right, lookup)
+        if ok_l and ok_r and type(left) in num and type(right) in num:
+            if isinstance(node.op, (ast.Pow, ast.LShift)) and isinstance(right, int) and abs(right) > _FOLD_MAX_BITS:
+                return False, None
+            try:
+                value = _FOLD_OPS[type(node.op)](left, right)
+            except (ArithmeticError, ValueError, TypeError):
+                return False, None
+            if type(value) in num and not (isinstance(value, int) and value.bit_length() > _FOLD_MAX_BITS):
+                return True, value
+    return False, None
+
+
+def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | None,
+                         lookup: Callable[[str], tuple[bool, Any]] = lambda _: (False, None)) -> tuple[SemType, str | None]:
+    """Reconcile an annotation-derived parameter type with the parameter's own default.
+
+    A call that omits the argument binds the default, which no caller assumption covers.
+    ``x: str = None`` (implicit Optional) is ``Optional[str]``. A default that folds to a
+    value of another type (a literal, a module constant through ``lookup``, or constant
+    arithmetic over those) makes the annotation untrusted (``Kind.OBJECT``). So does a default
+    that does not fold (a call, a class-body name, an import, a conditional ...): no caller
+    assumption covers the value a call that omits the argument binds, and it may already be
+    refutable from the source (I-137). A list/tuple display only has to match the kind.
+    """
+    if default is None or typ.origin is not Origin.ANNOTATION or typ.kind is Kind.OBJECT:
+        return typ, shown
+    k = typ.inner if typ.kind is Kind.OPTIONAL else typ.kind
+    if isinstance(default, ast.Constant) and default.value is None:
+        if typ.kind is Kind.OPTIONAL:
+            return typ, shown
+        return SemType(Kind.OPTIONAL, Origin.ANNOTATION, k), f"{shown} = None (implicit Optional)"
+    ok, value = fold_constant(default, lookup)
+    if ok:
+        match = type(value) is _DEFAULT_PY_TYPES.get(k)  # type: ignore[arg-type]
+    elif isinstance(default, ast.List):
+        match = k is Kind.LIST
+    elif isinstance(default, ast.Tuple):
+        match = k is Kind.TUPLE
+    else:
+        return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {ast.unparse(default)} is not a checked constant; not trusted)"
+    if match:
+        return typ, shown
+    text = ast.unparse(default)
+    if ok and text != repr(value):
+        text += f" = {value!r}"
+    return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {text} contradicts it; not trusted)"
 
 
 def _body_fingerprint(node: ast.FunctionDef) -> str:
@@ -320,8 +417,12 @@ class FunctionLowerer:
         declared_params: dict[str, str] | None,
         sites: dict[int, ObligationSite],
         ctx: ModuleContext | None = None,
+        class_names: set[str] | None = None,  # names bound by the enclosing class body (methods)
+        class_qualname: str | None = None,
     ) -> None:
         self.node = node
+        self.class_names = class_names or set()
+        self.class_qualname = class_qualname
         self.symbol_id = symbol_id
         self.snapshot_id = snapshot_id
         self.declared_params = declared_params  # name -> profile, or None
@@ -457,6 +558,14 @@ class FunctionLowerer:
     def ann_lookup(self, name: str) -> Resolution:
         """Resolution of an annotation name; ``Optional`` must come from ``typing``."""
         ctx = self.frame.ctx
+        if self.class_qualname is not None:
+            # A method's annotations are evaluated in its class body first (I-134 review),
+            # ``Optional`` included (I-136).
+            shadowed = name in self.class_names
+            rec = {"kind": "class_scope", "module": ctx.path, "class": self.class_qualname, "name": name, "bound": shadowed}
+            self.add_dep(rec)
+            if shadowed:
+                return Resolution("unresolved", name, rec, reason=f"'{name}' is bound in the body of class {self.class_qualname}")
         if name == "Optional":
             bs = ctx.bindings.get("Optional", [])
             ok = (
@@ -470,6 +579,14 @@ class FunctionLowerer:
             self.add_dep(rec)
             return Resolution("const" if ok else "unresolved", "Optional", rec)
         return self.resolve_global(name)
+
+    def default_lookup(self, name: str) -> tuple[bool, Any]:
+        """Value of a name in a parameter default: a module constant bound once. A name the
+        class body binds (a method's defaults are evaluated there) is not folded."""
+        if self.class_qualname is not None and name in self.class_names:
+            return False, None
+        res = self.resolve_global(name)
+        return (True, res.value) if res.kind == "const" else (False, None)
 
     def ensure_debug(self) -> str:
         """``__debug__`` runtime-mode input (python -O disables asserts), created on demand."""
@@ -612,8 +729,11 @@ class FunctionLowerer:
         params: list[Param] = []
         args = node.args
         declared = self.declared_params or {}
+        positional = args.posonlyargs + args.args
+        defaults: dict[str, ast.AST] = dict(zip([p.arg for p in positional][len(positional) - len(args.defaults):], args.defaults))
+        defaults.update({p.arg: d for p, d in zip(args.kwonlyargs, args.kw_defaults) if d is not None})
         for a in args.posonlyargs + args.args + args.kwonlyargs:
-            ann_type, shown = annotation_type(a.annotation, self.ann_lookup)
+            ann_type, shown = default_checked_type(*annotation_type(a.annotation, self.ann_lookup), defaults.get(a.arg), self.default_lookup)
             if a.arg in declared:
                 typ = PROFILE_TYPES.get(declared[a.arg])
                 if typ is None:
@@ -951,8 +1071,11 @@ class FunctionLowerer:
                     ins.operands = ins.operands + (lv,)
                 latch[n] = (UNKNOWN_TYPE, True) if lv is None or lv in self.maybe_unbound_values else (self.typ(lv), False)
         # Code that runs later in one iteration runs before the header of the next one.
-        body_ids = {f"b{i}" for i in range(first_block, self._b)}
-        effects = [i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
+        body_ids = [f"b{i}" for i in range(first_block, self._b)]  # program order: the example shown is deterministic
+        # Static analyses ignore the back edge, so they see this list through the marker:
+        # instructions here run before the header (and the body) of the next iteration (I-136).
+        marker.attrs["loop_blocks"] = [b for b in body_ids if b in self.blocks]
+        effects =[i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN
             marker.attrs["reason"] = "an earlier iteration of this loop may run unknown code (" + (effects[0].attrs.get("callee") or effects[0].attrs.get("reason", "unknown effect")) + ")"
@@ -996,7 +1119,7 @@ class FunctionLowerer:
             self.var_names[v] = self.frame.var_prefix + n
         self.emit(Op.LOOP_HEAD, (), None, span, block=block, context=context)
         marker = block.instructions[-1]
-        ids = {f"b{i}" for i in range(first_block, self._b)}
+        ids = [f"b{i}" for i in range(first_block, self._b)]  # program order: deterministic example
         effects = [i for bid in ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN
@@ -1238,7 +1361,7 @@ class FunctionLowerer:
             left = self.expr(test.left, env)
             for i, (op, comp) in enumerate(zip(test.ops, test.comparators)):
                 right = self.expr(comp, env)
-                c = self.compare(op, left, right, test)
+                c = self.truth(self.compare(op, left, right, test), test)
                 last = i == len(test.ops) - 1
                 nxt = t if last else self.new_block("chain")
                 cur = self.cur
@@ -1574,11 +1697,6 @@ class FunctionLowerer:
         return marker
 
     # -- operators ------------------------------------------------------------------------
-    def _literal_of(self, value_id: str, kind: Kind) -> bool:
-        """True when ``value_id`` is an exact built-in ``kind`` from a literal or display (never an annotation)."""
-        t = self.types.get(value_id)
-        return t is not None and t.kind is kind and t.origin is Origin.LITERAL
-
     def binop(self, op: Op, left: str, right: str, node: ast.AST, augmented: bool = False) -> str:
         lk, rk = self.kind(left), self.kind(right)
         span = self.span(node)
@@ -1603,11 +1721,14 @@ class FunctionLowerer:
             if augmented and seq_kind is Kind.LIST:
                 # ``xs += ys`` / ``xs *= n`` mutate the list in place, i.e. every alias of it.
                 effect = Effect.UNKNOWN
-        elif op is Op.MOD and self._literal_of(left, Kind.STR) and self._literal_of(right, Kind.TUPLE):
-            # printf-style formatting (I-131): an exact str on the left and an exact tuple on
-            # the right (tuple is never a str subclass, so no reflected __rmod__ runs first)
-            # select str.__mod__, which performs no numeric division. Formatting may still call
-            # user __str__/__repr__/__format__/__index__ hooks of the elements: effect UNKNOWN.
+        elif op is Op.MOD and lk is Kind.STR:
+            # printf-style formatting (I-131, I-134): an exact str on the left selects
+            # str.__mod__, which performs no numeric division and never returns NotImplemented,
+            # unless the right operand's type is a str subclass overriding __rmod__ (CPython
+            # tries that first). An exact built-in right operand has no subclass; any other
+            # needs the recorded assumption that it is not such a subclass (``rmod_assumption``).
+            # Formatting may still call user __str__/__repr__/__format__/__index__ hooks of the
+            # arguments: effect UNKNOWN.
             typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.str_format"
         else:
             typ, effect, flavor = UNKNOWN_TYPE, Effect.UNKNOWN, "python.dynamic_dispatch"
@@ -1617,7 +1738,9 @@ class FunctionLowerer:
         if flavor in ("python.sequence_concat", "python.sequence_repeat") and effect is Effect.UNKNOWN:
             attrs["reason"] = f"in-place list {'+=' if op is Op.ADD else '*='} mutates the list shared by every alias; alias/effect tracking for lists is not modeled"
         if flavor == "python.str_format":
-            attrs["reason"] = "str % tuple formatting may call user __str__/__repr__/__format__ hooks of the elements"
+            attrs["reason"] = "str % x formatting may call user __str__/__repr__/__format__ hooks of the arguments"
+            if rk not in EXACT_NON_NONE | {Kind.NONE, Kind.OPTIONAL}:
+                attrs["rmod_assumption"] = True
         if flavor == "python.dynamic_dispatch":
             attrs["reason"] = f"{op.value} on {lk.value}/{rk.value} operands may dispatch to user-defined operator methods"
         site: ObligationSite | None = None
@@ -1652,8 +1775,11 @@ class FunctionLowerer:
         cmp = _CMPOPS.get(type(op))
         builtin = {Kind.INT, Kind.BOOL, Kind.FLOAT, Kind.NONE, Kind.STR}
         if cmp is None or lk not in builtin or rk not in builtin:
+            # A rich comparison that may dispatch to user code (__eq__/__lt__/...) can return
+            # any object, not just a bool (I-137): its result is untyped, so arithmetic,
+            # formatting or a truth test on it is not modeled as a bool in [0, 1].
             return self.emit(
-                Op.UNKNOWN_EFFECT, (left, right), SemType(Kind.BOOL, Origin.UNKNOWN), span, Effect.UNKNOWN, None,
+                Op.UNKNOWN_EFFECT, (left, right), UNKNOWN_TYPE, span, Effect.UNKNOWN, None,
                 reason=f"comparison {type(op).__name__} on {lk.value}/{rk.value} may dispatch to user code",
             )
         numeric = {Kind.INT, Kind.BOOL, Kind.FLOAT}

@@ -40,3 +40,23 @@ def test_isolated_mode_would_ignore_the_seed(tmp_path):
 def test_interpreter_variables_cannot_be_allowlisted():
     with pytest.raises(ProfileError, match="PYTHON"):
         parse_profile("x", {"backend": "docker", "image": "python:3.13-slim", "allowed_targets": ["a.py::*"], "env_allowlist": ["PYTHONPATH"]})
+
+
+def test_check_output_does_not_depend_on_the_hash_seed(tmp_path):
+    """The example effect named for a loop or ``try`` havoc is chosen in program order, not by
+    set iteration (str hashing), so identical runs give identical obligation results."""
+    from ..conftest import run_guard_subprocess
+
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "m.py").write_text(
+        "def f(xs: list[int], d: int):\n"
+        "    for x in xs:\n"
+        "        if x:\n            print(x)\n        elif x > 2:\n            xs.sort()\n        else:\n            len(str(x))\n"
+        "    try:\n        a = 1\n        open('p')\n        sorted(xs)\n        repr(xs)\n    except OSError:\n        a = 2\n"
+        "    return 10 // d\n", encoding="utf-8")
+    outs = set()
+    for seed in ("1", "2", "3", "4", "5"):
+        p = run_guard_subprocess(["check", str(tmp_path), "--format", "json"], cwd=tmp_path, env={"PYTHONHASHSEED": seed})
+        rep = json.loads(p.stdout)
+        outs.add(json.dumps([{k: o[k] for k in ("obligation_id", "property_result", "assumptions", "reasons")} for o in rep["obligation_results"]], sort_keys=True))
+    assert len(outs) == 1
