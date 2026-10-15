@@ -210,6 +210,14 @@ def div_before_lambda_default(n: int):
     k = 10 // n
     f = lambda a=(yield): a
     return k
+
+
+def prestart_square(n: int):
+    yield 10 // (n * n + 1)
+
+
+def literal_only():
+    yield 10 // 2
 '''
 
 TRACER = r"""
@@ -352,12 +360,17 @@ EXPECTED = {
     ("use_check_class_base", "10 // n"): ("PROVED_UNSAFE", False),
     ("use_check_decorator", "10 // n"): ("PROVED_UNSAFE", False),
     ("div_before_lambda_default", "10 // n"): ("PROVED_UNSAFE", False),
+    ("prestart_square", "10 // (n * n + 1)"): ("PROVED_SAFE", False),
+    ("literal_only", "10 // 2"): ("PROVED_SAFE", False),
 }
 
 # PROVED_SAFE results whose path crosses a yield rely on the consumer not rebinding the
 # generator's locals (possible on CPython 3.13 via gi_frame.f_locals, PEP 667).
 CROSSES_YIELD = {"guard_before_yield", "len_before_yield_tuple", "loop_safe", "none_narrowed"}
 INTROSPECTION = "do not rebind this function's locals via frame introspection"
+# Between creating a generator and its first next(), the consumer can rebind the parameters
+# through gi_frame.f_locals, so every generator PROVED_SAFE that depends on one lists this.
+PRESTART = "via frame introspection (gi_frame.f_locals) before the first next()"
 
 GENERATOR_UNSAFE = "exists admitted function input such that consuming the generator with next() until exhaustion reaches the failure"
 
@@ -393,6 +406,10 @@ def test_generators_against_cpython(tmp_path: Path):
                 assert "every consumer" in o["quantifier"]
             if fn in CROSSES_YIELD:
                 assert any(INTROSPECTION in a for a in o["assumptions"]) and o["scope_validity"] == "CONDITIONAL", (fn, o["assumptions"])
+            if fn in generators:
+                prestart = any(PRESTART in a for a in o["assumptions"])
+                assert prestart == (fn != "literal_only"), (fn, o["assumptions"])
+                assert not prestart or o["scope_validity"] == "CONDITIONAL", (fn, o["scope_validity"])
         if result == "PROVED_UNSAFE":
             assert o["witness_validated"] is True
             assert (o["quantifier"] == GENERATOR_UNSAFE) == (fn in generators), (fn, o["quantifier"])
@@ -406,6 +423,30 @@ def test_generators_against_cpython(tmp_path: Path):
     # Non-vacuity: the consumers really reach the failures the expectations rely on.
     assert ("thrown_into_try", CORPUS.splitlines().index("        yield 10 // d") + 1, "ZeroDivisionError") in raised
     assert ("iterating_runs_body", CORPUS.splitlines().index("        return xs[0]", CORPUS.splitlines().index("def iterating_runs_body(xs: list):")) + 1, "IndexError") in raised
+
+
+PRESTART_REBIND = r"""
+import json, runpy, sys
+ns = runpy.run_path(sys.argv[1])
+class Z:
+    def __mul__(self, o):
+        return -1
+g = ns["prestart_square"](3)        # an exact int, as the domain requires
+g.gi_frame.f_locals["n"] = Z()      # consumer code before the body starts (PEP 667)
+try:
+    next(g)
+    print(json.dumps(None))
+except Exception as e:
+    print(json.dumps(type(e).__name__))
+"""
+
+
+def test_prestart_frame_rebinding_is_a_listed_assumption(tmp_path: Path):
+    """The pre-start assumption is load-bearing: a consumer that rebinds a parameter through
+    gi_frame.f_locals before the first next() makes the PROVED_SAFE division fail in CPython."""
+    path = tmp_path / "m.py"
+    path.write_text(CORPUS, encoding="utf-8")
+    assert _child(PRESTART_REBIND, str(path)) == "ZeroDivisionError"
 
 
 REBIND = r"""
@@ -457,3 +498,35 @@ def test_generator_call_records_the_callee_resolution(tmp_path: Path):
     assert unsafe["property_result"] == "PROVED_UNSAFE" and any(same_module in a for a in unsafe["assumptions"])
     # The assumption is load-bearing: rebinding the names refutes every one of these claims.
     assert _child(REBIND, str(root)) == [["local_only", "IndexError"], ["local_div", "ZeroDivisionError"], ["f_local", "IndexError"]]
+
+
+SEEDED = '''
+def loop(xs: list, n: int):
+    k = 1
+    for i in range(n):
+        if i > 2:
+            xs.popleft()
+        elif i > 1:
+            ys = [q for q in xs]
+        else:
+            k = k + 1
+        yield 10 // k
+'''
+
+
+def test_reasons_do_not_depend_on_the_hash_seed(tmp_path: Path):
+    """Loop markers and witness assumptions name the unknown effects on the path; they used
+    to come from iterating a set of block ids, so the text varied with PYTHONHASHSEED."""
+    root = tmp_path / "proj"
+    root.mkdir()
+    (root / ".git").mkdir()
+    (root / "m.py").write_text(SEEDED, encoding="utf-8")
+    texts = set()
+    for seed in range(6):
+        env = {"PATH": "/usr/bin:/bin", "HOME": str(tmp_path), "PYTHONHASHSEED": str(seed)}
+        p = subprocess.run([sys.executable, "-m", "invariantguard.cli", "check", str(root), "--format", "json"],
+                           capture_output=True, text=True, timeout=300, env=env, cwd=tmp_path)
+        rep = json.loads(p.stdout)
+        assert rep["obligation_results"], p.stderr
+        texts.add(json.dumps([(o["obligation_id"], o["property_result"], o["reasons"], o["assumptions"]) for o in rep["obligation_results"]]))
+    assert len(texts) == 1, texts

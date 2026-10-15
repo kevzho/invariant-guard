@@ -197,7 +197,9 @@ class FunctionChecker:
         assert bid is not None and site.result_id is not None
         idx = self.instr_index(bid, site.result_id)
         out: list[Instruction] = []
-        for b in self.backward_region(bid):
+        region = self.backward_region(bid)
+        # Block creation order, not set order: reasons list these, and must not vary with the hash seed.
+        for b in (b for b in self.fn.blocks if b in region):
             instrs = self.fn.blocks[b].instructions
             out.extend(instrs[:idx] if b == bid else instrs)
         return out
@@ -471,7 +473,11 @@ class FunctionChecker:
         if fact is None:
             raise EngineInconsistency(f"no analysis fact for obligation {site.result_id}")
         cone = self.cone(site)
-        source, authority, scope, domain, assumptions = self.domain_info(self.domain_cone(site, cone))
+        dcone = self.domain_cone(site, cone)
+        source, authority, scope, domain, assumptions = self.domain_info(dcone)
+        # Creating a generator binds its parameters, but its body starts only at the first
+        # next(); in between, the consumer can rebind them through gi_frame.f_locals.
+        prestart = [p.name for p in self.fn.params if p.value_id in dcone] if self.fn.generator else []
         notes, notes_conditional = self.resolution_notes(site, cone)
         assumptions = assumptions + notes
         upstream = self.upstream_unknown(site)
@@ -486,6 +492,10 @@ class FunctionChecker:
                     + ", ".join(sorted({u.attrs.get("callee") or u.attrs.get("reason", "unknown") for u in upstream})[:3])
                     + ") do not rebind this function's locals via frame introspection"
                 )
+            if prestart:
+                s = ScopeValidity.CONDITIONAL
+                a.append("the generator's consumer does not rebind its parameters (" + ", ".join(prestart)
+                         + ") via frame introspection (gi_frame.f_locals) before the first next()")
             if notes_conditional:
                 s = ScopeValidity.CONDITIONAL
             if self.fn.has_asserts:

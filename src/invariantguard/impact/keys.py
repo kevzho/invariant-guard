@@ -37,8 +37,9 @@ from ..models.spans import digest_json
 # change alters what a symbol's lowering means without changing its AST (I-136): validity keys
 # hold AST fingerprints, not IR digests. It is kept out of the semantics profile, which is part
 # of snapshot identity (shipped benchmark packets pin it). Revisions: 1 = through I-133 (try);
-# 2 = generator functions and generator calls (I-135/I-136).
-MODEL_REVISION = 2
+# 2 = generator functions and generator calls (I-135/I-136); 3 = generator pre-start
+# frame-introspection assumption (I-137).
+MODEL_REVISION = 3
 
 CONTRACT_SLOT = "per-symbol: digest of active contract revisions scoped to the symbol (contracts-v1)"
 

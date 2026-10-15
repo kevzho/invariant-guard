@@ -955,7 +955,8 @@ class FunctionLowerer:
                     ins.operands = ins.operands + (lv,)
                 latch[n] = (UNKNOWN_TYPE, True) if lv is None or lv in self.maybe_unbound_values else (self.typ(lv), False)
         # Code that runs later in one iteration runs before the header of the next one.
-        body_ids = {f"b{i}" for i in range(first_block, self._b)}
+        # Blocks in creation order, so the reported effect does not depend on set hashing.
+        body_ids = [f"b{i}" for i in range(first_block, self._b)]
         effects = [i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN

@@ -164,10 +164,10 @@ def test_cache_from_an_earlier_model_revision_is_not_reused(tmp_path, monkeypatc
     another model revision in their key, so a warm run recomputes instead of reusing them."""
     import invariantguard.impact.keys as keys
 
-    assert keys.MODEL_REVISION == 2
+    assert keys.MODEL_REVISION >= 2  # generators came with revision 2
     root, base = make_repo(tmp_path, GEN)
     write(root, {"m.py": GEN["m.py"].replace("return a", "return a + 1")})
-    monkeypatch.setattr(keys, "MODEL_REVISION", 1)
+    monkeypatch.setattr(keys, "MODEL_REVISION", keys.MODEL_REVISION - 1)
     _, old, _ = verify(root, base, "--mode", "full")
     assert old["patch"]["cache"]["published_entries"] > 0
     monkeypatch.undo()
