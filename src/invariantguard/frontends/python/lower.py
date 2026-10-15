@@ -1001,7 +1001,7 @@ class FunctionLowerer:
             self.var_names[v] = self.frame.var_prefix + n
         self.emit(Op.LOOP_HEAD, (), None, span, block=block, context=context)
         marker = block.instructions[-1]
-        ids = {f"b{i}" for i in range(first_block, self._b)}
+        ids = [f"b{i}" for i in range(first_block, self._b)]
         effects = [i for bid in ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN

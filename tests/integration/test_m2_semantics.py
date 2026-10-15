@@ -60,14 +60,14 @@ CASES = [
     # (id, source, declarations, obligation id suffix, expected result, expected scope)
     ("empty-list", "def f(xs):\n    return xs[0]\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_UNSAFE", "EXACT_MODEL"),
     ("negative-index-empty", "def f(xs):\n    return xs[-1]\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_UNSAFE", "EXACT_MODEL"),
-    ("negative-index-guarded-len", "def f(xs):\n    if len(xs) > 0:\n        return xs[-1]\n    return 0\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_SAFE", "EXACT_MODEL"),
-    ("negative-index-guarded-truthiness", "def f(xs):\n    if xs:\n        return xs[-1]\n    return 0\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_SAFE", "EXACT_MODEL"),
+    ("negative-index-guarded-len", "def f(xs):\n    if len(xs) > 0:\n        return xs[-1]\n    return 0\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_SAFE", "CONDITIONAL"),  # I-138: shared list
+    ("negative-index-guarded-truthiness", "def f(xs):\n    if xs:\n        return xs[-1]\n    return 0\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_SAFE", "CONDITIONAL"),  # I-138: shared list
     ("negative-index-too-far", "def f(xs):\n    if len(xs) >= 2:\n        return xs[-3]\n    return 0\n", {"m.py::f": (None, LIST)}, "index.out_of_range#0", "PROVED_UNSAFE", "EXACT_MODEL"),
-    ("relational-index", "def f(xs, i):\n    if 0 <= i < len(xs):\n        return xs[i]\n    return 0\n", {"m.py::f": [(["xs"], LIST), (["i"], INT)]}, "index.out_of_range#0", "PROVED_SAFE", "EXACT_MODEL"),
+    ("relational-index", "def f(xs, i):\n    if 0 <= i < len(xs):\n        return xs[i]\n    return 0\n", {"m.py::f": [(["xs"], LIST), (["i"], INT)]}, "index.out_of_range#0", "PROVED_SAFE", "CONDITIONAL"),  # I-138: shared list
     ("relational-index-off-by-one", "def f(xs, i):\n    if 0 <= i <= len(xs):\n        return xs[i]\n    return 0\n", {"m.py::f": [(["xs"], LIST), (["i"], INT)]}, "index.out_of_range#0", "PROVED_UNSAFE", "EXACT_MODEL"),
     ("literal-in-range", "def f():\n    xs = [1, 2, 3]\n    return xs[-3]\n", {}, "index.out_of_range#0", "PROVED_SAFE", "EXACT_MODEL"),
     ("literal-out-of-range", "def f():\n    ys = (1, 2)\n    return ys[2]\n", {}, "index.out_of_range#0", "PROVED_UNSAFE", "EXACT_MODEL"),
-    ("second-index-after-first", "def f(xs):\n    a = xs[3]\n    return xs[-4]\n", {"m.py::f": (None, LIST)}, "index.out_of_range#1", "PROVED_SAFE", "EXACT_MODEL"),
+    ("second-index-after-first", "def f(xs):\n    a = xs[3]\n    return xs[-4]\n", {"m.py::f": (None, LIST)}, "index.out_of_range#1", "PROVED_SAFE", "CONDITIONAL"),  # I-138: shared list
     ("len-taken-before-mutation", "def f():\n    xs = [1]\n    n = len(xs)\n    g(xs)\n    if n > 0:\n        return xs[0]\n    return 0\n", {}, "index.out_of_range#0", "UNKNOWN", None),
     ("alias-mutation", "def f():\n    xs = [1]\n    ys = xs\n    ys.append(2)\n    return xs[1]\n", {}, "index.out_of_range#0", "UNKNOWN", None),
     ("tuple-survives-unknown-call", "def f():\n    t = (1, 2)\n    g(t)\n    return t[1]\n", {}, "index.out_of_range#0", "PROVED_SAFE", "CONDITIONAL"),

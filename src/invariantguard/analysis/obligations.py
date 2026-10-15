@@ -231,6 +231,26 @@ class FunctionChecker:
                     roots.extend(ins.operands)
         return self.closure(roots)
 
+    def fresh_list(self, v: str, seen: set[str] | None = None) -> bool:
+        """Whether list value ``v`` is certainly a list this call created (a display, or a
+        non-augmented concatenation/repetition, possibly merged by a PHI): code outside the
+        function can then reach it only after it escapes, which takes an unknown effect.
+        Parameters, loop headers and every other source may be shared (I-138)."""
+        seen = set() if seen is None else seen
+        if v in seen:
+            return True
+        seen.add(v)
+        ins = self.defs.get(v)
+        if ins is None:
+            return False
+        if ins.op is Op.BUILD_SEQ:
+            return True
+        if ins.flavor in ("python.sequence_concat", "python.sequence_repeat"):
+            return ins.effect is not Effect.UNKNOWN  # ``xs += ys`` returns xs itself
+        if ins.op is Op.PHI:
+            return all(self.fresh_list(o, seen) for o in ins.operands)
+        return False
+
     def domain_cone(self, site: ObligationSite, cone: set[str]) -> set[str]:
         """Values whose *types* the claim relies on: the cone plus, for a division, the
         dividend. Built-in zero-divisor semantics hold only if the dividend really is a
@@ -481,6 +501,11 @@ class FunctionChecker:
         notes, notes_conditional = self.resolution_notes(site, cone)
         assumptions = assumptions + notes
         upstream = self.upstream_unknown(site)
+        # A list another reference can reach may be mutated between two reads of it by code
+        # that runs outside this function's control flow: another thread, a finalizer
+        # (__del__, a weakref callback, a started generator's finally) run by garbage
+        # collection at any bytecode, a signal handler or a trace hook (I-138).
+        shared_lists = sorted({self.render(v, 1) for v in dcone if self.kind(v) is Kind.LIST and not self.fresh_list(v)})
         base = dict(symbol_id=sid, site=site, authority=authority, domain_source=source, domain=domain)
 
         def safe(method: AnalysisMethod, reason: str, divisor_fact: str | None = None) -> ObligationOutcome:
@@ -498,6 +523,11 @@ class FunctionChecker:
                          + ") via frame introspection (gi_frame.f_locals) before the first next()")
             if notes_conditional:
                 s = ScopeValidity.CONDITIONAL
+            if shared_lists and method is not AnalysisMethod.TYPE_FACT:
+                s = ScopeValidity.CONDITIONAL
+                a.append("no code outside this function's control flow (another thread, a finalizer such as __del__, a weakref callback or a "
+                         "started generator's finally run by garbage collection, a signal handler, a trace hook) mutates list "
+                         + ", ".join(shared_lists) + " while this function runs")
             if self.fn.has_asserts:
                 a.append("holds both with assertions enabled and under python -O")
             return ObligationOutcome(**base, result=PropertyResult.PROVED_SAFE, method=method, scope=s, assumptions=a,

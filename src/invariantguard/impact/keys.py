@@ -38,8 +38,9 @@ from ..models.spans import digest_json
 # hold AST fingerprints, not IR digests. It is kept out of the semantics profile, which is part
 # of snapshot identity (shipped benchmark packets pin it). Revisions: 1 = through I-133 (try);
 # 2 = generator functions and generator calls (I-135/I-136); 3 = generator pre-start
-# frame-introspection assumption (I-137).
-MODEL_REVISION = 3
+# frame-introspection assumption (I-137); 4 = handler-marker order and the shared-list
+# asynchronous-mutation assumption (I-138).
+MODEL_REVISION = 4
 
 CONTRACT_SLOT = "per-symbol: digest of active contract revisions scoped to the symbol (contracts-v1)"
 

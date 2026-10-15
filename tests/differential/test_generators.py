@@ -511,18 +511,38 @@ def loop(xs: list, n: int):
         else:
             k = k + 1
         yield 10 // k
+
+
+def in_try():
+    try:
+        while True:
+            yield 1
+    except ValueError:
+        pass
+    yield 10 // 0
+
+
+def plain_in_try(n: int):
+    d = n
+    try:
+        while True:
+            print()
+    except ValueError:
+        pass
+    return 10 // d
 '''
 
 
 def test_reasons_do_not_depend_on_the_hash_seed(tmp_path: Path):
-    """Loop markers and witness assumptions name the unknown effects on the path; they used
-    to come from iterating a set of block ids, so the text varied with PYTHONHASHSEED."""
+    """Loop markers, try-handler markers and witness assumptions name the unknown effects on
+    the path; they used to come from iterating a set of block ids, so the text varied with
+    PYTHONHASHSEED (in_try / plain_in_try: a loop inside a try body)."""
     root = tmp_path / "proj"
     root.mkdir()
     (root / ".git").mkdir()
     (root / "m.py").write_text(SEEDED, encoding="utf-8")
     texts = set()
-    for seed in range(6):
+    for seed in range(8):
         env = {"PATH": "/usr/bin:/bin", "HOME": str(tmp_path), "PYTHONHASHSEED": str(seed)}
         p = subprocess.run([sys.executable, "-m", "invariantguard.cli", "check", str(root), "--format", "json"],
                            capture_output=True, text=True, timeout=300, env=env, cwd=tmp_path)
@@ -530,3 +550,77 @@ def test_reasons_do_not_depend_on_the_hash_seed(tmp_path: Path):
         assert rep["obligation_results"], p.stderr
         texts.add(json.dumps([(o["obligation_id"], o["property_result"], o["reasons"], o["assumptions"]) for o in rep["obligation_results"]]))
     assert len(texts) == 1, texts
+
+
+ASYNC_MUTATION = '''
+def shared(xs: list, n: int):
+    if len(xs) == 0:
+        return 0
+    ys = []
+    for i in range(n):
+        ys = [ys, i]
+    return xs[0]
+
+
+def fresh(n: int):
+    xs = [1, 2]
+    ys = []
+    for i in range(n):
+        ys = [ys, i]
+    return xs[1]
+
+
+def started_generator(xs: list):
+    try:
+        yield 1
+    finally:
+        xs.clear()
+'''
+
+FINALIZER = r"""
+import gc, json, sys
+sys.path.insert(0, sys.argv[1])
+import m
+xs = [1]
+class Cycle:
+    def __del__(self):
+        xs.clear()
+gc.disable()
+gc.collect()  # young count 0: the collection below happens inside the loop, after the check
+if sys.argv[2] == "del":
+    c = Cycle(); c.me = c; del c  # unreachable cycle; only the cyclic collector frees it
+else:
+    box = [m.started_generator(xs)]; next(box[0]); box.append(box); del box  # a started generator in a cycle
+gc.set_threshold(100); gc.enable()
+out = []
+for name, call in (("shared", lambda: m.shared(xs, 5000)), ("fresh", lambda: m.fresh(5000))):
+    try:
+        call()
+        out.append([name, None])
+    except Exception as e:
+        out.append([name, type(e).__name__])
+print(json.dumps(out))
+"""
+
+
+def test_asynchronous_list_mutation_is_a_listed_assumption(tmp_path: Path):
+    """I-138: garbage collection runs at loop back edges, so a finalizer (here a __del__ in an
+    unreachable cycle, and a started generator's finally) can clear a caller's list between the
+    length check and the index with no call in the analyzed function. Such a PROVED_SAFE is
+    CONDITIONAL on a listed assumption; a list the function created itself is not affected."""
+    root = tmp_path / "proj"
+    root.mkdir()
+    (root / ".git").mkdir()
+    (root / "m.py").write_text(ASYNC_MUTATION, encoding="utf-8")
+    _, rep, _ = check_json(root)
+    assert rep["errors"] == [], rep["errors"]
+    res = {o["symbol_id"]: o for o in rep["obligation_results"] if o["obligation_id"].endswith("index.out_of_range#0")}
+    note = "while this function runs"
+    s = res["m.py::shared"]
+    assert s["property_result"] == "PROVED_SAFE" and s["scope_validity"] == "CONDITIONAL", s
+    assert any(note in a and "mutates list xs" in a for a in s["assumptions"]), s["assumptions"]
+    f = res["m.py::fresh"]
+    assert f["property_result"] == "PROVED_SAFE" and not any(note in a for a in f["assumptions"]), f
+    # The assumption is load-bearing: CPython refutes the shared claim, not the fresh one.
+    for mode in ("del", "generator"):
+        assert _child(FINALIZER, str(root), mode) == [["shared", "IndexError"], ["fresh", None]], mode
