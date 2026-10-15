@@ -273,13 +273,20 @@ class FunctionChecker:
     def type_dependencies(self, site: ObligationSite) -> set[str]:
         """Values whose *types* the effect classification of earlier instructions relies on.
 
-        An instruction before the site with effect NONE/MAY_RAISE (a comparison, attribute
-        load, ``len``, iteration, arithmetic) runs no user code only because its operands are
+        An instruction that may run before the site (earlier on its path, or anywhere in the
+        body of a loop the site is in or after, since a later iteration runs it first) with
+        effect NONE/MAY_RAISE (a comparison, attribute load, ``len``, iteration, arithmetic) runs no user code only because its operands are
         exact built-ins. When such a type comes from an annotation, a subclass with an
         overriding method (``__eq__`` clearing an aliased list) would break the claim, so
         the result must list that annotation even if the value is outside the cone.
         """
-        roots = [o for i in self.prefix_instructions(site) if i.effect is not Effect.UNKNOWN and i.op not in _PURE_OPS for o in i.operands]
+        prefix = self.prefix_instructions(site)
+        # A loop body runs again after the site through the back edge, which the backward
+        # region does not follow: its instructions (named by the header marker, which is in
+        # the region of every site in or after the loop) may run before the site (I-136).
+        loop_blocks = sorted({b for i in prefix if i.op is Op.LOOP_HEAD for b in i.attrs.get("loop_blocks", ())}, key=_block_order)
+        instrs = prefix + [i for b in loop_blocks for i in self.fn.blocks[b].instructions]
+        roots = [o for i in instrs if i.effect is not Effect.UNKNOWN and i.op not in _PURE_OPS for o in i.operands]
         return self.closure(roots) if roots else set()
 
     def upstream_unknown(self, site: ObligationSite) -> list[Instruction]:

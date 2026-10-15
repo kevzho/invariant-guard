@@ -184,6 +184,74 @@ def default_literal_ok(k: int = 0):
     return 10 // (k * k + 1)
 
 
+def loop_later(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    t = 0
+    for i in range(2):
+        t = xs[0]
+        s == 'a'
+    return t
+
+
+def loop_int_later(n: int, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    r = 0
+    for _ in range(2):
+        r = 10 // len(xs)
+        if n == 3:
+            r = 1
+    return r
+
+
+def loop_lt_later(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    r = 0
+    for _ in range(2):
+        r = xs[0]
+        if s < "a":
+            r = 1
+    return r
+
+
+def while_attr_later(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    r = 0
+    i = 0
+    while i < 2:
+        r = 10 // len(xs)
+        u = s.upper
+        i += 1
+    return r
+
+
+def after_loop(s: str, xs: list[int]):
+    if len(xs) == 0:
+        return 0
+    for i in range(2):
+        s == 'a'
+    return xs[0]
+
+
+D = -0.5
+K = 3
+
+
+def default_constant(n: int = D):
+    return 10 // (n * 2 + 1)
+
+
+def default_arith(n: int = 1 - 1.5):
+    return 10 // (n * 2 + 1)
+
+
+def default_constant_ok(n: int = K + 1):
+    return 10 // (n * 2 + 1)
+
+
 class _Num:
     def __init__(self, v):
         self.v = v
@@ -197,6 +265,17 @@ class C:
 
     def meth(self, s: str):
         return s % 0
+
+
+class COpt:
+    class Optional:
+        def __class_getitem__(cls, item):
+            return float
+
+    def meth(self, x: Optional[int]):
+        if x is None:
+            return 0
+        return 10 // (x * 2 + 1)
 
 
 class _RModZero(str):
@@ -393,6 +472,19 @@ EXPECTED = {
     ("default_literal_ok", "10 // (k * k + 1)"): ("PROVED_SAFE", "PROVED_SAFE"),
     # `str` in the annotation is the class attribute `_Num` (class scope), not builtins.str.
     ("C.meth", "s % 0"): ("UNKNOWN", "UNKNOWN"),
+    # Review round 2: a loop body runs before the site's next iteration (and before code
+    # after the loop); the annotation that keeps it free of user code is listed.
+    ("loop_later", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("loop_int_later", "10 // len(xs)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("loop_lt_later", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("while_attr_later", "10 // len(xs)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("after_loop", "xs[0]"): ("PROVED_SAFE", "PROVED_SAFE"),
+    # A default that folds (module constant, constant arithmetic) to another type: not trusted.
+    ("default_constant", "10 // (n * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
+    ("default_arith", "10 // (n * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
+    ("default_constant_ok", "10 // (n * 2 + 1)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    # `Optional` bound in the class body is not typing.Optional.
+    ("COpt.meth", "10 // (x * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
 }
 
 
@@ -420,6 +512,10 @@ def _check(root: Path) -> dict[tuple[str, str], str]:
     assert any(k[1] == "div_effect" and k[3] == "ZeroDivisionError" and k[4] == "s" for k in truth["single_violation"])
     assert any(k[1] == "default_none_str" and k[3] == "ZeroDivisionError" for k in truth["admitted"])
     assert any(k[1] == "default_mismatch" for k in truth["admitted"])
+    for fn in ("loop_later", "loop_lt_later", "while_attr_later", "after_loop"):
+        assert any(k[1] == fn and k[4] == "s" for k in truth["single_violation"]), fn
+    assert any(k[1] == "loop_int_later" and k[4] == "n" for k in truth["single_violation"])
+    assert any(k[1] == "default_constant" for k in truth["admitted"]) and any(k[1] == "default_arith" for k in truth["admitted"])
     got: dict[tuple[str, str], str] = {}
     for o in rep["obligation_results"]:
         mod, fn = o["symbol_id"].split("::")
@@ -474,6 +570,12 @@ def test_class_scope_annotation_name_is_not_the_builtin(tmp_path: Path):
     (root / ".git").mkdir()
     _, rep, _ = check_json(root)
     (o,) = [o for o in rep["obligation_results"] if o["symbol_id"].endswith("::C.meth")]
+    assert o["property_result"] == "UNKNOWN"
+    assert not any(a.startswith(ANNOTATION) for a in o["assumptions"])
+    # `Optional` bound in the class body too: `x: Optional[int]` is float there.
+    probe = "import runpy, sys\nns = runpy.run_path(sys.argv[1])\ntry:\n    ns['COpt']().meth(-0.5)\n    print('null')\nexcept ZeroDivisionError:\n    print('\"ZeroDivisionError\"')\n"
+    assert _child(probe, str(root / "m.py")) == "ZeroDivisionError"
+    (o,) = [o for o in rep["obligation_results"] if o["symbol_id"].endswith("::COpt.meth")]
     assert o["property_result"] == "UNKNOWN"
     assert not any(a.startswith(ANNOTATION) for a in o["assumptions"])
 

@@ -29,7 +29,9 @@ that summaries are invalidated when anything they read changes (docs/07).
 from __future__ import annotations
 
 import ast
+import operator
 import symtable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -173,13 +175,44 @@ def class_scope_names(cls: symtable.SymbolTable) -> set[str]:
 _DEFAULT_PY_TYPES = {Kind.INT: int, Kind.BOOL: bool, Kind.FLOAT: float, Kind.STR: str, Kind.TUPLE: tuple}
 
 
-def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | None) -> tuple[SemType, str | None]:
+_FOLD_OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+             ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod}
+
+
+def fold_constant(node: ast.AST, lookup: Callable[[str], tuple[bool, Any]]) -> tuple[bool, Any]:
+    """(True, value) for a literal, a resolved module constant (``lookup``) or +, -, *, /, //, %
+    and unary +/- over int/float values of those; (False, None) otherwise. Used only to refute
+    an annotation, so a value it cannot fold keeps the previous treatment (I-136)."""
+    ok, value = constant_value(node)
+    if ok:
+        return ok, value
+    if isinstance(node, ast.Name):
+        return lookup(node.id)
+    num = (int, float, bool)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        ok, v = fold_constant(node.operand, lookup)
+        if ok and type(v) in num:
+            return True, (+v if isinstance(node.op, ast.UAdd) else -v)
+    if isinstance(node, ast.BinOp) and type(node.op) in _FOLD_OPS:
+        ok_l, left = fold_constant(node.left, lookup)
+        ok_r, right = fold_constant(node.right, lookup)
+        if ok_l and ok_r and type(left) in num and type(right) in num:
+            try:
+                return True, _FOLD_OPS[type(node.op)](left, right)
+            except (ArithmeticError, ValueError):
+                return False, None
+    return False, None
+
+
+def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | None,
+                         lookup: Callable[[str], tuple[bool, Any]] = lambda _: (False, None)) -> tuple[SemType, str | None]:
     """Reconcile an annotation-derived parameter type with the parameter's own default.
 
     A call that omits the argument binds the default, which no caller assumption covers.
-    ``x: str = None`` (implicit Optional) is ``Optional[str]``. A literal default of another
-    type makes the annotation untrusted (``Kind.OBJECT``). A default that is not a literal
-    keeps the annotation; the annotation assumption then names defaults explicitly.
+    ``x: str = None`` (implicit Optional) is ``Optional[str]``. A default that folds to a
+    value of another type (a literal, a module constant through ``lookup``, or constant
+    arithmetic over those) makes the annotation untrusted (``Kind.OBJECT``). A default that
+    does not fold keeps the annotation; the annotation assumption then names defaults explicitly.
     """
     if default is None or typ.origin is not Origin.ANNOTATION or typ.kind is Kind.OBJECT:
         return typ, shown
@@ -188,7 +221,7 @@ def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | Non
         if typ.kind is Kind.OPTIONAL:
             return typ, shown
         return SemType(Kind.OPTIONAL, Origin.ANNOTATION, k), f"{shown} = None (implicit Optional)"
-    ok, value = constant_value(default)
+    ok, value = fold_constant(default, lookup)
     if ok:
         match = type(value) is _DEFAULT_PY_TYPES.get(k)  # type: ignore[arg-type]
     elif isinstance(default, ast.List):
@@ -199,7 +232,10 @@ def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | Non
         return typ, shown
     if match:
         return typ, shown
-    return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {ast.unparse(default)} contradicts it; not trusted)"
+    text = ast.unparse(default)
+    if ok and text != repr(value):
+        text += f" = {value!r}"
+    return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {text} contradicts it; not trusted)"
 
 
 def _body_fingerprint(node: ast.FunctionDef) -> str:
@@ -513,6 +549,14 @@ class FunctionLowerer:
     def ann_lookup(self, name: str) -> Resolution:
         """Resolution of an annotation name; ``Optional`` must come from ``typing``."""
         ctx = self.frame.ctx
+        if self.class_qualname is not None:
+            # A method's annotations are evaluated in its class body first (I-134 review),
+            # ``Optional`` included (I-136).
+            shadowed = name in self.class_names
+            rec = {"kind": "class_scope", "module": ctx.path, "class": self.class_qualname, "name": name, "bound": shadowed}
+            self.add_dep(rec)
+            if shadowed:
+                return Resolution("unresolved", name, rec, reason=f"'{name}' is bound in the body of class {self.class_qualname}")
         if name == "Optional":
             bs = ctx.bindings.get("Optional", [])
             ok = (
@@ -525,14 +569,15 @@ class FunctionLowerer:
                    "descriptor": short_hex(ctx.name_descriptor("Optional")), "typing_optional": ok}
             self.add_dep(rec)
             return Resolution("const" if ok else "unresolved", "Optional", rec)
-        if self.class_qualname is not None:
-            # A method's annotations are evaluated in its class body first (I-134 review).
-            shadowed = name in self.class_names
-            rec = {"kind": "class_scope", "module": ctx.path, "class": self.class_qualname, "name": name, "bound": shadowed}
-            self.add_dep(rec)
-            if shadowed:
-                return Resolution("unresolved", name, rec, reason=f"'{name}' is bound in the body of class {self.class_qualname}")
         return self.resolve_global(name)
+
+    def default_lookup(self, name: str) -> tuple[bool, Any]:
+        """Value of a name in a parameter default: a module constant bound once. A name the
+        class body binds (a method's defaults are evaluated there) is not folded."""
+        if self.class_qualname is not None and name in self.class_names:
+            return False, None
+        res = self.resolve_global(name)
+        return (True, res.value) if res.kind == "const" else (False, None)
 
     def ensure_debug(self) -> str:
         """``__debug__`` runtime-mode input (python -O disables asserts), created on demand."""
@@ -679,7 +724,7 @@ class FunctionLowerer:
         defaults: dict[str, ast.AST] = dict(zip([p.arg for p in positional][len(positional) - len(args.defaults):], args.defaults))
         defaults.update({p.arg: d for p, d in zip(args.kwonlyargs, args.kw_defaults) if d is not None})
         for a in args.posonlyargs + args.args + args.kwonlyargs:
-            ann_type, shown = default_checked_type(*annotation_type(a.annotation, self.ann_lookup), defaults.get(a.arg))
+            ann_type, shown = default_checked_type(*annotation_type(a.annotation, self.ann_lookup), defaults.get(a.arg), self.default_lookup)
             if a.arg in declared:
                 typ = PROFILE_TYPES.get(declared[a.arg])
                 if typ is None:
@@ -1018,7 +1063,10 @@ class FunctionLowerer:
                 latch[n] = (UNKNOWN_TYPE, True) if lv is None or lv in self.maybe_unbound_values else (self.typ(lv), False)
         # Code that runs later in one iteration runs before the header of the next one.
         body_ids = [f"b{i}" for i in range(first_block, self._b)]  # program order: the example shown is deterministic
-        effects = [i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
+        # Static analyses ignore the back edge, so they see this list through the marker:
+        # instructions here run before the header (and the body) of the next iteration (I-136).
+        marker.attrs["loop_blocks"] = [b for b in body_ids if b in self.blocks]
+        effects =[i for bid in body_ids if bid in self.blocks for i in self.blocks[bid].instructions if i.effect is Effect.UNKNOWN]
         if effects:
             marker.effect = Effect.UNKNOWN
             marker.attrs["reason"] = "an earlier iteration of this loop may run unknown code (" + (effects[0].attrs.get("callee") or effects[0].attrs.get("reason", "unknown effect")) + ")"

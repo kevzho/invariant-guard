@@ -1235,6 +1235,17 @@ Reviewer round 1 on I-134; each issue was reproduced on `aadfee3` first (`guard 
 - Corpus (scratch copies, `guard check PATH --format json`), resolved required obligations: boltons 94 of 160, dateutil 28 of 85, more-itertools 0 of 42, own `src` at 286faec 8 of 120, all unchanged from `aadfee3`. No `property_result` or `scope_validity` changed; the assumption text changed on 53 obligations (the defaults wording, newly listed annotated parameters such as `log: list[str]` in `_verify_once`, and the deterministic examples).
 - Full suite (`pytest -q`, CPython 3.13): 898 passed, 17 skipped (Docker and real-model tests skip locally).
 
+## Review fixes for str annotations, round 2 (2026-10-14)
+
+Reviewer round 2 on I-135; each issue was reproduced on `46c74a1` first (`guard check . --format json` on a scratch repository with `.git`).
+
+- **Loop-carried type dependencies (unsound PROVED_SAFE; `loop_int` also on main).** `r = 10 // len(xs)` or `r = xs[0]` followed in the same `for`/`while` body by `n == 3`, `s < "a"` or `s.upper`, and `t = xs[0]` followed by `s == 'a'`, were PROVED_SAFE listing only `xs: list[int]`; CPython raises on the second iteration when a `str`/`int` subclass clears `xs`. A site after the loop (`for ...: s == 'a'` then `xs[0]`) had the same gap. Now the header marker carries the loop's blocks and `type_dependencies` includes them (I-136 (1)): all five list `s`/`n` and stay PROVED_SAFE, CONDITIONAL.
+- **Defaults that fold to another type (wrong assumption).** `def gd(n: int = D)` with `D = -0.5`, and `def g3(n: int = 1 - 1.5)`, are now UNKNOWN (`annotated int (default D = -0.5 contradicts it; not trusted)`), as `n: int = -0.5` already was. `n: int = K + 1` with `K = 3` stays PROVED_SAFE CONDITIONAL. The caller `cd()` that omits the argument still has no obligation of its own: the call is not inlined (non-literal default) and the claim lives at the callee's site, which is now UNKNOWN (I-136 (2)).
+- **`Optional` bound in a class body (wrong assumption).** `class C: class Optional: ...; def m(self, x: Optional[int])` is now UNKNOWN; the class-scope check runs before the `typing.Optional` special case (I-136 (3)).
+- **Tests.** `tests/differential/test_annotations.py` adds `loop_later`, `loop_int_later`, `loop_lt_later`, `while_attr_later`, `after_loop`, `default_constant`, `default_arith`, `default_constant_ok` and `COpt.meth` to the exhaustive CPython corpus and EXPECTED map, asserts that the loop adversaries are real (single-violation failures on `s`/`n`) and that the folded defaults fail in CPython, and extends `test_class_scope_annotation_name_is_not_the_builtin` with `Optional`. Mutation check: with `obligations.py` from `46c74a1` the test fails (`after_loop:204 fails when only s's annotation is violated, but the assumptions do not name it`).
+- Corpus (`guard check PATH --format json`, HEAD `46c74a1` source vs this change), resolved required obligations: boltons 94 of 160, dateutil 28 of 85, more-itertools 0 of 42, own `src` 8 of 120, all unchanged; no obligation's `property_result`, `scope_validity`, `assumptions` or `reasons` changed. Top UNKNOWN causes over the four: operand of unmodeled type 75, from attribute access 54, generator functions 38, computed from unmodeled values 29, non-name assignment targets 22.
+- Full suite (`.venv/bin/python -m pytest -q -p no:cacheprovider -x`, CPython 3.13): 898 passed, 17 skipped.
+
 ## Known gaps (disclosed)
 
 - **Found by the paper benchmark (engine 0.5.0, not fixed; the evaluation reports the frozen engine).**
