@@ -432,7 +432,12 @@ class Z:
     def __mul__(self, o):
         return -1
 g = ns["prestart_square"](3)        # an exact int, as the domain requires
-g.gi_frame.f_locals["n"] = Z()      # consumer code before the body starts (PEP 667)
+if sys.version_info >= (3, 13):
+    g.gi_frame.f_locals["n"] = Z()  # consumer code before the body starts (PEP 667 write-through)
+else:  # before PEP 667, f_locals is a snapshot; the same rebinding needs an explicit write-back
+    import ctypes
+    g.gi_frame.f_locals["n"] = Z()
+    ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(g.gi_frame), ctypes.c_int(0))
 try:
     next(g)
     print(json.dumps(None))
