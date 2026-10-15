@@ -10,6 +10,9 @@ Loops (I-132) run for real: a latch's ``back_edge`` jump returns to the header, 
 ``LOOP_PHI`` values are chosen by predecessor like any PHI, and ``ITER``/``NEXT``/``ELEMENT``
 iterate the concrete built-in iterable (``range``, list, tuple, str). Iterating anything
 else is STUCK. The step limit bounds long loops (STUCK, never a verdict).
+
+A generator function's body (I-138) runs as consumed by ``next()`` until exhaustion: each
+yield point evaluates to None, and evaluation ends at the body's return or first exception.
 """
 
 from __future__ import annotations
@@ -20,7 +23,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from .model import DIVISION_OPS, Function, Op
+from .model import DIVISION_OPS, Effect, Function, Op
 
 _CMP = {
     "EQ": operator.eq,
@@ -203,6 +206,22 @@ def evaluate(fn: Function, args: dict[str, Any], *, assertions_enabled: bool = T
                 # Execution enters the try body; an exception happens only where an instruction
                 # raises, and evaluation stops there (exceptional paths are never validated).
                 env[ins.result] = False
+            elif op is Op.UNKNOWN_EFFECT and ins.attrs.get("yield_point"):
+                # The modeled consumer calls next() until exhaustion (I-138): it runs no code
+                # between resumptions and sends None, so ``yield v`` evaluates to None. ``yield
+                # from`` a concrete list/tuple/str hands out its items (no code runs) and
+                # evaluates to None; delegating to anything else may run user code.
+                val = env[ins.operands[0]]
+                if val is UNBOUND:
+                    return _unbound(out, env, ins)
+                if ins.attrs["yield_point"] == "yield_from" and not (
+                        ins.attrs.get("iter_kind") in ("list", "tuple", "str") and type(val) in (list, tuple, str)):
+                    out.kind, out.detail = "STUCK", f"`yield from` an unmodeled iterable at {ins.result}"
+                    out.values = env
+                    return out
+                env[ins.result] = None
+            elif op is Op.CALL and ins.attrs.get("generator_call") and ins.effect is Effect.NONE:
+                env[ins.result] = UNMODELED  # a generator object: creating it runs none of its body
             elif op is Op.LOOP_PHI and ins.attrs.get("handler"):
                 out.kind, out.detail = "STUCK", "exceptional control flow is not evaluated"
                 out.values = env

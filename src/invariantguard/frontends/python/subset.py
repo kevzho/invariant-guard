@@ -3,6 +3,9 @@
 Function-level checks decide whether a symbol can be lowered at all. Statement and
 expression-level unsupported constructs inside a lowerable function are handled by the
 lowering pass (they become UNKNOWN_EFFECT and taint dependent obligations).
+
+Generator functions (``yield``/``yield from`` in the body) are lowered like any function
+(I-138); async functions, and so async generators, stay unsupported.
 """
 
 from __future__ import annotations
@@ -43,8 +46,6 @@ def _unsupported_reason(sym: SymbolInfo) -> str | None:
     if getattr(node, "type_params", None):
         return "functions with type parameters are outside the M1 subset"
     for n in own_scope_nodes(node):
-        if isinstance(n, (ast.Yield, ast.YieldFrom)):
-            return "generator functions are outside the M1 subset"
         if isinstance(n, ast.Await):
             return "await is outside the M1 subset"
         if isinstance(n, (ast.Global, ast.Nonlocal)):

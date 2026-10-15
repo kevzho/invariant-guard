@@ -19,6 +19,16 @@ evaluator takes the normal branch (exceptions happen only where an instruction r
 stops at the first exception, so a failure that needs an exceptional path to be reached is
 never validated: it stays POSSIBLY_UNSAFE.
 
+Generators (I-138): a generator function is lowered like a function (``Function.generator``).
+Each ``yield``/``yield from`` is an ``UNKNOWN_EFFECT`` with attr ``yield_point`` and an
+unknown effect: the consumer runs arbitrary code there (assumed not to rebind the frame's
+locals: the frame-introspection assumption, which the result lists; CPython 3.13 allows it
+via ``gi_frame.f_locals``, PEP 667), may send any value (the result is an unknown value)
+or throw an exception in (an exception "at any point" is already covered by the I-133 edge).
+The evaluator models one consumer, ``next()`` until exhaustion: a yield produces None, and
+``yield from`` over a concrete built-in list, tuple or str runs it to the end; anything
+else is STUCK.
+
 M2 additions (each needed by a shipped analysis, docs/04 "extend only when needed"):
 ``BUILD_SEQ`` (built-in list/tuple displays, for bounds checks), the ``LIST``/``TUPLE``/
 ``OPTIONAL`` kinds (sequence bounds and narrow None-flow), and obligation sites for the
@@ -274,6 +284,7 @@ class Function:
     sites: list[ObligationSite]
     domain_note: str | None = None
     has_asserts: bool = False
+    generator: bool = False  # a generator function: the body runs as the generator is consumed (I-138)
     var_names: dict[str, str] = field(default_factory=dict)  # value id -> source variable name
     # M2 impact/summary data recorded during lowering (docs/07 graph model).
     fingerprint: str = ""  # digest of the position-free AST of this def

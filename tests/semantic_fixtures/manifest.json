@@ -755,11 +755,11 @@
       "domain": "exact built-in list, declared",
       "expected": {
         "property_result": "PROVED_SAFE",
-        "scope_validity": "EXACT_MODEL"
+        "scope_validity": "CONDITIONAL"
       },
       "expected_without_solver": {
         "property_result": "PROVED_SAFE",
-        "scope_validity": "EXACT_MODEL"
+        "scope_validity": "CONDITIONAL"
       },
       "ground_truth": {
         "method": "hand proof",

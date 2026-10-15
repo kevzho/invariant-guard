@@ -2,7 +2,8 @@
 
 A symbol's analysis result is a deterministic function of its key material:
 
-* global material: engine/IR versions, host interpreter, semantics profile, analysis
+* global material: engine/IR versions, host interpreter, semantics profile and model
+  revision, analysis
   configuration that can change results (budgets, solver settings, excludes), solver
   identity, dependency-lock digests and the contract-set slot;
 * the symbol ID, the position-free AST fingerprint of its definition, its declared
@@ -32,6 +33,15 @@ from ..models.spans import digest_json
 # of the active contract revisions scoped to it (id, revision, semantic digest, authority),
 # so declaring, approving, revising or retiring a contract invalidates exactly the
 # summaries of its target symbol (T23 contract dependencies, T38).
+# Revision of the modeled static semantics (lowering, evaluator, analyses). Bump it whenever a
+# change alters what a symbol's lowering means without changing its AST (I-139): validity keys
+# hold AST fingerprints, not IR digests. It is kept out of the semantics profile, which is part
+# of snapshot identity (shipped benchmark packets pin it). Revisions: 1 = through I-133 (try);
+# 2 = generator functions and generator calls (I-138/I-139); 3 = generator pre-start
+# frame-introspection assumption (I-140); 4 = handler-marker order and the shared-list
+# asynchronous-mutation assumption (I-141); 5 = str annotations and `str % x` (I-134..I-137).
+MODEL_REVISION = 5
+
 CONTRACT_SLOT = "per-symbol: digest of active contract revisions scoped to the symbol (contracts-v1)"
 
 
@@ -41,6 +51,7 @@ def global_key_material(cfg: Any, solver_identity: str, semantics_profile: str, 
         "ir": IR_SCHEMA_VERSION,
         "python": sys.version.split()[0],
         "semantics": semantics_profile,
+        "model_revision": MODEL_REVISION,
         "analysis": cfg.analysis_key(),
         "solver": solver_identity,
         "locks": [{"path": d["path"], "sha256": d["sha256"]} for d in locks],
