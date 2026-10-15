@@ -1299,6 +1299,15 @@ Reviewer round 3 on I-136; each issue was reproduced on `1cd1bb8` first (`guard 
 - Corpus (`guard check PATH --format json`): unchanged (boltons 27 of 160, dateutil 16 of 91, more-itertools 1 of 42, own `src` 4 of 119). 1 result carries the new assumption (own `src`).
 - Full suite (`TMPDIR=<private dir> pytest -q -p no:cacheprovider`, CPython 3.13): 901 passed, 17 skipped (Docker and real-model tests skipped: no daemon, opt-in). An earlier run made while other probes were running had 2 more failures (`test_a06_schema_rejects_contradictory_result_scope_pairs`, `test_human_format_groups_unknown_by_cause_and_verbose_lists_each`). Both pass alone and in the full run above.
 
+## Merge: str annotations (I-134..I-137) and generators (I-138..I-141) (2026-10-14)
+
+- The generators branch originally numbered its decisions I-135..I-138; they were renumbered to I-138..I-141 before merging, because I-134..I-137 are the str-annotation decisions. `MODEL_REVISION` is 5 (the annotation semantics on top of the generator revisions).
+- Full suite (`.venv/bin/python -m pytest -q -p no:cacheprovider`, CPython 3.13, Docker daemon unavailable): 906 passed, 17 skipped (Docker-backed and opt-in real-model tests).
+- Corpus (`guard check PATH --format json` on scratch copies with `.git`; resolved required obligations, main 286faec → merged): boltons 25/160 → 106/160 (105 PROVED_SAFE, all CONDITIONAL, plus the intentional `1/0` in `excutils.whoops_math` as PROVED_UNSAFE); dateutil 16/85 → 24/91; more-itertools 0/42 → 1/42; own src 4/119 → 8/120.
+- 78 of the 105 boltons proofs rely on the listed assumption that the right operand of `str % x` is not a str subclass overriding `__rmod__` (`[analysis] assume_no_str_rmod_override`). They show that a `%` is formatting, not division.
+- Top remaining UNKNOWN causes: operands of unmodeled type (attribute access, computed values, unannotated parameters), `with`, non-name assignment targets, IfExp, Dict and comprehension expressions.
+- The agent-patch evaluation did not run: the replay runner needs Docker, the Docker daemon was unresponsive, and the data volume had about 1.5 GB free. `benchmarks/agent_patch_eval.py` is not written.
+
 ## Known gaps (disclosed)
 
 - **Asynchronous code and frame introspection (I-141).** Code outside the function's control flow (a trace hook, a finalizer run by garbage collection, another thread, a signal handler) can read or rebind the function's locals through `frame.f_locals` (write-through on CPython 3.13, PEP 667): it can rebind an int local between two operations, or mutate a list the function created. The frame-introspection assumption (I-012) is listed only when an unknown effect lies on the path. Results with no such effect do not list it, so they assume such code does not introspect the analyzed frame.
@@ -1370,12 +1379,3 @@ Reviewer round 3 on I-136; each issue was reproduced on `1cd1bb8` first (`guard 
   - T72: a labeled held-out patch benchmark from real agent patches (T73's internal ablation report now exists: `paper/`).
 - Carry-overs: a probe cache; a second model evaluation once a download is authorized; pruning of the report index.
 - Remote and agent proposers: agent proposals from three Claude Sonnet 5.5 subagents are scored (`benchmarks/results/paper_agent_eval_run*.json`); a controlled comparison (same prompt and cap across arms, different model families, independent benchmark authors) is still open. Fix the U02 fingerprint defect and re-run the seeded benchmark. Exercise the Anthropic/OpenAI adapters against a hosted provider once a key is explicitly provided, and record the request/response identity.
-
-## Merge: str annotations (I-134..I-137) and generators (I-138..I-141) (2026-10-14)
-
-- The generators branch originally numbered its decisions I-135..I-138; they were renumbered to I-138..I-141 before merging, because I-134..I-137 are the str-annotation decisions. `MODEL_REVISION` is 5 (the annotation semantics on top of the generator revisions).
-- Full suite (`.venv/bin/python -m pytest -q -p no:cacheprovider`, CPython 3.13, Docker daemon unavailable): 906 passed, 17 skipped (Docker-backed and opt-in real-model tests).
-- Corpus (`guard check PATH --format json` on scratch copies with `.git`; resolved required obligations, main 286faec → merged): boltons 25/160 → 106/160 (105 PROVED_SAFE, all CONDITIONAL, plus the intentional `1/0` in `excutils.whoops_math` as PROVED_UNSAFE); dateutil 16/85 → 24/91; more-itertools 0/42 → 1/42; own src 4/119 → 8/120.
-- 78 of the 105 boltons proofs rely on the listed assumption that the right operand of `str % x` is not a str subclass overriding `__rmod__` (`[analysis] assume_no_str_rmod_override`). They show that a `%` is formatting, not division.
-- Top remaining UNKNOWN causes: operands of unmodeled type (attribute access, computed values, unannotated parameters), `with`, non-name assignment targets, IfExp, Dict and comprehension expressions.
-- The agent-patch evaluation did not run: the replay runner needs Docker, the Docker daemon was unresponsive, and the data volume had about 1.5 GB free. `benchmarks/agent_patch_eval.py` is not written.
