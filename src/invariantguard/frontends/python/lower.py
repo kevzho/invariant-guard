@@ -176,13 +176,16 @@ _DEFAULT_PY_TYPES = {Kind.INT: int, Kind.BOOL: bool, Kind.FLOAT: float, Kind.STR
 
 
 _FOLD_OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
-             ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod}
+             ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod, ast.Pow: operator.pow,
+             ast.LShift: operator.lshift, ast.RShift: operator.rshift, ast.BitOr: operator.or_,
+             ast.BitAnd: operator.and_, ast.BitXor: operator.xor}
+_FOLD_MAX_BITS = 4096  # folding stops (no value) beyond this, so a default cannot make folding slow
 
 
 def fold_constant(node: ast.AST, lookup: Callable[[str], tuple[bool, Any]]) -> tuple[bool, Any]:
-    """(True, value) for a literal, a resolved module constant (``lookup``) or +, -, *, /, //, %
-    and unary +/- over int/float values of those; (False, None) otherwise. Used only to refute
-    an annotation, so a value it cannot fold keeps the previous treatment (I-136)."""
+    """(True, value) for a literal, a resolved module constant (``lookup``) or the arithmetic and
+    bitwise operators (+ - * / // % ** << >> | & ^, bounded sizes) and unary +/- over int/float
+    values of those; (False, None) otherwise (I-136, I-137)."""
     ok, value = constant_value(node)
     if ok:
         return ok, value
@@ -197,10 +200,14 @@ def fold_constant(node: ast.AST, lookup: Callable[[str], tuple[bool, Any]]) -> t
         ok_l, left = fold_constant(node.left, lookup)
         ok_r, right = fold_constant(node.right, lookup)
         if ok_l and ok_r and type(left) in num and type(right) in num:
-            try:
-                return True, _FOLD_OPS[type(node.op)](left, right)
-            except (ArithmeticError, ValueError):
+            if isinstance(node.op, (ast.Pow, ast.LShift)) and isinstance(right, int) and abs(right) > _FOLD_MAX_BITS:
                 return False, None
+            try:
+                value = _FOLD_OPS[type(node.op)](left, right)
+            except (ArithmeticError, ValueError, TypeError):
+                return False, None
+            if type(value) in num and not (isinstance(value, int) and value.bit_length() > _FOLD_MAX_BITS):
+                return True, value
     return False, None
 
 
@@ -211,8 +218,10 @@ def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | Non
     A call that omits the argument binds the default, which no caller assumption covers.
     ``x: str = None`` (implicit Optional) is ``Optional[str]``. A default that folds to a
     value of another type (a literal, a module constant through ``lookup``, or constant
-    arithmetic over those) makes the annotation untrusted (``Kind.OBJECT``). A default that
-    does not fold keeps the annotation; the annotation assumption then names defaults explicitly.
+    arithmetic over those) makes the annotation untrusted (``Kind.OBJECT``). So does a default
+    that does not fold (a call, a class-body name, an import, a conditional ...): no caller
+    assumption covers the value a call that omits the argument binds, and it may already be
+    refutable from the source (I-137). A list/tuple display only has to match the kind.
     """
     if default is None or typ.origin is not Origin.ANNOTATION or typ.kind is Kind.OBJECT:
         return typ, shown
@@ -229,7 +238,7 @@ def default_checked_type(typ: SemType, shown: str | None, default: ast.AST | Non
     elif isinstance(default, ast.Tuple):
         match = k is Kind.TUPLE
     else:
-        return typ, shown
+        return SemType(Kind.OBJECT, Origin.ANNOTATION), f"{shown} (default {ast.unparse(default)} is not a checked constant; not trusted)"
     if match:
         return typ, shown
     text = ast.unparse(default)
@@ -1352,7 +1361,7 @@ class FunctionLowerer:
             left = self.expr(test.left, env)
             for i, (op, comp) in enumerate(zip(test.ops, test.comparators)):
                 right = self.expr(comp, env)
-                c = self.compare(op, left, right, test)
+                c = self.truth(self.compare(op, left, right, test), test)
                 last = i == len(test.ops) - 1
                 nxt = t if last else self.new_block("chain")
                 cur = self.cur
@@ -1766,8 +1775,11 @@ class FunctionLowerer:
         cmp = _CMPOPS.get(type(op))
         builtin = {Kind.INT, Kind.BOOL, Kind.FLOAT, Kind.NONE, Kind.STR}
         if cmp is None or lk not in builtin or rk not in builtin:
+            # A rich comparison that may dispatch to user code (__eq__/__lt__/...) can return
+            # any object, not just a bool (I-137): its result is untyped, so arithmetic,
+            # formatting or a truth test on it is not modeled as a bool in [0, 1].
             return self.emit(
-                Op.UNKNOWN_EFFECT, (left, right), SemType(Kind.BOOL, Origin.UNKNOWN), span, Effect.UNKNOWN, None,
+                Op.UNKNOWN_EFFECT, (left, right), UNKNOWN_TYPE, span, Effect.UNKNOWN, None,
                 reason=f"comparison {type(op).__name__} on {lk.value}/{rk.value} may dispatch to user code",
             )
         numeric = {Kind.INT, Kind.BOOL, Kind.FLOAT}

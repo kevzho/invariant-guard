@@ -1,11 +1,14 @@
 """``str`` annotations and ``str % x`` formatting (I-134), checked against CPython.
 
-Every function runs exhaustively in an isolated child interpreter over three input sets:
+Every function, and every public method of a public class (called on an instance), runs
+exhaustively in an isolated child interpreter over four input sets:
 
 * ``admitted``: annotated parameters get exact values of their annotation, unannotated ones get
-  ints, strs, None, a tuple, a list, a float and an object whose ``__str__`` divides by zero;
-* ``no_rmod_assumption``: the same, plus a ``str`` subclass whose ``__rmod__`` divides by zero for
-  unannotated parameters (CPython calls it *before* ``str.__mod__``);
+  ints, strs, None, a tuple, a list, a float, an object whose ``__str__`` divides by zero and an
+  object whose rich comparisons return ``-1``/``-2`` (not a bool);
+* ``no_rmod_assumption``: the same, plus a ``str`` subclass whose ``__rmod__`` divides by zero, and
+  an object whose comparisons return that subclass, for unannotated parameters (CPython calls
+  ``__rmod__`` *before* ``str.__mod__``);
 * ``annotations_violated``: annotated parameters get every value except that subclass (and a plain
   ``str`` subclass), unannotated ones the ``admitted`` values;
 * ``unrestricted``: every value for every parameter.
@@ -252,6 +255,42 @@ def default_constant_ok(n: int = K + 1):
     return 10 // (n * 2 + 1)
 
 
+def default_pow(n: int = -(2 ** -1)):
+    return 10 // (n * 2 + 1)
+
+
+def default_call(n: int = abs(D)):
+    return 10 // (n * 2 - 1)
+
+
+def default_shift_ok(n: int = 1 << 3):
+    return 10 // (n * 2 - 1)
+
+
+class KDef:
+    E = -0.5
+
+    def m(self, n: int = E):
+        return 10 // (n * 2 + 1)
+
+
+def cmp_fmt(x):
+    return '%s' % (x == 1)
+
+
+def cmp_fmt_bound(s: str, x):
+    b = x != 0
+    return s % b
+
+
+def cmp_arith(x):
+    return 1 / (1 + (x == 1))
+
+
+def cmp_arith_lt(x: float, y):
+    return 10 // (2 + (x < y))
+
+
 class _Num:
     def __init__(self, v):
         self.v = v
@@ -337,6 +376,32 @@ class _IntMutator(int):
         return False
 
     __hash__ = int.__hash__
+
+
+class _CmpNeg:
+    """Rich comparisons return ints, not bools: arithmetic on them is not over [0, 1]."""
+
+    def __eq__(self, other):
+        return -1
+
+    def __ne__(self, other):
+        return -1
+
+    def __lt__(self, other):
+        return -2
+
+    __gt__ = __lt__
+    __hash__ = None
+
+
+class _CmpRMod:
+    """Rich comparisons return a str subclass whose __rmod__ divides by zero."""
+
+    def __eq__(self, other):
+        return _RModZero("r")
+
+    __ne__ = __lt__ = __gt__ = __eq__
+    __hash__ = None
 '''
 
 # A module that rebinds the name ``str``: its annotations are not trusted (dynamic dispatch).
@@ -353,8 +418,8 @@ path = sys.argv[1]
 ns = runpy.run_path(path)
 ints = list(range(-3, 4))
 strs = ["", "a", "0", "%s", "ab"]
-others = [None, (1, 2), [1], 1.5, ns.get("_StrZero", lambda: None)()]
-rmod = [ns["_RModZero"]("s")] if "_RModZero" in ns else []
+others = [None, (1, 2), [1], 1.5, ns.get("_StrZero", lambda: None)()] + ([ns["_CmpNeg"]()] if "_CmpNeg" in ns else [])
+rmod = [ns["_RModZero"]("s")] + ([ns["_CmpRMod"]()] if "_CmpRMod" in ns else []) if "_RModZero" in ns else []
 extra = [ns[k]("a") for k in ("_StrSub", "_ModZero", "_Mutator") if k in ns] + ([ns["_IntMutator"](1)] if "_IntMutator" in ns else [])
 DEFAULT = object()  # call without this argument: the function's own default is used
 
@@ -385,13 +450,27 @@ def admitted(p, x):
         return True
     return any(type(x) is type(y) and x == y for y in _domain(p, "admitted"))  # type first: no user __eq__
 
+def frames(tb):  # (qualified function name, line) of each frame in the analyzed file
+    while tb is not None:
+        if tb.tb_frame.f_code.co_filename == path:
+            yield tb.tb_frame.f_code.co_qualname, tb.tb_lineno
+        tb = tb.tb_next
+
+# Module-level functions, and methods of module-level classes called on an instance.
+targets = [(name, fn) for name, fn in ns.items()
+           if not name.startswith("_") and inspect.isfunction(fn) and fn.__module__ == "<run_path>"]
+for cname, cls in list(ns.items()):
+    if cname.startswith("_") or not inspect.isclass(cls) or cls.__module__ != "<run_path>":
+        continue
+    for mname, m in vars(cls).items():
+        if not mname.startswith("_") and inspect.isfunction(m):
+            targets.append((f"{cname}.{mname}", getattr(cls(), mname)))
+
 out = {}
 single = set()  # (function, line, exception, parameter): fails with only that annotation violated
 for mode in ("admitted", "no_rmod_assumption", "annotations_violated", "unrestricted"):
     fails = set()
-    for name, fn in ns.items():
-        if name.startswith("_") or not inspect.isfunction(fn) or fn.__module__ != "<run_path>":
-            continue
+    for name, fn in targets:
         params = list(inspect.signature(fn).parameters.values())
         for args in itertools.product(*[domain(p, mode) for p in params]):
             violated = [p.name for p, x in zip(params, args) if not admitted(p, x)]
@@ -402,10 +481,10 @@ for mode in ("admitted", "no_rmod_assumption", "annotations_violated", "unrestri
             try:
                 fn(**call)
             except Exception as e:
-                fr = [(t.name, t.lineno) for t in traceback.extract_tb(e.__traceback__) if t.filename == path]
+                fr = list(frames(e.__traceback__))
                 if not fr:
                     continue
-                if fr[-1][0] in ("__rmod__", "__mod__") and len(fr) >= 2:  # the operator itself was replaced
+                if fr[-1][0].rsplit(".", 1)[-1] in ("__rmod__", "__mod__") and len(fr) >= 2:  # the operator itself was replaced
                     key = (fr[-2][0], fr[-2][1], type(e).__name__)
                 else:
                     key = (fr[-1][0], fr[-1][1], type(e).__name__)
@@ -485,6 +564,17 @@ EXPECTED = {
     ("default_constant_ok", "10 // (n * 2 + 1)"): ("PROVED_SAFE", "PROVED_SAFE"),
     # `Optional` bound in the class body is not typing.Optional.
     ("COpt.meth", "10 // (x * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
+    # Review round 3: a default that does not fold (a call, a class-body name) is not trusted;
+    # `**` and `<<` fold.
+    ("default_pow", "10 // (n * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
+    ("default_call", "10 // (n * 2 - 1)"): ("UNKNOWN", "UNKNOWN"),
+    ("default_shift_ok", "10 // (n * 2 - 1)"): ("PROVED_SAFE", "PROVED_SAFE"),
+    ("KDef.m", "10 // (n * 2 + 1)"): ("UNKNOWN", "UNKNOWN"),
+    # A comparison that may run a user __eq__/__lt__ returns any object, not a bool.
+    ("cmp_fmt", "'%s' % (x == 1)"): ("PROVED_SAFE", "UNKNOWN"),
+    ("cmp_fmt_bound", "s % b"): ("PROVED_SAFE", "UNKNOWN"),
+    ("cmp_arith", "1 / (1 + (x == 1))"): ("UNKNOWN", "UNKNOWN"),
+    ("cmp_arith_lt", "10 // (2 + (x < y))"): ("UNKNOWN", "UNKNOWN"),
 }
 
 
@@ -516,6 +606,12 @@ def _check(root: Path) -> dict[tuple[str, str], str]:
         assert any(k[1] == fn and k[4] == "s" for k in truth["single_violation"]), fn
     assert any(k[1] == "loop_int_later" and k[4] == "n" for k in truth["single_violation"])
     assert any(k[1] == "default_constant" for k in truth["admitted"]) and any(k[1] == "default_arith" for k in truth["admitted"])
+    for fn in ("default_pow", "default_call", "KDef.m", "cmp_arith", "cmp_arith_lt"):
+        assert any(k[1] == fn for k in truth["admitted"]), fn
+    for fn in ("cmp_fmt", "cmp_fmt_bound"):
+        zde = {k for k in truth["no_rmod_assumption"] - truth["admitted"] if k[1] == fn and k[3] == "ZeroDivisionError"}
+        assert zde, fn
+    assert any(k[1] == "COpt.meth" for k in truth["unrestricted"])  # methods are enumerated too
     got: dict[tuple[str, str], str] = {}
     for o in rep["obligation_results"]:
         mod, fn = o["symbol_id"].split("::")

@@ -339,7 +339,7 @@ class FunctionChecker:
             ann = ", ".join(f"{p.name}: {p.annotation}" for p in annotated)
             kinds = sorted({(p.type.inner.value + " or None") if p.type.kind is Kind.OPTIONAL and p.type.inner else p.type.kind.value for p in annotated})
             assumptions = [
-                f"annotation-only domain ({ann}): assumes callers pass (and non-literal parameter defaults evaluate to) exact built-in {'/'.join(kinds)} values (type(x) is {kinds[0].split(' ')[0]}); annotations are not enforced at runtime",
+                f"annotation-only domain ({ann}): assumes callers pass exact built-in {'/'.join(kinds)} values (type(x) is {kinds[0].split(' ')[0]}); annotations are not enforced at runtime; a parameter default is trusted only when it folds to a constant of the annotated type",
                 "bool and int subclasses (which may override arithmetic/comparison operators) and list/tuple/str subclasses are outside this assumption",
             ]
             if declared:
