@@ -1,6 +1,6 @@
 # 15. Ordered implementation backlog
 
-Use this file as the implementation checklist. Check an item only after its completion evidence exists in IMPLEMENTATION_STATUS.md. Dependencies follow the milestone sequence. M1 is the first Claude assignment.
+Use this file as the implementation checklist. Check an item only after its completion evidence exists in IMPLEMENTATION_STATUS.md. Dependencies follow the milestone sequence.
 
 ## M0: foundation
 

@@ -14,7 +14,7 @@ The suite runs offline: any in-process network connection fails a test. Docker-b
 
 ## Rules for changes
 
-Read [CLAUDE.md](CLAUDE.md) (the evidence rules, written for both humans and coding agents) and [docs/03_EVIDENCE_AND_POLICY.md](docs/03_EVIDENCE_AND_POLICY.md). In short:
+Read [docs/03_EVIDENCE_AND_POLICY.md](docs/03_EVIDENCE_AND_POLICY.md) (the evidence rules, for both humans and coding agents). In short:
 
 - Never weaken an outcome to make a result look better. Unsupported behavior must produce `UNKNOWN`, which makes the run `INCOMPLETE`, never `PASS`.
 - Extending the modeled Python subset needs semantic fixtures with safe, unsafe and unknown cases. They must agree with real CPython behavior; `tests/differential/` has the harness.

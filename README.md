@@ -106,7 +106,7 @@ remote_allowed = true                  # required before any non-loopback destin
 - `docs/01`-`docs/15`: the original design specification (product, architecture, evidence policy, IR, engines, roadmap). Commands in these documents describe the intended interface, not necessarily what is implemented.
 - [docs/DECISIONS.md](docs/DECISIONS.md): the implementation decision log.
 - `paper/`: a research write-up of the engine and its benchmarks.
-- `docs/build_kit/`: the original build specification. [CLAUDE.md](CLAUDE.md) holds the evidence rules any contributor (human or agent) must follow.
+- [docs/03_EVIDENCE_AND_POLICY.md](docs/03_EVIDENCE_AND_POLICY.md): the evidence rules any contributor (human or agent) must follow.
 
 ## Contributing
 

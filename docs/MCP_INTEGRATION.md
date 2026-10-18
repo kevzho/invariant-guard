@@ -63,7 +63,7 @@ This is the tested client configuration. Put it in a file named `.mcp.json` at t
 
 To let agents run dynamic contract checks, add `"--allow-profile", "NAME"` for an isolated docker profile that is already defined and enabled in `/ABSOLUTE/PATH/TO/your-repository/.guard/config.toml`. Prepare its image once with `guard runner setup --run-profile NAME`; this is the only networked command. An equivalent CLI registration is `claude mcp add --scope project invariantguard -- /ABSOLUTE/PATH/TO/invariant-guard/.venv/bin/guard mcp serve --stdio --root app=/ABSOLUTE/PATH/TO/your-repository`.
 
-Suggested agent convention, for the project's CLAUDE.md. It is a convention only, not enforcement:
+Suggested agent convention, for the project's agent instructions file. It is a convention only, not enforcement:
 
 > Optional: to propose behavioral contracts for a function you changed, call `get_context_packet(repository="app", symbol="path/to/mod.py::fn")`, write candidates that follow its `candidate_schema`, and submit them with `propose_contracts` using the returned `context_packet_digest`. Accepted candidates are INFERRED proposals for a maintainer to review. Never treat them as approved.
 >
