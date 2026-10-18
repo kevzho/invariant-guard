@@ -143,6 +143,7 @@ class Lowered:
     errored_sites: list[tuple[str, ObligationSite, str]]
     domains: dict[str, Any]
     t_ms: float = 0.0
+    scoped: bool = False  # only some files were lowered (guard verify, I-143); the rest are unaffected
 
     def functions(self) -> dict[str, Function]:
         return {fn.symbol_id: fn for m in self.modules for fn in m.functions}
@@ -164,7 +165,8 @@ class Lowered:
         return out
 
 
-def lower_snapshot(snap: Snapshot, cfg: Config) -> Lowered:
+def lower_snapshot(snap: Snapshot, cfg: Config, only: set[str] | None = None) -> Lowered:
+    """Lower every captured file, or only the paths in ``only`` (the others stay available for resolution)."""
     t0 = time.perf_counter()
     require = cfg.analysis.require_coverage
     domains = cfg.domain_map()
@@ -178,14 +180,18 @@ def lower_snapshot(snap: Snapshot, cfg: Config) -> Lowered:
     raw = {f.path: f.raw for f in snap.files}
     # Modules are parsed on demand into a bounded cache (cross-module resolution may need a
     # module before its own turn); each file's bytes come from the immutable snapshot.
-    program = ProgramIndex(set(raw), lambda path: parse_source(path, raw[path]))
+    max_nodes = cfg.analysis.max_file_nodes
+    program = ProgramIndex(set(raw), lambda path: parse_source(path, raw[path], max_nodes))
     modules: list[ModuleIR] = []
     for f in snap.files:
+        if only is not None and f.path not in only:
+            continue
         ctx = program.context(f.path)
         if ctx is None:
             exc = program.failures[f.path]
             where = f" (line {exc.line})" if exc.line else ""
-            skipped.append({"kind": "parse_failure", "path": f.path, "symbol_id": None, "reason": f"{exc.kind}: {exc.message}{where}", "required": require})
+            kind = "resource_limit" if exc.kind == "resource_limit" else "parse_failure"
+            skipped.append({"kind": kind, "path": f.path, "symbol_id": None, "reason": f"{exc.kind}: {exc.message}{where}", "required": require})
             continue
         fr = lower_module(ctx.parsed, snap.snapshot_id, domains, program)
         check_ir_version(fr.module)
@@ -197,12 +203,12 @@ def lower_snapshot(snap: Snapshot, cfg: Config) -> Lowered:
             errors.append(e)
             for s in sites:
                 errored_sites.append((e["symbol_id"], s, f"engine error during {e['stage']}: {e['error_type']}: {e['message']}"))
-    captured_paths = {f.path for f in snap.files}
+    captured_paths = {f.path for f in snap.files if only is None or f.path in only}
     known_symbols = {fn.symbol_id for m in modules for fn in m.functions} | {u.symbol_id for m in modules for u in m.unsupported_symbols}
     for sym in sorted(domains):
         if sym.split("::", 1)[0] in captured_paths and sym not in known_symbols:
             diagnostics.append({"kind": "domain_unmatched", "symbol_id": sym, "message": "declared domain names a symbol that was not found in the captured source"})
-    return Lowered(snap, modules, program, skipped, errors, diagnostics, errored_sites, domains, (time.perf_counter() - t0) * 1000)
+    return Lowered(snap, modules, program, skipped, errors, diagnostics, errored_sites, domains, (time.perf_counter() - t0) * 1000, scoped=only is not None)
 
 
 def domain_reason(domains: dict[str, Any], symbol_id: str) -> str | None:

@@ -19,6 +19,14 @@ from ...models.spans import LineIndex
 
 PYTHON_GRAMMAR = f"{sys.version_info.major}.{sys.version_info.minor}"
 
+# Resource limits, checked on the AST before anything walks it recursively. The analyses walk
+# ASTs recursively, so a deeper tree can exhaust the interpreter's recursion limit (the
+# shallowest crash measured was about 450 levels of unary minus; I-142). A file over a limit is
+# skipped as `resource_limit` (missing coverage), never an engine crash.
+MAX_AST_DEPTH = 200
+DEFAULT_MAX_FILE_NODES = 100_000
+MAX_SOURCE_BYTES = 16 << 20
+
 
 @dataclass
 class ParsedFile:
@@ -31,7 +39,7 @@ class ParsedFile:
 
 
 class ParseFailure(Exception):
-    """The file cannot be analyzed (syntax error, unsupported encoding). Not an engine error."""
+    """The file cannot be analyzed (syntax error, unsupported encoding, resource limit). Not an engine error."""
 
     def __init__(self, path: str, kind: str, message: str, line: int | None = None) -> None:
         super().__init__(message)
@@ -41,7 +49,22 @@ class ParseFailure(Exception):
         self.line = line
 
 
-def parse_source(path: str, raw: bytes) -> ParsedFile:
+def ast_size(tree: ast.AST, max_nodes: int | None) -> tuple[int, int, bool]:
+    """(nodes, depth, truncated): counted without recursion, stopping once over a limit."""
+    nodes, depth, stack = 0, 0, [(tree, 1)]
+    while stack:
+        node, d = stack.pop()
+        nodes += 1
+        depth = max(depth, d)
+        if depth > MAX_AST_DEPTH or (max_nodes is not None and nodes > max_nodes):
+            return nodes, depth, True
+        stack.extend((c, d + 1) for c in ast.iter_child_nodes(node))
+    return nodes, depth, False
+
+
+def parse_source(path: str, raw: bytes, max_nodes: int | None = DEFAULT_MAX_FILE_NODES) -> ParsedFile:
+    if len(raw) > MAX_SOURCE_BYTES:
+        raise ParseFailure(path, "resource_limit", f"file is {len(raw)} bytes (limit {MAX_SOURCE_BYTES})")
     try:
         encoding, _ = tokenize.detect_encoding(io.BytesIO(raw).readline)
     except SyntaxError as exc:
@@ -54,6 +77,11 @@ def parse_source(path: str, raw: bytes) -> ParsedFile:
         raise ParseFailure(path, "encoding", f"invalid UTF-8: {exc}") from None
     try:
         tree = ast.parse(raw, filename=path, mode="exec", type_comments=False)
+        nodes, depth, over = ast_size(tree, max_nodes)
+        if over:
+            if depth > MAX_AST_DEPTH:
+                raise ParseFailure(path, "resource_limit", f"syntax tree is deeper than {MAX_AST_DEPTH} levels (engine limit)")
+            raise ParseFailure(path, "resource_limit", f"syntax tree has more than {max_nodes} nodes (analysis.max_file_nodes)")
         table = symtable.symtable(text, path, "exec")
     except SyntaxError as exc:
         raise ParseFailure(path, "syntax_error", f"SyntaxError: {exc.msg}", exc.lineno) from None

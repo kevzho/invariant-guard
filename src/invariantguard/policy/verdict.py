@@ -114,7 +114,7 @@ def evaluate(inp: PolicyInput) -> PolicyDecision:
     if inp.unknown_required:
         reasons.append(f"{inp.unknown_required} required obligation(s) UNKNOWN")
     if inp.skipped_required:
-        reasons.append(f"{inp.skipped_required} required check(s) skipped (e.g. unparsable file or changed source)")
+        reasons.append(f"{inp.skipped_required} required check(s) skipped (e.g. unparsable file, file over a resource limit, or changed source)")
     reasons.extend(inp.incomplete_reasons)
     if warnings:
         reasons.append(f"{warnings} advisory finding(s) (conditional, overapproximate or pre-existing)")

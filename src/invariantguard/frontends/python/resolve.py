@@ -369,14 +369,7 @@ class ModuleContext:
         return done("unresolved", f"global '{name}' is bound by a {b.kind} statement that is not modeled")
 
     def _module_for_from(self, stmt: ast.ImportFrom) -> str | None:
-        if stmt.level == 0:
-            return stmt.module
-        pkg = self.path.split("/")[:-1]
-        if stmt.level - 1 > len(pkg):
-            return None
-        base = pkg[: len(pkg) - (stmt.level - 1)]
-        parts = base + (stmt.module.split(".") if stmt.module else [])
-        return ".".join(parts) if parts else None
+        return from_import_module(self.path, stmt.level, stmt.module)
 
     def _resolve_from(self, stmt: ast.ImportFrom) -> tuple[str | None, str]:
         mod = self._module_for_from(stmt)
@@ -392,6 +385,18 @@ class ModuleContext:
         if len(present) != 1:
             return None, f"module '{mod}' maps to {len(present)} captured files ({', '.join(sorted(cands)) or 'none'})"
         return present[0], "ok"
+
+
+def from_import_module(path: str, level: int, module: str | None) -> str | None:
+    """Dotted module that ``from <level dots><module> import ...`` in file ``path`` names (None above the root)."""
+    if level == 0:
+        return module
+    pkg = path.split("/")[:-1]
+    if level - 1 > len(pkg):
+        return None
+    base = pkg[: len(pkg) - (level - 1)]
+    parts = base + (module.split(".") if module else [])
+    return ".".join(parts) if parts else None
 
 
 def stored_names_outer(stmt: ast.stmt) -> set[str]:

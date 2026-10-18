@@ -149,6 +149,7 @@
               "kind": {
                 "enum": [
                   "parse_failure",
+                  "resource_limit",
                   "source_changed_during_run",
                   "engine_error",
                   "excluded_path"
@@ -595,6 +596,59 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        },
+        "lowering": {
+          "description": "Which files were lowered (I-143). In quick mode, only changed files and files whose bindings can reach them through 'from ... import' bindings.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scoped",
+            "files_lowered",
+            "files_not_lowered",
+            "index_ms",
+            "basis",
+            "lowered"
+          ],
+          "properties": {
+            "scoped": {
+              "type": "boolean"
+            },
+            "files_lowered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "files_not_lowered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "index_ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "basis": {
+              "type": "string"
+            },
+            "lowered": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "reason"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       },

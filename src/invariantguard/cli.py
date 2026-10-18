@@ -17,6 +17,7 @@ errors go to stderr. Exit codes follow docs/09: 0 PASS/WARN, 1 BLOCK, 2 INCOMPLE
 from __future__ import annotations
 
 import argparse
+import faulthandler
 import json
 import re
 import sys
@@ -742,6 +743,13 @@ def _cmd_init(args: argparse.Namespace) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    # A fatal signal (for example a crash inside a C extension) prints the Python stack to
+    # stderr instead of ending the process silently.
+    if not faulthandler.is_enabled() and sys.__stderr__ is not None:
+        try:
+            faulthandler.enable(file=sys.__stderr__)
+        except (OSError, ValueError, AttributeError):  # no file descriptor (embedded interpreter)
+            pass
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command is None:

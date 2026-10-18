@@ -52,6 +52,9 @@ class AnalysisConfig:
     # I-134: `str % x` with x of unmodeled type is formatting, assuming x is not a str subclass
     # overriding __rmod__ (listed on every result that relies on it); false keeps it UNKNOWN.
     assume_no_str_rmod_override: bool = True
+    # I-142: a file whose syntax tree has more nodes is skipped as `resource_limit` (missing
+    # coverage). Bounds time and memory on generated files.
+    max_file_nodes: int = 100_000
 
 
 @dataclass
@@ -100,6 +103,7 @@ class Config:
             "per_query_rlimit": a.per_query_rlimit,
             "witness_search": a.witness_search,
             "assume_no_str_rmod_override": a.assume_no_str_rmod_override,
+            "max_file_nodes": a.max_file_nodes,
             "exclude": sorted(self.exclude),
         }
 
@@ -115,6 +119,7 @@ _ANALYSIS_KEYS = {
     "witness_search": bool,
     "full_budget_ms": int,
     "assume_no_str_rmod_override": bool,
+    "max_file_nodes": int,
 }
 _TOP_KEYS = {"schema_version", "analysis", "execution", "semantic", "privacy", "scope", "domains"}
 
@@ -148,7 +153,7 @@ def parse_config(raw: bytes, path: Path | None = None) -> Config:
     a = cfg.analysis
     if a.mode not in ("quick", "full"):
         raise ConfigError("analysis.mode must be 'quick' or 'full'")
-    if a.per_query_timeout_ms <= 0 or a.quick_budget_ms <= 0 or a.full_budget_ms <= 0 or a.per_query_rlimit < 0:
+    if a.per_query_timeout_ms <= 0 or a.quick_budget_ms <= 0 or a.full_budget_ms <= 0 or a.per_query_rlimit < 0 or a.max_file_nodes <= 0:
         raise ConfigError("analysis budgets must be positive")
     if any(lang != "python" for lang in a.languages):
         raise ConfigError(f"unsupported analysis.languages {a.languages}: only 'python' is implemented")

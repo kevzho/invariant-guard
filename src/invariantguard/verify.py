@@ -42,6 +42,7 @@ from .contracts.registry import REQUIRED_AUTHORITIES, ContractRegistry, Registry
 from .impact.attribution import BaseModel, classify, resolved
 from .impact.graph import Slice, affected_slice, build_graph, diff_files, match_symbols, symbol_table
 from .impact.keys import CONTRACT_SLOT, global_key_material, snapshot_keys
+from .impact.scope import Scope, file_facts, lowering_scope
 from .models.enums import PatchRelation, PropertyResult, ScopeValidity, Severity
 from .models.spans import digest_json, short_hex
 from .orchestration import (
@@ -222,7 +223,7 @@ def run_verify(opts: VerifyOptions) -> CheckResult:
         base = resolve_base(opts.base, root, scope_rel, cfg, repo, store)
         t_base_capture = (time.perf_counter() - t0) * 1000
         cancellation.check()
-        base_lowered = lower_snapshot(base.snapshot, cfg) if base.snapshot is not None else None
+        base_lowered = None  # lowered per attempt: quick mode lowers only what the candidate's changes can reach (I-143)
         restart_note: dict[str, Any] | None = None
         started: list[str] = []
         try:
@@ -378,12 +379,12 @@ def _prepare_execution(opts: Any, cfg: Config, view: RegistryView | None, log: l
     return setup
 
 
-def _global_change(cfg: Config, solver_identity: str, base: BaseSpec, base_lowered: Lowered | None, cand: Snapshot) -> tuple[str | None, list[str]]:
+def _global_change(cfg: Config, solver_identity: str, base: BaseSpec, base_snap: Snapshot | None, cand: Snapshot) -> tuple[str | None, list[str]]:
     notes: list[str] = []
     cand_mat = global_key_material(cfg, solver_identity, SEMANTICS_PROFILE, cand.dependency_locks)
-    if base_lowered is not None:
-        base_mat = global_key_material(cfg, solver_identity, SEMANTICS_PROFILE, base_lowered.snap.dependency_locks)
-        base_cfg_digest = base_lowered.snap.config_digest
+    if base_snap is not None:
+        base_mat = global_key_material(cfg, solver_identity, SEMANTICS_PROFILE, base_snap.dependency_locks)
+        base_cfg_digest = base_snap.config_digest
     else:
         stored = base.stored_results or {}
         base_mat = stored.get("global_material", {})
@@ -394,6 +395,22 @@ def _global_change(cfg: Config, solver_identity: str, base: BaseSpec, base_lower
     if not diff:
         return None, notes
     return "changed " + ", ".join(diff) + " (dependency locks, engine, analysis configuration or solver identity invalidate every summary)", notes
+
+
+def _lowering_scope(base_snap: Snapshot, cand: Snapshot, cfg: Config) -> Scope:
+    """Files that quick verify lowers (I-143): changed files plus files that can reach them."""
+    files = diff_files(base_snap, cand)
+    changed = set(files.added) | set(files.deleted) | set(files.modified) | set(files.renamed) | set(files.renamed.values())
+    facts = {f.path: (file_facts(f.path, f.raw, cfg.analysis.max_file_nodes) if f.path not in changed else None) for f in cand.files}
+    return lowering_scope(facts, changed)
+
+
+def _align_summaries(a: Lowered, b: Lowered) -> None:
+    """Both sides summarize the same modules, so changed_globals compares like with like."""
+    for p in sorted(set(a.program.summaries) | set(b.program.summaries)):
+        for side in (a, b):
+            if p not in side.program.summaries:
+                side.program.context(p)
 
 
 def _stored_base_model(base: BaseSpec) -> tuple[dict[str, Any], dict[str, str], dict[str, dict[str, Any]]]:
@@ -420,14 +437,26 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
     t_capture = (time.perf_counter() - t0) * 1000
     log.append(f"captured {len(cand_snap.files)} file(s), candidate snapshot {cand_snap.snapshot_id[:19]}…; base {base.kind}:{base.value}")
     cancellation.check()
-    cand_lowered = lower_snapshot(cand_snap, cfg)
+    scope: Scope | None = None
+    t_scope = 0.0
+    if base.snapshot is not None:
+        if not full and _global_change(cfg, solver.identity, base, base.snapshot, cand_snap)[0] is None:
+            ts = time.perf_counter()
+            scope = _lowering_scope(base.snapshot, cand_snap, cfg)
+            t_scope = (time.perf_counter() - ts) * 1000
+        base_lowered = lower_snapshot(base.snapshot, cfg, only=scope.files if scope is not None else None)
+        cancellation.check()
+    cand_lowered = lower_snapshot(cand_snap, cfg, only=scope.files if scope is not None else None)
+    if scope is not None and base_lowered is not None:
+        _align_summaries(base_lowered, cand_lowered)
+        log.append(f"lowered {len(scope.files)} of {len(cand_snap.files)} file(s): the others cannot reach a changed file through imports")
     cancellation.check()
 
     # -- impact -----------------------------------------------------------------------------
     t1 = time.perf_counter()
     _, keys_c = snapshot_keys(cand_lowered, cfg, solver.identity, SEMANTICS_PROFILE, contract_digests)
     syms_c = symbol_table(cand_lowered, keys_c)
-    global_change, unresolved = _global_change(cfg, solver.identity, base, base_lowered, cand_snap)
+    global_change, unresolved = _global_change(cfg, solver.identity, base, base.snapshot, cand_snap)
     if base.note:
         unresolved.append(base.note)
     if base_lowered is not None:
@@ -539,7 +568,7 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
                         "reason": "file content or the file set changed after capture (also after one restart); results for this snapshot are incomplete", "required": True})
     if base_lowered is not None:
         for s in base_lowered.skipped:
-            if s["kind"] in ("parse_failure", "excluded_path"):
+            if s["kind"] in ("parse_failure", "resource_limit", "excluded_path"):
                 unresolved.append(f"base: {s['kind']} {s['path']}: {s['reason']}")
 
     # -- attribution ----------------------------------------------------------------------------------
@@ -667,6 +696,16 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
             "published_entries": published,
         },
         "unresolved_changes": unresolved,
+        "lowering": {
+            "scoped": scope is not None,
+            "files_lowered": len({m.path for m in cand_lowered.modules}) if scope is not None else len(cand_snap.files),
+            "files_not_lowered": len(cand_snap.files) - len(scope.files & {f.path for f in cand_snap.files}) if scope is not None else 0,
+            "index_ms": round(t_scope, 3),
+            "basis": ("quick mode: only changed files and files whose bindings can reach a changed file through 'from ... import' "
+                      "bindings were lowered; the others are unaffected (I-143)") if scope is not None else
+                     ("whole scope (full mode, global invalidation or no base source)" if base.snapshot is None or full or global_change else "whole scope"),
+            "lowered": [{"path": p, "reason": scope.reasons[p]} for p in sorted(scope.files)[:200]] if scope is not None else [],
+        },
     }
     diagnostics = list(cand_lowered.diagnostics) + ([restart_note] if restart_note else [])
     extra_sections: dict[str, Any] = {"patch": patch, "_incomplete_reasons": incomplete_reasons}
