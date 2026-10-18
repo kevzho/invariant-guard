@@ -838,6 +838,7 @@
         "witness_in_base": {
           "enum": [
             "FAILED_SAME_SITE",
+            "FAILED_MOVED_SITE",
             "FAILED_OTHER_SITE",
             "PASSED",
             "RAISED_OTHER",
@@ -849,6 +850,7 @@
         "witness_in_candidate": {
           "enum": [
             "FAILED_SAME_SITE",
+            "FAILED_MOVED_SITE",
             "FAILED_OTHER_SITE",
             "PASSED",
             "RAISED_OTHER",

@@ -580,24 +580,25 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
     if base_lowered is None:
         bmodel.stored = _stored_base_model(base)[2]
     relations: dict[str, Relation] = {}
+    cand_fns = cand_lowered.functions()
     for o in analysis.outcomes:
         if o.result is PropertyResult.PROVED_SAFE:
             continue
         oid = site_obligation_id(o.symbol_id, o.site)
-        relations[oid] = classify(o, keys_c.get(o.symbol_id), match.cand_to_base.get(o.symbol_id), match.uncertain.get(o.symbol_id), bmodel)
+        relations[oid] = classify(o, keys_c.get(o.symbol_id), match.cand_to_base.get(o.symbol_id), match.uncertain.get(o.symbol_id), bmodel,
+                                  cand_fns.get(o.symbol_id))
 
     extra_findings: list[dict[str, Any]] = []
     extra_evidence: list[dict[str, Any]] = []
     if base_analysis is not None:
         b2c = match.base_to_cand()
         cand_by_anchor = {(o.symbol_id, o.site.property_id, o.site.anchor): o for o in analysis.outcomes}
-        cand_fns = cand_lowered.functions()
         for bo in base_analysis.outcomes:
             csym = b2c.get(bo.symbol_id)
             if csym is not None and csym not in select_c:
                 continue
             co = cand_by_anchor.get((csym, bo.site.property_id, bo.site.anchor)) if csym else None
-            rel = resolved(bo, cand_fns.get(csym) if csym else None, co, csym)
+            rel = resolved(bo, cand_fns.get(csym) if csym else None, co, csym, bmodel.functions.get(bo.symbol_id))
             if rel is None:
                 continue
             ev = bo.reused_evidence or make_evidence(bo, base_lowered.snap.snapshot_id, run_id, created_at, False)  # type: ignore[union-attr]

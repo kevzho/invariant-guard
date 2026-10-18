@@ -8,6 +8,7 @@ against the *base* model with the IR evaluator (the same concrete input in both 
 witness in base        base obligation                                        relation
 =====================  ====================================================  ============
 fails at the same site (any)                                                  PRE_EXISTING
+fails at a moved site  (any; same property, anchor on neither side)            PRE_EXISTING
 passes / returns       PROVED_UNSAFE or POSSIBLY_UNSAFE (a known defect)      CHANGED
 passes / returns       PROVED_SAFE, UNKNOWN or no such site in base           INTRODUCED
 stuck (unmodeled)      PROVED_SAFE under the same declared domain             INTRODUCED
@@ -80,8 +81,16 @@ def _args_for(fn: Function, witness: dict[str, Any]) -> dict[str, Any] | None:
     return args
 
 
-def eval_in(fn: Function | None, property_id: str, anchor: str, witness: dict[str, Any] | None, runtime_mode: str | None) -> str:
-    """Outcome of running ``witness`` through ``fn``'s IR at the site with ``anchor``."""
+def eval_in(fn: Function | None, property_id: str, anchor: str, witness: dict[str, Any] | None, runtime_mode: str | None,
+            other: Function | None = None) -> str:
+    """Outcome of running ``witness`` through ``fn``'s IR at the site with ``anchor``.
+
+    ``other`` is the matched function on the other side. When ``fn`` has no site with
+    ``anchor``, each side has exactly one site of this property without a counterpart
+    anchor (the edit moved one operation, as in ``s = a + b; 1 / s``) and the witness fails
+    at that site: FAILED_MOVED_SITE. A failure at an operation the patch left in place, or
+    an edit that adds or removes more than one such operation, stays FAILED_OTHER_SITE.
+    """
     if fn is None or witness is None:
         return "NOT_EVALUATED"
     args = _args_for(fn, witness)
@@ -90,7 +99,15 @@ def eval_in(fn: Function | None, property_id: str, anchor: str, witness: dict[st
     ev = evaluate(fn, args, assertions_enabled=runtime_mode != "python -O (assertions disabled)")
     target = next((s for s in fn.sites if s.property_id == property_id and s.anchor == anchor), None)
     if ev.kind == "REACHED_FAILURE":
-        return "FAILED_SAME_SITE" if target is not None and ev.instr_result == target.result_id else "FAILED_OTHER_SITE"
+        if target is not None:
+            return "FAILED_SAME_SITE" if ev.instr_result == target.result_id else "FAILED_OTHER_SITE"
+        if other is not None:
+            here = {s.anchor: s for s in fn.sites if s.property_id == property_id}
+            there = {s.anchor for s in other.sites if s.property_id == property_id}
+            moved = [s for a, s in here.items() if a not in there]
+            if len(moved) == 1 and len(there - set(here)) == 1 and moved[0].result_id == ev.instr_result:
+                return "FAILED_MOVED_SITE"
+        return "FAILED_OTHER_SITE"
     if ev.kind == "RETURNED":
         return "PASSED"
     if ev.kind in ("RAISED", "RAISED_OTHER"):
@@ -102,7 +119,8 @@ def eval_in(fn: Function | None, property_id: str, anchor: str, witness: dict[st
     return "STUCK"
 
 
-def classify(o: ObligationOutcome, cand_key: str | None, match: tuple[str, str] | None, uncertain: str | None, base: BaseModel) -> Relation:
+def classify(o: ObligationOutcome, cand_key: str | None, match: tuple[str, str] | None, uncertain: str | None, base: BaseModel,
+             cand_fn: Function | None = None) -> Relation:
     """Relation of one candidate obligation outcome (only meaningful for non-safe results)."""
     comp: dict[str, Any] = {"base_obligation_id": None, "base_result": None, "match": "none", "witness_in_base": "NOT_EVALUATED"}
 
@@ -141,10 +159,13 @@ def classify(o: ObligationOutcome, cand_key: str | None, match: tuple[str, str] 
         return rel(PatchRelation.UNDETERMINED, "overapproximate result without a validated witness; base comparison inconclusive")
     # PROVED_UNSAFE: replay the validated witness in the base model.
     fn = base.functions.get(base_sym)
-    outcome = eval_in(fn, o.site.property_id, o.site.anchor, o.witness, o.runtime_mode) if fn is not None else "STUCK"
+    outcome = eval_in(fn, o.site.property_id, o.site.anchor, o.witness, o.runtime_mode, cand_fn) if fn is not None else "STUCK"
     comp["witness_in_base"] = outcome
     if outcome == "FAILED_SAME_SITE":
         return rel(PatchRelation.PRE_EXISTING, f"the same witness {o.witness} also fails at the matched operation in the base")
+    if outcome == "FAILED_MOVED_SITE":
+        return rel(PatchRelation.PRE_EXISTING, f"the same witness {o.witness} fails in the base with the same property at an operation "
+                                               "the patch moved (no counterpart with the same anchor on either side)")
     if outcome == "PASSED":
         if base_result in _FAILING:
             return rel(PatchRelation.CHANGED, f"the base already had a failure here, but not for witness {o.witness}: the violating domain grew")
@@ -161,7 +182,8 @@ def classify(o: ObligationOutcome, cand_key: str | None, match: tuple[str, str] 
     return rel(PatchRelation.UNDETERMINED, reasons.get(outcome, outcome))
 
 
-def resolved(base_out: ObligationOutcome, cand_fn: Function | None, cand_out: ObligationOutcome | None, cand_symbol: str | None) -> Relation | None:
+def resolved(base_out: ObligationOutcome, cand_fn: Function | None, cand_out: ObligationOutcome | None, cand_symbol: str | None,
+             base_fn: Function | None = None) -> Relation | None:
     """RESOLVED (or UNDETERMINED) relation for a failing base obligation."""
     if base_out.result not in _FAILING:
         return None
@@ -177,8 +199,10 @@ def resolved(base_out: ObligationOutcome, cand_fn: Function | None, cand_out: Ob
             return Relation(PatchRelation.RESOLVED, comp)
         return None  # still failing or unknown: reported from the candidate side
     if base_out.witness is not None and base_out.witness_validated and cand_fn is not None:
-        outcome = eval_in(cand_fn, base_out.site.property_id, base_out.site.anchor, base_out.witness, base_out.runtime_mode)
+        outcome = eval_in(cand_fn, base_out.site.property_id, base_out.site.anchor, base_out.witness, base_out.runtime_mode, base_fn)
         comp["witness_in_candidate"] = outcome
+        if outcome == "FAILED_MOVED_SITE":
+            return None  # the moved operation still fails: reported from the candidate side
         if outcome == "PASSED":
             comp["reason"] = "the operation was removed and the base witness runs without failure in the candidate"
             return Relation(PatchRelation.RESOLVED, comp)
