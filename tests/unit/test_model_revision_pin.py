@@ -10,7 +10,9 @@ tests' inline corpora, deterministic solver limits) and compares a digest of the
   the reason in its comment), then regenerate the pin;
 * revision changed, pin not regenerated: fail until it is.
 
-Regenerate with ``.venv/bin/python -m tests.unit.test_model_revision_pin``. A pure refactor
+Regenerate with ``.venv/bin/python -m tests.unit.test_model_revision_pin``. The IR digest is
+pinned per CPython minor version (it records AST details that differ between versions);
+versions without an entry check the result digest only. A pure refactor
 that changes the digest without changing meaning still needs the pin regenerated, so the
 diff of the pin file shows up in review either way.
 """
@@ -82,19 +84,29 @@ def model_digests() -> dict[str, str]:
     return {"ir": digest_json(ir), "results": digest_json(results), "obligations": str(len(results))}
 
 
+PY = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+
 def test_model_revision_matches_pinned_semantics():
     pin = json.loads(PIN.read_text())
     got = model_digests()
     if keys.MODEL_REVISION != pin["model_revision"]:
         raise AssertionError(f"MODEL_REVISION is {keys.MODEL_REVISION} but the pin records {pin['model_revision']}: "
                              "regenerate it with `python -m tests.unit.test_model_revision_pin`")
-    changed = [k for k in ("ir", "results") if got[k] != pin[k]]
+    # The IR serialization differs between CPython minor versions (AST details), so its
+    # digest is pinned per version; results are pinned for every version.
+    changed = ["results"] if got["results"] != pin["results"] else []
+    if PY in pin["ir"] and got["ir"] != pin["ir"][PY]:
+        changed.append(f"ir (CPython {PY})")
     assert not changed, (f"the {' and '.join(changed)} digest of the pinned corpus changed under MODEL_REVISION {keys.MODEL_REVISION}: "
                          "bump impact.keys.MODEL_REVISION if the meaning of any lowering or result changed, then regenerate the pin "
-                         "(`python -m tests.unit.test_model_revision_pin`)")
+                         "(`python -m tests.unit.test_model_revision_pin` on each pinned CPython version)")
 
 
 if __name__ == "__main__":
-    data = {"model_revision": keys.MODEL_REVISION, **model_digests()}
-    PIN.write_text(json.dumps(data, indent=2) + "\n")
+    got = model_digests()
+    old = json.loads(PIN.read_text()) if PIN.exists() else {}
+    ir = old.get("ir", {}) if isinstance(old.get("ir"), dict) and old.get("model_revision") == keys.MODEL_REVISION and old.get("results") == got["results"] else {}
+    data = {"model_revision": keys.MODEL_REVISION, "results": got["results"], "obligations": got["obligations"], "ir": {**ir, PY: got["ir"]}}
+    PIN.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
     sys.stdout.write(json.dumps(data) + "\n")
