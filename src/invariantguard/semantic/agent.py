@@ -71,7 +71,7 @@ def dsl_reference() -> dict[str, Any]:
         "predicate_must_use_one_of": sorted(BEHAVIOR_NODES),
         "limits": {"max_nodes": MAX_NODES, "max_depth": MAX_DEPTH, "max_candidates_per_batch": MAX_AGENT_CANDIDATES,
                    "max_batch_bytes": MAX_BATCH_BYTES, "max_batches_per_call": MAX_BATCHES},
-        "string_fields": "strings are accepted only in 'kind', 'name' and 'comparison'; no Python, SMT or prose is ever evaluated",
+        "string_fields": "strings are accepted only in 'kind', 'name', 'comparison', 'type' and as a literal value (inert data compared with eq, at most 256 code points); no Python, SMT or prose is ever evaluated",
     }
 
 
