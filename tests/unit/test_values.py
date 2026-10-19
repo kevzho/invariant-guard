@@ -17,7 +17,7 @@ def _harness_namespace():
     return runpy.run_path(str(path), run_name="ig_harness_under_test")
 
 
-CORPUS = [None, True, False, 0, -1, 2 ** 80, 1.0, -0.0, 0.1, float("nan"), float("inf"), -float("inf"), "x", "", [1, 2.5, True, None],
+CORPUS = [None, True, False, 0, -1, 2 ** 80, 1.0, -0.0, 0.1, float("nan"), float("inf"), -float("inf"), "x", "", "e\u0301\x00\U0001F600", [1, 2.5, True, None],
           (1, (2, [3])), {"a": [1.0], "b": {"c": None}}, [], ()]
 
 
@@ -39,7 +39,7 @@ def test_harness_encoder_agrees_with_host_encoder():
 
     cyc = [1]
     cyc.append(cyc)
-    for v in CORPUS + [Custom(), cyc, {1: 2}, 10 ** 5000]:
+    for v in CORPUS + [Custom(), cyc, {1: 2}, 10 ** 5000, "\ud800", ["ok", "\udfff"], {"\udc00": 1}]:
         assert ns["encode"](v) == encode(v)
     for v in CORPUS:
         assert repr(ns["decode"](encode(v))) == repr(decode(encode(v))) or (isinstance(v, float) and math.isnan(v))
@@ -62,8 +62,9 @@ class MyList(list):
 
 
 @pytest.mark.parametrize("value,why", [(Sneaky(), "unsupported type"), (Color.RED, "unsupported type"), (MyList([1]), "unsupported type"),
-                                       (10 ** 5000, "integer too large"), ({1: 2}, "non-string key")],
-                         ids=["custom", "intenum", "list-subclass", "huge-int", "int-key"])
+                                       (10 ** 5000, "integer too large"), ({1: 2}, "non-string key"),
+                                       ("a\ud800", "lone surrogate (not Unicode text)"), ({"\udc00": 1}, "key with a lone surrogate")],
+                         ids=["custom", "intenum", "list-subclass", "huge-int", "int-key", "surrogate-str", "surrogate-key"])
 def test_unsupported_values_become_opaque_without_calling_user_code(value, why):
     enc = encode(value)
     assert enc["t"] == "opaque" and enc["why"] == why
@@ -91,6 +92,8 @@ def test_cycles_and_depth_are_bounded():
     {"t": "code", "v": "__import__('os')"},
     {"t": "list", "v": [{"t": "none"}], "extra": 1},
     {"t": "dict", "v": [[1, {"t": "none"}]]},
+    {"t": "str", "v": "\ud800"},  # a forged observation with a lone surrogate
+    {"t": "dict", "v": [["\udc00", {"t": "none"}]]},
     "not a node",
 ])
 def test_malformed_nodes_are_rejected(node):

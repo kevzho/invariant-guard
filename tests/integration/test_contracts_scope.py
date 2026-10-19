@@ -110,3 +110,60 @@ def test_run_profile_must_allow_every_parameter_profile(tmp_path):
     _, r, _ = verify_exec(root, base)
     c = contract_result(r, "take.len")
     assert c["status"] == "NOT_ALLOWED" and "bounded_builtin_ints_v1" in c["reasons"][0]
+
+
+PAD_BASE = "def pad(s, wide):\n    return s.ljust(8) if wide else s\n"
+PAD_PATCH = "def pad(s, wide):\n    return s.strip().ljust(8) if wide else s.strip()\n"
+S = {"kind": "arg", "name": "s"}
+PAD_CONTRACT = {"contract_id": "pad.keeps_length", "scope": "demo/text.py::pad", "precondition": TRUE,
+                "predicate": {"kind": "le", "left": {"kind": "str_len", "value": S}, "right": {"kind": "str_len", "value": R}},
+                "input_profile": {"s": "bounded_builtin_unicode_str_v1", "wide": "bounded_builtin_bool_v1"}}
+
+
+def test_str_and_bool_profiles_find_and_shrink_a_regression(tmp_path):
+    root, base = repo(tmp_path, {"demo/text.py": PAD_BASE}, exec_config())
+    declare(root, PAD_CONTRACT, tmp_path)
+    write(root, {"demo/text.py": PAD_PATCH})
+    code, r, _ = verify_exec(root, base)
+    c = contract_result(r, "pad.keeps_length")
+    assert (c["property_result"], c["patch_relation"], code) == ("OBSERVED_REGRESSION", "INTRODUCED", 1)
+    w = c["witness"]
+    # Shrunk inside both profiles: one whitespace character (strip removes it), and False before True.
+    assert type(w["s"]) is str and len(w["s"]) == 1 and w["s"].isspace() and w["wide"] is False, w
+    assert all((x["base"], x["candidate_run_1"], x["candidate_run_2"]) == ("PASS", "FAIL", "FAIL") for x in c["confirmations"])
+    probes = side_evidence(r, c, "candidate")["execution"]["probes"]
+    kinds = {p["input"]["wide"]["t"] for p in probes} | {p["input"]["s"]["t"] for p in probes}
+    assert kinds == {"bool", "str"}  # exact typed encodings, not JSON coercions
+    assert any(any(ord(ch) > 0x7F for ch in p["input"]["s"]["v"]) for p in probes)  # the unicode profile is exercised
+
+
+def test_ascii_profile_passes_are_tested_not_proved(tmp_path):
+    contract = dict(PAD_CONTRACT, contract_id="pad.ascii", input_profile={"s": "bounded_builtin_ascii_str_v1", "wide": "bounded_builtin_bool_v1"})
+    root, base = repo(tmp_path, {"demo/text.py": PAD_BASE}, exec_config())
+    declare(root, contract, tmp_path)
+    write(root, {"demo/text.py": PAD_BASE + "\n"})
+    _, r, _ = verify_exec(root, base)
+    c = contract_result(r, "pad.ascii")
+    assert (c["property_result"], c["scope_validity"]) == ("TESTED", "EXECUTED") and "not a proof" in c["quantifier"]
+    assert all(all(ord(ch) <= 0x7E for ch in p["input"]["s"]["v"]) for p in side_evidence(r, c, "candidate")["execution"]["probes"])
+
+
+BAD_BASE = "def echo(s, flag):\n    return s\n"
+BAD_PATCH = "def echo(s, flag):\n    if flag:\n        raise ValueError('bad \\udc80 input')\n    return s + '\\ud800'\n"
+
+
+def test_lone_surrogates_from_the_target_stay_unknown_or_sanitized(tmp_path):
+    # A result with a lone surrogate has no exact UTF-8 form: the runner encodes it as opaque (UNKNOWN, never PASS);
+    # an exception message with one is escaped, so the report stays valid JSON text.
+    root, base = repo(tmp_path, {"demo/text.py": BAD_BASE}, exec_config())
+    declare(root, {"contract_id": "echo.str", "scope": "demo/text.py::echo", "precondition": TRUE,
+                   "predicate": {"kind": "is_type", "value": R, "type": "str"},
+                   "input_profile": {"s": "bounded_builtin_ascii_str_v1", "flag": "bounded_builtin_bool_v1"}}, tmp_path)
+    write(root, {"demo/text.py": BAD_PATCH})
+    code, r, _ = verify_exec(root, base)
+    c = contract_result(r, "echo.str")
+    assert (c["property_result"], c["patch_relation"], code) == ("OBSERVED_REGRESSION", "INTRODUCED", 1)
+    assert c["witness"]["flag"] is True and "\\udc80" in c["observations"]["candidate"]["reason"]
+    probes = side_evidence(r, c, "candidate")["execution"]["probes"]
+    unknown = [p for p in probes if p["input"]["flag"]["v"] is False]
+    assert unknown and all(p["verdict"] == "UNKNOWN" and "lone surrogate" in p["reason"] for p in unknown)

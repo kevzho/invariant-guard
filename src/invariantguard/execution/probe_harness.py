@@ -71,6 +71,8 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
         if t is str:
             if len(x) > MAX_STR:
                 return {"t": "opaque", "type": "str", "why": "string too long"}
+            if not _scalar_text(x):
+                return {"t": "opaque", "type": "str", "why": "lone surrogate (not Unicode text)"}
             return {"t": "str", "v": x}
         if t in (list, tuple, dict):
             if id(x) in active:
@@ -82,6 +84,8 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
                     for k, v in x.items():
                         if type(k) is not str:
                             return {"t": "opaque", "type": "dict", "why": "non-string key"}
+                        if not _scalar_text(k):
+                            return {"t": "opaque", "type": "dict", "why": "key with a lone surrogate"}
                         items.append([k, enc(v, depth + 1, active)])
                     return {"t": "dict", "v": items}
                 return {"t": t.__name__, "v": [enc(v, depth + 1, active) for v in x]}
@@ -90,6 +94,19 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
         return {"t": "opaque", "type": "%s.%s" % (t.__module__, t.__qualname__), "why": "unsupported type"}
 
     return enc(value, 0, set())
+
+
+def _scalar_text(s):
+    try:
+        s.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def _text(s):
+    """Diagnostic text (exception messages, frame names) as Unicode scalar values only."""
+    return s if _scalar_text(s) else s.encode("utf-8", "backslashreplace").decode("utf-8")
 
 
 def decode(n, depth=0):
@@ -297,9 +314,9 @@ def _capabilities(req):
 # -- probes ---------------------------------------------------------------------------------------
 def _exc_summary(exc, src_prefix):
     t = type(exc)
-    name = t.__qualname__ if t.__module__ == "builtins" else "%s.%s" % (t.__module__, t.__qualname__)
+    name = _text(t.__qualname__ if t.__module__ == "builtins" else "%s.%s" % (t.__module__, t.__qualname__))
     try:
-        msg = str(exc)[:500]
+        msg = _text(str(exc)[:500])
     except BaseException:  # noqa: BLE001 - str() of an exception runs target code
         msg = "<unprintable>"
     frames = []
@@ -307,7 +324,7 @@ def _exc_summary(exc, src_prefix):
         stack = traceback.StackSummary.extract(traceback.walk_tb(exc.__traceback__), lookup_lines=False)
         for fs in list(stack)[-12:]:
             if fs.filename.startswith(src_prefix):
-                frames.append({"path": fs.filename[len(src_prefix):], "line": fs.lineno, "function": fs.name})
+                frames.append({"path": _text(fs.filename[len(src_prefix):]), "line": fs.lineno, "function": _text(fs.name)})
     except BaseException:  # noqa: BLE001
         pass
     return {"type": name, "message": msg, "frames": frames}

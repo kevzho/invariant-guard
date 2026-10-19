@@ -95,6 +95,8 @@ def check_document_shape(doc: Any) -> None:
         size = len(canonical_json(doc))
     except RecursionError:  # CPython 3.11's json encoder recurses on the Python stack; hostile nesting must not crash
         raise _reject("OVERSIZED", "", "contract revision is nested too deeply to serialize") from None
+    except UnicodeEncodeError:  # a JSON escape like \ud800 decodes to a lone surrogate, which has no UTF-8 form
+        raise _reject("MALFORMED_CONTRACT", "", "contract revision contains a lone surrogate (not Unicode text)") from None
     if size > MAX_CONTRACT_BYTES:
         raise _reject("OVERSIZED", "", f"contract revision exceeds {MAX_CONTRACT_BYTES} bytes")
     extra, missing = set(doc) - _FIELDS, _REQUIRED - set(doc)
@@ -170,14 +172,17 @@ def check_schema(doc: dict[str, Any]) -> None:
 
 
 def _example_value(v: Any, path: str) -> Any:
-    """Examples are plain JSON: numbers, booleans, null and lists of them."""
+    """Examples are plain JSON: numbers, booleans, null, strings and lists of them."""
     if v is None or type(v) in (bool, int, float):
         if type(v) is float and v != v:
             raise _reject("MALFORMED_CONTRACT", path, "example values must be finite")
         return v
+    if type(v) is str and len(v) <= 256:
+        return v
     if type(v) is list and len(v) <= 64:
         return [_example_value(x, f"{path}/{i}") for i, x in enumerate(v)]
-    raise _reject("MALFORMED_CONTRACT", path, "example values are numbers, booleans, null or lists of them (at most 64 items)")
+    raise _reject("MALFORMED_CONTRACT", path, "example values are numbers, booleans, null, strings (at most 256 characters) or lists of them "
+                  "(at most 64 items)")
 
 
 def validate_revision(doc: Any, files: dict[str, bytes], snapshot_id: str, *, python_path: list[str] | None = None,

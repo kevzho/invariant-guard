@@ -7,7 +7,8 @@ boundary as JSON. Plain JSON loses distinctions that contracts depend on (``1`` 
 * ``{"t": "none"}``, ``{"t": "bool", "v": true}``
 * ``{"t": "int", "v": "123"}`` (decimal string, so no precision is lost)
 * ``{"t": "float", "v": "0x1.0000000000000p+0"}`` (``float.hex``: exact, incl. nan/inf)
-* ``{"t": "str", "v": "..."}``
+* ``{"t": "str", "v": "..."}`` (Unicode scalar values only: a str with a lone surrogate
+  has no exact UTF-8 form and is encoded as opaque; decoding rejects one)
 * ``{"t": "list", "v": [...]}``, ``{"t": "tuple", "v": [...]}``
 * ``{"t": "dict", "v": [["key", node], ...]}`` (string keys only)
 * ``{"t": "opaque", "type": "module.Qualname", "why": "..."}`` - a value the encoder does
@@ -76,6 +77,8 @@ def encode(value: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES
         if t is str:
             if len(x) > MAX_STR:
                 return {"t": "opaque", "type": "str", "why": "string too long"}
+            if not _scalar_text(x):
+                return {"t": "opaque", "type": "str", "why": "lone surrogate (not Unicode text)"}
             return {"t": "str", "v": x}
         if t in (list, tuple, dict):
             if id(x) in active:
@@ -87,6 +90,8 @@ def encode(value: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES
                     for k, v in x.items():
                         if type(k) is not str:
                             return {"t": "opaque", "type": "dict", "why": "non-string key"}
+                        if not _scalar_text(k):
+                            return {"t": "opaque", "type": "dict", "why": "key with a lone surrogate"}
                         items.append([k, enc(v, depth + 1, active)])
                     return {"t": "dict", "v": items}
                 return {"t": t.__name__, "v": [enc(v, depth + 1, active) for v in x]}
@@ -95,6 +100,14 @@ def encode(value: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES
         return {"t": "opaque", "type": f"{t.__module__}.{t.__qualname__}", "why": "unsupported type"}
 
     return enc(value, 0, set())
+
+
+def _scalar_text(s: str) -> bool:
+    try:
+        s.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
 
 
 def decode(node: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES) -> Any:
@@ -137,6 +150,8 @@ def decode(node: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES)
         if tag == "str":
             if type(v) is not str or len(v) > MAX_STR:
                 raise ValueError_("str node needs a bounded string")
+            if not _scalar_text(v):
+                raise ValueError_("str node contains a lone surrogate")
             return v
         if tag in ("list", "tuple"):
             if type(v) is not list:
@@ -148,8 +163,8 @@ def decode(node: Any, *, max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES)
                 raise ValueError_("dict node needs an array of pairs")
             out: dict[str, Any] = {}
             for pair in v:
-                if type(pair) is not list or len(pair) != 2 or type(pair[0]) is not str:
-                    raise ValueError_("dict entries must be [string, node] pairs")
+                if type(pair) is not list or len(pair) != 2 or type(pair[0]) is not str or not _scalar_text(pair[0]):
+                    raise ValueError_("dict entries must be [string, node] pairs (Unicode text keys)")
                 out[pair[0]] = dec(pair[1], depth + 1)
             return out
         typ, why = n.get("type"), n.get("why")

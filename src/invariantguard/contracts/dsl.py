@@ -10,13 +10,16 @@ arg                 name (a parameter of the target)            profile type
 result              -                                           dyn (runtime-typed)
 before_arg          name                                        profile type
 after_arg           name                                        dyn
-literal             value (int/float, finite, |v| <= 2^53; bool; null)
+literal             value (int/float, finite, |v| <= 2^53; bool; null; str of at most 256 code points, no surrogates)
 eq                  left, right                                 bool
 lt, le              left, right (numbers)                       bool
 gt                  left, right; canonicalized to lt(right, left)
 and, or             args (1..32 booleans)                       bool (Kleene logic)
 not                 arg                                         bool
 len                 value (list)                                num (int)
+str_len             value (str)                                 num (int; code points)
+is_type             value, type (none|bool|int|float|str|list|  bool
+                    tuple|dict)
 sum                 value (list of numbers)                     num
 all_finite          value (number or list of numbers)           bool
 approx_eq           left, right, atol, rtol, require_finite     bool
@@ -30,7 +33,14 @@ names of at most 64 characters, and an evaluation budget of 200,000 operations.
 
 Semantics (evaluated on decoded *built-in* values only; no repository code is ever called):
 
+* static types: ``num``, ``num_list``, ``str``, ``bool``, ``none`` and ``dyn`` (``result``
+  and ``after_arg``, typed at runtime); a parameter has its input profile's type;
 * numbers are exact built-in ``int``/``float``; ``bool`` is not a number;
+* ``len`` takes lists only and ``str_len`` strings only (``len`` of a string stays a type
+  mismatch, as before ``str`` existed, so recorded contracts keep their meaning);
+  ``str_len`` counts code points, like Python's ``len`` on ``str``;
+* ``is_type`` is an exact type test (``True`` is ``bool``, not ``int``; a ``str``
+  subclass never reaches the evaluator: the encoder reports it as unsupported);
 * ``eq`` is structural equality with exact categories (``True`` is not ``1``; a tuple
   is not a list); numbers compare by Python value (``1 == 1.0``);
 * ``lt``/``le`` follow Python on numbers (any comparison with NaN is false);
@@ -66,6 +76,8 @@ MAX_DEPTH = 16
 MAX_ARGS = 32
 MAX_NAME = 64
 MAX_LITERAL = 2 ** 53
+MAX_STR_LITERAL = 256
+TYPE_NAMES = ("none", "bool", "int", "float", "str", "list", "tuple", "dict")
 MAX_REPEATS = 50
 MAX_EVAL_OPS = 200_000
 
@@ -83,6 +95,8 @@ _FIELDS: dict[str, frozenset[str]] = {
     "or": frozenset({"kind", "args"}),
     "not": frozenset({"kind", "arg"}),
     "len": frozenset({"kind", "value"}),
+    "str_len": frozenset({"kind", "value"}),
+    "is_type": frozenset({"kind", "value", "type"}),
     "sum": frozenset({"kind", "value"}),
     "all_finite": frozenset({"kind", "value"}),
     "approx_eq": frozenset({"kind", "left", "right", "atol", "rtol", "require_finite"}),
@@ -110,7 +124,7 @@ class Rejection(Exception):
 
 @dataclass
 class TypeEnv:
-    params: dict[str, str]  # parameter -> static type ("num_list" | "num")
+    params: dict[str, str]  # parameter -> static type ("num_list" | "num" | "str" | "bool")
     role: str  # precondition | predicate
     nodes: int = 0
     repeat: dict[str, Any] | None = None
@@ -189,8 +203,12 @@ def _check(node: Any, path: str, env: TypeEnv) -> tuple[dict[str, Any], str]:
             return {"kind": "literal", "value": None}, "none"
         if type(v) is bool:
             return {"kind": "literal", "value": v}, "bool"
+        if type(v) is str:
+            if len(v) > MAX_STR_LITERAL or any(0xD800 <= ord(ch) <= 0xDFFF for ch in v):
+                raise Rejection("TYPE_ERROR", path + "/value", f"a string literal has at most {MAX_STR_LITERAL} code points and no surrogates")
+            return {"kind": "literal", "value": v}, "str"
         if not _finite_number(v):
-            raise Rejection("TYPE_ERROR", path + "/value", "a literal must be null, a boolean, or a finite int/float with magnitude <= 2^53")
+            raise Rejection("TYPE_ERROR", path + "/value", "a literal must be null, a boolean, a bounded string, or a finite int/float with magnitude <= 2^53")
         return {"kind": "literal", "value": v}, "num"
     if kind in ("eq", "lt", "le", "gt"):
         left, lt_ = sub("left")
@@ -221,12 +239,17 @@ def _check(node: Any, path: str, env: TypeEnv) -> tuple[dict[str, Any], str]:
         if t not in ("bool", "dyn"):
             raise Rejection("TYPE_ERROR", path + "/arg", f"not needs a boolean, got {t}")
         return {"kind": "not", "arg": c}, "bool"
-    if kind in ("len", "sum", "all_finite"):
+    if kind in ("len", "str_len", "sum", "all_finite"):
         c, t = sub("value")
-        allowed = {"len": ("num_list", "dyn"), "sum": ("num_list", "dyn"), "all_finite": ("num_list", "num", "dyn")}[kind]
+        allowed = {"len": ("num_list", "dyn"), "str_len": ("str", "dyn"), "sum": ("num_list", "dyn"), "all_finite": ("num_list", "num", "dyn")}[kind]
         if t not in allowed:
-            raise Rejection("TYPE_ERROR", path + "/value", f"{kind} cannot take {t}")
+            raise Rejection("TYPE_ERROR", path + "/value", f"{kind} cannot take {t}" + (" (use str_len for a string)" if kind == "len" and t == "str" else ""))
         return {"kind": kind, "value": c}, ("bool" if kind == "all_finite" else "num")
+    if kind == "is_type":
+        c, _ = sub("value")
+        if node["type"] not in TYPE_NAMES:
+            raise Rejection("TYPE_ERROR", path + "/type", f"type must be one of {list(TYPE_NAMES)}")
+        return {"kind": "is_type", "value": c, "type": node["type"]}, "bool"
     if kind == "approx_eq":
         left, lt_ = sub("left")
         right, rt_ = sub("right")
@@ -339,6 +362,8 @@ class EvalResult:
 
 
 def _render(v: Any) -> str:
+    if type(v) is str and len(v) > 40:
+        return repr(v[:40]) + f"... ({len(v)} chars)"
     if type(v) is list and len(v) > 6:
         return "[" + ", ".join(_render(x) for x in v[:6]) + f", ... ({len(v)} items)]"
     if type(v) is float:
@@ -492,6 +517,22 @@ class _Evaluator:
             if type(v) not in (list, tuple):
                 raise _Mismatch(f"len of {_category(v)} {_render(v)}")
             return len(v)
+        if k == "str_len":
+            v = self.ev(n["value"])
+            if isinstance(v, Opaque):
+                raise _Unknown(f"str_len of an unsupported value ({v.type_name}: {v.why})")
+            if type(v) is not str:
+                raise _Mismatch(f"str_len of {_category(v)} {_render(v)}")
+            self.charge(len(v))
+            return len(v)
+        if k == "is_type":
+            v = self.ev(n["value"])
+            if contains_opaque(v):
+                raise _Unknown("is_type of an unsupported value")
+            actual = "none" if v is None else type(v).__name__
+            r = actual == n["type"]
+            self.trace.append(f"is_type({_render(v)}, {n['type']}) = {r}")
+            return r
         if k == "sum":
             xs = self.numlist(self.ev(n["value"]), "operand of sum")
             r = sum(xs)

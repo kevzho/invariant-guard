@@ -318,10 +318,18 @@
               "const": "literal"
             },
             "value": {
-              "type": [
-                "number",
-                "boolean",
-                "null"
+              "anyOf": [
+                {
+                  "type": [
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "maxLength": 256
+                }
               ]
             }
           },
@@ -481,6 +489,51 @@
           },
           "required": [
             "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "str_len"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "is_type"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "type": {
+              "enum": [
+                "none",
+                "bool",
+                "int",
+                "float",
+                "str",
+                "list",
+                "tuple",
+                "dict"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "type",
             "value"
           ]
         },

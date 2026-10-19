@@ -97,7 +97,7 @@
       "$ref": "urn:invariantguard:schema:common:1.0#/$defs/timestamp"
     },
     "examples": {
-      "description": "Hand-authored inputs probed first (each must satisfy the input profile; the precondition decides admission).",
+      "description": "Hand-authored inputs probed first (each must satisfy its parameter's input profile; the precondition decides admission).",
       "type": "array",
       "maxItems": 16,
       "items": {
@@ -111,8 +111,10 @@
               "type": [
                 "number",
                 "boolean",
-                "null"
-              ]
+                "null",
+                "string"
+              ],
+              "maxLength": 256
             },
             {
               "type": "array",
@@ -121,8 +123,10 @@
                 "type": [
                   "number",
                   "boolean",
-                  "null"
-                ]
+                  "null",
+                  "string"
+                ],
+                "maxLength": 256
               }
             }
           ]
