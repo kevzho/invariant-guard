@@ -313,6 +313,31 @@ def _exc_summary(exc, src_prefix):
     return {"type": name, "message": msg, "frames": frames}
 
 
+def _resolve_callable(module, req):
+    """(function, leading bound arguments, None) or (None, None, why). Reads only raw
+    namespaces (module and class ``__dict__``), so no descriptor or metaclass hook of the
+    target runs while the callable is located."""
+    name, owner = req["function"], req.get("owner")
+    if owner is None:
+        fn = module.__dict__.get(name)
+        if type(fn) is not types.FunctionType:
+            return None, None, "%s is %s, not a plain function" % (name, type(fn).__name__)
+        return fn, [], None
+    cls = module.__dict__.get(owner)
+    if not issubclass(type(cls), type):
+        return None, None, "%s is %s, not a class" % (owner, type(cls).__name__)
+    raw = type.__dict__["__dict__"].__get__(cls, type(cls)).get(name)
+    want = {"staticmethod": staticmethod, "classmethod": classmethod}.get(req.get("binding"))
+    if want is None or type(raw) is not want:
+        return None, None, "%s.%s is %s in the class namespace, not a %s" % (owner, name, type(raw).__name__, req.get("binding"))
+    fn = raw.__func__
+    if type(fn) is not types.FunctionType:
+        return None, None, "%s.%s wraps %s, not a plain function" % (owner, name, type(fn).__name__)
+    if fn.__qualname__ != "%s.%s" % (owner, name) or fn.__module__ != req["module"]:
+        return None, None, "%s.%s wraps %s.%s, not the analyzed def" % (owner, name, fn.__module__, fn.__qualname__)
+    return fn, ([cls] if want is classmethod else []), None
+
+
 def _child(req, probe, wfd):
     devnull = os.open(os.devnull, os.O_RDWR)
     for fd in (0, 1, 2):
@@ -342,16 +367,16 @@ def _child(req, probe, wfd):
         except BaseException as exc:  # noqa: BLE001 - import runs target code
             out = {"status": "import_error", "detail": _exc_summary(exc, src_root.rstrip("/") + "/")}
             raise _Done()
-        fn = module.__dict__.get(req["function"])
-        if type(fn) is not types.FunctionType:
-            out = {"status": "target_error", "detail": {"type": "TargetError", "message": "%s is %s, not a plain function" % (req["function"], type(fn).__name__), "frames": []}}
+        fn, bound, why = _resolve_callable(module, req)
+        if why is not None:
+            out = {"status": "target_error", "detail": {"type": "TargetError", "message": why, "frames": []}}
             raise _Done()
         repeats = int(probe.get("repeats", 1))
         for i in range(repeats):
             args = {k: decode(v) for k, v in probe["args"].items()}
             if i == 0:
                 out["before"] = {k: encode(v) for k, v in args.items()}
-            pos = [args[n] for n in req["positional"]]
+            pos = bound + [args[n] for n in req["positional"]]
             kw = {n: args[n] for n in req["keyword_only"]}
             try:
                 value = fn(*pos, **kw)

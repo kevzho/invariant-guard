@@ -181,8 +181,7 @@ def _batch(ctx: ExecContext, side: Side, tc: TypedContract, probes: list[tuple[s
     t = tc.target
     seed = tc.repeat["seed"] if tc.repeat else ctx.profile.seed
     reps = tc.repeat["repeats"] if tc.repeat else 1
-    req = ctx.backend.probe_request(ws, {"module": t.module, "function": t.function, "positional": list(t.positional), "keyword_only": list(t.keyword_only),
-                                         "python_path_root": t.root,
+    req = ctx.backend.probe_request(ws, {**t.call_spec(),
                                          "probes": [{"id": pid, "args": {k: encode(v) for k, v in args.items()}, "repeats": reps, "seed": seed} for pid, args in probes]})
     run = ctx.backend.run(ws, req)
     if run.response is None:
