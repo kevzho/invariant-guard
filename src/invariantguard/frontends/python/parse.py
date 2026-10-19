@@ -50,19 +50,22 @@ class ParseFailure(Exception):
 
 
 def ast_size(tree: ast.AST, max_nodes: int | None) -> tuple[int, int, bool]:
-    """(nodes, depth, truncated): counted without recursion, stopping once over a limit."""
-    nodes, depth, stack = 0, 0, [(tree, 1)]
-    while stack:
-        node, d = stack.pop()
-        nodes += 1
-        depth = max(depth, d)
+    """(nodes, depth, truncated): counted level by level without recursion, stopping once over a limit."""
+    nodes, depth, level = 0, 0, [tree]
+    while level:
+        depth += 1
+        nodes += len(level)
         if depth > MAX_AST_DEPTH or (max_nodes is not None and nodes > max_nodes):
             return nodes, depth, True
-        stack.extend((c, d + 1) for c in ast.iter_child_nodes(node))
+        nxt: list[ast.AST] = []
+        for node in level:
+            nxt.extend(ast.iter_child_nodes(node))
+        level = nxt
     return nodes, depth, False
 
 
-def parse_source(path: str, raw: bytes, max_nodes: int | None = DEFAULT_MAX_FILE_NODES) -> ParsedFile:
+def parse_tree(path: str, raw: bytes, max_nodes: int | None = DEFAULT_MAX_FILE_NODES) -> tuple[str, ast.Module]:
+    """(text, tree) under the same checks and limits as ``parse_source``, without the symbol table."""
     if len(raw) > MAX_SOURCE_BYTES:
         raise ParseFailure(path, "resource_limit", f"file is {len(raw)} bytes (limit {MAX_SOURCE_BYTES})")
     try:
@@ -78,10 +81,20 @@ def parse_source(path: str, raw: bytes, max_nodes: int | None = DEFAULT_MAX_FILE
     try:
         tree = ast.parse(raw, filename=path, mode="exec", type_comments=False)
         nodes, depth, over = ast_size(tree, max_nodes)
-        if over:
-            if depth > MAX_AST_DEPTH:
-                raise ParseFailure(path, "resource_limit", f"syntax tree is deeper than {MAX_AST_DEPTH} levels (engine limit)")
-            raise ParseFailure(path, "resource_limit", f"syntax tree has more than {max_nodes} nodes (analysis.max_file_nodes)")
+    except SyntaxError as exc:
+        raise ParseFailure(path, "syntax_error", f"SyntaxError: {exc.msg}", exc.lineno) from None
+    except (ValueError, RecursionError, MemoryError) as exc:
+        raise ParseFailure(path, "parse_error", f"{type(exc).__name__}: {exc}") from None
+    if over:
+        if depth > MAX_AST_DEPTH:
+            raise ParseFailure(path, "resource_limit", f"syntax tree is deeper than {MAX_AST_DEPTH} levels (engine limit)")
+        raise ParseFailure(path, "resource_limit", f"syntax tree has more than {max_nodes} nodes (analysis.max_file_nodes)")
+    return text, tree
+
+
+def parse_source(path: str, raw: bytes, max_nodes: int | None = DEFAULT_MAX_FILE_NODES) -> ParsedFile:
+    text, tree = parse_tree(path, raw, max_nodes)
+    try:
         table = symtable.symtable(text, path, "exec")
     except SyntaxError as exc:
         raise ParseFailure(path, "syntax_error", f"SyntaxError: {exc.msg}", exc.lineno) from None

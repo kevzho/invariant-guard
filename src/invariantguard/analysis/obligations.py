@@ -60,6 +60,9 @@ _ARITH_TEXT = {Op.ADD: "+", Op.SUB: "-", Op.MUL: "*", Op.DIV: "/", Op.FLOORDIV: 
 WITNESS_SEARCH_VALUES = (0, 1, -1, 2, -2, 3, -3)
 WITNESS_SEARCH_MAX = 4096
 MODELED_PARAM_KINDS = NUMERIC_EXACT | SEQUENCE_KINDS | {Kind.OPTIONAL}
+DIVIDEND_ASSUMPTION = ("if the dividend is not a built-in int, float or str, the operator method its type defines (__truediv__, "
+                       "__floordiv__ or __mod__, as written; user, standard-library or third-party code) does not raise "
+                       "ZeroDivisionError for a nonzero divisor")
 STR_RMOD_ASSUMPTION = ("the right operand of str % x is not an instance of a str subclass that overrides __rmod__ "
                        "(CPython would call that __rmod__, user code, before str.__mod__)")
 # Operations that only copy or merge values: no method of their operands runs.
@@ -80,6 +83,8 @@ class Budget:
     # [analysis] assume_no_str_rmod_override (I-134): `str % x` with x of unmodeled type is
     # formatting under a recorded assumption; False keeps it UNKNOWN (dynamic dispatch).
     assume_no_str_rmod_override: bool = True
+    # [analysis] assume_dividend_operator_respects_nonzero (I-147).
+    assume_dividend_operator_respects_nonzero: bool = True
 
     def exhausted(self) -> bool:
         return time.monotonic() >= self.deadline
@@ -601,6 +606,17 @@ class FunctionChecker:
                             "exceptions raised by argument __str__/__repr__/__format__ hooks are obligations of those hooks, not of this operation",
                             extra=[STR_RMOD_ASSUMPTION] if rmod else None)
             if fact.dividend_kind not in (Kind.INT, Kind.BOOL, Kind.FLOAT):
+                # A certainly nonzero built-in divisor: built-in division (int, float, str
+                # formatting, and the divisor's own reflected method) cannot raise
+                # ZeroDivisionError, so only a non-built-in dividend's method could (I-147).
+                nonzero = ((fact.divisor_kind is Kind.FLOAT and isinstance(fact.divisor_const, float) and fact.divisor_const != 0.0)
+                           or (fact.divisor_kind in NUMERIC_EXACT and fact.divisor is not None and fact.divisor.excludes_zero()))
+                if nonzero and self.budget.assume_dividend_operator_respects_nonzero:
+                    return safe(AnalysisMethod.INTERVAL,
+                                f"divisor {self.render(divisor_v, 1)} is a nonzero built-in number"
+                                + (f" ({fact.divisor!r})" if fact.divisor_kind is not Kind.FLOAT else "")
+                                + f"; the dividend has type {fact.dividend_kind.value}, so only its own operator method could raise",
+                                repr(fact.divisor) if fact.divisor_kind is not Kind.FLOAT else None, extra=[DIVIDEND_ASSUMPTION])
                 return unknown(AnalysisMethod.UNSUPPORTED, [
                     f"dividend has type {fact.dividend_kind.value}: the operator may dispatch to a user-defined method, so built-in zero-divisor semantics are not established"
                     + self._unknown_source(self.defs[site.result_id].operands[0])

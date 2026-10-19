@@ -599,7 +599,7 @@
           }
         },
         "lowering": {
-          "description": "Which files were lowered (I-143). In quick mode, only changed files and files whose bindings can reach them through 'from ... import' bindings.",
+          "description": "Which files were lowered (I-143). In quick mode, only changed files and, in other files, the statements whose bindings can reach them through names and 'from ... import' bindings.",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -645,6 +645,11 @@
                   },
                   "reason": {
                     "type": "string"
+                  },
+                  "statements": {
+                    "description": "Top-level statements whose symbols were lowered; absent: the whole file (it changed).",
+                    "type": "integer",
+                    "minimum": 0
                   }
                 }
               }

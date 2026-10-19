@@ -10,6 +10,7 @@ dropped from the denominator even when the owning symbol is unsupported.
 from __future__ import annotations
 
 import ast
+import weakref
 from dataclasses import dataclass, field
 
 DIV_AST_OPS = (ast.Div, ast.FloorDiv, ast.Mod)
@@ -173,9 +174,15 @@ def own_scope_nodes(fn: ast.AST):
         stack.extend(ast.iter_child_nodes(node))
 
 
+_GENERATOR_CACHE: "weakref.WeakKeyDictionary[ast.AST, bool]" = weakref.WeakKeyDictionary()
+
+
 def is_generator_function(fn: ast.AST) -> bool:
-    """True when ``yield``/``yield from`` occurs in the function's own scope (I-138)."""
-    return any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in own_scope_nodes(fn))
+    """True when ``yield``/``yield from`` occurs in the function's own scope (I-138; cached per node)."""
+    got = _GENERATOR_CACHE.get(fn)
+    if got is None:
+        got = _GENERATOR_CACHE[fn] = any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in own_scope_nodes(fn))
+    return got
 
 
 def stored_names(node: ast.AST) -> set[str]:

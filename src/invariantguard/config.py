@@ -43,8 +43,11 @@ class AnalysisConfig:
     languages: list[str] = field(default_factory=lambda: ["python"])
     mode: str = "quick"
     solver_enabled: bool = True
-    per_query_timeout_ms: int = 100
-    per_query_rlimit: int = 0
+    # I-146: queries are bounded by Z3's deterministic resource limit, so a result does not
+    # depend on machine load; the wall-clock limit is only a backstop (about 15x the time the
+    # resource limit takes on an idle laptop).
+    per_query_timeout_ms: int = 2000
+    per_query_rlimit: int = 500_000
     quick_budget_ms: int = 2000
     require_coverage: bool = True
     witness_search: bool = True
@@ -52,6 +55,10 @@ class AnalysisConfig:
     # I-134: `str % x` with x of unmodeled type is formatting, assuming x is not a str subclass
     # overriding __rmod__ (listed on every result that relies on it); false keeps it UNKNOWN.
     assume_no_str_rmod_override: bool = True
+    # I-147: a division whose divisor is certainly a nonzero built-in number is safe when the
+    # dividend is of unmodeled type, assuming a non-built-in dividend's operator method does
+    # not raise ZeroDivisionError for a nonzero divisor (listed); false keeps it UNKNOWN.
+    assume_dividend_operator_respects_nonzero: bool = True
     # I-142: a file whose syntax tree has more nodes is skipped as `resource_limit` (missing
     # coverage). Bounds time and memory on generated files.
     max_file_nodes: int = 100_000
@@ -103,6 +110,7 @@ class Config:
             "per_query_rlimit": a.per_query_rlimit,
             "witness_search": a.witness_search,
             "assume_no_str_rmod_override": a.assume_no_str_rmod_override,
+            "assume_dividend_operator_respects_nonzero": a.assume_dividend_operator_respects_nonzero,
             "max_file_nodes": a.max_file_nodes,
             "exclude": sorted(self.exclude),
         }
@@ -119,6 +127,7 @@ _ANALYSIS_KEYS = {
     "witness_search": bool,
     "full_budget_ms": int,
     "assume_no_str_rmod_override": bool,
+    "assume_dividend_operator_respects_nonzero": bool,
     "max_file_nodes": int,
 }
 _TOP_KEYS = {"schema_version", "analysis", "execution", "semantic", "privacy", "scope", "domains"}
@@ -381,12 +390,18 @@ schema_version = "1.0"
 languages = ["python"]
 mode = "quick"
 solver_enabled = true
-per_query_timeout_ms = 100
+# Z3 resource limit per query (deterministic); the wall-clock limit is only a backstop.
+per_query_rlimit = 500000
+per_query_timeout_ms = 2000
 quick_budget_ms = 2000
 require_coverage = true
 # `str % x` is formatting unless x is a str subclass overriding __rmod__; results relying on
 # that assumption list it. Set to false to report such operations as UNKNOWN instead.
 assume_no_str_rmod_override = true
+# `x / 7` with x of unmodeled type is safe unless x's type (not a built-in number or str) has an
+# operator method that raises ZeroDivisionError for a nonzero divisor; results relying on that
+# assumption list it. Set to false to report such operations as UNKNOWN instead.
+assume_dividend_operator_respects_nonzero = true
 
 [execution]
 # Dynamic contract checks run only with `guard verify --execute --run-profile NAME` and an

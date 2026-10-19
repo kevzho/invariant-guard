@@ -198,7 +198,14 @@ def test_solver_unavailable_is_distinct_from_disabled(tmp_path):
 
 def test_solver_timeout_and_resource_limit_are_unknown_not_safe(project):
     src = {"m.py": "def f(x, y, z):\n    d = x * x * x + y * y * y + z * z * z - 33\n    return 100 / d\n"}
+    # Default limits (I-146): the deterministic resource limit decides.
     root = project(src, "m.py::f")
+    code, report, _ = check_json(root / "m.py")
+    r = result_for(report, "m.py::f")
+    ev = next(e for e in report["evidence"] if e["evidence_id"] == r["evidence_ids"][0])
+    assert r["property_result"] == "UNKNOWN" and ev["solver_runs"][0]["response"] == "RESOURCE_LIMIT" and code == 2
+    # A wall-clock limit only (no rlimit) gives TIMEOUT.
+    root = project(src, "m.py::f", extra_analysis="per_query_rlimit = 0\nper_query_timeout_ms = 100")
     code, report, _ = check_json(root / "m.py")
     r = result_for(report, "m.py::f")
     ev = next(e for e in report["evidence"] if e["evidence_id"] == r["evidence_ids"][0])

@@ -121,8 +121,22 @@ def _read_deps(ctx: ModuleContext, sym: SymbolInfo) -> list[dict[str, Any]]:
     return deps
 
 
-def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[str, Any], program: ProgramIndex | None = None) -> FrontendResult:
+def _statement_ranges(tree: ast.Module, stmts: set[int]) -> list[tuple[int, int]]:
+    """Line ranges (decorators included) of the selected top-level statements."""
+    out = []
+    for i, st in enumerate(tree.body):
+        if i in stmts:
+            lo = min([st.lineno] + [d.lineno for d in getattr(st, "decorator_list", [])])
+            out.append((lo, st.end_lineno or st.lineno))
+    return out
+
+
+def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[str, Any], program: ProgramIndex | None = None,
+                 stmts: set[int] | None = None) -> FrontendResult:
     """Lower all supported functions of one parsed file.
+
+    ``stmts`` (indexes into the module body) restricts lowering to the symbols defined in
+    those top-level statements (I-143); the module initializer is always included.
 
     ``declared_domains`` maps symbol_id -> a declaration (or a list of declarations for
     disjoint parameter sets) with ``params`` (tuple or None), ``profile``, ``authority``
@@ -142,10 +156,13 @@ def lower_module(parsed: ParsedFile, snapshot_id: str, declared_domains: dict[st
     errors: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     requested: list[str] = []
+    ranges = _statement_ranges(parsed.tree, stmts) if stmts is not None else None
     for sym in symbols:
         symbol_id = f"{parsed.path}::{sym.qualname}"
         if sym.kind in ("module_initializer", "class_body") and not sym.division_nodes:
             continue  # import-time code without division sites contributes no obligations
+        if ranges is not None and sym.kind != "module_initializer" and not any(lo <= sym.node.lineno <= hi for lo, hi in ranges):  # type: ignore[attr-defined]
+            continue
         requested.append(symbol_id)
         sites = _make_sites(parsed, snapshot_id, sym)
         reason = function_unsupported_reason(sym)

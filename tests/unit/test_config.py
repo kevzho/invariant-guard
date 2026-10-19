@@ -5,7 +5,7 @@ from invariantguard.config import ConfigError, INIT_TEMPLATE, parse_config
 
 def test_init_template_parses_and_omits_endpoint():
     cfg = parse_config(INIT_TEMPLATE.encode())
-    assert cfg.analysis.per_query_timeout_ms == 100 and cfg.domains == []
+    assert cfg.analysis.per_query_timeout_ms == 2000 and cfg.analysis.per_query_rlimit == 500_000 and cfg.domains == []
     assert "endpoint" not in cfg.semantic
 
 

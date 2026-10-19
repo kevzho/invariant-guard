@@ -165,8 +165,12 @@ class Lowered:
         return out
 
 
-def lower_snapshot(snap: Snapshot, cfg: Config, only: set[str] | None = None) -> Lowered:
-    """Lower every captured file, or only the paths in ``only`` (the others stay available for resolution)."""
+def lower_snapshot(snap: Snapshot, cfg: Config, only: dict[str, set[int] | None] | None = None) -> Lowered:
+    """Lower every captured file, or only the paths in ``only`` (the others stay available for resolution).
+
+    ``only`` maps a path to the top-level statement indexes whose symbols are lowered, or to
+    None for the whole file (I-143).
+    """
     t0 = time.perf_counter()
     require = cfg.analysis.require_coverage
     domains = cfg.domain_map()
@@ -193,7 +197,7 @@ def lower_snapshot(snap: Snapshot, cfg: Config, only: set[str] | None = None) ->
             kind = "resource_limit" if exc.kind == "resource_limit" else "parse_failure"
             skipped.append({"kind": kind, "path": f.path, "symbol_id": None, "reason": f"{exc.kind}: {exc.message}{where}", "required": require})
             continue
-        fr = lower_module(ctx.parsed, snap.snapshot_id, domains, program)
+        fr = lower_module(ctx.parsed, snap.snapshot_id, domains, program, stmts=only.get(f.path) if only is not None else None)
         check_ir_version(fr.module)
         fr.module.semantics_profile = SEMANTICS_PROFILE
         modules.append(fr.module)
@@ -203,7 +207,7 @@ def lower_snapshot(snap: Snapshot, cfg: Config, only: set[str] | None = None) ->
             errors.append(e)
             for s in sites:
                 errored_sites.append((e["symbol_id"], s, f"engine error during {e['stage']}: {e['error_type']}: {e['message']}"))
-    captured_paths = {f.path for f in snap.files if only is None or f.path in only}
+    captured_paths = {f.path for f in snap.files if only is None or (f.path in only and only[f.path] is None)}
     known_symbols = {fn.symbol_id for m in modules for fn in m.functions} | {u.symbol_id for m in modules for u in m.unsupported_symbols}
     for sym in sorted(domains):
         if sym.split("::", 1)[0] in captured_paths and sym not in known_symbols:
@@ -360,7 +364,8 @@ def _check_once(opts: CheckOptions, root: Path, cfg: Config, log: list[str], *, 
 
     backend = solver.backend(cfg)
     budget = Budget(deadline=time.monotonic() + cfg.analysis.quick_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
-                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override,
+                    assume_dividend_operator_respects_nonzero=cfg.analysis.assume_dividend_operator_respects_nonzero)
     analysis = analyze_lowered(lowered, cfg, backend, solver.status, budget)
     errors = lowered.errors + analysis.errors
     produced = sorted(site_obligation_id(o.symbol_id, o.site) for o in analysis.outcomes)

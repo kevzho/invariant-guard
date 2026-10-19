@@ -31,6 +31,7 @@ from __future__ import annotations
 import ast
 import operator
 import symtable
+import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -133,8 +134,18 @@ class LoweringError(Exception):
     """Internal lowering inconsistency: an engine error, never an unsupported construct."""
 
 
+_FUNCTION_TABLES: "weakref.WeakKeyDictionary[symtable.SymbolTable, dict[str, list[symtable.SymbolTable]]]" = weakref.WeakKeyDictionary()
+
+
 def find_table(module_table: symtable.SymbolTable, node: ast.FunctionDef) -> symtable.SymbolTable | None:
-    candidates = [c for c in module_table.get_children() if c.get_name() == node.name and c.get_type() == "function"]  # a str on 3.11-3.12, a StrEnum on 3.13+
+    index = _FUNCTION_TABLES.get(module_table)
+    if index is None:  # built once per module table: get_children() wraps every child table anew
+        index = {}
+        for c in module_table.get_children():
+            if c.get_type() == "function":  # a str on 3.11-3.12, a StrEnum on 3.13+
+                index.setdefault(c.get_name(), []).append(c)
+        _FUNCTION_TABLES[module_table] = index
+    candidates = index.get(node.name, [])
     for c in candidates:
         if c.get_lineno() == node.lineno:
             return c

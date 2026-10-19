@@ -22,18 +22,23 @@ PROJECT = {
     "pkg/consts.py": "K = 1\n",
     "pkg/core.py": "from .consts import K\n\n\ndef denom(x):\n    return x + K\n",
     "app.py": ("from pkg import d\n\n\ndef helper(x):\n    return d(x)\n\n\n"
-               "def ratio(x: int):\n    if x < 0:\n        return 0\n    return 100 // helper(x)\n"),
+               "def ratio(x: int):\n    if x < 0:\n        return 0\n    return 100 // helper(x)\n\n\n"
+               "def other(x: int):\n    return 7 // (x * x + 1)\n"),
     "local.py": "def lazy(x: int):\n    from pkg.core import denom\n    if x < 0:\n        return 0\n    return 10 // denom(x)\n",
     "meth.py": ("from pkg import d\n\n\nclass C:\n    def m(self, x: int):\n        if x < 0:\n            return 0\n"
                 "        return 10 // d(x)\n"),
     "unrelated.py": "def u(x: int):\n    if x == 0:\n        return 0\n    return 1 // x\n",
+    # A class whose method reaches the change is lowered; a file that only names the class is not
+    # (the resolver resolves a class name to a descriptor of the class's own AST).
+    "cls.py": "from pkg import d\n\n\nclass Box:\n    def get(self, x: int):\n        if x < 0:\n            return 0\n        return 10 // d(x)\n",
+    "uses_cls.py": "from cls import Box\n\n\ndef mk(x: int):\n    b = Box()\n    return 5 // (x * x + 1)\n",
 }
 CFG = config("app.py::ratio", "local.py::lazy", "unrelated.py::u", extra=DETERMINISTIC)
 
 CASES = {
     # K = 0 makes denom(0) == 0: reached through core -> __init__ alias -> app.helper -> ratio.
     "constant-two-hops": (lambda r: write(r, {"pkg/consts.py": "K = 0\n"}), {"app.py", "local.py", "meth.py", "pkg/core.py"}),
-    "callee-body": (lambda r: write(r, {"pkg/core.py": PROJECT["pkg/core.py"].replace("x + K", "x - K")}), {"app.py", "local.py", "meth.py"}),
+    "callee-body": (lambda r: write(r, {"pkg/core.py": PROJECT["pkg/core.py"].replace("x + K", "x - K")}), {"app.py", "local.py", "meth.py", "cls.py"}),
     "re-export-target": (lambda r: write(r, {"pkg/__init__.py": "from .core import denom as d\n\n\ndef denom2(x):\n    return x\n"}),
                          {"app.py", "meth.py"}),
     # A package directory next to pkg/core.py makes `pkg.core` ambiguous for every importer.
@@ -50,8 +55,12 @@ def test_scoped_quick_equals_full(tmp_path: Path, case: str):
     assert low["scoped"] is True and out["full"]["patch"]["lowering"]["scoped"] is False
     lowered = {x["path"] for x in low["lowered"]}
     assert must_lower <= lowered, (must_lower - lowered, low["lowered"])
+    assert "uses_cls.py" not in lowered
     if case != "unrelated-edit":
         assert "unrelated.py" not in lowered
+    app = next((x for x in low["lowered"] if x["path"] == "app.py"), None)
+    if app is not None:  # app.py is unchanged in every case: only the statements that reach the change
+        assert app["statements"] == 2, app  # helper and ratio, not the import or other
     assert low["files_lowered"] + low["files_not_lowered"] == len(PROJECT) + (case == "ambiguous-module")
 
 

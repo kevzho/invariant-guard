@@ -39,8 +39,10 @@ from ..models.spans import digest_json
 # of snapshot identity (shipped benchmark packets pin it). Revisions: 1 = through I-133 (try);
 # 2 = generator functions and generator calls (I-138/I-139); 3 = generator pre-start
 # frame-introspection assumption (I-140); 4 = handler-marker order and the shared-list
-# asynchronous-mutation assumption (I-141); 5 = str annotations and `str % x` (I-134..I-137).
-MODEL_REVISION = 5
+# asynchronous-mutation assumption (I-141); 5 = str annotations and `str % x` (I-134..I-137);
+# 6 = nonzero built-in divisor with a dividend of unmodeled type (I-147). A pinned digest
+# (tests/unit/test_model_revision_pin.py) fails the suite when results change without a bump.
+MODEL_REVISION = 6
 
 CONTRACT_SLOT = "per-symbol: digest of active contract revisions scoped to the symbol (contracts-v1)"
 

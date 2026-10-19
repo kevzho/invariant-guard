@@ -503,7 +503,8 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
     # -- analysis (base first: attribution needs it) ----------------------------------------------
     backend = solver.backend(cfg)
     budget = Budget(deadline=time.monotonic() + budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
-                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override,
+                    assume_dividend_operator_respects_nonzero=cfg.analysis.assume_dividend_operator_respects_nonzero)
     use_cache = store is not None and not opts.no_cache
     if store is not None:
         store.begin_run(run_id, "verify", base.snapshot.snapshot_id if base.snapshot else None, cand_snap.snapshot_id)
@@ -700,12 +701,13 @@ def _verify_once(opts: VerifyOptions, root: Path, cfg: Config, repo: GitRepo | N
         "lowering": {
             "scoped": scope is not None,
             "files_lowered": len({m.path for m in cand_lowered.modules}) if scope is not None else len(cand_snap.files),
-            "files_not_lowered": len(cand_snap.files) - len(scope.files & {f.path for f in cand_snap.files}) if scope is not None else 0,
+            "files_not_lowered": len(cand_snap.files) - len(set(scope.files) & {f.path for f in cand_snap.files}) if scope is not None else 0,
             "index_ms": round(t_scope, 3),
-            "basis": ("quick mode: only changed files and files whose bindings can reach a changed file through 'from ... import' "
-                      "bindings were lowered; the others are unaffected (I-143)") if scope is not None else
+            "basis": ("quick mode: only changed files and, elsewhere, the statements whose bindings can reach a changed file through "
+                      "names and 'from ... import' bindings were lowered; the rest is unaffected (I-143)") if scope is not None else
                      ("whole scope (full mode, global invalidation or no base source)" if base.snapshot is None or full or global_change else "whole scope"),
-            "lowered": [{"path": p, "reason": scope.reasons[p]} for p in sorted(scope.files)[:200]] if scope is not None else [],
+            "lowered": [{"path": p, "reason": scope.reasons[p], **({"statements": len(st)} if st is not None else {})}
+                        for p, st in sorted(scope.files.items())[:200]] if scope is not None else [],
         },
     }
     diagnostics = list(cand_lowered.diagnostics) + ([restart_note] if restart_note else [])
@@ -845,7 +847,8 @@ def run_baseline_create(opts: BaselineOptions) -> tuple[dict[str, Any], list[str
         store.begin_run(run_id, "baseline_create", None, snap.snapshot_id)
         cache = SymbolCache(store, keys, run_id=run_id, snapshot_id=snap.snapshot_id, created_at=created_at)
         budget = Budget(deadline=time.monotonic() + cfg.analysis.full_budget_ms / 1000.0, per_query_timeout_ms=cfg.analysis.per_query_timeout_ms, witness_search=cfg.analysis.witness_search,
-                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override)
+                    assume_no_str_rmod_override=cfg.analysis.assume_no_str_rmod_override,
+                    assume_dividend_operator_respects_nonzero=cfg.analysis.assume_dividend_operator_respects_nonzero)
         analysis = analyze_lowered(lowered, cfg, solver.backend(cfg), solver.status, budget, cache=cache)
         store.finalize_run(run_id, ok=True)
         obligations = {
