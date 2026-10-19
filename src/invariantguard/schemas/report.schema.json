@@ -840,6 +840,9 @@
                     "type": "string"
                   },
                   {
+                    "$ref": "urn:invariantguard:schema:common:1.0#/$defs/input_profile_spec"
+                  },
+                  {
                     "type": "null"
                   }
                 ]

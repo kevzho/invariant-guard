@@ -43,8 +43,12 @@ def _variants(v: Any) -> list[Any]:
         if v:
             out.append([max(v)] * len(v))
         return out
+    if type(v) is bool:
+        return [v, not v]
     if type(v) in (int, float):
         return [v, -v, v + 1, v - 1, v * 2, 0]
+    if type(v) is str:
+        return [v, "", v + "a", v[:-1], v[::-1], v.upper(), v.lower(), v.strip(), v * 2]
     return [v]
 
 

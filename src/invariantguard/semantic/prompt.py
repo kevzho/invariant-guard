@@ -72,6 +72,10 @@ def _value_schema(profile_name: str) -> dict[str, Any]:
         return {"type": "array", "minItems": 1, "maxItems": 16, "items": {"type": "number"}}
     if kind == "int":
         return {"type": "integer"}
+    if kind == "str":
+        return {"type": "string", "maxLength": PROFILES[profile_name].max_len}
+    if kind == "bool":
+        return {"type": "boolean"}
     return {"type": "number"}
 
 

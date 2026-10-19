@@ -8,7 +8,8 @@ evidence"); authority, reasons and timestamps are not part of it.
 
 ``validate_revision`` performs every docs/06 check without executing anything:
 schema version and fields, known target symbol (AST only), parameter coverage by the
-input profile, DSL typing and budgets, a nonvacuous predicate (it must observe behavior),
+input profile (one name for every parameter, or ``{parameter: name}`` covering exactly the
+target's parameters), DSL typing and budgets, a nonvacuous predicate (it must observe behavior),
 and a nonempty admitted domain: a bounded deterministic search must find at least one
 input that satisfies profile and precondition, otherwise the contract is
 INVALID_CONTRACT (an unsatisfiable precondition is never a proof of success).
@@ -23,7 +24,7 @@ from typing import Any
 
 from ..models.spans import canonical_json, digest_json
 from .dsl import DSL_VERSION, EvalEnv, Rejection, canonicalize, check_expression, evaluate
-from .profiles import PROFILE_VERSION, PROFILES, InputProfile, admit_inputs, check_value, domain_hints
+from .profiles import PROFILE_VERSION, PROFILES, ProfileAssignment, admit_inputs, domain_hints
 from .targets import Target, TargetError, resolve_target
 
 CONTRACT_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,96}$")
@@ -31,6 +32,7 @@ SYMBOL_RE = re.compile(r"^[^\s:][^:]*::[^\s].*$")
 TIMESTAMP_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$")
 MAX_CONTRACT_BYTES = 32 * 1024
 MAX_EXAMPLES = 16
+MAX_PROFILE_PARAMS = 32
 WITNESS_SEARCH_LIMIT = 256
 AUTHORITIES = ("DECLARED", "APPROVED", "INFERRED", "REJECTED", "RETIRED")
 LIFECYCLE = ("CANDIDATE", "VALIDATED", "CHECKED", "REVIEWED", "REJECTED", "INVALID_CONTRACT")
@@ -54,7 +56,7 @@ class TypedContract:
     revision: int
     scope: str
     authority: str
-    input_profile: InputProfile
+    input_profile: ProfileAssignment
     precondition: dict[str, Any]  # canonical
     predicate: dict[str, Any]  # canonical
     examples: list[dict[str, Any]]
@@ -71,10 +73,11 @@ class TypedContract:
 
     @property
     def domain_text(self) -> str:
-        return f"inputs of profile {self.input_profile.name} that satisfy the contract precondition"
+        word = "profile" if self.input_profile.uniform else "profiles"
+        return f"inputs of {word} {self.input_profile.name} that satisfy the contract precondition"
 
 
-def semantic_digest(scope: str, precondition: dict[str, Any], predicate: dict[str, Any], input_profile: str, examples: list[Any]) -> str:
+def semantic_digest(scope: str, precondition: dict[str, Any], predicate: dict[str, Any], input_profile: str | dict[str, str], examples: list[Any]) -> str:
     return digest_json({"dsl": DSL_VERSION, "profiles": PROFILE_VERSION, "scope": scope, "precondition": canonicalize(precondition),
                         "predicate": canonicalize(predicate),
                         "input_profile": input_profile, "examples": examples})
@@ -92,6 +95,8 @@ def check_document_shape(doc: Any) -> None:
         size = len(canonical_json(doc))
     except RecursionError:  # CPython 3.11's json encoder recurses on the Python stack; hostile nesting must not crash
         raise _reject("OVERSIZED", "", "contract revision is nested too deeply to serialize") from None
+    except UnicodeEncodeError:  # a JSON escape like \ud800 decodes to a lone surrogate, which has no UTF-8 form
+        raise _reject("MALFORMED_CONTRACT", "", "contract revision contains a lone surrogate (not Unicode text)") from None
     if size > MAX_CONTRACT_BYTES:
         raise _reject("OVERSIZED", "", f"contract revision exceeds {MAX_CONTRACT_BYTES} bytes")
     extra, missing = set(doc) - _FIELDS, _REQUIRED - set(doc)
@@ -111,8 +116,20 @@ def check_document_shape(doc: Any) -> None:
         raise _reject("MALFORMED_CONTRACT", "authority", f"authority must be one of {AUTHORITIES}")
     if doc["lifecycle_state"] not in LIFECYCLE:
         raise _reject("MALFORMED_CONTRACT", "lifecycle_state", f"lifecycle_state must be one of {LIFECYCLE}")
-    if type(doc["input_profile"]) is not str or not doc["input_profile"]:
-        raise _reject("MISSING_DOMAIN", "input_profile", "an input profile is required (no contract without a domain)")
+    ip = doc["input_profile"]
+    if type(ip) is dict:
+        if not ip:
+            raise _reject("MISSING_DOMAIN", "input_profile", "a per-parameter input profile needs at least one parameter")
+        if len(ip) > MAX_PROFILE_PARAMS:
+            raise _reject("MALFORMED_CONTRACT", "input_profile", f"at most {MAX_PROFILE_PARAMS} per-parameter profiles")
+        for k, v in ip.items():
+            if not k.isidentifier() or len(k) > 64:
+                raise _reject("MALFORMED_CONTRACT", f"input_profile/{k}", "per-parameter profile keys are parameter names")
+            if type(v) is not str or not v:
+                raise _reject("MISSING_DOMAIN", f"input_profile/{k}", "each parameter needs a profile name")
+    elif type(ip) is not str or not ip:
+        raise _reject("MISSING_DOMAIN", "input_profile", "an input profile is required (no contract without a domain): a profile name, "
+                      "or an object {parameter: profile name}")
     prov = doc["provenance"]
     if type(prov) is not list or not prov:
         raise _reject("MISSING_PROVENANCE", "provenance", "at least one provenance entry is required")
@@ -155,30 +172,42 @@ def check_schema(doc: dict[str, Any]) -> None:
 
 
 def _example_value(v: Any, path: str) -> Any:
-    """Examples are plain JSON: numbers, booleans, null and lists of them."""
+    """Examples are plain JSON: numbers, booleans, null, strings and lists of them."""
     if v is None or type(v) in (bool, int, float):
         if type(v) is float and v != v:
             raise _reject("MALFORMED_CONTRACT", path, "example values must be finite")
         return v
+    if type(v) is str and len(v) <= 256:
+        return v
     if type(v) is list and len(v) <= 64:
         return [_example_value(x, f"{path}/{i}") for i, x in enumerate(v)]
-    raise _reject("MALFORMED_CONTRACT", path, "example values are numbers, booleans, null or lists of them (at most 64 items)")
+    raise _reject("MALFORMED_CONTRACT", path, "example values are numbers, booleans, null, strings (at most 256 characters) or lists of them "
+                  "(at most 64 items)")
 
 
 def validate_revision(doc: Any, files: dict[str, bytes], snapshot_id: str, *, python_path: list[str] | None = None,
                       search_limit: int = WITNESS_SEARCH_LIMIT) -> TypedContract:
     """Validate a revision against a snapshot. Raises :class:`Rejection`."""
     check_document_shape(doc)
-    profile = PROFILES.get(doc["input_profile"])
-    if profile is None:
-        raise _reject("UNKNOWN_PROFILE", "input_profile", f"unknown input profile {doc['input_profile']!r}; known: {sorted(PROFILES)}")
+    spec = doc["input_profile"]
+    for where, name in ([("input_profile", spec)] if type(spec) is str else [(f"input_profile/{k}", v) for k, v in spec.items()]):
+        if name not in PROFILES:
+            raise _reject("UNKNOWN_PROFILE", where, f"unknown input profile {name!r}; known: {sorted(PROFILES)}")
     try:
         target = resolve_target(doc["scope"], files, snapshot_id, python_path)
     except TargetError as exc:
         raise _reject(exc.code, "scope", exc.message) from None
-    params = {p: profile.dsl_type for p in target.params}
-    if not params:
+    if not target.params:
         raise _reject("UNSUPPORTED_TARGET", "scope", "the target has no parameters; a bounded input profile cannot describe its domain")
+    if type(spec) is dict:
+        missing = [p for p in target.params if p not in spec]
+        extra = sorted(set(spec) - set(target.params))
+        if missing:
+            raise _reject("MISSING_DOMAIN", "input_profile", f"no input profile for parameter(s) {missing} (every parameter needs a domain)")
+        if extra:
+            raise _reject("UNKNOWN_SYMBOL", "input_profile", f"{extra} are not parameters of the target (parameters: {list(target.params)})")
+    profile = ProfileAssignment(spec, {p: PROFILES[spec if type(spec) is str else spec[p]] for p in target.params})
+    params = {p: profile.of(p).dsl_type for p in target.params}
     pre = check_expression(doc["precondition"], params, "precondition", "precondition")
     post = check_expression(doc["predicate"], params, "predicate", "predicate")
     if not post.references:
@@ -190,12 +219,12 @@ def validate_revision(doc: Any, files: dict[str, bytes], snapshot_id: str, *, py
             raise _reject("MALFORMED_CONTRACT", f"examples/{i}", f"an example must give exactly the parameters {list(target.params)}")
         ex = {k: _example_value(v, f"examples/{i}/{k}") for k, v in ex.items()}
         for k, v in ex.items():
-            why = check_value(profile, v)
+            why = profile.check(k, v)
             if why is not None:
-                raise _reject("MALFORMED_CONTRACT", f"examples/{i}/{k}", f"example is outside input profile {profile.name}: {why}")
+                raise _reject("MALFORMED_CONTRACT", f"examples/{i}/{k}", f"example is outside input profile {profile.of(k).name}: {why}")
         examples.append(ex)
     check_schema(doc)
-    digest = semantic_digest(doc["scope"], pre.canonical, post.canonical, profile.name, examples)
+    digest = semantic_digest(doc["scope"], pre.canonical, post.canonical, spec, examples)
     tc = TypedContract(doc=doc, contract_id=doc["contract_id"], revision=doc["revision"], scope=doc["scope"], authority=doc["authority"],
                        input_profile=profile, precondition=pre.canonical, predicate=post.canonical, examples=examples, semantic_digest=digest,
                        target=target, repeat=post.repeat, references=post.references)

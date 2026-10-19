@@ -1,19 +1,27 @@
 """Bounded input profiles for contract probes (M3, docs/06 "Minimal typed property DSL").
 
 A profile is the generator-side half of a contract's input domain. It fixes the exact
-built-in type and the bounds of *every* parameter of the target, so a probe input is
-always a finite, serializable built-in value. The contract precondition then narrows the
+built-in type and the bounds of a parameter, so a probe input is always a finite,
+serializable built-in value. A contract names one profile for every parameter, or one
+profile per parameter (:class:`ProfileAssignment`; DECISIONS I-150). The contract precondition then narrows the
 profile; an input is admitted only if it satisfies both (``admitted``). JSON alone is
 not a complete generator (docs/06), so generation is explicit here:
 
 * boundary inputs derived from the profile and from simple precondition conjuncts
-  (``all_between``, comparisons of ``len(arg)`` or a scalar ``arg`` with a literal);
+  (``all_between``, comparisons of ``len(arg)``, ``str_len(arg)`` or a scalar ``arg``
+  with a literal);
 * seeded pseudo-random inputs (``random.Random(seed)``; deterministic across runs);
 * shrink candidates that are strictly simpler under :func:`complexity`.
 
 Hints only steer generation. Admission is always re-checked against the full profile and
 the full precondition, so a wrong or missing hint can cost coverage, never soundness of
 the domain (shrinking never leaves the domain: tests/unit/test_profiles.py).
+
+String profiles (DECISIONS I-151) bound the length in code points and the alphabet:
+``ascii_printable`` (U+0020..U+007E) or ``unicode_scalar`` (any code point except the
+surrogates U+D800..U+DFFF, so every value has an exact UTF-8 form; controls, NUL,
+combining marks and astral characters are included on purpose). The bool profile is the
+two exact built-in values; ``1`` and ``0`` are not members.
 """
 
 from __future__ import annotations
@@ -29,20 +37,21 @@ PROFILE_VERSION = "profiles-1"
 @dataclass(frozen=True)
 class InputProfile:
     name: str
-    kind: str  # num_list | int_list | int | float
+    kind: str  # num_list | int_list | int | float | str | bool
     description: str
     min_len: int = 0
     max_len: int = 16
     lo: float = -1e6
     hi: float = 1e6
+    alphabet: str = ""  # str profiles: ascii_printable | unicode_scalar
 
     @property
     def dsl_type(self) -> str:
-        return "num_list" if self.kind in ("num_list", "int_list") else "num"
+        return {"num_list": "num_list", "int_list": "num_list", "str": "str", "bool": "bool"}.get(self.kind, "num")
 
     def to_json(self) -> dict[str, Any]:
         return {"name": self.name, "kind": self.kind, "description": self.description, "min_len": self.min_len, "max_len": self.max_len,
-                "lo": self.lo, "hi": self.hi, "version": PROFILE_VERSION}
+                "lo": self.lo, "hi": self.hi, **({"alphabet": self.alphabet} if self.alphabet else {}), "version": PROFILE_VERSION}
 
 
 PROFILES: dict[str, InputProfile] = {
@@ -58,8 +67,70 @@ PROFILES: dict[str, InputProfile] = {
                      "every parameter is an exact built-in int (bool excluded) within [-1000000, 1000000]", lo=-1_000_000, hi=1_000_000),
         InputProfile("bounded_builtin_finite_floats_v1", "float",
                      "every parameter is an exact built-in float, finite, within [-1e6, 1e6]"),
+        InputProfile("bounded_builtin_ascii_str_v1", "str",
+                     "an exact built-in str of 0..32 characters, each printable ASCII (U+0020..U+007E)", min_len=0, max_len=32,
+                     alphabet="ascii_printable"),
+        InputProfile("bounded_builtin_unicode_str_v1", "str",
+                     "an exact built-in str of 0..32 code points, each a Unicode scalar value (any code point except surrogates; "
+                     "controls, NUL, combining marks and astral characters included)", min_len=0, max_len=32, alphabet="unicode_scalar"),
+        InputProfile("bounded_builtin_bool_v1", "bool", "an exact built-in bool (True or False; 0 and 1 are not members)"),
     )
 }
+ASCII_PRINTABLE = "".join(chr(c) for c in range(0x20, 0x7F))
+
+
+def _in_alphabet(alphabet: str, ch: str) -> bool:
+    o = ord(ch)
+    if alphabet == "ascii_printable":
+        return 0x20 <= o <= 0x7E
+    return not 0xD800 <= o <= 0xDFFF  # unicode_scalar
+
+
+class ProfileAssignment:
+    """The input domain of a contract: exactly one profile per target parameter.
+
+    ``spec`` is the revision's ``input_profile`` as written: a profile name (the same
+    profile for every parameter, the original form) or an object ``{parameter: name}``.
+    """
+
+    def __init__(self, spec: str | dict[str, str], by_param: dict[str, InputProfile]) -> None:
+        self.spec = spec
+        self.by_param = dict(by_param)
+
+    @property
+    def uniform(self) -> bool:
+        return isinstance(self.spec, str)
+
+    @property
+    def name(self) -> str:
+        """Display label: the profile name, or ``{p: name, ...}`` in parameter order."""
+        if isinstance(self.spec, str):
+            return self.spec
+        return "{" + ", ".join(f"{p}: {prof.name}" for p, prof in self.by_param.items()) + "}"
+
+    @property
+    def names(self) -> list[str]:
+        return sorted({prof.name for prof in self.by_param.values()})
+
+    def of(self, param: str) -> InputProfile:
+        return self.by_param[param]
+
+    def check(self, param: str, value: Any) -> str | None:
+        return check_value(self.by_param[param], value)
+
+
+def profile_label(spec: Any) -> str:
+    """Text rendering of a revision's ``input_profile`` (a name or ``{parameter: name}``)."""
+    if type(spec) is dict:
+        return "{" + ", ".join(f"{p}: {n}" for p, n in spec.items()) + "}"
+    return str(spec)
+
+
+def per_param(profile: "InputProfile | ProfileAssignment | dict[str, InputProfile]", params: list[str]) -> dict[str, InputProfile]:
+    if isinstance(profile, InputProfile):
+        return {p: profile for p in params}
+    by = profile.by_param if isinstance(profile, ProfileAssignment) else profile
+    return {p: by[p] for p in params}
 
 
 def is_num(x: Any) -> bool:
@@ -72,6 +143,17 @@ def _finite(x: Any) -> bool:
 
 def check_value(profile: InputProfile, value: Any) -> str | None:
     """None if ``value`` belongs to the profile, else the reason it does not."""
+    if profile.kind == "bool":
+        return None if type(value) is bool else f"expected an exact built-in bool, got {type(value).__name__}"
+    if profile.kind == "str":
+        if type(value) is not str:
+            return f"expected an exact built-in str, got {type(value).__name__}"
+        if not profile.min_len <= len(value) <= profile.max_len:
+            return f"str length {len(value)} outside [{profile.min_len}, {profile.max_len}]"
+        bad = next((ch for ch in value if not _in_alphabet(profile.alphabet, ch)), None)
+        if bad is not None:
+            return f"character U+{ord(bad):04X} is outside the {profile.alphabet} alphabet"
+        return None
     if profile.kind in ("num_list", "int_list"):
         if type(value) is not list:
             return f"expected a built-in list, got {type(value).__name__}"
@@ -142,12 +224,12 @@ def domain_hints(precondition: dict[str, Any], params: list[str]) -> dict[str, H
             continue
         left, right = c["left"], c["right"]
         strict = k == "lt"
-        for wrapper in ("len", None):
+        for wrapper in ("len", "str_len", None):
             lp, rp = _arg_of(left, wrapper), _arg_of(right, wrapper)
             lv, rv = _lit(left), _lit(right)
             if lp in hints and rv is not None:  # f(arg) <= v  /  f(arg) == v
                 h = hints[lp]
-                if wrapper == "len":
+                if wrapper in ("len", "str_len"):
                     bound = math.floor(rv) - (1 if strict and float(rv).is_integer() else 0)
                     h.len_hi = min(h.len_hi, bound)
                     if k == "eq":
@@ -158,7 +240,7 @@ def domain_hints(precondition: dict[str, Any], params: list[str]) -> dict[str, H
                         h.lo = max(h.lo, rv)
             if rp in hints and lv is not None:  # v <= f(arg)
                 h = hints[rp]
-                if wrapper == "len":
+                if wrapper in ("len", "str_len"):
                     bound = math.ceil(lv) + (1 if strict and float(lv).is_integer() else 0)
                     h.len_lo = max(h.len_lo, bound)
                     if k == "eq":
@@ -207,7 +289,30 @@ def _gen_number(rng: random.Random, lo: float, hi: float, ints_only: bool, want_
     return v
 
 
+# Unicode draw pools: (weight, lo, hi) code point ranges, surrogates excluded by construction.
+_UNICODE_POOLS = ((40, 0x20, 0x7E), (8, 0x00, 0x1F), (2, 0x7F, 0x9F), (14, 0xA0, 0x24F), (8, 0x300, 0x36F), (10, 0x4E00, 0x9FFF),
+                  (8, 0x1F300, 0x1FAFF), (10, 0x0, 0x10FFFF))
+
+
+def _gen_char(rng: random.Random, alphabet: str) -> str:
+    if alphabet == "ascii_printable":
+        return rng.choice(ASCII_PRINTABLE)
+    r = rng.randrange(sum(w for w, _, _ in _UNICODE_POOLS))
+    for w, lo, hi in _UNICODE_POOLS:
+        if r < w:
+            o = rng.randint(lo, hi)
+            return chr(o) if not 0xD800 <= o <= 0xDFFF else chr(o + 0x800)  # skip the surrogate block
+        r -= w
+    return "a"  # unreachable
+
+
 def generate(profile: InputProfile, rng: random.Random, h: Hint) -> Any:
+    if profile.kind == "bool":
+        return rng.random() < 0.5
+    if profile.kind == "str":
+        llo, lhi = _len_range(profile, h)
+        n = rng.randint(llo, min(lhi, llo + 12))
+        return "".join(_gen_char(rng, profile.alphabet) for _ in range(n))
     if profile.kind in ("num_list", "int_list"):
         llo, lhi = _len_range(profile, h)
         n = rng.randint(llo, min(lhi, llo + 7))
@@ -219,8 +324,22 @@ def generate(profile: InputProfile, rng: random.Random, h: Hint) -> Any:
     return float(_gen_number(rng, lo, hi, False, want_float=True))
 
 
+_STR_BOUNDARY = ("", "a", " ", "0", "A", "~", "a b", "Hello, World!", "  padded  ", "\\", "'\"")
+_UNICODE_BOUNDARY = ("\u00e9", "e\u0301", "\u00df", "\u0130", "\u65e5\u672c\u8a9e", "\U0001F600", "\x00", "\u200b", "\U0010FFFF", "\r\n", "\ufeff")
+
+
 def boundary(profile: InputProfile, h: Hint) -> list[Any]:
     out: list[Any] = []
+    if profile.kind == "bool":
+        return [False, True]
+    if profile.kind == "str":
+        llo, lhi = _len_range(profile, h)
+        cands = list(_STR_BOUNDARY) + (list(_UNICODE_BOUNDARY) if profile.alphabet == "unicode_scalar" else []) + ["a" * lhi, "z" * llo]
+        for c in cands:
+            c = (c + "a" * llo)[:max(llo, len(c))][:lhi]  # pad to the minimum, cut to the maximum length
+            if check_value(profile, c) is None and c not in out:
+                out.append(c)
+        return out
     if profile.kind in ("num_list", "int_list"):
         llo, lhi = _len_range(profile, h)
         elo, ehi = _elem_range(profile, h, scalar=False)
@@ -258,8 +377,17 @@ def _num_cost(x: int | float) -> float:
     return a + (0.5 if type(x) is float else 0.0) + 0.01 * digits
 
 
+def _char_cost(ch: str) -> float:
+    return 0.0 if ch == "a" else 1.0 + ord(ch) / 0x110000
+
+
 def complexity(value: Any) -> tuple[float, float]:
-    """Well-founded simplicity measure: shorter lists, smaller magnitudes, ints before floats."""
+    """Well-founded simplicity measure: shorter lists and strings, smaller magnitudes, ints
+    before floats, ``"a"`` before any other character, False before True."""
+    if type(value) is bool:
+        return (0.0, float(value))
+    if type(value) is str:
+        return (float(len(value)), sum(_char_cost(ch) for ch in value))
     if type(value) in (list, tuple):
         return (float(len(value)), sum(_num_cost(x) for x in value))
     if is_num(value):
@@ -284,7 +412,13 @@ def shrink_candidates(profile: InputProfile, value: Any) -> list[Any]:
     """Candidates strictly simpler than ``value`` (admission is checked by the caller)."""
     base = complexity(value)
     cands: list[Any] = []
-    if type(value) is list:
+    if type(value) is bool:
+        cands = [False]
+    elif type(value) is str:
+        n = len(value)
+        cands = [value[:n // 2], value[n // 2:]] + [value[:i] + value[i + 1:] for i in range(n)]
+        cands += [value[:i] + "a" + value[i + 1:] for i in range(n) if value[i] != "a"]
+    elif type(value) is list:
         for i in range(len(value)):
             cands.append(value[:i] + value[i + 1:])
         for i, x in enumerate(value):
@@ -311,11 +445,13 @@ class Admission:
     attempts: int = 0
 
 
-def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: Callable[[dict[str, Any]], tuple[bool | None, str]],
+def admit_inputs(profile: InputProfile | ProfileAssignment | dict[str, InputProfile], params: list[str],
+                 precondition_holds: Callable[[dict[str, Any]], tuple[bool | None, str]],
                  hints: dict[str, Hint], *, seed: int, limit: int, examples: list[dict[str, Any]] | None = None,
                  max_attempts: int | None = None) -> Admission:
-    """Examples, then boundary inputs, then seeded random inputs; each must satisfy the
-    profile and the precondition (``precondition_holds`` is the pure DSL evaluator)."""
+    """Examples, then boundary inputs, then seeded random inputs; each must satisfy every
+    parameter's profile and the precondition (``precondition_holds`` is the pure DSL evaluator)."""
+    profs = per_param(profile, params)
     adm = Admission()
     seen: set[str] = set()
     max_attempts = max_attempts if max_attempts is not None else max(64, limit * 8)
@@ -327,9 +463,9 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
         seen.add(key)
         adm.attempts += 1
         for p in params:
-            why = check_value(profile, args.get(p))
+            why = check_value(profs[p], args.get(p))
             if why is not None:
-                adm.excluded.append((args, origin, f"outside input profile {profile.name}: {p}: {why}"))
+                adm.excluded.append((args, origin, f"outside input profile {profs[p].name}: {p}: {why}"))
                 return
         ok, why = precondition_holds(args)
         if ok is True:
@@ -339,7 +475,7 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
 
     for ex in examples or []:
         offer(dict(ex), "example")
-    b = {p: boundary(profile, hints[p]) for p in params}
+    b = {p: boundary(profs[p], hints[p]) for p in params}
     width = max((len(v) for v in b.values()), default=0)
     for i in range(width):
         if len(adm.inputs) >= limit:
@@ -349,10 +485,10 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
     draws = 0
     while len(adm.inputs) < limit and draws < max_attempts:
         draws += 1  # counted before deduplication, so a tiny domain cannot loop forever
-        offer({p: generate(profile, rng, hints[p]) for p in params}, "random")
+        offer({p: generate(profs[p], rng, hints[p]) for p in params}, "random")
     adm.inputs = adm.inputs[:limit]
     return adm
 
 
-__all__ = ["PROFILES", "InputProfile", "check_value", "domain_hints", "generate", "boundary", "shrink_candidates", "complexity", "admit_inputs",
+__all__ = ["PROFILES", "ASCII_PRINTABLE", "InputProfile", "ProfileAssignment", "per_param", "profile_label", "check_value", "domain_hints", "generate", "boundary", "shrink_candidates", "complexity", "admit_inputs",
            "Hint", "Admission", "PROFILE_VERSION", "is_num"]

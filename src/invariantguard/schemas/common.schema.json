@@ -318,10 +318,18 @@
               "const": "literal"
             },
             "value": {
-              "type": [
-                "number",
-                "boolean",
-                "null"
+              "anyOf": [
+                {
+                  "type": [
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "maxLength": 256
+                }
               ]
             }
           },
@@ -481,6 +489,51 @@
           },
           "required": [
             "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "str_len"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "is_type"
+            },
+            "value": {
+              "$ref": "#/$defs/dsl_node"
+            },
+            "type": {
+              "enum": [
+                "none",
+                "bool",
+                "int",
+                "float",
+                "str",
+                "list",
+                "tuple",
+                "dict"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "type",
             "value"
           ]
         },
@@ -1015,6 +1068,28 @@
         "kinds",
         "data_egress",
         "client"
+      ]
+    },
+    "input_profile_spec": {
+      "description": "A contract's input domain: one profile name for every parameter, or an object giving each parameter's profile name.",
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 32,
+          "propertyNames": {
+            "pattern": "^(?!\\d)\\w+$",
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
       ]
     }
   }

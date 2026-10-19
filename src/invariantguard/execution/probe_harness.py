@@ -71,6 +71,8 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
         if t is str:
             if len(x) > MAX_STR:
                 return {"t": "opaque", "type": "str", "why": "string too long"}
+            if not _scalar_text(x):
+                return {"t": "opaque", "type": "str", "why": "lone surrogate (not Unicode text)"}
             return {"t": "str", "v": x}
         if t in (list, tuple, dict):
             if id(x) in active:
@@ -82,6 +84,8 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
                     for k, v in x.items():
                         if type(k) is not str:
                             return {"t": "opaque", "type": "dict", "why": "non-string key"}
+                        if not _scalar_text(k):
+                            return {"t": "opaque", "type": "dict", "why": "key with a lone surrogate"}
                         items.append([k, enc(v, depth + 1, active)])
                     return {"t": "dict", "v": items}
                 return {"t": t.__name__, "v": [enc(v, depth + 1, active) for v in x]}
@@ -90,6 +94,19 @@ def encode(value, max_depth=MAX_DEPTH, max_nodes=MAX_NODES):
         return {"t": "opaque", "type": "%s.%s" % (t.__module__, t.__qualname__), "why": "unsupported type"}
 
     return enc(value, 0, set())
+
+
+def _scalar_text(s):
+    try:
+        s.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def _text(s):
+    """Diagnostic text (exception messages, frame names) as Unicode scalar values only."""
+    return s if _scalar_text(s) else s.encode("utf-8", "backslashreplace").decode("utf-8")
 
 
 def decode(n, depth=0):
@@ -297,9 +314,9 @@ def _capabilities(req):
 # -- probes ---------------------------------------------------------------------------------------
 def _exc_summary(exc, src_prefix):
     t = type(exc)
-    name = t.__qualname__ if t.__module__ == "builtins" else "%s.%s" % (t.__module__, t.__qualname__)
+    name = _text(t.__qualname__ if t.__module__ == "builtins" else "%s.%s" % (t.__module__, t.__qualname__))
     try:
-        msg = str(exc)[:500]
+        msg = _text(str(exc)[:500])
     except BaseException:  # noqa: BLE001 - str() of an exception runs target code
         msg = "<unprintable>"
     frames = []
@@ -307,10 +324,35 @@ def _exc_summary(exc, src_prefix):
         stack = traceback.StackSummary.extract(traceback.walk_tb(exc.__traceback__), lookup_lines=False)
         for fs in list(stack)[-12:]:
             if fs.filename.startswith(src_prefix):
-                frames.append({"path": fs.filename[len(src_prefix):], "line": fs.lineno, "function": fs.name})
+                frames.append({"path": _text(fs.filename[len(src_prefix):]), "line": fs.lineno, "function": _text(fs.name)})
     except BaseException:  # noqa: BLE001
         pass
     return {"type": name, "message": msg, "frames": frames}
+
+
+def _resolve_callable(module, req):
+    """(function, leading bound arguments, None) or (None, None, why). Reads only raw
+    namespaces (module and class ``__dict__``), so no descriptor or metaclass hook of the
+    target runs while the callable is located."""
+    name, owner = req["function"], req.get("owner")
+    if owner is None:
+        fn = module.__dict__.get(name)
+        if type(fn) is not types.FunctionType:
+            return None, None, "%s is %s, not a plain function" % (name, type(fn).__name__)
+        return fn, [], None
+    cls = module.__dict__.get(owner)
+    if not issubclass(type(cls), type):
+        return None, None, "%s is %s, not a class" % (owner, type(cls).__name__)
+    raw = type.__dict__["__dict__"].__get__(cls, type(cls)).get(name)
+    want = {"staticmethod": staticmethod, "classmethod": classmethod}.get(req.get("binding"))
+    if want is None or type(raw) is not want:
+        return None, None, "%s.%s is %s in the class namespace, not a %s" % (owner, name, type(raw).__name__, req.get("binding"))
+    fn = raw.__func__
+    if type(fn) is not types.FunctionType:
+        return None, None, "%s.%s wraps %s, not a plain function" % (owner, name, type(fn).__name__)
+    if fn.__qualname__ != "%s.%s" % (owner, name) or fn.__module__ != req["module"]:
+        return None, None, "%s.%s wraps %s.%s, not the analyzed def" % (owner, name, fn.__module__, fn.__qualname__)
+    return fn, ([cls] if want is classmethod else []), None
 
 
 def _child(req, probe, wfd):
@@ -342,16 +384,16 @@ def _child(req, probe, wfd):
         except BaseException as exc:  # noqa: BLE001 - import runs target code
             out = {"status": "import_error", "detail": _exc_summary(exc, src_root.rstrip("/") + "/")}
             raise _Done()
-        fn = module.__dict__.get(req["function"])
-        if type(fn) is not types.FunctionType:
-            out = {"status": "target_error", "detail": {"type": "TargetError", "message": "%s is %s, not a plain function" % (req["function"], type(fn).__name__), "frames": []}}
+        fn, bound, why = _resolve_callable(module, req)
+        if why is not None:
+            out = {"status": "target_error", "detail": {"type": "TargetError", "message": why, "frames": []}}
             raise _Done()
         repeats = int(probe.get("repeats", 1))
         for i in range(repeats):
             args = {k: decode(v) for k, v in probe["args"].items()}
             if i == 0:
                 out["before"] = {k: encode(v) for k, v in args.items()}
-            pos = [args[n] for n in req["positional"]]
+            pos = bound + [args[n] for n in req["positional"]]
             kw = {n: args[n] for n in req["keyword_only"]}
             try:
                 value = fn(*pos, **kw)

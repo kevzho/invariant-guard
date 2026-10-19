@@ -27,7 +27,7 @@ from typing import Any
 
 from .checker import ExecContext, Side, _canon, _evaluate_batch, _witness
 from .model import TypedContract
-from .profiles import admit_inputs, check_value, complexity, domain_hints, shrink_candidates
+from .profiles import admit_inputs, complexity, domain_hints, shrink_candidates
 from .values import encode
 
 SHRINK_BATCH = 16
@@ -40,8 +40,9 @@ def falsify(ctx: ExecContext, tc: TypedContract, side: Side) -> dict[str, Any]:
     if not ctx.profile.allows(tc.scope):
         out.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allowlist target {tc.scope}"])
         return out
-    if tc.input_profile.name not in ctx.profile.input_profiles:
-        out.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allow input profile {tc.input_profile.name}"])
+    denied = [n for n in tc.input_profile.names if n not in ctx.profile.input_profiles]
+    if denied:
+        out.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allow input profile {', '.join(denied)}"])
         return out
     params = list(tc.target.params)
     seed = int(tc.semantic_digest.split(":", 1)[1][:12], 16) ^ (ctx.profile.seed & 0xFFFFFFFFFFFF)
@@ -74,11 +75,11 @@ def falsify(ctx: ExecContext, tc: TypedContract, side: Side) -> dict[str, Any]:
     while rounds < ctx.profile.max_shrink_rounds:
         cands = []
         for p in params:
-            for v in shrink_candidates(tc.input_profile, cur[p]):
+            for v in shrink_candidates(tc.input_profile.of(p), cur[p]):
                 a = dict(cur)
                 a[p] = v
                 key = _canon(encode(a))
-                if key in seen or any(check_value(tc.input_profile, a[q]) for q in params):
+                if key in seen or any(tc.input_profile.check(q, a[q]) for q in params):
                     continue
                 seen.add(key)
                 if tc.precondition_holds(a)[0] is True:  # never leave the candidate's domain
