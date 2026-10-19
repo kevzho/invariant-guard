@@ -1,8 +1,9 @@
 """Bounded input profiles for contract probes (M3, docs/06 "Minimal typed property DSL").
 
 A profile is the generator-side half of a contract's input domain. It fixes the exact
-built-in type and the bounds of *every* parameter of the target, so a probe input is
-always a finite, serializable built-in value. The contract precondition then narrows the
+built-in type and the bounds of a parameter, so a probe input is always a finite,
+serializable built-in value. A contract names one profile for every parameter, or one
+profile per parameter (:class:`ProfileAssignment`; DECISIONS I-146). The contract precondition then narrows the
 profile; an input is admitted only if it satisfies both (``admitted``). JSON alone is
 not a complete generator (docs/06), so generation is explicit here:
 
@@ -60,6 +61,53 @@ PROFILES: dict[str, InputProfile] = {
                      "every parameter is an exact built-in float, finite, within [-1e6, 1e6]"),
     )
 }
+
+
+class ProfileAssignment:
+    """The input domain of a contract: exactly one profile per target parameter.
+
+    ``spec`` is the revision's ``input_profile`` as written: a profile name (the same
+    profile for every parameter, the original form) or an object ``{parameter: name}``.
+    """
+
+    def __init__(self, spec: str | dict[str, str], by_param: dict[str, InputProfile]) -> None:
+        self.spec = spec
+        self.by_param = dict(by_param)
+
+    @property
+    def uniform(self) -> bool:
+        return isinstance(self.spec, str)
+
+    @property
+    def name(self) -> str:
+        """Display label: the profile name, or ``{p: name, ...}`` in parameter order."""
+        if isinstance(self.spec, str):
+            return self.spec
+        return "{" + ", ".join(f"{p}: {prof.name}" for p, prof in self.by_param.items()) + "}"
+
+    @property
+    def names(self) -> list[str]:
+        return sorted({prof.name for prof in self.by_param.values()})
+
+    def of(self, param: str) -> InputProfile:
+        return self.by_param[param]
+
+    def check(self, param: str, value: Any) -> str | None:
+        return check_value(self.by_param[param], value)
+
+
+def profile_label(spec: Any) -> str:
+    """Text rendering of a revision's ``input_profile`` (a name or ``{parameter: name}``)."""
+    if type(spec) is dict:
+        return "{" + ", ".join(f"{p}: {n}" for p, n in spec.items()) + "}"
+    return str(spec)
+
+
+def per_param(profile: "InputProfile | ProfileAssignment | dict[str, InputProfile]", params: list[str]) -> dict[str, InputProfile]:
+    if isinstance(profile, InputProfile):
+        return {p: profile for p in params}
+    by = profile.by_param if isinstance(profile, ProfileAssignment) else profile
+    return {p: by[p] for p in params}
 
 
 def is_num(x: Any) -> bool:
@@ -311,11 +359,13 @@ class Admission:
     attempts: int = 0
 
 
-def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: Callable[[dict[str, Any]], tuple[bool | None, str]],
+def admit_inputs(profile: InputProfile | ProfileAssignment | dict[str, InputProfile], params: list[str],
+                 precondition_holds: Callable[[dict[str, Any]], tuple[bool | None, str]],
                  hints: dict[str, Hint], *, seed: int, limit: int, examples: list[dict[str, Any]] | None = None,
                  max_attempts: int | None = None) -> Admission:
-    """Examples, then boundary inputs, then seeded random inputs; each must satisfy the
-    profile and the precondition (``precondition_holds`` is the pure DSL evaluator)."""
+    """Examples, then boundary inputs, then seeded random inputs; each must satisfy every
+    parameter's profile and the precondition (``precondition_holds`` is the pure DSL evaluator)."""
+    profs = per_param(profile, params)
     adm = Admission()
     seen: set[str] = set()
     max_attempts = max_attempts if max_attempts is not None else max(64, limit * 8)
@@ -327,9 +377,9 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
         seen.add(key)
         adm.attempts += 1
         for p in params:
-            why = check_value(profile, args.get(p))
+            why = check_value(profs[p], args.get(p))
             if why is not None:
-                adm.excluded.append((args, origin, f"outside input profile {profile.name}: {p}: {why}"))
+                adm.excluded.append((args, origin, f"outside input profile {profs[p].name}: {p}: {why}"))
                 return
         ok, why = precondition_holds(args)
         if ok is True:
@@ -339,7 +389,7 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
 
     for ex in examples or []:
         offer(dict(ex), "example")
-    b = {p: boundary(profile, hints[p]) for p in params}
+    b = {p: boundary(profs[p], hints[p]) for p in params}
     width = max((len(v) for v in b.values()), default=0)
     for i in range(width):
         if len(adm.inputs) >= limit:
@@ -349,10 +399,10 @@ def admit_inputs(profile: InputProfile, params: list[str], precondition_holds: C
     draws = 0
     while len(adm.inputs) < limit and draws < max_attempts:
         draws += 1  # counted before deduplication, so a tiny domain cannot loop forever
-        offer({p: generate(profile, rng, hints[p]) for p in params}, "random")
+        offer({p: generate(profs[p], rng, hints[p]) for p in params}, "random")
     adm.inputs = adm.inputs[:limit]
     return adm
 
 
-__all__ = ["PROFILES", "InputProfile", "check_value", "domain_hints", "generate", "boundary", "shrink_candidates", "complexity", "admit_inputs",
+__all__ = ["PROFILES", "InputProfile", "ProfileAssignment", "per_param", "profile_label", "check_value", "domain_hints", "generate", "boundary", "shrink_candidates", "complexity", "admit_inputs",
            "Hint", "Admission", "PROFILE_VERSION", "is_num"]

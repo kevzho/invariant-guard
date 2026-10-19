@@ -27,6 +27,17 @@ GEO_BASE = '''class Geo:
 GEO_PATCH = GEO_BASE.replace("        return sorted(xs)\n", "        xs.sort()\n        return xs\n")
 
 
+TAKE_BASE = "def take(xs, n):\n    return xs[:n]\n"
+TAKE_PATCH = "def take(xs, n):\n    return xs[:n + 1]\n"
+N = {"kind": "arg", "name": "n"}
+PER = {"xs": "bounded_builtin_int_list_v1", "n": "bounded_builtin_ints_v1"}
+TAKE_CONTRACT = {"contract_id": "take.len", "scope": "demo/take.py::take",
+                 "precondition": {"kind": "and", "args": [{"kind": "le", "left": {"kind": "literal", "value": 0}, "right": N},
+                                                          {"kind": "le", "left": N, "right": {"kind": "literal", "value": 16}}]},
+                 "predicate": {"kind": "le", "left": {"kind": "len", "value": R}, "right": N}, "input_profile": PER,
+                 "examples": [{"xs": [5, 6, 7], "n": 2}]}
+
+
 def _declare_raw(root, tmp_path, contract):
     f = tmp_path / f"{contract['contract_id']}.json"
     f.write_text(json.dumps(contract), encoding="utf-8")
@@ -72,3 +83,30 @@ def test_runtime_replacement_of_a_static_method_is_a_target_error(tmp_path):
     c = contract_result(r, "geo.sorted.pure")
     assert c["property_result"] == "UNKNOWN" and c["status"] == "CHECKED"
     assert any("not the analyzed def" in x for x in c["reasons"]), c["reasons"]
+
+
+def test_per_parameter_profiles_regression_with_shrunk_witness(tmp_path):
+    root, base = repo(tmp_path, {"demo/take.py": TAKE_BASE}, exec_config())
+    declare(root, TAKE_CONTRACT, tmp_path)
+    write(root, {"demo/take.py": TAKE_PATCH})
+    code, r, _ = verify_exec(root, base)
+    c = contract_result(r, "take.len")
+    assert (c["property_result"], c["patch_relation"], code) == ("OBSERVED_REGRESSION", "INTRODUCED", 1)
+    assert c["input_profile"] == PER and c["original_witness"] == {"xs": [5, 6, 7], "n": 2}
+    w = c["witness"]
+    assert type(w["n"]) is int and 0 <= w["n"] <= 16 and len(w["xs"]) == w["n"] + 1 and all(type(x) is int for x in w["xs"])
+    assert w == {"xs": [0], "n": 0}  # shrunk within each parameter's own profile and the precondition
+    ev = side_evidence(r, c, "candidate")
+    assert "profiles {xs: bounded_builtin_int_list_v1, n: bounded_builtin_ints_v1}" in ev["domain"]
+    code, out, err = run_cli(["contracts", "list", "--path", str(root), "--format", "human"])
+    assert code == 0 and "({n: bounded_builtin_ints_v1, xs: bounded_builtin_int_list_v1})" in out, (out, err)  # stored with sorted keys
+
+
+def test_run_profile_must_allow_every_parameter_profile(tmp_path):
+    cfg = exec_config(require_coverage=False, extra_profile='input_profiles = ["bounded_builtin_int_list_v1"]')
+    root, base = repo(tmp_path, {"demo/take.py": TAKE_BASE}, cfg)
+    declare(root, TAKE_CONTRACT, tmp_path)
+    write(root, {"demo/take.py": TAKE_PATCH})
+    _, r, _ = verify_exec(root, base)
+    c = contract_result(r, "take.len")
+    assert c["status"] == "NOT_ALLOWED" and "bounded_builtin_ints_v1" in c["reasons"][0]

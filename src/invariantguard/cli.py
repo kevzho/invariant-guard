@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from . import ENGINE_VERSION
+from .contracts.profiles import profile_label
 from .config import CONFIG_DIR, CONFIG_NAME, INIT_TEMPLATE, SUGGESTED_IGNORE
 from .frontends.python import FRONTEND_CAPABILITIES
 from .models.enums import EXIT_ERROR, EXIT_INCOMPLETE, EXIT_PASS, EXIT_USAGE
@@ -490,7 +491,7 @@ def _human_contracts(out: dict[str, Any]) -> str:
     lines = []
     for c in out["contracts"]:
         ev = c["latest_evidence"]
-        lines.append(f"{c['contract_id']} r{c['revision']}  {c['authority']}  {c['lifecycle_state']}  {c['scope']}  ({c['input_profile']})"
+        lines.append(f"{c['contract_id']} r{c['revision']}  {c['authority']}  {c['lifecycle_state']}  {c['scope']}  ({profile_label(c['input_profile'])})"
                      + (f"  latest evidence: {ev['result_label']} ({ev['side']}, {ev['created_at']})" if ev else "  no evidence for this revision")
                      + (f"  [{c['stale_evidence_from_other_revisions']} stale]" if c["stale_evidence_from_other_revisions"] else "")
                      + ("" if c["integrity"] == "ok" else "  INTEGRITY ERROR: " + "; ".join(c["integrity_errors"])))

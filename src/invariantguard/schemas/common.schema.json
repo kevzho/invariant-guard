@@ -1014,6 +1014,28 @@
         "data_egress",
         "client"
       ]
+    },
+    "input_profile_spec": {
+      "description": "A contract's input domain: one profile name for every parameter, or an object giving each parameter's profile name.",
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 32,
+          "propertyNames": {
+            "pattern": "^(?!\\d)\\w+$",
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
     }
   }
 }

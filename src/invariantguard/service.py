@@ -42,6 +42,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from . import ENGINE_VERSION, cancellation
+from .contracts.profiles import profile_label
 from .config import CONFIG_DIR, CONFIG_NAME, ConfigError, load_config
 from .models.spans import canonical_json, sha256_bytes
 from .orchestration import CheckOptions, CheckResult, UsageError
@@ -966,7 +967,7 @@ def explanation_text(e: dict[str, Any]) -> str:
         lines.append(f"{side}: " + ", ".join(f"{k}={v}" for k, v in o.items()))
     if e.get("contract"):
         c = e["contract"]
-        lines.append(f"contract {c['contract_id']} r{c['revision']} ({c['input_profile']}):")
+        lines.append(f"contract {c['contract_id']} r{c['revision']} ({profile_label(c['input_profile'])}):")
         lines.append("  precondition: " + json.dumps(c["precondition"], separators=(",", ":")))
         lines.append("  predicate: " + json.dumps(c["predicate"], separators=(",", ":")))
     lines.append("does not show:")

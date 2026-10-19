@@ -37,7 +37,7 @@ from ..execution.runner import Backend, BackendStatus, Workspace, validate_obser
 from ..models.spans import canonical_json, short_hex
 from .dsl import EvalEnv, Rejection, evaluate
 from .model import TypedContract, validate_revision
-from .profiles import admit_inputs, check_value, complexity, domain_hints, shrink_candidates
+from .profiles import admit_inputs, complexity, domain_hints, shrink_candidates
 from .registry import REQUIRED_AUTHORITIES, ContractRegistry, ContractState, RegistryView
 from .values import ValueError_, decode, encode, to_plain
 
@@ -228,8 +228,9 @@ def check_one(ctx: ExecContext, st: ContractState, base: Side, cand: Side, locks
     if not ctx.profile.allows(tc.scope):
         entry.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allowlist target {tc.scope} (allowed_targets)"])
         return entry
-    if tc.input_profile.name not in ctx.profile.input_profiles:
-        entry.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allow input profile {tc.input_profile.name}"])
+    denied = [n for n in tc.input_profile.names if n not in ctx.profile.input_profiles]
+    if denied:
+        entry.update(status="NOT_ALLOWED", reasons=[f"run profile {ctx.profile.name!r} does not allow input profile {', '.join(denied)}"])
         return entry
     base_tc: TypedContract | None = None
     base_why = base.note or "baseline snapshot is not available for replay"
@@ -297,11 +298,11 @@ def check_one(ctx: ExecContext, st: ContractState, base: Side, cand: Side, locks
         while rounds < ctx.profile.max_shrink_rounds:
             cands = []
             for p in params:
-                for v in shrink_candidates(tc.input_profile, cur_args[p]):
+                for v in shrink_candidates(tc.input_profile.of(p), cur_args[p]):
                     a = dict(cur_args)
                     a[p] = v
                     key = _canon(encode(a))
-                    if key in seen or any(check_value(tc.input_profile, a[q]) for q in params):
+                    if key in seen or any(tc.input_profile.check(q, a[q]) for q in params):
                         continue
                     seen.add(key)
                     if tc.precondition_holds(a)[0] is True:  # never leave the contract domain

@@ -39,8 +39,7 @@
       "$ref": "urn:invariantguard:schema:common:1.0#/$defs/dsl_node"
     },
     "input_profile": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "urn:invariantguard:schema:common:1.0#/$defs/input_profile_spec"
     },
     "provenance": {
       "type": "array",

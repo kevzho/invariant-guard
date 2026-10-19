@@ -458,7 +458,7 @@ def cmd_propose(ctx: Ctx, batches: Any, *, client: dict[str, str] | None, execut
     return out, code
 
 
-def _meaning(scope: str, pre: Any, post: Any, profile: str) -> str:
+def _meaning(scope: str, pre: Any, post: Any, profile: str | dict[str, str]) -> str:
     from ..models.spans import digest_json
     from .dsl import canonicalize
 
@@ -478,7 +478,7 @@ def _dedupe(props: list[Any], view: Any) -> None:
         if pr.status != "validated":
             continue
         tc = pr.extra["typed"]
-        key = _meaning(tc.scope, tc.precondition, tc.predicate, tc.input_profile.name)
+        key = _meaning(tc.scope, tc.precondition, tc.predicate, tc.input_profile.spec)
         pr.extra["meaning_digest"] = key
         if key in recorded and recorded[key] != pr.doc["contract_id"]:
             pr.status, pr.reason = "duplicate", f"same claim as recorded contract {recorded[key]}"
