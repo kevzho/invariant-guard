@@ -1,5 +1,5 @@
-"""Contract scope: per-parameter input profiles (DECISIONS I-146) with backward compatibility of the
-single-profile form, str and bool profiles (I-147) and the DSL str operations (I-148)."""
+"""Contract scope: per-parameter input profiles (DECISIONS I-150) with backward compatibility of the
+single-profile form, str and bool profiles (I-151) and the DSL str operations (I-152)."""
 
 import copy
 
@@ -104,7 +104,7 @@ def test_examples_are_checked_against_their_parameter_profile():
     assert exc.value.code == "MALFORMED_CONTRACT" and "bounded_builtin_ints_v1" in exc.value.message
 
 
-# -- str and bool profiles (I-147) and DSL str (I-148) ----------------------------------------------------
+# -- str and bool profiles (I-151) and DSL str (I-152) ----------------------------------------------------
 ASCII = PROFILES["bounded_builtin_ascii_str_v1"]
 UNI = PROFILES["bounded_builtin_unicode_str_v1"]
 BOOL = PROFILES["bounded_builtin_bool_v1"]

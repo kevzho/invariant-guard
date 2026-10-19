@@ -1,5 +1,5 @@
 """Contract scope end to end with the explicit *unisolated* backend: static and class method
-targets, per-parameter input profiles, str and bool profiles (DECISIONS I-145..I-149)."""
+targets, per-parameter input profiles, str and bool profiles (DECISIONS I-153..I-153)."""
 
 import json
 

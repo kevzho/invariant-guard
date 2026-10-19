@@ -3,7 +3,7 @@
 A profile is the generator-side half of a contract's input domain. It fixes the exact
 built-in type and the bounds of a parameter, so a probe input is always a finite,
 serializable built-in value. A contract names one profile for every parameter, or one
-profile per parameter (:class:`ProfileAssignment`; DECISIONS I-146). The contract precondition then narrows the
+profile per parameter (:class:`ProfileAssignment`; DECISIONS I-150). The contract precondition then narrows the
 profile; an input is admitted only if it satisfies both (``admitted``). JSON alone is
 not a complete generator (docs/06), so generation is explicit here:
 
@@ -17,7 +17,7 @@ Hints only steer generation. Admission is always re-checked against the full pro
 the full precondition, so a wrong or missing hint can cost coverage, never soundness of
 the domain (shrinking never leaves the domain: tests/unit/test_profiles.py).
 
-String profiles (DECISIONS I-147) bound the length in code points and the alphabet:
+String profiles (DECISIONS I-151) bound the length in code points and the alphabet:
 ``ascii_printable`` (U+0020..U+007E) or ``unicode_scalar`` (any code point except the
 surrogates U+D800..U+DFFF, so every value has an exact UTF-8 form; controls, NUL,
 combining marks and astral characters are included on purpose). The bool profile is the

@@ -173,7 +173,7 @@ def test_dsl_rejects_unknown_and_executable_nodes():
     c["predicate"] = {"kind": "approx_eq", "left": NODE_LIT, "right": NODE_LIT, "atol": 1e-9, "rtol": 1e-9}  # missing finiteness policy
     assert validation_errors("contract_revision", c)
     c = copy.deepcopy(CONTRACT)
-    c["predicate"] = {"kind": "literal", "value": "x" * 257}  # string literals are inert, bounded data (DECISIONS I-148)
+    c["predicate"] = {"kind": "literal", "value": "x" * 257}  # string literals are inert, bounded data (DECISIONS I-152)
     assert validation_errors("contract_revision", c)
     c["predicate"] = {"kind": "literal", "value": {"code": "os.system"}}
     assert validation_errors("contract_revision", c)
